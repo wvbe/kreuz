@@ -1,0 +1,97 @@
+{
+	"name": "kreuzzeug-im-nagelhosen",
+	"version": "0.1.0",
+	"private": true,
+	"license": "MIT",
+	"author": "wvbe",
+	"main": "dist/index.js",
+	"module": "dist/kreuzzeug-im-nagelhosen.esm.js",
+	"typings": "dist/index.d.ts",
+	"files": [
+		"dist",
+		"src"
+	],
+	"scripts": {
+		"analyze": "size-limit --why",
+		"build": "dts build",
+		"build-storybook": "build-storybook",
+		"lint": "dts lint src stories",
+		"prepare": "dts build",
+		"size": "size-limit",
+		"start": "dts watch",
+		"storybook": "start-storybook -p 6006",
+		"test": "dts test --passWithNoTests"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "dts lint"
+		}
+	},
+	"homepage": ".",
+	"prettier": {
+		"arrowParens": "avoid",
+		"printWidth": 100,
+		"quoteProps": "consistent",
+		"singleQuote": true,
+		"tabWidth": 4,
+		"trailingComma": "none",
+		"useTabs": true
+	},
+	"jest": {
+		"testEnvironment": "jsdom"
+	},
+	"peerDependencies": {
+		"react": ">=16"
+	},
+	"engines": {
+		"node": ">=12"
+	},
+	"size-limit": [
+		{
+			"path": "dist/kreuzzeug-im-nagelhosen.cjs.production.min.js",
+			"limit": "10 KB"
+		},
+		{
+			"path": "dist/kreuzzeug-im-nagelhosen.esm.js",
+			"limit": "10 KB"
+		}
+	],
+	"devDependencies": {
+		"@babel/core": "^7.17.5",
+		"@size-limit/preset-small-lib": "^7.0.8",
+		"@storybook/addon-essentials": "^6.4.19",
+		"@storybook/addon-info": "^5.3.21",
+		"@storybook/addon-links": "^6.4.19",
+		"@storybook/addons": "^6.4.19",
+		"@storybook/react": "^6.4.19",
+		"@tsconfig/create-react-app": "^1.0.2",
+		"@tsconfig/recommended": "^1.0.1",
+		"@types/color": "^3.0.3",
+		"@types/react": "^17.0.39",
+		"@types/react-dom": "^17.0.11",
+		"@types/seedrandom": "^3.0.2",
+		"@types/three": "^0.138.0",
+		"babel-loader": "^8.2.3",
+		"dts-cli": "^1.4.0",
+		"husky": "^7.0.4",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"react-is": "^17.0.2",
+		"size-limit": "^7.0.8",
+		"tslib": "^2.3.1",
+		"typescript": "^4.5.5"
+	},
+	"dependencies": {
+		"@emotion/react": "^11.8.1",
+		"@emotion/styled": "^11.8.1",
+		"@fortawesome/free-solid-svg-icons": "^6.1.0",
+		"@fortawesome/react-fontawesome": "^0.1.17",
+		"@redblobgames/dual-mesh": "github:wvbe/dual-mesh",
+		"color": "^3.2.1",
+		"poisson-disk-sampling": "^2.2.3",
+		"react-draggable": "^4.4.4",
+		"react-spring": "^9.4.3",
+		"seedrandom": "^3.0.5",
+		"three": "^0.138.3"
+	}
+}

@@ -3,15 +3,15 @@ import React, { FunctionComponent } from 'react';
 import { Coordinate } from '../classes/Coordinate';
 import { Anchor } from '../space/Anchor';
 import { MonochromeBox } from '../space/MonochromeBox';
-import { Entity } from './Entity';
+import { PersonEntity } from './PersonEntity';
 
 const zoom = 0.25;
 const translate = zoom / 2;
-const offset = new Coordinate(-translate, -translate, 0);
+const offset = new Coordinate(-translate, -translate, -translate / 2);
 
-export class GuardEntity extends Entity {
-	get label(): string {
-		return `Guardsman ${this.id}`;
+export class GuardEntity extends PersonEntity {
+	public get label(): string {
+		return `Guardsman ${this.passport.firstName}`;
 	}
 
 	Component: FunctionComponent = () => {

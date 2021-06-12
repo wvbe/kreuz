@@ -45,6 +45,8 @@ export const ContextMenuButton = styled.button`
 	display: block;
 	width: 100%;
 	box-sizing: border-box;
+
+	// Same as HorizontalLinkListItem
 	padding: 0.5em 1em;
 	white-space: nowrap;
 	transition: background-color 0.5s;

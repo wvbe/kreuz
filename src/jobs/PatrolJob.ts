@@ -1,26 +1,12 @@
+import { PersonEntity } from '../entities/PersonEntity';
 import { TerrainCoordinate } from '../classes/TerrainCoordinate';
-import { Entity } from '../entities/Entity';
+import { Job } from './Job';
 
-export class Job {
-	entity: Entity;
-	constructor(entity: Entity) {
-		this.entity = entity;
-	}
-
-	get label(): string {
-		throw new Error(`Not implemented for ${this.constructor.name}`);
-	}
-
-	start() {
-		throw new Error(`Not implemented for ${this.constructor.name}`);
-	}
-}
-
-export class PatrolJob extends Job {
+export class PatrolJob extends Job<PersonEntity> {
 	waypoints: TerrainCoordinate[];
 	waypointIndex: number;
 
-	constructor(entity: Entity, waypoints: TerrainCoordinate[]) {
+	constructor(entity: PersonEntity, waypoints: TerrainCoordinate[]) {
 		super(entity);
 		if (waypoints.length < 2) {
 			throw new Error('A patrol must have at least 2 waypoints');
@@ -39,12 +25,12 @@ export class PatrolJob extends Job {
 				this.waypointIndex = (this.waypointIndex + 1) % this.waypoints.length;
 				setTimeout(
 					() => this.entity.walkTo(this.waypoints[this.waypointIndex]),
-					3000 + Math.random() * 5000
+					3000 + Math.random()
 				);
 			})
 		];
 
 		this.entity.walkTo(this.waypoints[0]);
-		return () => destroyers.forEach(d => d());
+		return () => destroyers.forEach((d) => d());
 	}
 }

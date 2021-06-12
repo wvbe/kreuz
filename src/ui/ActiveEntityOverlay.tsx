@@ -31,24 +31,73 @@ const Avatar = styled.div`
 	display: flex;
 	margin-right: 1em;
 `;
+const HorizontalLinkList = styled.nav`
+	display: flex;
+	flex-direction: row;
+	font-size: 60%;
+	text-transform: uppercase;
+`;
+const HorizontalLinkListItem = styled.a`
+	flex: 0 0 auto;
+	background-color: rgba(255, 255, 255, 0.1);
+	margin-right: 3px;
 
-export const ActiveEntityOverlay: FunctionComponent<{ entity?: Entity }> = ({ entity }) => (
+	// Same as ContextMenuItem
+	padding: 0.125em 0.5em;
+	white-space: nowrap;
+	transition: background-color 0.5s;
+	color: white;
+	/* background-color: transparent; */
+	/* background-color: rgba(255, 255, 255, 0.05); */
+	&:hover {
+		background-color: rgba(255, 255, 255, 0.5);
+		cursor: pointer;
+	}
+`;
+export const EntityTextBadge: FunctionComponent<{ entity: Entity }> = ({ entity }) => (
+	<>
+		<p>
+			<b>{entity.label}</b>
+		</p>
+		<p>{entity?.job ? entity.job.label : 'Jobless'}</p>
+		<HorizontalLinkList style={{ marginTop: '1em' }}>
+			<HorizontalLinkListItem
+				onClick={() => {
+					console.log('Active entity:', entity);
+				}}
+			>
+				LOG
+			</HorizontalLinkListItem>
+			<HorizontalLinkListItem
+				onClick={() => {
+					console.warn('Following entity not implemented yet', entity);
+				}}
+			>
+				FOLLOW
+			</HorizontalLinkListItem>
+		</HorizontalLinkList>
+	</>
+);
+export const ActiveEntityOverlay: FunctionComponent<{ entity?: Entity; zoom?: number }> = ({
+	entity,
+	zoom = 4
+}) => (
 	<ActiveEntityOverlayBoundary>
 		<ActiveEntityOverlayBody>
 			<Avatar>
-				<p>T</p>
-			</Avatar>
-			<div>
-				<p>Heyyoo</p>
-				{entity ? (
-					<p>
-						<b>{entity.label}</b>
-					</p>
-				) : (
-					<p>Not anything selected</p>
+				{entity && (
+					<svg
+						width="1"
+						height="1"
+						overflow="visible"
+						shapeRendering="geometricPrecision"
+						viewBox={[0, 0, 1 / zoom, 1 / zoom].join(' ')}
+					>
+						<entity.Component />
+					</svg>
 				)}
-				{entity?.job ? <p>{entity.job.label}</p> : <p>Jobless</p>}
-			</div>
+			</Avatar>
+			<div>{entity ? <EntityTextBadge entity={entity} /> : null}</div>
 		</ActiveEntityOverlayBody>
 	</ActiveEntityOverlayBoundary>
 );

@@ -1,7 +1,8 @@
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { Scene } from '../classes/Scene';
 import { TerrainCoordinateComponent } from '../classes/TerrainCoordinate';
-import { Entity, EntityComponent } from '../entities/Entity';
+import { Entity } from '../entities/Entity';
+import { PersonEntity, PersonEntityComponent } from '../entities/PersonEntity';
 import { Viewport } from '../space/Viewport';
 import { ActiveEntityOverlay } from '../ui/ActiveEntityOverlay';
 
@@ -16,11 +17,11 @@ const Demo: FunctionComponent = () => {
 
 	const terrain = useMemo(
 		() =>
-			scene.terrain.getCoordinatesInRenderOrder().map(terrainCoordinate => (
+			scene.terrain.getCoordinatesInRenderOrder().map((terrainCoordinate) => (
 				<TerrainCoordinateComponent
 					key={terrainCoordinate.toString()}
 					terrainCoordinate={terrainCoordinate}
-					onClick={event => {
+					onClick={(event) => {
 						event.preventDefault();
 						setCenter(terrainCoordinate);
 					}}
@@ -37,16 +38,18 @@ const Demo: FunctionComponent = () => {
 
 	const entities = useMemo(
 		() =>
-			scene.entities.map(entity => (
-				<EntityComponent
-					key={entity.id}
-					entity={entity}
-					onClick={event => {
-						event.preventDefault();
-						setActiveEntity(entity);
-					}}
-				/>
-			)),
+			scene.entities
+				.filter((entity): entity is PersonEntity => entity instanceof PersonEntity)
+				.map((entity) => (
+					<PersonEntityComponent
+						key={entity.id}
+						entity={entity}
+						onClick={(event) => {
+							event.preventDefault();
+							setActiveEntity(entity);
+						}}
+					/>
+				)),
 		[scene.entities]
 	);
 

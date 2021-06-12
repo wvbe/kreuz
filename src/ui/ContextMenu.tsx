@@ -5,14 +5,13 @@ import React, {
 	ReactElement,
 	useContext,
 	useEffect,
-	useMemo,
 	useState
 } from 'react';
 import { CoordinateLike } from '../classes/Coordinate';
 import { ViewportHtmlContainer } from '../space/Viewport';
 import { Event } from '../util/events';
 
-const CONTEXT = createContext<null | ContextMenuManager>(null);
+export const ContextMenuContext = createContext<null | ContextMenuManager>(null);
 
 /**
  * Presentational components
@@ -38,6 +37,7 @@ const ContextMenuBoundary = styled.div`
 const ContextMenuBody = styled.div`
 	border: 1px solid rgba(255, 255, 255, 0.5);
 	border-radius: 3px;
+	overflow: hidden;
 `;
 
 export const ContextMenuButton = styled.button`
@@ -52,18 +52,31 @@ export const ContextMenuButton = styled.button`
 	transition: background-color 0.5s;
 	color: white;
 	background-color: transparent;
-	/* background-color: rgba(255, 255, 255, 0.05); */
 	&:hover {
 		background-color: rgba(255, 255, 255, 0.5);
 		cursor: pointer;
 	}
 `;
 
+export const ContextMenuFooter = styled.button`
+	border: none;
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+
+	// Same as HorizontalLinkListItem
+	padding: 0.5em 1em;
+	white-space: nowrap;
+	transition: background-color 0.5s;
+	color: white;
+	background-color: rgba(255, 255, 255, 0.1);
+`;
+
 /**
  * Logic
  */
 type ContextManagerState = false | { location: CoordinateLike; contents: ReactElement };
-class ContextMenuManager {
+export class ContextMenuManager {
 	public state: ContextManagerState = false;
 	public change = new Event<[ContextManagerState]>();
 
@@ -82,18 +95,12 @@ class ContextMenuManager {
 	}
 }
 
-// const manager = new ContextMenuManager();
-export const ContextMenuProvider: FunctionComponent = ({ children }) => {
-	const manager = useMemo(() => new ContextMenuManager(), []);
-	return <CONTEXT.Provider value={manager}>{children}</CONTEXT.Provider>;
-};
-
 export const useContextMenuManager = () => {
-	const contextMenuManager = useContext(CONTEXT);
+	const contextMenuManager = useContext(ContextMenuContext);
 	return contextMenuManager;
 };
 
-export const ContextMenuContainer: FunctionComponent<{ zoom: number }> = ({ zoom = 1 }) => {
+export const ContextMenuContainer: FunctionComponent<{ zoom?: number }> = ({ zoom = 1 }) => {
 	const contextMenuManager = useContextMenuManager();
 	const [managerState, setManagerState] = useState(contextMenuManager?.state);
 	useEffect(() => {

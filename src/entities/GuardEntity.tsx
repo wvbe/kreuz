@@ -17,7 +17,12 @@ export class GuardEntity extends PersonEntity {
 	Component: FunctionComponent = () => {
 		return (
 			<Anchor {...offset}>
-				<MonochromeBox size={zoom} fill={Color('#227d5e')} />
+				<MonochromeBox
+					size={zoom}
+					fill={Color('#227d5e')}
+					stroke={Color('#227d5e').mix(Color('#000'), 0.3)}
+					innerStroke={Color('#227d5e').mix(Color('#fff'), 0.3)}
+				/>
 			</Anchor>
 		);
 	};

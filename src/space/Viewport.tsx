@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent, ReactElement, useMemo } from 'react';
-import { AnimatedComponent } from 'react-spring';
 import { CoordinateLike } from '../classes/Coordinate';
 import { Length, PERSPECTIVE } from './PERSPECTIVE';
 
@@ -28,7 +27,7 @@ export const AbsolutelyPositionedContainer = styled.div`
 		top: 0;
 		left: 0;
 	}
-` as unknown as AnimatedComponent<'div'>;
+`;
 
 type ViewportComponentProps = {
 	zoom?: number;
@@ -69,8 +68,6 @@ export const Viewport: FunctionComponent<ViewportComponentProps> = ({
 		</AbsolutelyPositionedContainer>
 	);
 };
-
-
 
 export const ViewportSvgContainer: FunctionComponent<
 	{

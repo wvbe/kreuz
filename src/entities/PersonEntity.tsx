@@ -23,7 +23,7 @@ export class PersonEntity extends Entity {
 		super(id, location);
 
 		// Movement handling
-		this.pathStepEnd.on((loc) => {
+		this.pathStepEnd.on(loc => {
 			this.location = loc;
 		});
 
@@ -91,9 +91,13 @@ export const PersonEntityComponent: FunctionComponent<{
 	useEventListeners(
 		() => [
 			// Listen for the entity moveStart order;
-			entity.pathStepStart.on((destination) =>
+			entity.pathStepStart.on(destination =>
 				animatePosition({
-					destination,
+					destination: TerrainCoordinate.clone(destination).transform(
+						-0.25 + Math.random() * 0.5,
+						-0.25 + Math.random() * 0.5,
+						0
+					),
 					duration: entity.location.euclideanDistanceTo(destination) * 500
 				})
 			)

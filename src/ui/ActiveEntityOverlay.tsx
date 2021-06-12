@@ -5,9 +5,6 @@ import React, { FunctionComponent } from 'react';
 import { Entity } from '../entities/Entity';
 
 const ActiveEntityOverlayBoundary = styled.div`
-	position: absolute;
-	bottom: 2em;
-	left: 2em;
 	backdrop-filter: blur(2px);
 `;
 
@@ -15,9 +12,6 @@ const ActiveEntityOverlayBody = styled.div`
 	border: 1px solid rgba(255, 255, 255, 0.5);
 	border-radius: 3px;
 	padding: 1em;
-
-	font-family: sans-serif;
-	color: white;
 	display: flex;
 	flex-direction: row;
 `;

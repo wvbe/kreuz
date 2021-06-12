@@ -5,8 +5,8 @@ import { MonochromeBox } from '../space/MonochromeBox';
 import { MonochromeTile } from '../space/MonochromeTile';
 import { Terrain } from './Terrain';
 import { color } from '../styles';
+import { SvgMouseInteractionProps } from '../types';
 
-type OnTerrainClick = (event: React.MouseEvent<SVGElement, MouseEvent>) => void;
 /**
  * A special type of coordinate that is equal to another terrain coordinate when the X and Y are equal, disregarding Z.
  */
@@ -16,8 +16,10 @@ export class TerrainCoordinate extends Coordinate {
 	equals(coord: CoordinateLike) {
 		return this === coord || (coord && this.x === coord.x && this.y === coord.y);
 	}
-	static clone(coord: CoordinateLike) {
-		return new TerrainCoordinate(coord.x, coord.y, coord.z);
+	static clone(coord: CoordinateLike | TerrainCoordinate) {
+		const coord2 = new TerrainCoordinate(coord.x, coord.y, coord.z);
+		coord2.terrain = (coord as TerrainCoordinate).terrain;
+		return coord2;
 	}
 
 	canWalkHere() {
@@ -28,10 +30,11 @@ export class TerrainCoordinate extends Coordinate {
 /**
  * A component that automatically transitions the entity component as per its move instructions
  */
-export const TerrainCoordinateComponent: FunctionComponent<{
-	terrainCoordinate: TerrainCoordinate;
-	onClick?: OnTerrainClick;
-}> = ({ terrainCoordinate, onClick }) => {
+export const TerrainCoordinateComponent: FunctionComponent<
+	SvgMouseInteractionProps & {
+		terrainCoordinate: TerrainCoordinate;
+	}
+> = ({ terrainCoordinate, ...svgMouseInteractionProps }) => {
 	const [isHovered, setIsHovered] = useState(false);
 	const translated = Coordinate.clone(terrainCoordinate).transform(
 		-0.5,
@@ -49,7 +52,7 @@ export const TerrainCoordinateComponent: FunctionComponent<{
 					}
 					onMouseEnter={() => setIsHovered(true)}
 					onMouseLeave={() => setIsHovered(false)}
-					onClick={onClick}
+					{...svgMouseInteractionProps}
 				/>
 			) : (
 				<MonochromeTile
@@ -57,7 +60,7 @@ export const TerrainCoordinateComponent: FunctionComponent<{
 					stroke={isHovered ? color.white : undefined}
 					onMouseEnter={() => setIsHovered(true)}
 					onMouseLeave={() => setIsHovered(false)}
-					onClick={onClick}
+					{...svgMouseInteractionProps}
 				/>
 			)}
 		</Anchor>

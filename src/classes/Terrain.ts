@@ -9,7 +9,7 @@ export class Terrain {
 
 	constructor(coordinates: TerrainCoordinate[]) {
 		this.coordinates = coordinates;
-		this.coordinates.forEach((coordinate) => (coordinate.terrain = this));
+		this.coordinates.forEach(coordinate => (coordinate.terrain = this));
 
 		this.size = Math.sqrt(this.coordinates.length);
 	}
@@ -20,7 +20,7 @@ export class Terrain {
 
 	public selectContiguousNeigbors(
 		start: TerrainCoordinate,
-		selector: (coordinate: TerrainCoordinate) => boolean = (c) => c.canWalkHere()
+		selector: (coordinate: TerrainCoordinate) => boolean = c => c.canWalkHere()
 	) {
 		const island: TerrainCoordinate[] = [];
 		const seen: TerrainCoordinate[] = [];
@@ -30,16 +30,14 @@ export class Terrain {
 			const current = queue.shift() as TerrainCoordinate;
 			island.push(current);
 
-			const neighbours = this.getNeighbors(current).filter((n) => !seen.includes(n));
+			const neighbours = this.getNeighbors(current).filter(n => !seen.includes(n));
 			seen.splice(0, 0, current, ...neighbours);
 			queue.splice(0, 0, ...neighbours.filter(selector));
 		}
 		return island;
 	}
 
-	public getIslands(
-		selector: (coordinate: TerrainCoordinate) => boolean = (c) => c.canWalkHere()
-	) {
+	public getIslands(selector: (coordinate: TerrainCoordinate) => boolean = c => c.canWalkHere()) {
 		let open = this.coordinates.slice();
 		const islands = [];
 		while (open.length) {
@@ -48,7 +46,7 @@ export class Terrain {
 				continue;
 			}
 			const island = this.selectContiguousNeigbors(next, selector);
-			open = open.filter((n) => !island.includes(n));
+			open = open.filter(n => !island.includes(n));
 			islands.push(island);
 		}
 		return islands;
@@ -83,8 +81,8 @@ export class Terrain {
 		return this.coordinatesInRenderOrder;
 	}
 
-	static generateRandom(size: number) {
-		const generator = new TerrainGenerator(size);
+	static generateRandom(seed: string, size: number) {
+		const generator = new TerrainGenerator(seed, size);
 		generator.generate(1);
 
 		// For clarity, the terrain must currently always be square
@@ -104,7 +102,7 @@ export class Terrain {
 			}
 		);
 
-		const sortedHeights = coordinates.map((coordinate) => coordinate[2]).sort();
+		const sortedHeights = coordinates.map(coordinate => coordinate[2]).sort();
 		const RATIO_WATER_OF_TOTAL = 0.25;
 		const waterlineOffset =
 			sortedHeights[Math.floor(sortedHeights.length * RATIO_WATER_OF_TOTAL)];

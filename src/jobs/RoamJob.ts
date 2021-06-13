@@ -1,6 +1,7 @@
 import { TerrainCoordinate } from './../classes/TerrainCoordinate';
 import { PersonEntity } from '../entities/PersonEntity';
 import { Job } from './Job';
+import { Random } from '../classes/Random';
 
 export class RoamJob extends Job<PersonEntity> {
 	island: TerrainCoordinate[];
@@ -17,16 +18,18 @@ export class RoamJob extends Job<PersonEntity> {
 		if (!this.island.length) {
 			return () => {};
 		}
+		let steps = 0;
 		const doTimeout = () =>
-			setTimeout(
-				() =>
-					this.entity.walkTo(this.island[Math.floor(Math.random() * this.island.length)]),
-				5000 + Math.random() * 10000
-			);
+			setTimeout(() => {
+				steps++;
+				this.entity.walkTo(
+					Random.arrayItem(this.island, this.entity.id, 'roam-destination', steps)
+				);
+			}, 5000 + Random.float(this.entity.id, 'roam-delay', steps) * 10000);
 
 		const destroyers = [this.entity.pathEnd.on(doTimeout)];
 		doTimeout();
 
-		return () => destroyers.forEach((d) => d());
+		return () => destroyers.forEach(d => d());
 	}
 }

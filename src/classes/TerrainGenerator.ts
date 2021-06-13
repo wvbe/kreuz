@@ -3,6 +3,8 @@
  *   https://github.com/hunterloftis/playfuljs-demos/blob/gh-pages/terrain/index.html#L118
  */
 
+import { Random } from './Random';
+
 export const OUT_OF_BOUNDS = Symbol();
 
 function average(values: Array<number | typeof OUT_OF_BOUNDS>) {
@@ -15,8 +17,10 @@ export class TerrainGenerator {
 	private size: number;
 	private max: number;
 	private map: Float32Array;
+	private seed;
 
-	constructor(size: number) {
+	constructor(seed: string, size: number) {
+		this.seed = seed;
 		const detail = Math.ceil(Math.log(size) / Math.log(2));
 		this.size = Math.pow(2, detail) + 1;
 		this.max = this.size - 1;
@@ -52,12 +56,22 @@ export class TerrainGenerator {
 
 		for (y = half; y < this.max; y += size) {
 			for (x = half; x < this.max; x += size) {
-				this.square(x, y, half, Math.random() * scale * 2 - scale);
+				this.square(
+					x,
+					y,
+					half,
+					Random.float(this.seed, size, 'square', x, y) * scale * 2 - scale
+				);
 			}
 		}
 		for (y = 0; y <= this.max; y += half) {
 			for (x = (y + half) % size; x <= this.max; x += size) {
-				this.diamond(x, y, half, Math.random() * scale * 2 - scale);
+				this.diamond(
+					x,
+					y,
+					half,
+					Random.float(this.seed, size, 'square', x, y) * scale * 2 - scale
+				);
 			}
 		}
 		this.divide(size / 2, roughness);

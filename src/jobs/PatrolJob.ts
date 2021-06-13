@@ -1,6 +1,7 @@
 import { PersonEntity } from '../entities/PersonEntity';
 import { TerrainCoordinate } from '../classes/TerrainCoordinate';
 import { Job } from './Job';
+import { Random } from '../classes/Random';
 
 export class PatrolJob extends Job<PersonEntity> {
 	waypoints: TerrainCoordinate[];
@@ -22,15 +23,18 @@ export class PatrolJob extends Job<PersonEntity> {
 		const destroyers = [
 			this.entity.pathEnd.on(() => {
 				// Guards move from one waypoint to another, pausing for a random amount of time in between
-				this.waypointIndex = (this.waypointIndex + 1) % this.waypoints.length;
+				this.waypointIndex += 1;
 				setTimeout(
-					() => this.entity.walkTo(this.waypoints[this.waypointIndex]),
-					3000 + Math.random()
+					() =>
+						this.entity.walkTo(
+							this.waypoints[this.waypointIndex % this.waypoints.length]
+						),
+					3000 + Random.float(this.entity.id, 'patrol', this.waypointIndex) * 5000
 				);
 			})
 		];
 
 		this.entity.walkTo(this.waypoints[0]);
-		return () => destroyers.forEach((d) => d());
+		return () => destroyers.forEach(d => d());
 	}
 }

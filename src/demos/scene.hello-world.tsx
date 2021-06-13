@@ -26,7 +26,7 @@ function fakeCoordinates(x: number, y: number) {
 
 const Demo: FunctionComponent = () => {
 	const scene = useMemo(() => {
-		const scene = Scene.generateRandom(WORLD_SIZE);
+		const scene = Scene.generateRandom(String(Date.now()), WORLD_SIZE);
 		(window as any).scene = scene;
 		return scene;
 	}, []);
@@ -114,6 +114,8 @@ const Demo: FunctionComponent = () => {
 					>
 						GitHub
 					</a>
+					{'    '}
+					Seed: {scene.seed}
 				</p>
 			</Overlay>
 		</ContextMenuContext.Provider>

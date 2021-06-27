@@ -4,7 +4,7 @@ import { TerrainCoordinate } from './TerrainCoordinate';
 
 describe('Coordinate.ts', () => {
 	it('getNeighbors', () => {
-		const terrain = Terrain.generateRandom(4);
+		const terrain = Terrain.generateRandom('test', 4);
 		expect(terrain.getNeighbors(terrain.getAtXy(0, 0) as TerrainCoordinate)).toHaveLength(2);
 		expect(terrain.getNeighbors(terrain.getAtXy(3, 3) as TerrainCoordinate)).toHaveLength(2);
 		expect(terrain.getNeighbors(terrain.getAtXy(0, 1) as TerrainCoordinate)).toHaveLength(3);

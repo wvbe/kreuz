@@ -4,7 +4,7 @@ const FIRST_NAMES_M = `
 `
 	.replace(/\t|\n/g, '')
 	.split(',')
-	.map((name) => name.trim());
+	.map(name => name.trim());
 
 const FIRST_NAMES_F = `
 	Mia, Mare, Miriam, Mary, Mara, Molly, Maren, Mariah, Marisol, Maria, Moira, Polly, Marie, Mariana, Marilyn, Malia,
@@ -14,7 +14,7 @@ const FIRST_NAMES_F = `
 `
 	.replace(/\t|\n/g, '')
 	.split(',')
-	.map((name) => name.trim());
+	.map(name => name.trim());
 
 export function getRandomMaleFirstName() {
 	return FIRST_NAMES_M[Math.floor(Math.random() * FIRST_NAMES_M.length)];
@@ -23,6 +23,4 @@ export function getRandomFemaleFirstName() {
 	return FIRST_NAMES_F[Math.floor(Math.random() * FIRST_NAMES_F.length)];
 }
 
-export function getRandomFullName() {
-	
-}
+export function getRandomFullName() {}

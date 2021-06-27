@@ -1,16 +1,18 @@
-import { CoordValue, Length } from '../space/PERSPECTIVE';
+import { InGameDistance } from '../space/PERSPECTIVE';
 export interface CoordinateLike {
-	x: CoordValue;
-	y: CoordValue;
-	z: CoordValue;
+	x: InGameDistance;
+	y: InGameDistance;
+	z: InGameDistance;
 }
 
-export class Coordinate implements CoordinateLike {
-	x: CoordValue;
-	y: CoordValue;
-	z: CoordValue;
+export type CoordinateArray = [InGameDistance, InGameDistance, InGameDistance];
 
-	constructor(x: CoordValue, y: CoordValue, z: CoordValue) {
+export class Coordinate implements CoordinateLike {
+	x: InGameDistance;
+	y: InGameDistance;
+	z: InGameDistance;
+
+	constructor(x: InGameDistance, y: InGameDistance, z: InGameDistance) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -23,7 +25,7 @@ export class Coordinate implements CoordinateLike {
 		);
 	}
 
-	transform(dx: Length = 0, dy: Length = 0, dz: Length = 0) {
+	transform(dx: InGameDistance = 0, dy: InGameDistance = 0, dz: InGameDistance = 0) {
 		this.x += dx;
 		this.y += dy;
 		this.z += dz;

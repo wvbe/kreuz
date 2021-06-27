@@ -1,12 +1,13 @@
 import React, { FunctionComponent, ReactElement } from 'react';
+import { CoordinateArray } from '../classes/Coordinate';
 
-import { CoordArray, PERSPECTIVE } from './PERSPECTIVE';
+import { PERSPECTIVE } from './PERSPECTIVE';
 
 const BORDER_WIDTH = 0;
 
 export const LinePath: FunctionComponent<
 	Omit<React.SVGProps<SVGLineElement>, 'path'> & {
-		path: CoordArray[];
+		path: CoordinateArray[];
 	}
 > = ({ path, stroke = 'black', strokeWidth = BORDER_WIDTH }) => {
 	let spatialCoordinates = path

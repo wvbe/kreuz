@@ -1,13 +1,13 @@
 import { useSpring } from '@react-spring/core';
 import { animated } from '@react-spring/web';
 import React, { FunctionComponent, useMemo } from 'react';
-import { CoordinateLike } from '../classes/Coordinate';
+import { CoordinateArray, CoordinateLike } from '../classes/Coordinate';
 import { SvgMouseInteractionProps } from '../types';
 import { LinePath } from './LinePath';
-import { CoordArray, Length, PERSPECTIVE } from './PERSPECTIVE';
+import { InGameDistance, PERSPECTIVE } from './PERSPECTIVE';
 
-const Crosshair: FunctionComponent<{ size: Length }> = ({ size = 4 }) => {
-	const lines: CoordArray[][] = [
+const Crosshair: FunctionComponent<{ size: InGameDistance }> = ({ size = 4 }) => {
+	const lines: CoordinateArray[][] = [
 		[
 			// over the x axis
 			[-1 * size, 0, 0],
@@ -36,7 +36,7 @@ const Crosshair: FunctionComponent<{ size: Length }> = ({ size = 4 }) => {
 
 export const Anchor: FunctionComponent<
 	SvgMouseInteractionProps & {
-		crosshairSize?: Length;
+		crosshairSize?: InGameDistance;
 	} & Partial<CoordinateLike>
 > = ({ x = 0, y = 0, z = 0, children, crosshairSize = 0 }) => {
 	const pixels = useMemo(() => PERSPECTIVE.toPixels(x, y, z), [x, y, z]);
@@ -54,7 +54,7 @@ export const MovingAnchor: FunctionComponent<
 		moveTo: CoordinateLike;
 		moveSpeed: number;
 		onRest?: () => void;
-		crosshairSize?: Length;
+		crosshairSize?: InGameDistance;
 	}
 > = ({ moveTo, moveSpeed, onRest, children, crosshairSize = 0, onClick }) => {
 	const [dx, dy] = useMemo(() => PERSPECTIVE.toPixels(moveTo.x, moveTo.y, moveTo.z), [moveTo]);

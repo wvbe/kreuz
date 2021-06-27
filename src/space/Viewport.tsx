@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent, ReactElement, useMemo } from 'react';
 import { CoordinateLike } from '../classes/Coordinate';
-import { Length, PERSPECTIVE } from './PERSPECTIVE';
+import { InGameDistance, PERSPECTIVE } from './PERSPECTIVE';
 
 // The pythagoras distance (1/sqrt(2)) with a little tweaking for better looks
 const PIXEL_FRIENDLY_PYTHAGORAS = 1 / Math.pow(2, 1 / 2); //0.8;
@@ -112,8 +112,8 @@ const XAxis = styled(NoAxis)`
 
 export const ViewportHtmlContainer: FunctionComponent<{
 	axis?: 'x' | 'y' | 'z';
-	width: Length;
-	height: Length;
+	width: InGameDistance;
+	height: InGameDistance;
 	zoom?: number;
 	location: CoordinateLike;
 }> = ({ location, zoom = 1, axis, width, height, children }) => {

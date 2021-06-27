@@ -22,8 +22,12 @@ export class TerrainCoordinate extends Coordinate {
 		return coord2;
 	}
 
-	canWalkHere() {
+	isLand() {
 		return this.z > 0;
+	}
+	// For debugging purposes only, may change without notice or tests
+	toString() {
+		return '(' + [this.x, this.y].join(',') + ')';
 	}
 }
 

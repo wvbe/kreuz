@@ -57,7 +57,9 @@ export const EntityTextBadge: FunctionComponent<{ entity: Entity }> = ({ entity 
 		<HorizontalLinkList style={{ marginTop: '1em' }}>
 			<HorizontalLinkListItem
 				onClick={() => {
-					console.log('Active entity:', entity);
+					console.group('Selected entity');
+					console.log(entity);
+					console.groupEnd();
 				}}
 			>
 				LOG

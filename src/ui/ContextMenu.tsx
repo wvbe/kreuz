@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 import { CoordinateLike } from '../classes/Coordinate';
 import { ViewportHtmlContainer } from '../space/Viewport';
-import { Event } from '../util/events';
+import { Event } from '../util/Event';
 
 export const ContextMenuContext = createContext<null | ContextMenuManager>(null);
 

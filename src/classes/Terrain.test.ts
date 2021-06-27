@@ -17,7 +17,7 @@ function map(strs: TemplateStringsArray) {
 				throw new Error(`Unfamiliar mapping character "${char}"`);
 			})
 		);
-	if (!cleanString.every((line) => line.length === cleanString.length)) {
+	if (!cleanString.every(line => line.length === cleanString.length)) {
 		throw new Error('Not a square map');
 	}
 

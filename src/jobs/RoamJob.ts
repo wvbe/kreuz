@@ -1,7 +1,7 @@
 import { TerrainCoordinate } from './../classes/TerrainCoordinate';
 import { PersonEntity } from '../entities/PersonEntity';
 import { Job } from './Job';
-import { Random } from '../classes/Random';
+import { Random } from '../util/Random';
 
 export class RoamJob extends Job<PersonEntity> {
 	island: TerrainCoordinate[];

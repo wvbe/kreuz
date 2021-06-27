@@ -1,57 +1,67 @@
 import { CoordinateLike } from '../classes/Coordinate';
-//     z+
-//     |     y+
-//     |    /
-//     |  /
-//     |/
-// 0,0  \
-//        \
-//          \ x+
+
+//        z+,                height
+//        |        __ y+,    depth
+//        |     __/
+//        |  __/
+//    0,0 |_/
+//          \__
+//             \__
+//                \__ x+,    width
 
 const BASE_LENGTH = 32;
 
-export type CoordValue = number;
-export type Length = number;
-export type Angle = number;
-export type CoordArray = [CoordValue, CoordValue, CoordValue];
-export type CoordObject = { x: CoordValue; y: CoordValue; z: CoordValue };
+export type InGameDistance = number;
+export type OnScreenDistance = number;
+export type OnSreenAngle = number;
 
-function createPerspective(degrees: Angle, tileSize: Length) {
-	const isometricAngle = degrees * (Math.PI / 180);
-	const _isometricCos = Math.cos(isometricAngle);
-	const _isometricSin = Math.sin(isometricAngle);
-	const _isometricTan = Math.tan(isometricAngle);
+class Perspective {
+	public readonly degrees: OnSreenAngle;
+	public readonly tileSize: OnScreenDistance;
 
-	const tileHeight = tileSize;
+	private _cos: OnSreenAngle;
+	private _sin: OnSreenAngle;
+	private _tan: OnSreenAngle;
 
-	return {
-		degrees: degrees,
-		radians: degrees * (Math.PI / 180),
-		tileSize: tileSize,
-		toPixels: (x: CoordValue, y: CoordValue, z: CoordValue) => {
-			const cartX = (x + y) * _isometricCos,
-				cartY = (x - y) * _isometricSin;
+	constructor(degrees: OnSreenAngle, tileSize: OnScreenDistance) {
+		this.degrees = degrees;
+		this.tileSize = tileSize;
 
-			return [
-				cartX * tileSize, // x
-				cartY * tileSize - tileHeight * z // y
-			];
-		},
-		toCoords: (cartX: CoordValue, cartY: CoordValue) => {
-			const isoY = _isometricTan * cartX + cartY,
-				isoX = (cartY - isoY) / -_isometricSin - isoY;
+		const isometricAngle = degrees * (Math.PI / 180);
+		this._cos = Math.cos(isometricAngle);
+		this._sin = Math.sin(isometricAngle);
+		this._tan = Math.tan(isometricAngle);
+	}
 
-			// this is good so far, b should be rescaled for tile size. as
-			return [isoX / tileSize, isoY / tileSize];
-		}
-	};
+	toPixels(
+		x: InGameDistance,
+		y: InGameDistance,
+		z: InGameDistance
+	): [OnScreenDistance, OnScreenDistance] {
+		const cartX = (x + y) * this._cos,
+			cartY = (x - y) * this._sin;
+
+		const tileHeight = this.tileSize;
+
+		return [
+			cartX * this.tileSize, // x
+			cartY * this.tileSize - tileHeight * z // y
+		];
+	}
+
+	private toCoords(
+		cartX: InGameDistance,
+		cartY: InGameDistance
+	): [InGameDistance, InGameDistance, InGameDistance] {
+		const isoY = this._tan * cartX + cartY,
+			isoX = (cartY - isoY) / -this._sin - isoY;
+
+		// this is good so far, b should be rescaled for tile size. as
+		return [isoX / this.tileSize, isoY / this.tileSize, 0];
+	}
 }
 
-export const PERSPECTIVE = createPerspective(30, BASE_LENGTH);
-
-export function randomComparator() {
-	return 0.5 - Math.random();
-}
+export const PERSPECTIVE = new Perspective(30, BASE_LENGTH);
 
 export function distanceToCameraComparator(a: CoordinateLike, b: CoordinateLike) {
 	const dX = b.x - a.x;

@@ -3,7 +3,7 @@
  *   https://github.com/hunterloftis/playfuljs-demos/blob/gh-pages/terrain/index.html#L118
  */
 
-import { Random } from './Random';
+import { Random } from '../util/Random';
 
 export const OUT_OF_BOUNDS = Symbol();
 

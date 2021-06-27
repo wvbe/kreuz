@@ -1,12 +1,13 @@
 import Color from 'color';
 import React, { FunctionComponent } from 'react';
+import { CoordinateArray } from '../classes/Coordinate';
 import { color } from '../styles';
 import { SvgMouseInteractionProps } from '../types';
-import { CoordArray, Length, PERSPECTIVE } from './PERSPECTIVE';
+import { InGameDistance, PERSPECTIVE } from './PERSPECTIVE';
 
 const BORDER_WIDTH = 0;
 
-function coordsToPixels(coords: CoordArray[], borderWidth = BORDER_WIDTH) {
+function coordsToPixels(coords: CoordinateArray[], borderWidth = BORDER_WIDTH) {
 	return coords
 		.map(coordinate => PERSPECTIVE.toPixels(...coordinate))
 		.map(cc => cc.map(c => c + borderWidth));
@@ -53,8 +54,8 @@ export const MonochromeBox: FunctionComponent<
 		strokeLinecap?: 'round' | 'butt' | 'square' | 'inherit' | undefined;
 		fill?: Color;
 		stroke?: Color;
-		strokeWidth?: Length;
-		innerStrokeWidth?: Length;
+		strokeWidth?: InGameDistance;
+		innerStrokeWidth?: InGameDistance;
 		innerStroke?: Color;
 	}
 > = ({

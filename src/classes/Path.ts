@@ -6,7 +6,7 @@
 //   Includes Binary Heap (with modifications) from Marijn Haverbeke.
 //   http://eloquentjavascript.net/appendix2.html
 
-import { BinaryHeap } from './BinaryHeap';
+import { BinaryHeap } from '../util/BinaryHeap';
 import { Terrain } from './Terrain';
 import { TerrainCoordinate } from './TerrainCoordinate';
 
@@ -104,7 +104,7 @@ export class Path {
 			}
 
 			// End case -- result has been found, return the traced path.
-			if (currentNode === end) {
+			if (currentNode.equals(end)) {
 				return this.tracePath(currentNodeHeuristics);
 			}
 
@@ -118,7 +118,7 @@ export class Path {
 				const neighbor = neighbors[i];
 				let neighborHeuristics = this.cache.get(neighbor);
 
-				if (neighborHeuristics?.closed || !neighbor.canWalkHere()) {
+				if (neighborHeuristics?.closed || !neighbor.isLand()) {
 					// Not a valid node to process, skip to next neighbor.
 					continue;
 				}
@@ -173,6 +173,7 @@ export class Path {
 		}
 
 		// No result was found - empty array signifies failure to find path.
+		console.warn('-- No path --');
 		return [];
 	}
 

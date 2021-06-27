@@ -1,11 +1,13 @@
 import { distanceToCameraComparator } from '../space/PERSPECTIVE';
+import { generateTerrain as generateHelloWorldTerrain } from '../generators/hello-world';
 import { TerrainCoordinate } from './TerrainCoordinate';
-import { OUT_OF_BOUNDS, TerrainGenerator } from './TerrainGenerator';
-
+type IslandFilter = (coordinate: TerrainCoordinate) => boolean;
 export class Terrain {
 	public readonly coordinates: TerrainCoordinate[];
 	private coordinatesInRenderOrder: TerrainCoordinate[] | null = null;
 	private readonly size: number;
+
+	private islands: Map<IslandFilter, TerrainCoordinate[][]> = new Map();
 
 	constructor(coordinates: TerrainCoordinate[]) {
 		this.coordinates = coordinates;
@@ -18,9 +20,12 @@ export class Terrain {
 		return this.size * y + x;
 	}
 
+	/**
+	 * Select all neighbouring points that connect to one another, like an island.
+	 */
 	public selectContiguousNeigbors(
 		start: TerrainCoordinate,
-		selector: (coordinate: TerrainCoordinate) => boolean = c => c.canWalkHere()
+		selector: IslandFilter = c => c.isLand()
 	) {
 		const island: TerrainCoordinate[] = [];
 		const seen: TerrainCoordinate[] = [];
@@ -37,7 +42,15 @@ export class Terrain {
 		return island;
 	}
 
-	public getIslands(selector: (coordinate: TerrainCoordinate) => boolean = c => c.canWalkHere()) {
+	/**
+	 * Get all distinct contiguous groups of cells
+	 */
+	public getIslands(selector: (coordinate: TerrainCoordinate) => boolean = c => c.isLand()) {
+		const fromCache = this.islands.get(selector);
+		if (fromCache) {
+			return fromCache;
+		}
+
 		let open = this.coordinates.slice();
 		const islands = [];
 		while (open.length) {
@@ -49,6 +62,8 @@ export class Terrain {
 			open = open.filter(n => !island.includes(n));
 			islands.push(island);
 		}
+
+		this.islands.set(selector, islands);
 		return islands;
 	}
 
@@ -82,32 +97,6 @@ export class Terrain {
 	}
 
 	static generateRandom(seed: string, size: number) {
-		const generator = new TerrainGenerator(seed, size);
-		generator.generate(1);
-
-		// For clarity, the terrain must currently always be square
-		// @TODO fix that some time.
-		const width = size,
-			height = size;
-
-		const coordinates = Array.from(new Array(width * height)).map<[number, number, number]>(
-			(_, i) => {
-				const x = i % width;
-				const y = Math.floor(i / width);
-				const z = generator.get(x, y);
-				if (z === OUT_OF_BOUNDS) {
-					throw new Error(`Out of bounds @ ${x}, ${y}`);
-				}
-				return [x, y, (2 * (z as number)) / size];
-			}
-		);
-
-		const sortedHeights = coordinates.map(coordinate => coordinate[2]).sort();
-		const RATIO_WATER_OF_TOTAL = 0.25;
-		const waterlineOffset =
-			sortedHeights[Math.floor(sortedHeights.length * RATIO_WATER_OF_TOTAL)];
-		return new Terrain(
-			coordinates.map(([x, y, z]) => new TerrainCoordinate(x, y, z - waterlineOffset))
-		);
+		return generateHelloWorldTerrain(seed, size);
 	}
 }

@@ -3,10 +3,11 @@ import { Path } from '../classes/Path';
 import { TerrainCoordinate } from '../classes/TerrainCoordinate';
 import { getRandomFemaleFirstName, getRandomMaleFirstName } from '../constants/names';
 import { MovingAnchor } from '../space/Anchor';
-import { Event, useEventListeners } from '../util/events';
+import { Event, useEventListeners } from '../util/Event';
 import { Entity } from './Entity';
 
 type OnEntityClick = (event: React.MouseEvent<SVGElement, MouseEvent>) => void;
+
 export class PersonEntity extends Entity {
 	// The event that the person starts walking a path
 	public readonly pathStart = new Event<[]>();
@@ -17,7 +18,7 @@ export class PersonEntity extends Entity {
 	// The person started finished one step, according to react-spring's timing
 	public readonly pathStepEnd = new Event<[TerrainCoordinate]>();
 
-	protected passport: { firstName: string };
+	public readonly passport: { firstName: string };
 
 	constructor(id: string, location: TerrainCoordinate) {
 		super(id, location);
@@ -42,15 +43,20 @@ export class PersonEntity extends Entity {
 			this.location,
 			destination
 		);
+
+		// console.log(`${this.location}-->${destination}: ${path.length}`);
+
 		if (!path.length) {
+			console.warn('Path was zero steps long, finishing early.');
+			this.pathEnd.emit();
 			return;
 		}
 		let unlisten = this.pathStepEnd.on(() => {
 			const nextStep = path.shift();
 
 			if (!nextStep) {
-				unlisten();
 				this.pathEnd.emit();
+				unlisten();
 			} else {
 				this.doPathStep(nextStep);
 			}
@@ -68,7 +74,7 @@ export class PersonEntity extends Entity {
 		this.pathStepStart.emit(coordinate);
 	}
 
-	get label(): string {
+	public get label(): string {
 		return this.passport.firstName;
 	}
 
@@ -76,6 +82,7 @@ export class PersonEntity extends Entity {
 		return <circle cx={0} cy={0} r="5" fill="white" />;
 	};
 }
+
 /**
  * A component that automatically transitions the entity component as per its move instructions
  */
@@ -93,11 +100,7 @@ export const PersonEntityComponent: FunctionComponent<{
 			// Listen for the entity moveStart order;
 			entity.pathStepStart.on(destination =>
 				animatePosition({
-					destination: TerrainCoordinate.clone(destination).transform(
-						-0.25 + Math.random() * 0.5,
-						-0.25 + Math.random() * 0.5,
-						0
-					),
+					destination: destination,
 					duration: entity.location.euclideanDistanceTo(destination) * 500
 				})
 			)
@@ -105,10 +108,10 @@ export const PersonEntityComponent: FunctionComponent<{
 		[entity.pathStepStart]
 	);
 
-	const onRest = useCallback(
-		() => entity.pathStepEnd.emit(destination),
-		[entity.pathStepEnd, destination]
-	);
+	const onRest = useCallback(() => entity.pathStepEnd.emit(destination), [
+		entity.pathStepEnd,
+		destination
+	]);
 
 	return (
 		<MovingAnchor moveTo={destination} moveSpeed={duration} onRest={onRest} onClick={onClick}>

@@ -1,20 +1,21 @@
 import Color from 'color';
 import React, { FunctionComponent } from 'react';
+import { CoordinateArray } from '../classes/Coordinate';
 import { color } from '../styles';
 
-import { CoordArray, PERSPECTIVE } from './PERSPECTIVE';
+import { PERSPECTIVE } from './PERSPECTIVE';
 
 const BORDER_WIDTH = 1;
-const BORDER_NODES: CoordArray[] = [
+const BORDER_NODES: CoordinateArray[] = [
 	[1, 0, 0],
 	[1, 1, 0],
 	[0, 1, 0],
 	[0, 0, 0]
 ];
 
-let spatialCoordinates = BORDER_NODES.map(coordinate => PERSPECTIVE.toPixels(...coordinate)).map(
-	cc => cc.map(c => c + BORDER_WIDTH)
-);
+let spatialCoordinates = BORDER_NODES.map(coordinate =>
+	PERSPECTIVE.toPixels(...coordinate)
+).map(cc => cc.map(c => c + BORDER_WIDTH));
 
 export const MonochromeTile: FunctionComponent<
 	Omit<React.SVGProps<SVGPolygonElement>, 'fill' | 'stroke'> & {

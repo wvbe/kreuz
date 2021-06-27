@@ -7,7 +7,7 @@ import { GuardEntity } from '../entities/GuardEntity';
 import { PersonEntity } from '../entities/PersonEntity';
 import { PatrolJob } from '../jobs/PatrolJob';
 import { Random } from '../util/Random';
-import { RoamJob } from '../jobs/RoamJob';
+import { LoiterJob } from '../jobs/LoiterJob';
 
 function repeat<P>(n: number, cb: (i: number) => P): P[] {
 	return Array.from(new Array(n)).map((_, i) => cb(i));
@@ -64,7 +64,7 @@ export function generateEntities(seed: string, terrain: Terrain) {
 	const walkableTiles = terrain.coordinates.filter(c => c.isLand());
 	// const islands = terrain.getIslands();
 
-	const amountOfGuards = 5;
+	const amountOfGuards = 0;
 	const amountOfCivilians = 10;
 	return [
 		...repeat(amountOfGuards, i => {
@@ -79,7 +79,7 @@ export function generateEntities(seed: string, terrain: Terrain) {
 			const id = seed + '-person-' + i;
 			const start = Random.arrayItem(walkableTiles, id, 'start');
 			const worker = new CivilianEntity(id, start);
-			worker.doJob(new RoamJob(worker));
+			worker.doJob(new LoiterJob(worker));
 			return worker;
 		})
 	];

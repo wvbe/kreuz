@@ -14,7 +14,7 @@ import {
 } from '../ui/ContextMenu';
 import { Overlay } from '../ui/Overlay';
 
-const WORLD_SIZE = 20;
+const WORLD_SIZE = 32;
 
 function fancyTimeFormat(seconds: number) {
 	// Output like "1:01" or "4:03:59" or "123:03:59"

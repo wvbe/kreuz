@@ -11,10 +11,13 @@ type OnEntityClick = (event: React.MouseEvent<SVGElement, MouseEvent>) => void;
 export class PersonEntity extends Entity {
 	// The event that the person starts walking a path
 	public readonly pathStart = new Event<[]>();
+
 	// The event that the person finishes a path, according to react-spring's timing
 	public readonly pathEnd = new Event<[]>();
+
 	// The person started one step
 	public readonly pathStepStart = new Event<[TerrainCoordinate]>();
+	
 	// The person started finished one step, according to react-spring's timing
 	public readonly pathStepEnd = new Event<[TerrainCoordinate]>();
 
@@ -47,7 +50,7 @@ export class PersonEntity extends Entity {
 		// console.log(`${this.location}-->${destination}: ${path.length}`);
 
 		if (!path.length) {
-			console.warn('Path was zero steps long, finishing early.');
+			console.warn('Path was zero steps long, finishing early.', this);
 			this.pathEnd.emit();
 			return;
 		}

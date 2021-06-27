@@ -42,6 +42,13 @@ export class Terrain {
 		return island;
 	}
 
+	public selectClosestNeigbors(start: TerrainCoordinate, maxDistance: number) {
+		return this.selectContiguousNeigbors(
+			start,
+			other => other.isLand() && start.euclideanDistanceTo(other) <= maxDistance
+		);
+	}
+
 	/**
 	 * Get all distinct contiguous groups of cells
 	 */

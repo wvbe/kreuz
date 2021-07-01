@@ -2,6 +2,7 @@ import { distanceToCameraComparator } from '../space/PERSPECTIVE';
 import { generateTerrain as generateHelloWorldTerrain } from '../generators/hello-world';
 import { TerrainCoordinate } from './TerrainCoordinate';
 type IslandFilter = (coordinate: TerrainCoordinate) => boolean;
+
 export class Terrain {
 	public readonly coordinates: TerrainCoordinate[];
 	private coordinatesInRenderOrder: TerrainCoordinate[] | null = null;

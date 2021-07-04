@@ -30,15 +30,6 @@ export class GenericTile extends Coordinate {
 	}
 }
 
-class IslandMap<T> {
-	filter: any;
-	contents: T[];
-	constructor(filter: any, contents: T[]) {
-		this.filter = filter;
-		this.contents = contents;
-	}
-}
-
 export abstract class GenericTerrain<T extends GenericTile> {
 	/**
 	 * Private

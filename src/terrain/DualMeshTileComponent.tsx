@@ -11,13 +11,23 @@ export const DualMeshTileComponent: FunctionComponent<
 		nodes: Coordinate[];
 	}
 > = ({ tile, nodes, ...svgProps }) => {
+	const center = PERSPECTIVE.toPixels(tile.x, tile.y, tile.z);
 	return (
-		<polyline
-			fill="rgba(0,0,0,0.1)"
-			stroke="black"
-			points={nodes.map(n => PERSPECTIVE.toPixels(n.x, n.y, n.z).join(',')).join(' ')}
-			{...svgProps}
-		/>
+		<>
+			<polyline
+				fill={tile.isOnBoundary ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}
+				stroke={tile.isOnBoundary ? undefined : 'black'}
+				points={nodes.map(n => PERSPECTIVE.toPixels(n.x, n.y, n.z).join(',')).join(' ')}
+				{...svgProps}
+			/>
+			<circle
+				cx={center[0]}
+				cy={center[1]}
+				r="9"
+				fill="transparent"
+				stroke={tile.isOnBoundary ? 'red' : 'blue'}
+			/>
+		</>
 	);
 };
 

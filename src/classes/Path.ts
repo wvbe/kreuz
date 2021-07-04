@@ -31,6 +31,7 @@ type PathOptions = {
 	heuristic?: HeuristicScorer;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const MANHATTAN: HeuristicScorer = (pos0, pos1) => {
 	const d1 = Math.abs(pos1.x - pos0.x);
 	const d2 = Math.abs(pos1.y - pos0.y);
@@ -75,7 +76,7 @@ export class Path {
 			return heuristic.f;
 		});
 
-		this.heuristic = MANHATTAN;
+		this.heuristic = DIAGONAL;
 	}
 
 	find(start: GenericTile, end: GenericTile) {

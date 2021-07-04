@@ -3,7 +3,6 @@ import { Route, Switch } from 'react-router';
 import { Link } from 'react-router-dom';
 import DemoCubes from './demos/demo.cubes';
 import SceneHelloWorld from './demos/scene.hello-world';
-import DualMeshWorld from './demos/scene.dual-mesh';
 
 function Demos() {
 	return (
@@ -21,7 +20,6 @@ function Demos() {
 function App() {
 	return (
 		<Switch>
-			<Route exact path="/dual-mesh" component={DualMeshWorld} />
 			<Route exact path="/" component={SceneHelloWorld} />
 			<Route component={Demos} />
 		</Switch>

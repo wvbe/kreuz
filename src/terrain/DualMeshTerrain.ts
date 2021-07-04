@@ -2,28 +2,26 @@ import MeshBuilder from 'dual-mesh/create';
 import Poisson from 'poisson-disk-sampling';
 import React, { FunctionComponent } from 'react';
 import { Coordinate, CoordinateArray } from '../classes/Coordinate';
-import { InGameDistance } from '../space/PERSPECTIVE';
 import { DualMeshTerrainComponent } from './DualMeshTileComponent';
 
 import { GenericTerrain, GenericTerrainComponentProps, GenericTile } from './GenericTerrain';
 
 export class DualMeshTile extends GenericTile {
-	public readonly outlinePoints?: Coordinate[];
-
-	constructor(
-		x: InGameDistance,
-		y: InGameDistance,
-		z: InGameDistance,
-		outlinePoints?: Coordinate[]
-	) {
-		super(x, y, z);
-		this.outlinePoints = outlinePoints;
-	}
+	public outlinePoints?: Coordinate[];
+	public neighbors?: DualMeshTile[];
+	public isOnBoundary?: boolean;
 
 	static clone(coord: DualMeshTile) {
-		const coord2 = new DualMeshTile(coord.x, coord.y, coord.z, coord.outlinePoints);
+		const coord2 = new DualMeshTile(coord.x, coord.y, coord.z);
+		coord2.isOnBoundary = coord.isOnBoundary;
+		coord2.neighbors = coord.neighbors;
+		coord2.outlinePoints = coord.outlinePoints;
 		coord2.terrain = (coord as DualMeshTile).terrain;
 		return coord2;
+	}
+
+	isLand() {
+		return this.z >= 0 && !this.isOnBoundary;
 	}
 }
 
@@ -32,8 +30,10 @@ export class DualMeshTerrain extends GenericTerrain<DualMeshTile> {
 
 	constructor(tiles: DualMeshTile[], mesh: any) {
 		super(tiles);
-		this.tiles.forEach(coordinate => (coordinate.terrain = this));
 		this.mesh = mesh;
+		this.tiles.forEach((coordinate, i) => {
+			coordinate.terrain = this;
+		});
 	}
 
 	override Component: FunctionComponent<GenericTerrainComponentProps<DualMeshTile>> = props =>
@@ -45,13 +45,9 @@ export class DualMeshTerrain extends GenericTerrain<DualMeshTile> {
 	override getClosestToXy(x: number, y: number): DualMeshTile {
 		const center = new Coordinate(x, y, 0);
 		const { tile } = this.tiles.reduce<{ tile?: DualMeshTile; distance: number }>(
-			(res, tile) => {
+			(last, tile) => {
 				const distance = center.euclideanDistanceTo(tile);
-				console.log(distance, center, tile);
-				if (distance < res.distance) {
-					return { distance, tile };
-				}
-				return res;
+				return distance < last.distance ? { distance, tile } : last;
 			},
 			{ distance: Infinity }
 		);
@@ -62,7 +58,7 @@ export class DualMeshTerrain extends GenericTerrain<DualMeshTile> {
 	}
 
 	override getNeighborTiles(center: DualMeshTile): DualMeshTile[] {
-		throw new Error('Not implemented');
+		return center.neighbors || [];
 	}
 }
 
@@ -75,21 +71,35 @@ export function generateRandom(seed: string, size: number) {
 		},
 		Math.random
 	);
-	const meshBuilder = new MeshBuilder({ boundarySpacing: distance });
-
+	const meshBuilder = new MeshBuilder({ boundarySpacing: 0 });
 	meshBuilder.points.forEach((p: [number, number]) => poisson.addPoint(p));
 	meshBuilder.points = poisson.fill().map((xy: [number, number]) => [...xy, 0]);
 
 	const mesh = meshBuilder.create();
-	return new DualMeshTerrain(
-		meshBuilder.points.map((c: CoordinateArray, i: number) => {
-			const points = mesh
-				.r_circulate_t([], i)
-				.map((i: number) => new Coordinate(mesh.t_x(i), mesh.t_y(i), c[2]));
-			const tile = new DualMeshTile(...c, points);
 
-			return tile;
-		}),
+	return new DualMeshTerrain(
+		meshBuilder.points
+			.map((coordinates: CoordinateArray, i: number) => new DualMeshTile(...coordinates))
+			.map((tile: DualMeshTile, i: number, tiles: DualMeshTile[]) => {
+				const outlinePointIndices = mesh.r_circulate_t([], i);
+				tile.outlinePoints = outlinePointIndices.map(
+					(i: number) => new Coordinate(mesh.t_x(i), mesh.t_y(i), tile.z)
+				);
+
+				tile.isOnBoundary = outlinePointIndices.some((index: number) =>
+					mesh.t_ghost(index)
+				);
+				return tile;
+			})
+			.map((tile: DualMeshTile, i: number, tiles: DualMeshTile[]) => {
+				tile.neighbors = mesh
+					.r_circulate_r([], i)
+					.map((x: keyof DualMeshTerrain['tiles']) => tiles[x])
+					.filter(Boolean);
+
+				return tile;
+			})
+			.filter(Boolean),
 		mesh
 	);
 }

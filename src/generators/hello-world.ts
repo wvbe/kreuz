@@ -38,7 +38,7 @@ export function generateEntities<Y extends GenericTile, T extends GenericTerrain
 
 	// const islands = terrain.getIslands();
 
-	const amountOfGuards = 0;
+	const amountOfGuards = 5;
 	const amountOfCivilians = 10;
 	return [
 		...repeat(amountOfGuards, i => {

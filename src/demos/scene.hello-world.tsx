@@ -48,6 +48,15 @@ const Demo: FunctionComponent = () => {
 							<ContextMenuButton onClick={() => setCenter(tile)}>
 								Center camera
 							</ContextMenuButton>
+							<ContextMenuButton
+								onClick={() => {
+									console.group(`Tile ${tile}`);
+									console.log(tile);
+									console.groupEnd();
+								}}
+							>
+								Show in console
+							</ContextMenuButton>
 							<ContextMenuFooter>{fakeCoordinates(tile.x, tile.y)}</ContextMenuFooter>
 						</>
 					);

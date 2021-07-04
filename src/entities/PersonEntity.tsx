@@ -1,6 +1,6 @@
 import { FunctionComponent, useCallback, useState } from 'react';
 import { Path } from '../classes/Path';
-import { TerrainCoordinate } from '../classes/TerrainCoordinate';
+import { GenericTile } from '../terrain/GenericTerrain';
 import { getRandomFemaleFirstName, getRandomMaleFirstName } from '../constants/names';
 import { MovingAnchor } from '../space/Anchor';
 import { Event, useEventListeners } from '../util/Event';
@@ -16,14 +16,14 @@ export class PersonEntity extends Entity {
 	public readonly pathEnd = new Event<[]>();
 
 	// The person started one step
-	public readonly pathStepStart = new Event<[TerrainCoordinate]>();
-	
+	public readonly pathStepStart = new Event<[GenericTile]>();
+
 	// The person started finished one step, according to react-spring's timing
-	public readonly pathStepEnd = new Event<[TerrainCoordinate]>();
+	public readonly pathStepEnd = new Event<[GenericTile]>();
 
 	public readonly passport: { firstName: string };
 
-	constructor(id: string, location: TerrainCoordinate) {
+	constructor(id: string, location: GenericTile) {
 		super(id, location);
 
 		// Movement handling
@@ -38,7 +38,7 @@ export class PersonEntity extends Entity {
 	}
 
 	// Calculate a path and emit animations to walk it the whole way. `this.location` is updated in between each step
-	public walkTo(destination: TerrainCoordinate) {
+	public walkTo(destination: GenericTile) {
 		if (!this.location.terrain) {
 			throw new Error(`Entity "${this.id}" is trying to path in a detached coordinate`);
 		}
@@ -65,12 +65,12 @@ export class PersonEntity extends Entity {
 			}
 		});
 
-		this.doPathStep(path.shift() as TerrainCoordinate);
+		this.doPathStep(path.shift() as GenericTile);
 	}
 	/**
 	 * Move entity directly to a coordinate. Does not consider accessibility or closeness.
 	 */
-	public doPathStep(coordinate: TerrainCoordinate) {
+	public doPathStep(coordinate: GenericTile) {
 		if (coordinate.hasNaN()) {
 			debugger;
 		}

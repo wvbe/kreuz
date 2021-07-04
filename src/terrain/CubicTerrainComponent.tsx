@@ -1,44 +1,21 @@
 import { FunctionComponent, useState } from 'react';
-import { Coordinate, CoordinateLike } from './Coordinate';
+import { Coordinate } from '../classes/Coordinate';
 import { Anchor } from '../space/Anchor';
 import { MonochromeBox } from '../space/MonochromeBox';
 import { MonochromeTile } from '../space/MonochromeTile';
-import { Terrain } from './Terrain';
 import { color } from '../styles';
 import { SvgMouseInteractionProps } from '../types';
-
-/**
- * A special type of coordinate that is equal to another terrain coordinate when the X and Y are equal, disregarding Z.
- */
-export class TerrainCoordinate extends Coordinate {
-	terrain?: Terrain;
-
-	equals(coord: CoordinateLike) {
-		return this === coord || (coord && this.x === coord.x && this.y === coord.y);
-	}
-	static clone(coord: CoordinateLike | TerrainCoordinate) {
-		const coord2 = new TerrainCoordinate(coord.x, coord.y, coord.z);
-		coord2.terrain = (coord as TerrainCoordinate).terrain;
-		return coord2;
-	}
-
-	isLand() {
-		return this.z > 0;
-	}
-	// For debugging purposes only, may change without notice or tests
-	toString() {
-		return '(' + [this.x, this.y].join(',') + ')';
-	}
-}
+import { CubicTerrain, CubicTile } from './CubicTerrain';
+import { GenericTerrainComponentI, GenericTile } from './GenericTerrain';
 
 /**
  * A component that automatically transitions the entity component as per its move instructions
  */
-export const TerrainCoordinateComponent: FunctionComponent<
+const CubicTileComponent: FunctionComponent<
 	SvgMouseInteractionProps & {
-		terrainCoordinate: TerrainCoordinate;
+		tile: GenericTile;
 	}
-> = ({ terrainCoordinate, ...svgMouseInteractionProps }) => {
+> = ({ tile: terrainCoordinate, ...svgMouseInteractionProps }) => {
 	const [isHovered, setIsHovered] = useState(false);
 	const translated = Coordinate.clone(terrainCoordinate).transform(
 		-0.5,
@@ -70,3 +47,35 @@ export const TerrainCoordinateComponent: FunctionComponent<
 		</Anchor>
 	);
 };
+
+export const CubicTerrainComponent: GenericTerrainComponentI<CubicTerrain, CubicTile> = ({
+	terrain,
+	onTileClick,
+	onTileContextMenu
+}) => (
+	<g className="cubic-terrain">
+		{terrain.getTilesInRenderOrder().map(tile => (
+			<CubicTileComponent
+				key={tile.toString()}
+				tile={tile}
+				onClick={
+					onTileClick
+						? event => {
+								event.preventDefault();
+								event.stopPropagation();
+								onTileClick(event, tile);
+						  }
+						: onTileClick
+				}
+				onContextMenu={
+					onTileContextMenu
+						? event => {
+								event.preventDefault();
+								onTileContextMenu(event, tile);
+						  }
+						: onTileContextMenu
+				}
+			/>
+		))}
+	</g>
+);

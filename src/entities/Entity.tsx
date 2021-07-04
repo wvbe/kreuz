@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'react';
-import { TerrainCoordinate } from '../classes/TerrainCoordinate';
+import { GenericTile } from '../terrain/GenericTerrain';
 import { Job } from '../jobs/Job';
 const noop = () => {};
 
@@ -14,14 +14,14 @@ export class Entity {
 		return null;
 	};
 
-	public location: TerrainCoordinate;
+	public location: GenericTile;
 
 	/**
 	 * The set of behaviour/tasks given to this entity.
 	 */
 	public job?: Job;
 
-	constructor(id: string, location: TerrainCoordinate) {
+	constructor(id: string, location: GenericTile) {
 		this.id = id;
 		this.location = location;
 	}

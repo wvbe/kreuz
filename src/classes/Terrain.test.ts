@@ -1,5 +1,4 @@
-import { Terrain } from './Terrain';
-import { TerrainCoordinate } from './TerrainCoordinate';
+import { GenericTerrain, GenericTile } from '../terrain/GenericTerrain';
 
 function map(strs: TemplateStringsArray) {
 	const cleanString = strs[0]
@@ -9,10 +8,10 @@ function map(strs: TemplateStringsArray) {
 		.map((line, y) =>
 			line.split('').map((char, x) => {
 				if (char === 'X') {
-					return new TerrainCoordinate(x, y, 1);
+					return new GenericTile(x, y, 1);
 				}
 				if (char === '-') {
-					return new TerrainCoordinate(x, y, -1);
+					return new GenericTile(x, y, -1);
 				}
 				throw new Error(`Unfamiliar mapping character "${char}"`);
 			})
@@ -21,8 +20,8 @@ function map(strs: TemplateStringsArray) {
 		throw new Error('Not a square map');
 	}
 
-	return new Terrain(
-		cleanString.reduce<TerrainCoordinate[]>((flat, line) => flat.concat(line), [])
+	return new GenericTerrain(
+		cleanString.reduce<GenericTile[]>((flat, line) => flat.concat(line), [])
 	);
 }
 

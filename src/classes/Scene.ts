@@ -1,16 +1,17 @@
 import { Entity } from '../entities/Entity';
 import { generateEntities as generateHelloWorldEntities } from '../generators/hello-world';
-import { Terrain } from './Terrain';
+import { DualMeshTerrain, DualMeshTile, generateRandom } from '../terrain/DualMeshTerrain';
+import { GenericTerrain, GenericTile } from '../terrain/GenericTerrain';
 
-export class Scene {
-	public readonly terrain: Terrain;
+export class Scene<T extends GenericTerrain<GenericTile>> {
+	public readonly terrain: T;
 
 	// @TODO change to not readonly, and handle spontaneous changes
 	public readonly entities: Entity[];
 
 	public readonly seed;
 
-	constructor(seed: string, terrain: Terrain, entities: Entity[]) {
+	constructor(seed: string, terrain: T, entities: Entity[]) {
 		this.seed = seed;
 		this.terrain = terrain;
 		this.entities = entities;
@@ -22,8 +23,8 @@ export class Scene {
 	}
 
 	static generateRandom(seed: string, size: number) {
-		const terrain = Terrain.generateRandom(seed, size);
-		const entities = generateHelloWorldEntities(seed, terrain);
+		const terrain = generateRandom(seed, size);
+		const entities = generateHelloWorldEntities<DualMeshTile, DualMeshTerrain>(seed, terrain);
 		return new Scene(seed, terrain, entities);
 	}
 }

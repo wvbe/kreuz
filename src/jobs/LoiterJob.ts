@@ -28,7 +28,7 @@ export class LoiterJob extends Job<PersonEntity> {
 				}
 				steps++;
 				const destinations =
-					this.entity.location?.terrain?.selectClosestNeigbors(
+					this.entity.location?.terrain?.selectClosestTiles(
 						this.entity.location,
 						this.walkMaxDistance
 					) || [];

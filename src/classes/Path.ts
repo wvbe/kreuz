@@ -7,18 +7,17 @@
 //   http://eloquentjavascript.net/appendix2.html
 
 import { BinaryHeap } from '../util/BinaryHeap';
-import { Terrain } from './Terrain';
-import { TerrainCoordinate } from './TerrainCoordinate';
+import { GenericTerrain, GenericTile } from '../terrain/GenericTerrain';
 
 // See list of heuristics: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
-type HeuristicScorer = (a: TerrainCoordinate, b: TerrainCoordinate) => number;
+type HeuristicScorer = (a: GenericTile, b: GenericTile) => number;
 
 /**
  * Perform an A* Search on a graph given a start and end node.
  */
 
 type HeuristicReport = {
-	coordinate: TerrainCoordinate;
+	coordinate: GenericTile;
 	h: number;
 	g: number;
 	f: number;
@@ -47,24 +46,28 @@ const DIAGONAL: HeuristicScorer = (pos0, pos1) => {
 	return D * (d1 + d2) + (D2 - 2 * D) * Math.min(d1, d2);
 };
 
-function getVisitationCost(terrain: Terrain, from: TerrainCoordinate, neighbor: TerrainCoordinate) {
+function getVisitationCost(
+	terrain: GenericTerrain<GenericTile>,
+	from: GenericTile,
+	neighbor: GenericTile
+) {
 	return 1;
 }
 
 export class Path {
-	private readonly terrain: Terrain;
+	private readonly terrain: GenericTerrain<GenericTile>;
 	private readonly options: PathOptions;
-	private readonly cache: Map<TerrainCoordinate, HeuristicReport>;
-	private readonly heap: BinaryHeap<TerrainCoordinate>;
+	private readonly cache: Map<GenericTile, HeuristicReport>;
+	private readonly heap: BinaryHeap<GenericTile>;
 	private readonly heuristic: HeuristicScorer;
 
-	constructor(graph: Terrain, options: PathOptions) {
+	constructor(graph: GenericTerrain<GenericTile>, options: PathOptions) {
 		this.terrain = graph;
 		this.options = options;
 
-		this.cache = new Map<TerrainCoordinate, HeuristicReport>();
+		this.cache = new Map<GenericTile, HeuristicReport>();
 
-		this.heap = new BinaryHeap<TerrainCoordinate>(node => {
+		this.heap = new BinaryHeap<GenericTile>(node => {
 			const heuristic = this.cache.get(node);
 			if (!heuristic) {
 				throw new Error('This is weird');
@@ -75,7 +78,7 @@ export class Path {
 		this.heuristic = MANHATTAN;
 	}
 
-	find(start: TerrainCoordinate, end: TerrainCoordinate) {
+	find(start: GenericTile, end: GenericTile) {
 		let closestNode = start; // set the start node to be the closest if required
 		let closestNodeHeuristics: HeuristicReport = {
 			coordinate: closestNode,
@@ -112,7 +115,7 @@ export class Path {
 			currentNodeHeuristics.closed = true;
 
 			// Find all neighbors for the current node.
-			const neighbors = this.terrain.getNeighbors(currentNode);
+			const neighbors = this.terrain.getNeighborTiles(currentNode);
 
 			for (let i = 0, il = neighbors.length; i < il; ++i) {
 				const neighbor = neighbors[i];

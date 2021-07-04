@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { Scene } from '../classes/Scene';
-import { TerrainCoordinateComponent } from '../classes/TerrainCoordinate';
 import { Entity } from '../entities/Entity';
 import { PersonEntity, PersonEntityComponent } from '../entities/PersonEntity';
 import { Viewport } from '../space/Viewport';
@@ -34,39 +33,31 @@ const Demo: FunctionComponent = () => {
 	const contextManager = useMemo(() => new ContextMenuManager(), []);
 
 	const [center, setCenter] = useState(
-		scene.terrain.getAtXy(Math.floor(WORLD_SIZE / 2), Math.floor(WORLD_SIZE / 2))
+		scene.terrain.getClosestToXy(Math.floor(WORLD_SIZE / 2), Math.floor(WORLD_SIZE / 2))
 	);
 
 	const [activeEntity, setActiveEntity] = useState<Entity | undefined>(undefined);
 
 	const terrain = useMemo(
-		() =>
-			scene.terrain.getCoordinatesInRenderOrder().map(terrainCoordinate => (
-				<TerrainCoordinateComponent
-					key={terrainCoordinate.toString()}
-					terrainCoordinate={terrainCoordinate}
-					onClick={event => {
-						event.preventDefault();
-						event.stopPropagation();
-						contextManager.invoke(
-							terrainCoordinate,
-							<>
-								<ContextMenuButton onClick={() => setCenter(terrainCoordinate)}>
-									Center camera
-								</ContextMenuButton>
-								<ContextMenuFooter>
-									{fakeCoordinates(terrainCoordinate.x, terrainCoordinate.y)}
-								</ContextMenuFooter>
-							</>
-						);
-					}}
-					onContextMenu={event => {
-						event.preventDefault();
-						setCenter(terrainCoordinate);
-					}}
-				/>
-			)),
-		[scene.terrain, contextManager]
+		() => (
+			<scene.terrain.Component
+				onTileClick={(event, tile) => {
+					contextManager.invoke(
+						tile,
+						<>
+							<ContextMenuButton onClick={() => setCenter(tile)}>
+								Center camera
+							</ContextMenuButton>
+							<ContextMenuFooter>{fakeCoordinates(tile.x, tile.y)}</ContextMenuFooter>
+						</>
+					);
+				}}
+				onTileContextMenu={(event, tile) => {
+					setCenter(tile);
+				}}
+			/>
+		),
+		[scene, contextManager]
 	);
 
 	const entities = useMemo(
@@ -101,8 +92,8 @@ const Demo: FunctionComponent = () => {
 	return (
 		<ContextMenuContext.Provider value={contextManager}>
 			<Viewport center={center} zoom={1} overlay={<ContextMenuContainer zoom={1} />}>
-				<g id="scene-terrain">{terrain}</g>
-				<g id="scene-entities">{entities}</g>
+				<g id="scene__terrain">{terrain}</g>
+				<g id="scene__entities">{entities}</g>
 			</Viewport>
 			<Overlay>
 				<ActiveEntityOverlay entity={activeEntity} />

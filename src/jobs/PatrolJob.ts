@@ -1,12 +1,12 @@
-import { TerrainCoordinate } from '../classes/TerrainCoordinate';
+import { GenericTile } from '../terrain/GenericTerrain';
 import { PersonEntity } from '../entities/PersonEntity';
 import { Job } from './Job';
 
 export class PatrolJob extends Job<PersonEntity> {
-	waypoints: TerrainCoordinate[];
+	waypoints: GenericTile[];
 	waypointIndex: number;
 
-	constructor(entity: PersonEntity, waypoints: TerrainCoordinate[]) {
+	constructor(entity: PersonEntity, waypoints: GenericTile[]) {
 		super(entity);
 		if (waypoints.length < 2) {
 			throw new Error('A patrol must have at least 2 waypoints');

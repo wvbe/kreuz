@@ -1,24 +1,9 @@
 import MeshBuilder from 'dual-mesh/create';
 import Poisson from 'poisson-disk-sampling';
 import React, { FunctionComponent, useMemo, useState } from 'react';
-import { Coordinate, CoordinateArray } from '../classes/Coordinate';
-import { PERSPECTIVE } from '../space/PERSPECTIVE';
+import { Coordinate } from '../classes/Coordinate';
 import { Viewport } from '../space/Viewport';
 
-const Region: FunctionComponent<{ center: CoordinateArray; nodes: CoordinateArray[] }> = ({
-	center,
-	nodes
-}) => {
-	return (
-		<polyline
-			fill="rgba(0,0,0,0.1)"
-			stroke="black"
-			points={[...nodes, nodes[0]]
-				.map(n => PERSPECTIVE.toPixels(n[0], n[1], 0).join(','))
-				.join(' ')}
-		/>
-	);
-};
 const TerrainMesh: FunctionComponent = () => {
 	const { mesh, points } = useMemo(() => {
 		// new MeshBuilder({ boundarySpacing: 75 }).addPoisson(Poisson, 75).create();
@@ -43,17 +28,17 @@ const TerrainMesh: FunctionComponent = () => {
 
 	return (
 		<Viewport center={center} zoom={1}>
-			{points.map((point: CoordinateArray, i: number) => {
+			{/* {points.map((point: CoordinateArray, i: number) => {
 				return (
-					<Region
+					<DualMeshTileComponent
 						key={point.join('/')}
-						center={point}
+						tile={point}
 						nodes={mesh
 							.r_circulate_t([], i)
 							.map((i: number) => [mesh.t_x(i), mesh.t_y(i)])}
 					/>
 				);
-			})}
+			})} */}
 		</Viewport>
 	);
 };

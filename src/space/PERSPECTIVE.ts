@@ -64,6 +64,10 @@ class Perspective {
 export const PERSPECTIVE = new Perspective(30, BASE_LENGTH);
 
 export function distanceToCameraComparator(a: CoordinateLike, b: CoordinateLike) {
+	const dZ = b.z - a.z;
+	if (dZ) {
+		return -dZ;
+	}
 	const dX = b.x - a.x;
 	if (dX) {
 		return -dX;
@@ -72,10 +76,6 @@ export function distanceToCameraComparator(a: CoordinateLike, b: CoordinateLike)
 	const dY = a.y - b.y;
 	if (dY) {
 		return -dY;
-	}
-	const dZ = b.z - a.z;
-	if (dZ) {
-		return -dZ;
 	}
 	return 0;
 }

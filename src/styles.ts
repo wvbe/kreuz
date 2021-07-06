@@ -6,16 +6,14 @@ export const color: Record<string, Color> = {};
 color.white = Color('#fff');
 color.terrain = Color('#282c34');
 color.highlightedTerrain = color.terrain.lighten(1);
-
+color.terrainStroke = color.terrain.darken(0.3).saturate(0.3);
 const styles = css`
 	:root {
 		/*
 			Terrain with nothing special about it:
 		*/
 		--color-terrain-normal-fill: ${color.terrain.toString()};
-		--color-terrain-highlight-outer-stroke: ${color.terrain
-			.darken(0.3)
-			.saturate(0.3)
+		--color-terrain-highlight-outer-stroke: ${color.terrainStroke
 			.toString()};
 		--color-terrain-highlight-inner-stroke: ${color.terrain
 			.lighten(0.4)

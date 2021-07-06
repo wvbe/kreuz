@@ -6,12 +6,11 @@ import { GenericTerrain, GenericTerrainComponentProps, GenericTile } from './Gen
 
 export class CubicTile extends GenericTile {
 	// public terrain?: CubicTerrain;
-
-	static clone(coord: CubicTile) {
-		const coord2 = new CubicTile(coord.x, coord.y, coord.z);
-		coord2.terrain = (coord as CubicTile).terrain;
-		return coord2;
-	}
+	// static clone(coord: CubicTile) {
+	// 	const coord2 = new CubicTile(coord.x, coord.y, coord.z);
+	// 	coord2.terrain = (coord as CubicTile).terrain;
+	// 	return coord2;
+	// }
 }
 
 export class CubicTerrain extends GenericTerrain<CubicTile> {
@@ -19,12 +18,12 @@ export class CubicTerrain extends GenericTerrain<CubicTile> {
 
 	constructor(coordinates: CubicTile[]) {
 		super(coordinates);
-		this.tiles.forEach(coordinate => (coordinate.terrain = this));
+		this.tiles.forEach((coordinate) => (coordinate.terrain = this));
 
 		this.size = Math.sqrt(this.tiles.length);
 	}
 
-	override Component: FunctionComponent<GenericTerrainComponentProps<CubicTile>> = props =>
+	override Component: FunctionComponent<GenericTerrainComponentProps<CubicTile>> = (props) =>
 		React.createElement(CubicTerrainComponent, { terrain: this, ...props });
 
 	override getClosestToXy(x: number, y: number): CubicTile {
@@ -74,7 +73,7 @@ export function generateRandom(seed: string, size: number) {
 		}
 	);
 
-	const sortedHeights = coordinates.map(coordinate => coordinate[2]).sort();
+	const sortedHeights = coordinates.map((coordinate) => coordinate[2]).sort();
 	const waterlineOffset = sortedHeights[Math.floor(sortedHeights.length * RATIO_WATER_OF_TOTAL)];
 	return new CubicTerrain(
 		coordinates.map(([x, y, z]) => new CubicTile(x, y, z - waterlineOffset))

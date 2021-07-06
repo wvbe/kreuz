@@ -1,17 +1,9 @@
 import styled from '@emotion/styled';
-import React, {
-	createContext,
-	FunctionComponent,
-	ReactElement,
-	useContext,
-	useEffect,
-	useState
-} from 'react';
+import React, { FunctionComponent, ReactElement, useEffect, useState } from 'react';
 import { CoordinateLike } from '../classes/Coordinate';
+import { useGame } from '../Game';
 import { ViewportHtmlContainer } from '../space/Viewport';
 import { Event } from '../util/Event';
-
-export const ContextMenuContext = createContext<null | ContextMenuManager>(null);
 
 /**
  * Presentational components
@@ -78,11 +70,11 @@ export const ContextMenuFooter = styled.button`
 type ContextManagerState = false | { location: CoordinateLike; contents: ReactElement };
 export class ContextMenuManager {
 	public state: ContextManagerState = false;
-	public change = new Event<[ContextManagerState]>();
+	public $changed = new Event<[ContextManagerState]>();
 
-	invoke(location: CoordinateLike, contents: ReactElement) {
+	open(location: CoordinateLike, contents: ReactElement) {
 		this.state = { location, contents };
-		this.change.emit(this.state);
+		this.$changed.emit(this.state);
 	}
 
 	isOpen() {
@@ -91,24 +83,19 @@ export class ContextMenuManager {
 
 	close() {
 		this.state = false;
-		this.change.emit(this.state);
+		this.$changed.emit(this.state);
 	}
 }
 
-export const useContextMenuManager = () => {
-	const contextMenuManager = useContext(ContextMenuContext);
-	return contextMenuManager;
-};
-
 export const ContextMenuContainer: FunctionComponent<{ zoom?: number }> = ({ zoom = 1 }) => {
-	const contextMenuManager = useContextMenuManager();
-	const [managerState, setManagerState] = useState(contextMenuManager?.state);
+	const { contextMenu } = useGame();
+	const [managerState, setManagerState] = useState(contextMenu?.state);
 	useEffect(() => {
-		if (!contextMenuManager) {
+		if (!contextMenu) {
 			throw new Error('Shit.');
 		}
-		return contextMenuManager.change.on(setManagerState);
-	}, [contextMenuManager]);
+		return contextMenu.$changed.on(setManagerState);
+	}, [contextMenu]);
 
 	if (!managerState) {
 		return null;

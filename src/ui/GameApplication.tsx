@@ -1,40 +1,27 @@
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
-import { Scene } from '../classes/Scene';
 import { Entity } from '../entities/Entity';
 import { PersonEntity, PersonEntityComponent } from '../entities/PersonEntity';
+import { Game } from '../Game';
 import { Viewport } from '../space/Viewport';
-import { ActiveEntityOverlay } from '../ui/ActiveEntityOverlay';
-import {
-	ContextMenuButton,
-	ContextMenuContainer,
-	ContextMenuContext,
-	ContextMenuFooter,
-	ContextMenuManager
-} from '../ui/ContextMenu';
-import { Overlay } from '../ui/Overlay';
-
-const WORLD_SIZE = 32;
+import { GenericTile } from '../terrain/GenericTerrain';
+import { ActiveEntityOverlay } from './ActiveEntityOverlay';
+import { ContextMenuButton, ContextMenuContainer, ContextMenuFooter } from './ContextMenu';
+import { Overlay } from './Overlay';
 
 function fancyTimeFormat(seconds: number) {
-	// Output like "1:01" or "4:03:59" or "123:03:59"
-	return `${~~((seconds % 3600) / 60)}′ ${seconds % 60}″`;
+	return `${~~((seconds % 3600) / 60)}′ ${Math.floor(seconds % 60)}″`;
 }
 function fakeCoordinates(x: number, y: number) {
-	return `40° ${fancyTimeFormat(1000 - x)} N 79° ${fancyTimeFormat(700 - y)} W`;
+	return `40° ${fancyTimeFormat(1000 - x * 13)} N 79° ${fancyTimeFormat(700 - y * 13)} W`;
 }
 
-const Demo: FunctionComponent = () => {
-	const scene = useMemo(() => {
-		const scene = Scene.generateRandom(String(Date.now()), WORLD_SIZE);
-		(window as any).scene = scene;
-		return scene;
-	}, []);
+export const GameApplication: FunctionComponent<{
+	game: Game;
+	initialViewportCenter: GenericTile;
+}> = ({ game, initialViewportCenter }) => {
+	const { scene, contextMenu } = game;
 
-	const contextManager = useMemo(() => new ContextMenuManager(), []);
-
-	const [center, setCenter] = useState(
-		scene.terrain.getClosestToXy(Math.floor(WORLD_SIZE / 2), Math.floor(WORLD_SIZE / 2))
-	);
+	const [center, setCenter] = useState(initialViewportCenter);
 
 	const [activeEntity, setActiveEntity] = useState<Entity | undefined>(undefined);
 
@@ -42,7 +29,7 @@ const Demo: FunctionComponent = () => {
 		() => (
 			<scene.terrain.Component
 				onTileClick={(event, tile) => {
-					contextManager.invoke(
+					contextMenu.open(
 						tile,
 						<>
 							<ContextMenuButton onClick={() => setCenter(tile)}>
@@ -66,18 +53,18 @@ const Demo: FunctionComponent = () => {
 				}}
 			/>
 		),
-		[scene, contextManager]
+		[scene, contextMenu]
 	);
 
 	const entities = useMemo(
 		() =>
 			scene.entities
 				.filter((entity): entity is PersonEntity => entity instanceof PersonEntity)
-				.map(entity => (
+				.map((entity) => (
 					<PersonEntityComponent
 						key={entity.id}
 						entity={entity}
-						onClick={event => {
+						onClick={(event) => {
 							event.preventDefault();
 							setActiveEntity(entity);
 						}}
@@ -86,20 +73,17 @@ const Demo: FunctionComponent = () => {
 		[scene.entities]
 	);
 
-	// Make all the things move!
-	useEffect(() => scene.play(), [scene]);
-
 	useEffect(() => {
 		const cb = () => {
-			contextManager.close();
+			contextMenu.close();
 		};
 
 		window.addEventListener('click', cb);
 		return () => window.removeEventListener('click', cb);
-	}, [contextManager]);
+	}, [contextMenu]);
 
 	return (
-		<ContextMenuContext.Provider value={contextManager}>
+		<>
 			<Viewport center={center} zoom={1} overlay={<ContextMenuContainer zoom={1} />}>
 				<g id="scene__terrain">{terrain}</g>
 				<g id="scene__entities">{entities}</g>
@@ -118,8 +102,6 @@ const Demo: FunctionComponent = () => {
 					Seed: {scene.seed}
 				</p>
 			</Overlay>
-		</ContextMenuContext.Provider>
+		</>
 	);
 };
-
-export default Demo;

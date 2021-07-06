@@ -21,7 +21,7 @@ export class PatrolJob extends Job<PersonEntity> {
 
 	start() {
 		const destroyers = [
-			this.entity.pathEnd.on(() => {
+			this.entity.$stoppedWalking.on(() => {
 				// Guards move from one waypoint to another, pausing for a random amount of time in between
 				setTimeout(() => {
 					this.waypointIndex += 1;

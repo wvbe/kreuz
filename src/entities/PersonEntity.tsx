@@ -10,31 +10,31 @@ type OnEntityClick = (event: React.MouseEvent<SVGElement, MouseEvent>) => void;
 
 export class PersonEntity extends Entity {
 	// The event that the person starts walking a path
-	public readonly pathStart = new Event<[]>();
+	public readonly $startedWalking = new Event<[]>();
 
 	// The event that the person finishes a path, according to react-spring's timing
-	public readonly pathEnd = new Event<[]>();
+	public readonly $stoppedWalking = new Event<[]>();
 
 	// The person started one step
-	public readonly pathStepStart = new Event<[GenericTile]>();
+	public readonly $startedWalkStep = new Event<[GenericTile]>();
 
 	// The person started finished one step, according to react-spring's timing
-	public readonly pathStepEnd = new Event<[GenericTile]>();
+	public readonly $stoppedWalkStep = new Event<[GenericTile]>();
 
 	public readonly passport: { firstName: string };
 
 	constructor(id: string, location: GenericTile) {
 		super(id, location);
 
-		// Movement handling
-		this.pathStepEnd.on(loc => {
-			this.location = loc;
-		});
-
 		const feminine = Math.random() < 0.5;
 		this.passport = {
 			firstName: feminine ? getRandomFemaleFirstName() : getRandomMaleFirstName()
 		};
+
+		// Movement handling
+		this.$stoppedWalkStep.on((loc) => {
+			this.location = loc;
+		});
 	}
 
 	// Calculate a path and emit animations to walk it the whole way. `this.location` is updated in between each step
@@ -51,14 +51,14 @@ export class PersonEntity extends Entity {
 
 		if (!path.length) {
 			console.warn('Path was zero steps long, finishing early.', this);
-			this.pathEnd.emit();
+			this.$stoppedWalking.emit();
 			return;
 		}
-		let unlisten = this.pathStepEnd.on(() => {
+		const unlisten = this.$stoppedWalkStep.on(() => {
 			const nextStep = path.shift();
 
 			if (!nextStep) {
-				this.pathEnd.emit();
+				this.$stoppedWalking.emit();
 				unlisten();
 			} else {
 				this.doPathStep(nextStep);
@@ -74,7 +74,7 @@ export class PersonEntity extends Entity {
 		if (coordinate.hasNaN()) {
 			debugger;
 		}
-		this.pathStepStart.emit(coordinate);
+		this.$startedWalkStep.emit(coordinate);
 	}
 
 	public get label(): string {
@@ -101,20 +101,20 @@ export const PersonEntityComponent: FunctionComponent<{
 	useEventListeners(
 		() => [
 			// Listen for the entity moveStart order;
-			entity.pathStepStart.on(destination =>
+			entity.$startedWalkStep.on((destination) =>
 				animatePosition({
 					destination: destination,
 					duration: entity.location.euclideanDistanceTo(destination) * 500
 				})
 			)
 		],
-		[entity.pathStepStart]
+		[entity.$startedWalkStep]
 	);
 
-	const onRest = useCallback(() => entity.pathStepEnd.emit(destination), [
-		entity.pathStepEnd,
-		destination
-	]);
+	const onRest = useCallback(
+		() => entity.$stoppedWalkStep.emit(destination),
+		[entity.$stoppedWalkStep, destination]
+	);
 
 	return (
 		<MovingAnchor moveTo={destination} moveSpeed={duration} onRest={onRest} onClick={onClick}>

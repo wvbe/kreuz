@@ -2,31 +2,51 @@ import MeshBuilder from 'dual-mesh/create';
 import Poisson from 'poisson-disk-sampling';
 import React, { FunctionComponent } from 'react';
 import { Coordinate, CoordinateArray } from '../classes/Coordinate';
+import { Random } from '../util/Random';
 import { DualMeshTerrainComponent } from './DualMeshTileComponent';
 
 import { GenericTerrain, GenericTerrainComponentProps, GenericTile } from './GenericTerrain';
 
 export class DualMeshTile extends GenericTile {
-	public outlinePoints?: Coordinate[];
 	public neighbors?: DualMeshTile[];
-	public isOnBoundary?: boolean;
+	public outlinePoints?: Coordinate[];
+	public isGhost?: boolean;
 
-	static clone(coord: DualMeshTile) {
-		const coord2 = new DualMeshTile(coord.x, coord.y, coord.z);
-		coord2.isOnBoundary = coord.isOnBoundary;
-		coord2.neighbors = coord.neighbors;
-		coord2.outlinePoints = coord.outlinePoints;
-		coord2.terrain = (coord as DualMeshTile).terrain;
-		return coord2;
-	}
+	// static clone(coord: DualMeshTile) {
+	// 	const coord2 = new DualMeshTile(coord.x, coord.y, coord.z);
+	// 	coord2.isGhost = coord.isGhost;
+	// 	coord2.neighbors = coord.neighbors;
+	// 	coord2.outlinePoints = coord.outlinePoints;
+	// 	coord2.terrain = coord.terrain;
+	// 	return coord2;
+	// }
 
+	private _isLand?: boolean = undefined;
 	isLand() {
-		return this.z >= 0 && !this.isOnBoundary;
+		if (this._isLand === undefined) {
+			// Return a subset of tiles to reduce "ugly" shapes and the
+			this._isLand =
+				// Must be above the waterline:
+				this.z >= 0 &&
+				// And must be at least <4> neighbors away from an outermost tile
+				!(function r(item: DualMeshTile, maxDepth: number): boolean {
+					if (item.isGhost) {
+						return true;
+					}
+					if (maxDepth <= 0) {
+						return false;
+					}
+
+					--maxDepth;
+					return item.neighbors?.some((n) => r(n, maxDepth)) || false;
+				})(this, 2);
+		}
+		return this._isLand;
 	}
 }
 
 export class DualMeshTerrain extends GenericTerrain<DualMeshTile> {
-	protected mesh: any;
+	private mesh: any;
 
 	constructor(tiles: DualMeshTile[], mesh: any) {
 		super(tiles);
@@ -36,7 +56,7 @@ export class DualMeshTerrain extends GenericTerrain<DualMeshTile> {
 		});
 	}
 
-	override Component: FunctionComponent<GenericTerrainComponentProps<DualMeshTile>> = props =>
+	override Component: FunctionComponent<GenericTerrainComponentProps<DualMeshTile>> = (props) =>
 		React.createElement(DualMeshTerrainComponent, {
 			terrain: this,
 			...props
@@ -62,36 +82,42 @@ export class DualMeshTerrain extends GenericTerrain<DualMeshTile> {
 	}
 }
 
-export function generateRandom(seed: string, size: number) {
-	const distance = size / 10;
+export function generateRandom(seed: string, size: number, density: number = 1) {
+	// Use @redblobgames/dual-mesh to generate tiles and relationships.
+	// More information:
+	// - https://redblobgames.github.io/dual-mesh/
+	// - https://github.com/redblobgames/dual-mesh
+	let i = 0;
 	const poisson = new Poisson(
 		{
 			shape: [size, size],
-			minDistance: distance
+			minDistance: 1 / density
 		},
-		Math.random
+		() => Random.float(`${seed}/${++i}`)
 	);
-	const meshBuilder = new MeshBuilder({ boundarySpacing: 0 });
+	const meshBuilder = new MeshBuilder({ boundarySpacing: 1 });
 	meshBuilder.points.forEach((p: [number, number]) => poisson.addPoint(p));
-	meshBuilder.points = poisson.fill().map((xy: [number, number]) => [...xy, 0]);
+	meshBuilder.points = poisson
+		.fill()
+		.map((xy: [number, number], i: number) => [
+			...xy,
+			(-0.2 + Random.float(seed, ...xy)) * 0.2
+		]);
 
 	const mesh = meshBuilder.create();
-
 	return new DualMeshTerrain(
-		meshBuilder.points
-			.map((coordinates: CoordinateArray, i: number) => new DualMeshTile(...coordinates))
-			.map((tile: DualMeshTile, i: number, tiles: DualMeshTile[]) => {
+		(meshBuilder.points as Array<CoordinateArray>)
+			.map((coordinates, i) => new DualMeshTile(...coordinates))
+			.map((tile, i) => {
 				const outlinePointIndices = mesh.r_circulate_t([], i);
 				tile.outlinePoints = outlinePointIndices.map(
 					(i: number) => new Coordinate(mesh.t_x(i), mesh.t_y(i), tile.z)
 				);
 
-				tile.isOnBoundary = outlinePointIndices.some((index: number) =>
-					mesh.t_ghost(index)
-				);
+				tile.isGhost = outlinePointIndices.some((index: number) => mesh.t_ghost(index));
 				return tile;
 			})
-			.map((tile: DualMeshTile, i: number, tiles: DualMeshTile[]) => {
+			.map((tile, i, tiles) => {
 				tile.neighbors = mesh
 					.r_circulate_r([], i)
 					.map((x: keyof DualMeshTerrain['tiles']) => tiles[x])

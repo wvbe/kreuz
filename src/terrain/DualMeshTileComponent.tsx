@@ -1,33 +1,55 @@
-import React, { FunctionComponent } from 'react';
-import { Coordinate } from '../classes/Coordinate';
+import React, { FunctionComponent, useMemo, useState } from 'react';
 import { PERSPECTIVE } from '../space/PERSPECTIVE';
+import { color } from '../styles';
 import { SvgMouseInteractionProps } from '../types';
 import { DualMeshTerrain, DualMeshTile } from './DualMeshTerrain';
 import { GenericTerrainComponentI } from './GenericTerrain';
 
+const TERRAIN_FILL = color.terrain.string();
+const TERRAIN_FILL_HIGHLIGHTED = color.highlightedTerrain.string();
+const TERRAIN_FILL_WATER = 'transparent';
+const TERRAIN_STROKE = color.terrainStroke.string();
+const TERRAIN_STROKE_WATER = color.terrainStroke.opaquer(-0.5).string();
 export const DualMeshTileComponent: FunctionComponent<
 	SvgMouseInteractionProps & {
 		tile: DualMeshTile;
-		nodes: Coordinate[];
 	}
-> = ({ tile, nodes, ...svgProps }) => {
-	const center = PERSPECTIVE.toPixels(tile.x, tile.y, tile.z);
+> = ({ tile, ...svgProps }) => {
+	const [isHovered, setIsHovered] = useState(false);
+	const points = useMemo(() => {
+		if (!tile.isLand() && !tile.neighbors?.some((n) => n.isLand())) {
+			return;
+		}
+		if (!tile.outlinePoints || tile.outlinePoints.length < 3) {
+			throw new Error('Not a polygon');
+		}
+		const points = [...tile.outlinePoints, tile.outlinePoints[0]]
+			.map((n) => PERSPECTIVE.toPixels(n.x, n.y, n.z).join(','))
+			.join(' ');
+
+		return <polygon points={points} />;
+	}, [tile]);
+
+	if (!points) {
+		return null;
+	}
 	return (
-		<>
-			<polyline
-				fill={tile.isOnBoundary ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}
-				stroke={tile.isOnBoundary ? undefined : 'black'}
-				points={nodes.map(n => PERSPECTIVE.toPixels(n.x, n.y, n.z).join(',')).join(' ')}
-				{...svgProps}
-			/>
-			<circle
-				cx={center[0]}
-				cy={center[1]}
-				r="9"
-				fill="transparent"
-				stroke={tile.isOnBoundary ? 'red' : 'blue'}
-			/>
-		</>
+		<g
+			className="dual-mesh-tile"
+			fill={
+				tile.isLand()
+					? isHovered
+						? TERRAIN_FILL_HIGHLIGHTED
+						: TERRAIN_FILL
+					: TERRAIN_FILL_WATER
+			}
+			stroke={tile.isLand() ? TERRAIN_STROKE : TERRAIN_STROKE_WATER}
+			{...svgProps}
+			onMouseEnter={() => setIsHovered(true)}
+			onMouseLeave={() => setIsHovered(false)}
+		>
+			{points}
+		</g>
 	);
 };
 
@@ -35,31 +57,33 @@ export const DualMeshTerrainComponent: GenericTerrainComponentI<DualMeshTerrain,
 	terrain,
 	onTileClick,
 	onTileContextMenu
-}) => (
-	<g className="dual-mesh-terrain">
-		{terrain.getTilesInRenderOrder().map(tile => (
-			<DualMeshTileComponent
-				key={tile.toString()}
-				nodes={tile.outlinePoints || []}
-				tile={tile}
-				onClick={
-					onTileClick
-						? event => {
-								event.preventDefault();
-								event.stopPropagation();
-								onTileClick(event, tile);
-						  }
-						: onTileClick
-				}
-				onContextMenu={
-					onTileContextMenu
-						? event => {
-								event.preventDefault();
-								onTileContextMenu(event, tile);
-						  }
-						: onTileContextMenu
-				}
-			/>
-		))}
-	</g>
-);
+}) => {
+	const terrainElements = useMemo(
+		() =>
+			terrain.getTilesInRenderOrder().map((tile) => (
+				<DualMeshTileComponent
+					key={tile.toString()}
+					tile={tile}
+					onClick={
+						onTileClick
+							? (event) => {
+									event.preventDefault();
+									event.stopPropagation();
+									onTileClick(event, tile);
+							  }
+							: onTileClick
+					}
+					onContextMenu={
+						onTileContextMenu
+							? (event) => {
+									event.preventDefault();
+									onTileContextMenu(event, tile);
+							  }
+							: onTileContextMenu
+					}
+				/>
+			)),
+		[terrain, onTileClick, onTileContextMenu]
+	);
+	return <g className="dual-mesh-terrain">{terrainElements}</g>;
+};

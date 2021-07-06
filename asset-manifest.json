@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.js": "./static/js/main.c8fc4e08.chunk.js",
-    "main.js.map": "./static/js/main.c8fc4e08.chunk.js.map",
+    "main.js": "./static/js/main.8b4a8ba6.chunk.js",
+    "main.js.map": "./static/js/main.8b4a8ba6.chunk.js.map",
     "runtime-main.js": "./static/js/runtime-main.956d17e4.js",
     "runtime-main.js.map": "./static/js/runtime-main.956d17e4.js.map",
-    "static/js/2.dc35a307.chunk.js": "./static/js/2.dc35a307.chunk.js",
-    "static/js/2.dc35a307.chunk.js.map": "./static/js/2.dc35a307.chunk.js.map",
+    "static/js/2.1a42512b.chunk.js": "./static/js/2.1a42512b.chunk.js",
+    "static/js/2.1a42512b.chunk.js.map": "./static/js/2.1a42512b.chunk.js.map",
     "index.html": "./index.html",
-    "static/js/2.dc35a307.chunk.js.LICENSE.txt": "./static/js/2.dc35a307.chunk.js.LICENSE.txt",
+    "static/js/2.1a42512b.chunk.js.LICENSE.txt": "./static/js/2.1a42512b.chunk.js.LICENSE.txt",
     "static/media/nebula-282c34.dda754f6.png": "./static/media/nebula-282c34.dda754f6.png"
   },
   "entrypoints": [
     "static/js/runtime-main.956d17e4.js",
-    "static/js/2.dc35a307.chunk.js",
-    "static/js/main.c8fc4e08.chunk.js"
+    "static/js/2.1a42512b.chunk.js",
+    "static/js/main.8b4a8ba6.chunk.js"
   ]
 }

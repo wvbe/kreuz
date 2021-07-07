@@ -32,7 +32,7 @@ export class PersonEntity extends Entity {
 		};
 
 		// Movement handling
-		this.$stoppedWalkStep.on((loc) => {
+		this.$stoppedWalkStep.on(loc => {
 			this.location = loc;
 		});
 	}
@@ -82,7 +82,7 @@ export class PersonEntity extends Entity {
 	}
 
 	Component: FunctionComponent = () => {
-		return <circle cx={0} cy={0} r="5" fill="white" />;
+		return <circle cx={0} cy={0} r="5" fill="white" stroke="black" />;
 	};
 }
 
@@ -101,7 +101,7 @@ export const PersonEntityComponent: FunctionComponent<{
 	useEventListeners(
 		() => [
 			// Listen for the entity moveStart order;
-			entity.$startedWalkStep.on((destination) =>
+			entity.$startedWalkStep.on(destination =>
 				animatePosition({
 					destination: destination,
 					duration: entity.location.euclideanDistanceTo(destination) * 500

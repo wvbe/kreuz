@@ -6,10 +6,10 @@ import { DualMeshTerrain, DualMeshTile } from './DualMeshTerrain';
 import { GenericTerrainComponentI } from './GenericTerrain';
 
 const TERRAIN_FILL = color.terrain.string();
-const TERRAIN_FILL_HIGHLIGHTED = color.highlightedTerrain.string();
+const TERRAIN_FILL_HIGHLIGHTED = color.beach.string();
 const TERRAIN_FILL_WATER = 'transparent';
 const TERRAIN_STROKE = color.terrainStroke.string();
-const TERRAIN_STROKE_WATER = color.terrainStroke.opaquer(-0.5).string();
+const TERRAIN_STROKE_WATER = color.terrainStroke.opaquer(-0.8).string();
 export const DualMeshTileComponent: FunctionComponent<
 	SvgMouseInteractionProps & {
 		tile: DualMeshTile;
@@ -17,14 +17,14 @@ export const DualMeshTileComponent: FunctionComponent<
 > = ({ tile, ...svgProps }) => {
 	const [isHovered, setIsHovered] = useState(false);
 	const points = useMemo(() => {
-		if (!tile.isLand() && !tile.neighbors?.some((n) => n.isLand())) {
+		if (!tile.isLand() && !tile.neighbors?.some(n => n.isLand())) {
 			return;
 		}
 		if (!tile.outlinePoints || tile.outlinePoints.length < 3) {
 			throw new Error('Not a polygon');
 		}
 		const points = [...tile.outlinePoints, tile.outlinePoints[0]]
-			.map((n) => PERSPECTIVE.toPixels(n.x, n.y, n.z).join(','))
+			.map(n => PERSPECTIVE.toPixels(n.x, n.y, n.z).join(','))
 			.join(' ');
 
 		return <polygon points={points} />;
@@ -60,13 +60,13 @@ export const DualMeshTerrainComponent: GenericTerrainComponentI<DualMeshTerrain,
 }) => {
 	const terrainElements = useMemo(
 		() =>
-			terrain.getTilesInRenderOrder().map((tile) => (
+			terrain.getTilesInRenderOrder().map(tile => (
 				<DualMeshTileComponent
 					key={tile.toString()}
 					tile={tile}
 					onClick={
 						onTileClick
-							? (event) => {
+							? event => {
 									event.preventDefault();
 									event.stopPropagation();
 									onTileClick(event, tile);
@@ -75,7 +75,7 @@ export const DualMeshTerrainComponent: GenericTerrainComponentI<DualMeshTerrain,
 					}
 					onContextMenu={
 						onTileContextMenu
-							? (event) => {
+							? event => {
 									event.preventDefault();
 									onTileContextMenu(event, tile);
 							  }

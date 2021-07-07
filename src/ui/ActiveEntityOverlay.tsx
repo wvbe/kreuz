@@ -4,19 +4,21 @@ import styled from '@emotion/styled';
 import React, { FunctionComponent } from 'react';
 import { Entity } from '../entities/Entity';
 
+const borderColor = `rgba(0,0, 0, 0.5)`;
 const ActiveEntityOverlayBoundary = styled.div`
 	backdrop-filter: blur(2px);
 `;
 
 const ActiveEntityOverlayBody = styled.div`
-	border: 1px solid rgba(255, 255, 255, 0.5);
+	border: 1px solid ${borderColor};
+	background-color: rgba(0, 0, 0, 0.4);
 	border-radius: 3px;
 	padding: 1em;
 	display: flex;
 	flex-direction: row;
 `;
 const Avatar = styled.div`
-	border: 1px solid rgba(255, 255, 255, 0.5);
+	border: 1px solid ${borderColor};
 	border-radius: 50%;
 	width: 64px;
 	height: 64px;
@@ -44,7 +46,7 @@ const HorizontalLinkListItem = styled.a`
 	/* background-color: transparent; */
 	/* background-color: rgba(255, 255, 255, 0.05); */
 	&:hover {
-		background-color: rgba(255, 255, 255, 0.5);
+		background-color: ${borderColor};
 		cursor: pointer;
 	}
 `;

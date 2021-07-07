@@ -16,14 +16,14 @@ export function generateTerrain(seed: string, size: number) {}
 
 function generatePatrolJob(seed: string, entity: PersonEntity) {
 	const start = entity.location;
-	const island = start.terrain?.getIslands().find((island) => island.includes(start));
+	const island = start.terrain?.getIslands().find(island => island.includes(start));
 	if (!island) {
 		// Expect to never throw this:
 		throw new Error('Got falsy start from none of the islands');
 	}
 
 	return new PatrolJob(entity, [
-		...repeat(2 + Math.floor(Random.float(entity.id, 'job', 'waypoint_amount') * 4), (i) =>
+		...repeat(2 + Math.floor(Random.float(entity.id, 'job', 'waypoint_amount') * 4), i =>
 			Random.arrayItem(island, entity.id, 'job', 'waypoint', i)
 		),
 		start
@@ -31,11 +31,14 @@ function generatePatrolJob(seed: string, entity: PersonEntity) {
 }
 
 export function generateEntities<T extends GenericTerrain<GenericTile>>(seed: string, terrain: T) {
-	const walkableTiles = terrain.tiles.filter((c) => c.isLand());
+	const walkableTiles = terrain.tiles.filter(c => c.isLand());
+	if (!walkableTiles.length) {
+		throw new Error('The terrain does not contain any walkable tiles!');
+	}
 	const amountOfGuards = 5;
 	const amountOfCivilians = 10;
 	return [
-		...repeat(amountOfGuards, (i) => {
+		...repeat(amountOfGuards, i => {
 			const id = seed + '-guard-' + i;
 			const start = Random.arrayItem(walkableTiles, id, 'start');
 			const guard = new GuardEntity(id, start);
@@ -43,7 +46,7 @@ export function generateEntities<T extends GenericTerrain<GenericTile>>(seed: st
 			guard.doJob(job);
 			return guard;
 		}),
-		...repeat(amountOfCivilians, (i) => {
+		...repeat(amountOfCivilians, i => {
 			const id = seed + '-person-' + i;
 			const start = Random.arrayItem(walkableTiles, id, 'start');
 			const worker = new CivilianEntity(id, start);

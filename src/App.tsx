@@ -9,7 +9,7 @@ import { generateRandom as generateTerrain } from './terrain/DualMeshTerrain';
 import { GameApplication } from './ui/GameApplication';
 
 function generateEverything(seed: string = String(Date.now())) {
-	const size = 24;
+	const size = 48;
 	const density = 1;
 	let game: Game;
 	if ((window as any).game) {
@@ -32,12 +32,7 @@ function generateEverything(seed: string = String(Date.now())) {
 }
 
 function GameRoute() {
-	const gameApplicationProps = useMemo(
-		() =>
-			generateEverything(),
-			// 'my-fixed-seed'
-		[]
-	);
+	const gameApplicationProps = useMemo(() => generateEverything(), []);
 	useEffect(() => gameApplicationProps.game.scene.play(), [gameApplicationProps.game.scene]);
 	return (
 		<GameContext.Provider value={gameApplicationProps.game}>

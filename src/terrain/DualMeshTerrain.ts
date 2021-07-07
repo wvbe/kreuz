@@ -8,20 +8,11 @@ import { DualMeshTerrainComponent } from './DualMeshTileComponent';
 import { GenericTerrain, GenericTerrainComponentProps, GenericTile } from './GenericTerrain';
 
 export class DualMeshTile extends GenericTile {
-	public neighbors?: DualMeshTile[];
-	public outlinePoints?: Coordinate[];
-	public isGhost?: boolean;
-
-	// static clone(coord: DualMeshTile) {
-	// 	const coord2 = new DualMeshTile(coord.x, coord.y, coord.z);
-	// 	coord2.isGhost = coord.isGhost;
-	// 	coord2.neighbors = coord.neighbors;
-	// 	coord2.outlinePoints = coord.outlinePoints;
-	// 	coord2.terrain = coord.terrain;
-	// 	return coord2;
-	// }
-
+	public _neighbors?: DualMeshTile[];
+	public _outlinePoints?: Coordinate[];
+	public _isGhost?: boolean;
 	private _isLand?: boolean = undefined;
+
 	isLand() {
 		if (this._isLand === undefined) {
 			// Return a subset of tiles to reduce "ugly" shapes and the
@@ -30,7 +21,7 @@ export class DualMeshTile extends GenericTile {
 				this.z >= 0 &&
 				// And must be at least <4> neighbors away from an outermost tile
 				!(function r(item: DualMeshTile, maxDepth: number): boolean {
-					if (item.isGhost) {
+					if (item._isGhost) {
 						return true;
 					}
 					if (maxDepth <= 0) {
@@ -38,7 +29,7 @@ export class DualMeshTile extends GenericTile {
 					}
 
 					--maxDepth;
-					return item.neighbors?.some((n) => r(n, maxDepth)) || false;
+					return item._neighbors?.some(n => r(n, maxDepth)) || false;
 				})(this, 2);
 		}
 		return this._isLand;
@@ -46,17 +37,17 @@ export class DualMeshTile extends GenericTile {
 }
 
 export class DualMeshTerrain extends GenericTerrain<DualMeshTile> {
-	private mesh: any;
+	// private mesh: any;
 
-	constructor(tiles: DualMeshTile[], mesh: any) {
+	constructor(tiles: DualMeshTile[], _mesh: any) {
 		super(tiles);
-		this.mesh = mesh;
+		// this.mesh = mesh;
 		this.tiles.forEach((coordinate, i) => {
 			coordinate.terrain = this;
 		});
 	}
 
-	override Component: FunctionComponent<GenericTerrainComponentProps<DualMeshTile>> = (props) =>
+	override Component: FunctionComponent<GenericTerrainComponentProps<DualMeshTile>> = props =>
 		React.createElement(DualMeshTerrainComponent, {
 			terrain: this,
 			...props
@@ -78,7 +69,7 @@ export class DualMeshTerrain extends GenericTerrain<DualMeshTile> {
 	}
 
 	override getNeighborTiles(center: DualMeshTile): DualMeshTile[] {
-		return center.neighbors || [];
+		return center._neighbors || [];
 	}
 }
 
@@ -101,31 +92,56 @@ export function generateRandom(seed: string, size: number, density: number = 1) 
 		.fill()
 		.map((xy: [number, number], i: number) => [
 			...xy,
-			(-0.2 + Random.float(seed, ...xy)) * 0.2
+			(-0.2 + Random.float(seed, ...xy)) * 0.4
 		]);
 
 	const mesh = meshBuilder.create();
-	return new DualMeshTerrain(
-		(meshBuilder.points as Array<CoordinateArray>)
-			.map((coordinates, i) => new DualMeshTile(...coordinates))
-			.map((tile, i) => {
-				const outlinePointIndices = mesh.r_circulate_t([], i);
-				tile.outlinePoints = outlinePointIndices.map(
-					(i: number) => new Coordinate(mesh.t_x(i), mesh.t_y(i), tile.z)
-				);
+	const tiles = (meshBuilder.points as Array<CoordinateArray>)
+		.map((coordinates, i) => new DualMeshTile(...coordinates))
+		.map((tile, i) => {
+			const outlinePointIndices = mesh.r_circulate_t([], i);
+			tile._outlinePoints = outlinePointIndices.map(
+				(i: number) => new Coordinate(mesh.t_x(i), mesh.t_y(i), tile.z)
+			);
 
-				tile.isGhost = outlinePointIndices.some((index: number) => mesh.t_ghost(index));
-				return tile;
-			})
-			.map((tile, i, tiles) => {
-				tile.neighbors = mesh
-					.r_circulate_r([], i)
-					.map((x: keyof DualMeshTerrain['tiles']) => tiles[x])
-					.filter(Boolean);
+			tile._isGhost = outlinePointIndices.some((index: number) => mesh.t_ghost(index));
+			return tile;
+		})
+		.map((tile, i, tiles) => {
+			tile._neighbors = mesh
+				.r_circulate_r([], i)
+				.map((x: keyof DualMeshTerrain['tiles']) => tiles[x])
+				.filter(Boolean);
 
-				return tile;
-			})
-			.filter(Boolean),
-		mesh
-	);
+			return tile;
+		})
+		.filter(Boolean);
+
+	const terrain = new DualMeshTerrain(tiles, mesh);
+
+	// terrain
+	// 	.getIslands(t => t.isLand())
+	// 	.forEach(island => {
+	// 		const { x, y } = island.reduce(
+	// 			(c, t) => c.transform(t.x, t.y, t.z),
+	// 			new Coordinate(0, 0, 0)
+	// 		);
+	// 		const centerIsh = terrain.getClosestToXy(x / island.length, y / island.length);
+	// 		console.log(centerIsh);
+	// 		if (!island.includes(centerIsh)) {
+	// 			return;
+	// 		}
+	// 		terrain.selectClosestTiles(centerIsh, size / 3).forEach(t => t.transform(0, 0, 5));
+	// 	});
+
+	// for (let iterations = 25; iterations > 0; --iterations) {
+	// 	terrain.tiles.forEach(t => {
+	// 		t.z = t._neighbors
+	// 			? 0.5 * t.z +
+	// 			  (0.5 * t._neighbors.reduce((tot, tt) => (tot += tt.z), 0)) / t._neighbors.length
+	// 			: t.z;
+	// 	});
+	// }
+
+	return terrain;
 }

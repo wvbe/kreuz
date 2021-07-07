@@ -10,21 +10,22 @@ const TERRAIN_FILL_HIGHLIGHTED = color.beach.string();
 const TERRAIN_FILL_WATER = 'transparent';
 const TERRAIN_STROKE = color.terrainStroke.string();
 const TERRAIN_STROKE_WATER = color.terrainStroke.opaquer(-0.8).string();
-export const DualMeshTileComponent: FunctionComponent<
+
+const DualMeshTileComponent: FunctionComponent<
 	SvgMouseInteractionProps & {
 		tile: DualMeshTile;
 	}
 > = ({ tile, ...svgProps }) => {
 	const [isHovered, setIsHovered] = useState(false);
 	const points = useMemo(() => {
-		if (!tile.isLand() && !tile.neighbors?.some(n => n.isLand())) {
+		if (!tile.isLand() && !tile._neighbors?.some(n => n.isLand())) {
 			return;
 		}
-		if (!tile.outlinePoints || tile.outlinePoints.length < 3) {
+		if (!tile._outlinePoints || tile._outlinePoints.length < 3) {
 			throw new Error('Not a polygon');
 		}
-		const points = [...tile.outlinePoints, tile.outlinePoints[0]]
-			.map(n => PERSPECTIVE.toPixels(n.x, n.y, n.z).join(','))
+		const points = [...tile._outlinePoints, tile._outlinePoints[0]]
+			.map(n => PERSPECTIVE.toPixels(n.x, n.y, tile.z).join(','))
 			.join(' ');
 
 		return <polygon points={points} />;
@@ -58,6 +59,35 @@ export const DualMeshTerrainComponent: GenericTerrainComponentI<DualMeshTerrain,
 	onTileClick,
 	onTileContextMenu
 }) => {
+	const pathElements = useMemo(() => {
+		const seen: DualMeshTile[] = [];
+
+		return terrain.tiles
+			.reduce<[DualMeshTile, DualMeshTile][]>((connections, origin) => {
+				seen.push(origin);
+				return origin.isLand()
+					? connections.concat(
+							terrain
+								.getNeighborTiles(origin)
+								.filter(target => target.isLand())
+								.filter(target => !seen.includes(target))
+								.map(target => [origin, target])
+					  )
+					: connections;
+			}, [])
+			.map(coords => coords.map(c => PERSPECTIVE.toPixels(c.x, c.y, c.z)))
+			.map(([origin, target]) => (
+				<line
+					key={`${origin}x${target}`}
+					x1={origin[0]}
+					y1={origin[1]}
+					x2={target[0]}
+					y2={target[1]}
+					stroke={color.terrainStroke.opaquer(-0.6).string()}
+					strokeDasharray="3"
+				/>
+			));
+	}, [terrain]);
 	const terrainElements = useMemo(
 		() =>
 			terrain.getTilesInRenderOrder().map(tile => (
@@ -85,5 +115,10 @@ export const DualMeshTerrainComponent: GenericTerrainComponentI<DualMeshTerrain,
 			)),
 		[terrain, onTileClick, onTileContextMenu]
 	);
-	return <g className="dual-mesh-terrain">{terrainElements}</g>;
+	return (
+		<g className="dual-mesh-terrain">
+			<g className="dual-mesh-terrain__tiles">{terrainElements}</g>
+			<g className="dual-mesh-terrain__paths">{pathElements}</g>
+		</g>
+	);
 };

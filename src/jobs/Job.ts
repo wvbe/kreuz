@@ -1,8 +1,8 @@
-import { Entity } from '../entities/Entity';
+import { EntityPersonI, JobI } from '../types';
 
-export class Job<E = Entity> {
-	entity: E;
-	constructor(entity: E) {
+export class Job implements JobI {
+	protected entity: EntityPersonI;
+	constructor(entity: EntityPersonI) {
 		this.entity = entity;
 	}
 
@@ -11,6 +11,10 @@ export class Job<E = Entity> {
 	}
 
 	start() {
+		throw new Error(`Not implemented for ${this.constructor.name}`);
+	}
+
+	destroy() {
 		throw new Error(`Not implemented for ${this.constructor.name}`);
 	}
 }

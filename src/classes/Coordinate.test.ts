@@ -1,38 +1,27 @@
-import { Path } from './Path';
-import { GenericTile, GenericTerrain } from '../terrain/GenericTerrain';
+import { Coordinate } from './Coordinate';
 
-describe('Coordinate.ts', () => {
-	it('getNeighbors', () => {
-		// const terrain = GenericTerrain.generateRandom('test', 4);
-		// expect(terrain.getNeighborTiles(terrain.getClosestToXy(0, 0) as GenericTile)).toHaveLength(2);
-		// expect(terrain.getNeighborTiles(terrain.getClosestToXy(3, 3) as GenericTile)).toHaveLength(2);
-		// expect(terrain.getNeighborTiles(terrain.getClosestToXy(0, 1) as GenericTile)).toHaveLength(3);
-		// expect(terrain.getNeighborTiles(terrain.getClosestToXy(1, 1) as GenericTile)).toHaveLength(4);
+describe('Coordinate', () => {
+	it('#equals()', () => {
+		expect(new Coordinate(1, 1, 1).equals(new Coordinate(1, 1, 1))).toBeTruthy();
+		expect(new Coordinate(1, 1, 9).equals(new Coordinate(1, 1, 1))).toBeFalsy();
 	});
-	it('pathfinding', () => {
-		// Traversable (Y) and non-traversable (N) coordinates:
-		//   YNY
-		//   YNY
-		//   YYY
-		const terrain = new GenericTerrain(
-			[
-				new GenericTile(0, 0, 1),
-				new GenericTile(1, 0, 0),
-				new GenericTile(2, 0, 1),
-				new GenericTile(0, 1, 1),
-				new GenericTile(1, 1, 0),
-				new GenericTile(2, 1, 1),
-				new GenericTile(0, 2, 1),
-				new GenericTile(1, 2, 1),
-				new GenericTile(2, 2, 1)
-			],
-			{ waterlineZ: 0 }
+	it('#transform()', () => {
+		expect(new Coordinate(0, 0, 0).transform(1, 1, 1)).toEqual(new Coordinate(1, 1, 1));
+	});
+	it('#manhattanDistanceTo()', () => {
+		expect(new Coordinate(0, 0, 0).manhattanDistanceTo(new Coordinate(1, 1, 1))).toBe(3);
+	});
+	it('#euclideanDistanceTo()', () => {
+		expect(new Coordinate(0, 0, 0).euclideanDistanceTo(new Coordinate(1, 1, 1))).toBe(
+			1.7320508075688774
 		);
-		expect(
-			new Path(terrain, { closest: false }).find(
-				terrain.getClosestToXy(0, 0) as GenericTile,
-				terrain.getClosestToXy(2, 0) as GenericTile
-			)
-		).toHaveLength(6);
+	});
+	it('.clone()', () => {
+		const coord = new Coordinate(0, 0, 0);
+		const clone = Coordinate.clone(coord);
+
+		expect(coord).not.toBe(clone);
+		expect(coord).toEqual(clone);
+		expect(coord.equals(clone)).toBeTruthy();
 	});
 });

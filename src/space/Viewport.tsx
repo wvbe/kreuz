@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent, ReactElement, useMemo } from 'react';
-import { CoordinateLike } from '../classes/Coordinate';
+import { CoordinateI } from '../classes/Coordinate';
 import { InGameDistance, PERSPECTIVE } from './PERSPECTIVE';
 
 // The pythagoras distance (1/sqrt(2)) with a little tweaking for better looks
@@ -31,7 +31,7 @@ export const AbsolutelyPositionedContainer = styled.div`
 
 type ViewportComponentProps = {
 	zoom?: number;
-	center?: CoordinateLike;
+	center?: CoordinateI;
 	overlay?: ReactElement;
 };
 
@@ -92,37 +92,37 @@ const NoAxis = styled.div<{ zoom?: number }>`
 	transform: scale(var(--scale-val));
 `;
 
-const YAxis = styled(NoAxis)`
-	transform: skewY(-${PERSPECTIVE.degrees}deg)
-		scale(calc(${PIXEL_FRIENDLY_PYTHAGORAS} * var(--scale-val)), var(--scale-val));
-`;
+// const YAxis = styled(NoAxis)`
+// 	transform: skewY(-${PERSPECTIVE.degrees}deg)
+// 		scale(calc(${PIXEL_FRIENDLY_PYTHAGORAS} * var(--scale-val)), var(--scale-val));
+// `;
 
-const ZAxis = styled(NoAxis)`
-	transform: rotate(-${PERSPECTIVE.degrees}deg) skewX(${PERSPECTIVE.degrees}deg)
-		scale(
-			calc(${Math.sqrt(PIXEL_FRIENDLY_PYTHAGORAS)} * var(--scale-val)),
-			calc(${PIXEL_FRIENDLY_PYTHAGORAS} * var(--scale-val))
-		);
-`;
+// const ZAxis = styled(NoAxis)`
+// 	transform: rotate(-${PERSPECTIVE.degrees}deg) skewX(${PERSPECTIVE.degrees}deg)
+// 		scale(
+// 			calc(${Math.sqrt(PIXEL_FRIENDLY_PYTHAGORAS)} * var(--scale-val)),
+// 			calc(${PIXEL_FRIENDLY_PYTHAGORAS} * var(--scale-val))
+// 		);
+// `;
 
-const XAxis = styled(NoAxis)`
-	transform: skewY(${PERSPECTIVE.degrees}deg)
-		scale(calc(${PIXEL_FRIENDLY_PYTHAGORAS} * var(--scale-val)), var(--scale-val));
-`;
+// const XAxis = styled(NoAxis)`
+// 	transform: skewY(${PERSPECTIVE.degrees}deg)
+// 		scale(calc(${PIXEL_FRIENDLY_PYTHAGORAS} * var(--scale-val)), var(--scale-val));
+// `;
 
 export const ViewportHtmlContainer: FunctionComponent<{
 	axis?: 'x' | 'y' | 'z';
 	width: InGameDistance;
 	height: InGameDistance;
 	zoom?: number;
-	location: CoordinateLike;
+	location: CoordinateI;
 }> = ({ location, zoom = 1, axis, width, height, children }) => {
 	const { x, y, z } = location,
 		// @TODO use css variable to zoom instead of JS
 		[left, top] = PERSPECTIVE.toPixels(x, y, z).map(n => mathRoundMaybe(n * zoom));
 	// @TODO use css variable to zoom instead of JS
 	const [pixelWidth] = PERSPECTIVE.toPixels(0, width, height).map(n => mathRoundMaybe(n * zoom));
-	const Axis = axis === 'y' ? YAxis : axis === 'x' ? XAxis : axis === 'z' ? ZAxis : NoAxis;
+	const Axis = /* axis === 'y' ? YAxis : axis === 'x' ? XAxis : axis === 'z' ? ZAxis : */ NoAxis;
 	return (
 		<Axis
 			zoom={zoom}

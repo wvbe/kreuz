@@ -1,12 +1,13 @@
-import { GenericTile } from '../terrain/GenericTerrain';
-import { PersonEntity } from '../entities/PersonEntity';
+import Logger from '../classes/Logger';
+import { EntityPersonI, JobI, TileI } from '../types';
 import { Job } from './Job';
 
-export class PatrolJob extends Job<PersonEntity> {
-	waypoints: GenericTile[];
+export class PatrolJob extends Job implements JobI {
+	private readonly destroyers: (() => void)[] = [];
+	waypoints: TileI[];
 	waypointIndex: number;
 
-	constructor(entity: PersonEntity, waypoints: GenericTile[]) {
+	constructor(entity: EntityPersonI, waypoints: TileI[]) {
 		super(entity);
 		if (waypoints.length < 2) {
 			throw new Error('A patrol must have at least 2 waypoints');
@@ -20,7 +21,7 @@ export class PatrolJob extends Job<PersonEntity> {
 	}
 
 	start() {
-		const destroyers = [
+		this.destroyers.push(
 			this.entity.$stoppedWalking.on(() => {
 				// Guards move from one waypoint to another, pausing for a random amount of time in between
 				setTimeout(() => {
@@ -29,12 +30,13 @@ export class PatrolJob extends Job<PersonEntity> {
 					this.entity.walkTo(next);
 				}, 3000);
 			})
-		];
+		);
 
 		this.entity.walkTo(this.waypoints[0]);
+	}
 
-		return () => {
-			destroyers.forEach(d => d());
-		};
+	destroy() {
+		Logger.log(`Destroy ${this.constructor.name}`);
+		this.destroyers.forEach(destroy => destroy());
 	}
 }

@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import Logger from './classes/Logger';
 import { Scene } from './classes/Scene';
 import { ContextMenuManager } from './ui/ContextMenu';
 
@@ -9,14 +9,9 @@ export class Game {
 	constructor(scene: Scene) {
 		this.scene = scene;
 	}
-}
-
-export const GameContext = createContext<null | Game>(null);
-
-export const useGame = () => {
-	const gameApi = useContext(GameContext);
-	if (!gameApi) {
-		throw new Error('Game context does not exist');
+	destroy() {
+		Logger.group(`Destroy ${this.constructor.name}`);
+		this.scene.destroy();
+		Logger.groupEnd();
 	}
-	return gameApi;
-};
+}

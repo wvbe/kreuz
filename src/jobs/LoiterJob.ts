@@ -1,8 +1,11 @@
-import { PersonEntity } from '../entities/PersonEntity';
-import { Random } from '../util/Random';
+import Logger from '../classes/Logger';
+import { Random } from '../classes/Random';
+import { JobI } from '../types';
 import { Job } from './Job';
 
-export class LoiterJob extends Job<PersonEntity> {
+export class LoiterJob extends Job implements JobI {
+	private readonly destroyers: (() => void)[] = [];
+
 	// The minimum and maximum amounts of ms before considering to move again, after having walked
 	private walkMinWait = 4000;
 	private walkMaxWait = 15000;
@@ -17,11 +20,15 @@ export class LoiterJob extends Job<PersonEntity> {
 	get label() {
 		return `Loitering`;
 	}
-
 	start() {
 		let steps = 0;
-		const doTimeout = () =>
-			setTimeout(() => {
+		let timer: NodeJS.Timeout | null = null;
+		const doTimeout = () => {
+			if (timer) {
+				throw new Error('Timer for LoiterJob already exists');
+			}
+			timer = setTimeout(() => {
+				timer = null;
 				if (Math.random() > this.walkChanceOnRoll) {
 					doTimeout();
 					return;
@@ -33,14 +40,23 @@ export class LoiterJob extends Job<PersonEntity> {
 						this.walkMaxDistance
 					) || [];
 				this.entity.walkTo(
-					Random.arrayItem(destinations, this.entity.id, 'roam-destination', steps)
+					Random.fromArray(destinations, this.entity.id, 'roam-destination', steps)
 				);
 			}, this.walkMinWait + Random.float(this.entity.id, 'roam-delay', steps) * (this.walkMaxWait - this.walkMinWait));
+		};
 
-		const destroyers = [this.entity.$stoppedWalking.on(doTimeout)];
+		this.destroyers.push(this.entity.$stoppedWalking.on(doTimeout));
+		this.destroyers.push(() => {
+			if (timer) {
+				clearTimeout(timer);
+			}
+		});
 
 		doTimeout();
+	}
 
-		return () => destroyers.forEach((d) => d());
+	destroy() {
+		Logger.log(`Destroy ${this.constructor.name}`);
+		this.destroyers.forEach(destroy => destroy());
 	}
 }

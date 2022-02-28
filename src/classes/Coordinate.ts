@@ -1,5 +1,5 @@
 import { InGameDistance } from '../space/PERSPECTIVE';
-export interface CoordinateLike {
+export interface CoordinateI {
 	x: InGameDistance;
 	y: InGameDistance;
 	z: InGameDistance;
@@ -7,7 +7,7 @@ export interface CoordinateLike {
 
 export type CoordinateArray = [InGameDistance, InGameDistance, InGameDistance];
 
-export class Coordinate implements CoordinateLike {
+export class Coordinate implements CoordinateI {
 	x: InGameDistance;
 	y: InGameDistance;
 	z: InGameDistance;
@@ -18,7 +18,7 @@ export class Coordinate implements CoordinateLike {
 		this.z = z;
 	}
 
-	equals(coord: CoordinateLike) {
+	equals(coord: CoordinateI) {
 		return (
 			this === coord ||
 			(coord && this.x === coord.x && this.y === coord.y && this.z === coord.z)
@@ -37,11 +37,11 @@ export class Coordinate implements CoordinateLike {
 		return isNaN(this.x) || isNaN(this.y) || isNaN(this.z);
 	}
 
-	manhattanDistanceTo(coord: CoordinateLike) {
+	manhattanDistanceTo(coord: CoordinateI) {
 		return Math.abs(this.x - coord.x) + Math.abs(this.y - coord.y) + Math.abs(this.z - coord.z);
 	}
 
-	euclideanDistanceTo(coord: CoordinateLike) {
+	euclideanDistanceTo(coord: CoordinateI) {
 		const xy = Math.sqrt((this.x - coord.x) ** 2 + (this.y - coord.y) ** 2);
 		const xyz = Math.sqrt(xy ** 2 + (this.z - coord.z) ** 2);
 		return xyz;
@@ -52,7 +52,7 @@ export class Coordinate implements CoordinateLike {
 		return [this.x, this.y, this.z].join(',');
 	}
 
-	static clone(coord: CoordinateLike) {
+	static clone(coord: CoordinateI) {
 		return new Coordinate(coord.x, coord.y, coord.z);
 	}
 }

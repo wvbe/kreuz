@@ -1,9 +1,11 @@
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
-import { Entity } from '../entities/Entity';
-import { PersonEntity, PersonEntityComponent } from '../entities/PersonEntity';
+import Logger from '../classes/Logger';
+import { PersonEntity } from '../entities/PersonEntity';
+import { PersonEntityC } from '../entities/PersonEntityC';
 import { Game } from '../Game';
 import { Viewport } from '../space/Viewport';
-import { GenericTile } from '../terrain/GenericTerrain';
+import { DualMeshTerrainC } from '../terrain/DualMeshTerrainC';
+import { EntityI, TileI } from '../types';
 import { ActiveEntityOverlay } from './ActiveEntityOverlay';
 import { ContextMenuButton, ContextMenuContainer, ContextMenuFooter } from './ContextMenu';
 import { Overlay } from './Overlay';
@@ -17,17 +19,18 @@ function fakeCoordinates(x: number, y: number) {
 
 export const GameApplication: FunctionComponent<{
 	game: Game;
-	initialViewportCenter: GenericTile;
+	initialViewportCenter: TileI;
 }> = ({ game, initialViewportCenter }) => {
 	const { scene, contextMenu } = game;
 
 	const [center, setCenter] = useState(initialViewportCenter);
 
-	const [activeEntity, setActiveEntity] = useState<Entity | undefined>(undefined);
+	const [activeEntity, setActiveEntity] = useState<EntityI | undefined>(undefined);
 
 	const terrain = useMemo(
 		() => (
-			<scene.terrain.Component
+			<DualMeshTerrainC
+				terrain={scene.terrain}
 				onTileClick={(event, tile) => {
 					contextMenu.open(
 						tile,
@@ -37,9 +40,9 @@ export const GameApplication: FunctionComponent<{
 							</ContextMenuButton>
 							<ContextMenuButton
 								onClick={() => {
-									console.group(`Tile ${tile}`);
-									console.log(tile);
-									console.groupEnd();
+									Logger.group(`Tile ${tile}`);
+									Logger.log(tile);
+									Logger.groupEnd();
 								}}
 							>
 								Show in console
@@ -60,11 +63,11 @@ export const GameApplication: FunctionComponent<{
 		() =>
 			scene.entities
 				.filter((entity): entity is PersonEntity => entity instanceof PersonEntity)
-				.map((entity) => (
-					<PersonEntityComponent
+				.map(entity => (
+					<PersonEntityC
 						key={entity.id}
 						entity={entity}
-						onClick={(event) => {
+						onClick={event => {
 							event.preventDefault();
 							setActiveEntity(entity);
 						}}

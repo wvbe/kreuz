@@ -2,7 +2,8 @@
 
 import styled from '@emotion/styled';
 import React, { FunctionComponent } from 'react';
-import { Entity } from '../entities/Entity';
+import Logger from '../classes/Logger';
+import { EntityI } from '../types';
 
 const borderColor = `rgba(0,0, 0, 0.5)`;
 const ActiveEntityOverlayBoundary = styled.div`
@@ -50,25 +51,26 @@ const HorizontalLinkListItem = styled.a`
 		cursor: pointer;
 	}
 `;
-export const EntityTextBadge: FunctionComponent<{ entity: Entity }> = ({ entity }) => (
+
+const EntityTextBadge: FunctionComponent<{ entity: EntityI }> = ({ entity }) => (
 	<>
 		<p>
 			<b>{entity.label}</b>
 		</p>
-		<p>{entity?.job ? entity.job.label : 'Jobless'}</p>
+		<p>{entity.job?.label || 'Jobless'}</p>
 		<HorizontalLinkList style={{ marginTop: '1em' }}>
 			<HorizontalLinkListItem
 				onClick={() => {
-					console.group('Selected entity');
-					console.log(entity);
-					console.groupEnd();
+					Logger.group('Selected entity');
+					Logger.log(entity);
+					Logger.groupEnd();
 				}}
 			>
 				LOG
 			</HorizontalLinkListItem>
 			<HorizontalLinkListItem
 				onClick={() => {
-					console.warn('Following entity not implemented yet', entity);
+					Logger.warn('Following entity not implemented yet', entity);
 				}}
 			>
 				FOLLOW
@@ -76,7 +78,8 @@ export const EntityTextBadge: FunctionComponent<{ entity: Entity }> = ({ entity 
 		</HorizontalLinkList>
 	</>
 );
-export const ActiveEntityOverlay: FunctionComponent<{ entity?: Entity; zoom?: number }> = ({
+
+export const ActiveEntityOverlay: FunctionComponent<{ entity?: EntityI; zoom?: number }> = ({
 	entity,
 	zoom = 4
 }) => (

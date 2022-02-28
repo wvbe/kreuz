@@ -1,65 +1,40 @@
-import { distanceToCameraComparator } from '../space/PERSPECTIVE';
-import { Coordinate, CoordinateLike } from '../classes/Coordinate';
 import { FunctionComponent } from 'react';
+import { distanceToCameraComparator } from '../space/PERSPECTIVE';
+import { TerrainI, TileFilter, TileI } from '../types';
 
-type TileFilter<T extends GenericTile> = (tile: T) => boolean;
-
-/**
- * A special type of coordinate that is equal to another terrain coordinate when the X and Y are equal, disregarding Z.
- */
-export class GenericTile extends Coordinate {
-	public terrain?: GenericTerrain<GenericTile>;
-
-	equals(coord: CoordinateLike) {
-		return this === coord || (coord && this.x === coord.x && this.y === coord.y);
-	}
-
-	static clone(coord: GenericTile) {
-		const coord2 = new GenericTile(coord.x, coord.y, coord.z);
-		coord2.terrain = (coord as GenericTile).terrain;
-		return coord2;
-	}
-
-	isLand() {
-		return this.z >= 0;
-	}
-
-	// For debugging purposes only, may change without notice or tests
-	toString() {
-		return '(' + [this.x, this.y].map((num: number) => num.toFixed(2)).join(',') + ')';
-	}
-}
-
-export abstract class GenericTerrain<T extends GenericTile> {
+export class GenericTerrain implements TerrainI {
 	/**
 	 * Private
 	 */
 
 	//
-	private _tilesInRenderOrder: T[] | null = null;
 
 	/**
 	 * Public, shared code
 	 */
 
-	public readonly tiles: T[] = [];
+	public readonly tiles: TileI[] = [];
 
 	//
-	protected islands: Map<TileFilter<T>, T[][]> = new Map();
 
-	constructor(tiles: T[]) {
+	constructor(tiles: TileI[]) {
 		this.tiles = tiles;
 	}
 
-	//
-	public selectContiguousTiles(start: T, selector: TileFilter<T> = c => c.isLand()): T[] {
-		const island: T[] = [];
-		const seen: T[] = [];
-		const queue: T[] = [start];
+	public selectContiguousTiles(
+		start: TileI,
+		selector: TileFilter<TileI> = c => c.isLand(),
+		inclusive: boolean
+	): TileI[] {
+		const island: TileI[] = [];
+		const seen: TileI[] = [];
+		const queue: TileI[] = [start];
 
 		while (queue.length) {
-			const current = queue.shift() as T;
-			island.push(current);
+			const current = queue.shift() as TileI;
+			if (inclusive || current !== start) {
+				island.push(current);
+			}
 
 			const neighbours = this.getNeighborTiles(current).filter(n => !seen.includes(n));
 			seen.splice(0, 0, current, ...neighbours);
@@ -69,15 +44,17 @@ export abstract class GenericTerrain<T extends GenericTile> {
 	}
 
 	//
-	public selectClosestTiles(start: T, maxDistance: number): T[] {
+	public selectClosestTiles(start: TileI, maxDistance: number): TileI[] {
 		return this.selectContiguousTiles(
 			start,
-			other => other.isLand() && start.euclideanDistanceTo(other) <= maxDistance
+			other => other.isLand() && start.euclideanDistanceTo(other) <= maxDistance,
+			false
 		);
 	}
 
 	//
-	public getIslands(selector: TileFilter<T> = t => t.isLand()): T[][] {
+	protected islands: Map<TileFilter<TileI>, TileI[][]> = new Map();
+	public getIslands(selector: TileFilter<TileI> = t => t.isLand()): TileI[][] {
 		const fromCache = this.islands.get(selector);
 		if (fromCache) {
 			return fromCache;
@@ -86,11 +63,11 @@ export abstract class GenericTerrain<T extends GenericTile> {
 		let open = this.tiles.slice();
 		const islands = [];
 		while (open.length) {
-			const next = open.shift() as T;
+			const next = open.shift() as TileI;
 			if (!selector(next)) {
 				continue;
 			}
-			const island = this.selectContiguousTiles(next, selector);
+			const island = this.selectContiguousTiles(next, selector, true);
 			open = open.filter(n => !island.includes(n));
 			islands.push(island);
 		}
@@ -99,7 +76,7 @@ export abstract class GenericTerrain<T extends GenericTile> {
 		return islands;
 	}
 
-	//
+	private _tilesInRenderOrder: TileI[] | null = null;
 	public getTilesInRenderOrder() {
 		if (!this._tilesInRenderOrder) {
 			this._tilesInRenderOrder = this.tiles.slice().sort(distanceToCameraComparator);
@@ -112,36 +89,38 @@ export abstract class GenericTerrain<T extends GenericTile> {
 	 */
 
 	//
-	public abstract Component: FunctionComponent<GenericTerrainComponentProps<T>> = () => {
+	public Component: TerrainI['Component'] = () => {
 		throw new Error('Not implemented');
 	};
 
 	//
-	public abstract getClosestToXy(x: number, y: number): T;
+	public getTileClosestToXy(x: number, y: number): TileI {
+		throw new Error('Not implemented');
+	}
 
 	//
-	public abstract getNeighborTiles(center: T): T[];
+	public getNeighborTiles(center: TileI): TileI[] {
+		return this.tiles.filter(tile => center.manhattanDistanceTo(tile) === 1);
+	}
 
 	/**
 	 * Statics
 	 */
 
 	//
-	static generateRandom(seed: string, size: number): GenericTerrain<GenericTile> {
+	static generateRandom(seed: string, size: number): GenericTerrain {
 		throw new Error('Not implemented');
 	}
 }
 
-export type GenericTerrainComponentProps<Tile extends GenericTile = GenericTile> = {
+export type GenericTerrainComponentProps<Tile extends TileI> = {
 	onTileClick?: (event: React.MouseEvent<SVGGElement>, tile: Tile) => void;
 	onTileContextMenu?: (event: React.MouseEvent<SVGGElement>, tile: Tile) => void;
 };
 
-export type GenericTerrainComponentI<
-	Terrain extends GenericTerrain<GenericTile> = GenericTerrain<GenericTile>,
-	Tile extends GenericTile = GenericTile
-> = FunctionComponent<
-	{
-		terrain: Terrain;
-	} & GenericTerrainComponentProps<Tile>
->;
+export type GenericTerrainComponentI<Terrain extends TerrainI, Tile extends TileI> =
+	FunctionComponent<
+		{
+			terrain: Terrain;
+		} & GenericTerrainComponentProps<Tile>
+	>;

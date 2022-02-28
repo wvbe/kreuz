@@ -1,17 +1,4 @@
-import { Global } from '@emotion/react';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { HashRouter } from 'react-router-dom';
+import DualMesh from './scenarios/DualMesh';
+// import Cubic from './scenarios/Cubic';
 
-import App from './App';
-import globalStyleRules from './styles';
-
-ReactDOM.render(
-	<React.StrictMode>
-		<Global styles={globalStyleRules} />
-		<HashRouter hashType={'slash'}>
-			<App />
-		</HashRouter>
-	</React.StrictMode>,
-	document.getElementById('root')
-);
+export const scenarios = { DualMesh };

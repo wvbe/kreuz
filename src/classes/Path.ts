@@ -6,18 +6,19 @@
 //   Includes Binary Heap (with modifications) from Marijn Haverbeke.
 //   http://eloquentjavascript.net/appendix2.html
 
-import { BinaryHeap } from '../util/BinaryHeap';
-import { GenericTerrain, GenericTile } from '../terrain/GenericTerrain';
+import { TerrainI, TileI } from '../types';
+import { BinaryHeap } from './BinaryHeap';
+import Logger from './Logger';
 
 // See list of heuristics: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
-type HeuristicScorer = (a: GenericTile, b: GenericTile) => number;
+type HeuristicScorer = (a: TileI, b: TileI) => number;
 
 /**
  * Perform an A* Search on a graph given a start and end node.
  */
 
 type HeuristicReport = {
-	coordinate: GenericTile;
+	coordinate: TileI;
 	h: number;
 	g: number;
 	f: number;
@@ -31,44 +32,24 @@ type PathOptions = {
 	heuristic?: HeuristicScorer;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const MANHATTAN: HeuristicScorer = (pos0, pos1) => {
-	const d1 = Math.abs(pos1.x - pos0.x);
-	const d2 = Math.abs(pos1.y - pos0.y);
-	return d1 + d2;
-};
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const DIAGONAL: HeuristicScorer = (pos0, pos1) => {
-	const D = 1;
-	const D2 = Math.sqrt(2);
-	const d1 = Math.abs(pos1.x - pos0.x);
-	const d2 = Math.abs(pos1.y - pos0.y);
-	return D * (d1 + d2) + (D2 - 2 * D) * Math.min(d1, d2);
-};
-
-function getVisitationCost(
-	terrain: GenericTerrain<GenericTile>,
-	from: GenericTile,
-	neighbor: GenericTile
-) {
+function getVisitationCost(terrain: TerrainI, from: TileI, neighbor: TileI) {
 	return 1;
 }
 
 export class Path {
-	private readonly terrain: GenericTerrain<GenericTile>;
+	private readonly terrain: TerrainI;
 	private readonly options: PathOptions;
-	private readonly cache: Map<GenericTile, HeuristicReport>;
-	private readonly heap: BinaryHeap<GenericTile>;
+	private readonly cache: Map<TileI, HeuristicReport>;
+	private readonly heap: BinaryHeap<TileI>;
 	private readonly heuristic: HeuristicScorer;
 
-	constructor(graph: GenericTerrain<GenericTile>, options: PathOptions) {
+	constructor(graph: TerrainI, options: PathOptions) {
 		this.terrain = graph;
 		this.options = options;
 
-		this.cache = new Map<GenericTile, HeuristicReport>();
+		this.cache = new Map<TileI, HeuristicReport>();
 
-		this.heap = new BinaryHeap<GenericTile>(node => {
+		this.heap = new BinaryHeap<TileI>(node => {
 			const heuristic = this.cache.get(node);
 			if (!heuristic) {
 				throw new Error('This is weird');
@@ -76,10 +57,12 @@ export class Path {
 			return heuristic.f;
 		});
 
-		this.heuristic = DIAGONAL;
+		this.heuristic = (pos0, pos1) => {
+			return pos0.euclideanDistanceTo(pos1);
+		};
 	}
 
-	find(start: GenericTile, end: GenericTile) {
+	public find(start: TileI, end: TileI) {
 		let closestNode = start; // set the start node to be the closest if required
 		let closestNodeHeuristics: HeuristicReport = {
 			coordinate: closestNode,
@@ -177,11 +160,11 @@ export class Path {
 		}
 
 		// No result was found - empty array signifies failure to find path.
-		console.warn('-- No path --');
+		Logger.warn('-- No path --');
 		return [];
 	}
 
-	tracePath(heuristicReport: HeuristicReport) {
+	private tracePath(heuristicReport: HeuristicReport) {
 		let curr = heuristicReport;
 		const path = [];
 		while (curr.parent) {

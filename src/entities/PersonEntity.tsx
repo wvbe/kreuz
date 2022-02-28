@@ -1,35 +1,32 @@
-import { FunctionComponent, useCallback, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import { Path } from '../classes/Path';
-import { GenericTile } from '../terrain/GenericTerrain';
 import { getRandomFemaleFirstName, getRandomMaleFirstName } from '../constants/names';
-import { MovingAnchor } from '../space/Anchor';
-import { Event, useEventListeners } from '../util/Event';
+import { EntityPersonI, TileI } from '../types';
+import { Event } from '../classes/Event';
 import { Entity } from './Entity';
+import Logger from '../classes/Logger';
 
-type OnEntityClick = (event: React.MouseEvent<SVGElement, MouseEvent>) => void;
-
-export class PersonEntity extends Entity {
-	// The event that the person starts walking a path
-	public readonly $startedWalking = new Event<[]>();
-
+export class PersonEntity extends Entity implements EntityPersonI {
 	// The event that the person finishes a path, according to react-spring's timing
 	public readonly $stoppedWalking = new Event<[]>();
 
 	// The person started one step
-	public readonly $startedWalkStep = new Event<[GenericTile]>();
+	public readonly $startedWalkStep = new Event<[TileI]>();
 
 	// The person started finished one step, according to react-spring's timing
-	public readonly $stoppedWalkStep = new Event<[GenericTile]>();
+	public readonly $stoppedWalkStep = new Event<[TileI]>();
 
-	public readonly passport: { firstName: string };
+	protected readonly passport: { firstName: string };
 
-	constructor(id: string, location: GenericTile) {
+	constructor(
+		id: string,
+		location: TileI,
+		passport = {
+			firstName: Math.random() < 0.5 ? getRandomFemaleFirstName() : getRandomMaleFirstName()
+		}
+	) {
 		super(id, location);
-
-		const feminine = Math.random() < 0.5;
-		this.passport = {
-			firstName: feminine ? getRandomFemaleFirstName() : getRandomMaleFirstName()
-		};
+		this.passport = passport;
 
 		// Movement handling
 		this.$stoppedWalkStep.on(loc => {
@@ -38,7 +35,7 @@ export class PersonEntity extends Entity {
 	}
 
 	// Calculate a path and emit animations to walk it the whole way. `this.location` is updated in between each step
-	public walkTo(destination: GenericTile) {
+	public walkTo(destination: TileI) {
 		if (!this.location.terrain) {
 			throw new Error(`Entity "${this.id}" is trying to path in a detached coordinate`);
 		}
@@ -47,12 +44,14 @@ export class PersonEntity extends Entity {
 			destination
 		);
 
-		// console.log(`${this.location}-->${destination}: ${path.length}`);
+		Logger.log(`${this.location}-->${destination}: ${path.length}`);
 
 		if (!path.length) {
-			console.warn('Path was zero steps long, finishing early.', this);
-			this.$stoppedWalking.emit();
-			return;
+			// This should never happen, even if it is harmless.
+			//   this.$stoppedWalking.emit();
+			//   return;
+
+			throw new Error('Path was zero steps long, finishing early.');
 		}
 		const unlisten = this.$stoppedWalkStep.on(() => {
 			const nextStep = path.shift();
@@ -65,13 +64,14 @@ export class PersonEntity extends Entity {
 			}
 		});
 
-		this.doPathStep(path.shift() as GenericTile);
+		this.doPathStep(path.shift() as TileI);
 	}
 	/**
 	 * Move entity directly to a coordinate. Does not consider accessibility or closeness.
 	 */
-	public doPathStep(coordinate: GenericTile) {
+	private doPathStep(coordinate: TileI) {
 		if (coordinate.hasNaN()) {
+			// @TODO remove or throw
 			debugger;
 		}
 		this.$startedWalkStep.emit(coordinate);
@@ -85,40 +85,3 @@ export class PersonEntity extends Entity {
 		return <circle cx={0} cy={0} r="5" fill="white" stroke="black" />;
 	};
 }
-
-/**
- * A component that automatically transitions the entity component as per its move instructions
- */
-export const PersonEntityComponent: FunctionComponent<{
-	entity: PersonEntity;
-	onClick?: OnEntityClick;
-}> = ({ entity, onClick }) => {
-	const [{ destination, duration }, animatePosition] = useState({
-		destination: entity.location,
-		duration: 0
-	});
-
-	useEventListeners(
-		() => [
-			// Listen for the entity moveStart order;
-			entity.$startedWalkStep.on(destination =>
-				animatePosition({
-					destination: destination,
-					duration: entity.location.euclideanDistanceTo(destination) * 500
-				})
-			)
-		],
-		[entity.$startedWalkStep]
-	);
-
-	const onRest = useCallback(
-		() => entity.$stoppedWalkStep.emit(destination),
-		[entity.$stoppedWalkStep, destination]
-	);
-
-	return (
-		<MovingAnchor moveTo={destination} moveSpeed={duration} onRest={onRest} onClick={onClick}>
-			<entity.Component />
-		</MovingAnchor>
-	);
-};

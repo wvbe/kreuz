@@ -1,9 +1,9 @@
 import { FunctionComponent } from 'react';
-import { GenericTile } from '../terrain/GenericTerrain';
-import { Job } from '../jobs/Job';
+import Logger from '../classes/Logger';
+import { EntityI, JobI, TileI } from '../types';
 const noop = () => {};
 
-export class Entity {
+export class Entity implements EntityI {
 	public readonly id: string;
 
 	/**
@@ -14,14 +14,14 @@ export class Entity {
 		return null;
 	};
 
-	public location: GenericTile;
+	public location: TileI;
 
 	/**
 	 * The set of behaviour/tasks given to this entity.
 	 */
-	public job?: Job;
+	public job?: JobI;
 
-	constructor(id: string, location: GenericTile) {
+	constructor(id: string, location: TileI) {
 		this.id = id;
 		this.location = location;
 	}
@@ -34,9 +34,14 @@ export class Entity {
 		return this.job?.start() || noop;
 	}
 
-	public doJob(job: Job) {
+	public doJob(job: JobI) {
 		this.job = job;
 
 		// @TODO maybe some events
+	}
+	public destroy() {
+		Logger.group(`Destroy ${this.constructor.name} ${this.id}`);
+		this.job?.destroy();
+		Logger.groupEnd();
 	}
 }

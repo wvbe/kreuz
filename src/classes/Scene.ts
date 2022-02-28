@@ -1,22 +1,30 @@
-import { Entity } from '../entities/Entity';
-import { GenericTerrain, GenericTile } from '../terrain/GenericTerrain';
+import { EntityI, TerrainI } from '../types';
+import Logger from './Logger';
 
-export class Scene<T extends GenericTerrain<GenericTile> = GenericTerrain<GenericTile>> {
-	public readonly terrain: T;
+export class Scene {
+	public readonly terrain: TerrainI;
 
 	// @TODO change to not readonly, and handle spontaneous changes
-	public readonly entities: Entity[];
+	public readonly entities: EntityI[];
 
 	public readonly seed;
 
-	constructor(seed: string, terrain: T, entities: Entity[]) {
+	constructor(seed: string, terrain: TerrainI, entities: EntityI[]) {
 		this.seed = seed;
 		this.terrain = terrain;
 		this.entities = entities;
 	}
 
 	play() {
-		const destroyers = this.entities.map((entity) => entity.play());
-		return () => destroyers.forEach((d) => d());
+		this.entities.forEach(entity => entity.play());
+		return () => {
+			this.destroy();
+		};
+	}
+
+	destroy() {
+		Logger.group(`Destroy ${this.constructor.name}`);
+		this.entities.forEach(entity => entity.destroy());
+		Logger.groupEnd();
 	}
 }

@@ -1,13 +1,13 @@
-import { CoordinateLike } from '../classes/Coordinate';
+import { CoordinateI } from '../classes/Coordinate';
 
-//        z+,                height
-//        |        __ y+,    depth
+//        z+, height
+//        |        __ y+, depth
 //        |     __/
 //        |  __/
 //    0,0 |_/
 //          \__
 //             \__
-//                \__ x+,    width
+//                \__ x+, width
 
 const BASE_LENGTH = 32;
 
@@ -15,8 +15,28 @@ export type InGameDistance = number;
 export type OnScreenDistance = number;
 export type OnSreenAngle = number;
 
-class Perspective {
-	public readonly degrees: OnSreenAngle;
+interface PerspectiveI {
+	tileSize: OnScreenDistance;
+
+	toPixels(
+		x: InGameDistance,
+		y: InGameDistance,
+		z: InGameDistance
+	): [OnScreenDistance, OnScreenDistance];
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+class TopDownPerspective implements PerspectiveI {
+	tileSize: number = 42;
+	constructor(tileSize: OnScreenDistance) {
+		this.tileSize = tileSize;
+	}
+	toPixels(x: number, y: number, z: number): [number, number] {
+		return [x * this.tileSize, y * this.tileSize];
+	}
+}
+class IsometricPerspective implements PerspectiveI {
+	private readonly degrees: OnSreenAngle;
 	public readonly tileSize: OnScreenDistance;
 
 	private _cos: OnSreenAngle;
@@ -61,13 +81,10 @@ class Perspective {
 	}
 }
 
-export const PERSPECTIVE = new Perspective(30, BASE_LENGTH);
+export const PERSPECTIVE = new IsometricPerspective(30, BASE_LENGTH);
+// export const PERSPECTIVE = new TopDownPerspective(BASE_LENGTH);
 
-export function distanceToCameraComparator(a: CoordinateLike, b: CoordinateLike) {
-	const dZ = b.z - a.z;
-	if (dZ) {
-		return -dZ;
-	}
+export function distanceToCameraComparator(a: CoordinateI, b: CoordinateI) {
 	const dX = b.x - a.x;
 	if (dX) {
 		return -dX;
@@ -76,6 +93,10 @@ export function distanceToCameraComparator(a: CoordinateLike, b: CoordinateLike)
 	const dY = a.y - b.y;
 	if (dY) {
 		return -dY;
+	}
+	const dZ = b.z - a.z;
+	if (dZ) {
+		return -dZ;
 	}
 	return 0;
 }

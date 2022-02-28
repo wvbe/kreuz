@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent, ReactElement, useEffect, useState } from 'react';
-import { CoordinateLike } from '../classes/Coordinate';
-import { useGame } from '../Game';
+import { CoordinateI } from '../classes/Coordinate';
+import { useGame } from '../hooks/game';
 import { ViewportHtmlContainer } from '../space/Viewport';
-import { Event } from '../util/Event';
+import { Event } from '../classes/Event';
 
 /**
  * Presentational components
@@ -68,12 +68,12 @@ export const ContextMenuFooter = styled.button`
 /**
  * Logic
  */
-type ContextManagerState = false | { location: CoordinateLike; contents: ReactElement };
+type ContextManagerState = false | { location: CoordinateI; contents: ReactElement };
 export class ContextMenuManager {
 	public state: ContextManagerState = false;
 	public $changed = new Event<[ContextManagerState]>();
 
-	open(location: CoordinateLike, contents: ReactElement) {
+	open(location: CoordinateI, contents: ReactElement) {
 		this.state = { location, contents };
 		this.$changed.emit(this.state);
 	}

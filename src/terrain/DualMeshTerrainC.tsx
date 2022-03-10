@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { PERSPECTIVE } from '../space/PERSPECTIVE';
+import { perspective } from '../constants/perspective';
 import { color } from '../styles';
 import { TerrainI, TileI } from '../types';
 import { DualMeshTileC } from './DualMeshTileC';
@@ -25,7 +25,7 @@ export const DualMeshTerrainC: TerrainI['Component'] = ({
 					  )
 					: connections;
 			}, [])
-			.map(coords => coords.map(c => PERSPECTIVE.toPixels(c.x, c.y, c.z)))
+			.map(coords => coords.map(c => perspective.toPixels(c.x, c.y, c.z)))
 			.map(([origin, target]) => (
 				<line
 					key={`${origin}x${target}`}

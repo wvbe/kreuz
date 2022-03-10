@@ -6,7 +6,7 @@ import { SimpleCube } from '../space/SimpleCube';
 import { EntityPersonI } from '../types';
 import { PersonEntity } from './PersonEntity';
 
-const zoom = 0.25;
+const zoom = 0.1;
 const translate = zoom / 2;
 const offset = new Coordinate(-translate, -translate, -translate / 2);
 

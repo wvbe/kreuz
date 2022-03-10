@@ -1,4 +1,4 @@
-import { InGameDistance } from '../space/PERSPECTIVE';
+import { InGameDistance } from '../constants/perspective';
 export interface CoordinateI {
 	x: InGameDistance;
 	y: InGameDistance;

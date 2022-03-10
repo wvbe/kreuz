@@ -4,7 +4,7 @@ import React, { FunctionComponent, useMemo } from 'react';
 import { CoordinateArray, CoordinateI } from '../classes/Coordinate';
 import { SvgMouseInteractionProps } from '../types';
 import { LinePath } from './LinePath';
-import { InGameDistance, PERSPECTIVE } from './PERSPECTIVE';
+import { InGameDistance, perspective } from '../constants/perspective';
 
 const Crosshair: FunctionComponent<{ size: InGameDistance }> = ({ size = 4 }) => {
 	const lines: CoordinateArray[][] = [
@@ -39,7 +39,7 @@ export const Anchor: FunctionComponent<
 		crosshairSize?: InGameDistance;
 	} & Partial<CoordinateI>
 > = ({ x = 0, y = 0, z = 0, children, crosshairSize = 0 }) => {
-	const pixels = useMemo(() => PERSPECTIVE.toPixels(x, y, z), [x, y, z]);
+	const pixels = useMemo(() => perspective.toPixels(x, y, z), [x, y, z]);
 
 	return (
 		<svg x={pixels[0]} y={pixels[1]} overflow={'visible'}>
@@ -57,7 +57,7 @@ export const MovingAnchor: FunctionComponent<
 		crosshairSize?: InGameDistance;
 	}
 > = ({ moveTo, moveSpeed, onRest, children, crosshairSize = 0, onClick }) => {
-	const [dx, dy] = useMemo(() => PERSPECTIVE.toPixels(moveTo.x, moveTo.y, moveTo.z), [moveTo]);
+	const [dx, dy] = useMemo(() => perspective.toPixels(moveTo.x, moveTo.y, moveTo.z), [moveTo]);
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const [ix, iy] = useMemo(() => [dx, dy], []);

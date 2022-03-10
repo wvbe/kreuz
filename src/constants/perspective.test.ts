@@ -1,4 +1,4 @@
-import { distanceToCameraComparator } from './PERSPECTIVE';
+import { distanceToCameraComparator } from './perspective';
 
 test('sortCoordinatesByCameraDistance', () => {
 	const sortedCoords = [

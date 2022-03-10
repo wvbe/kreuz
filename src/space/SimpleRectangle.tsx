@@ -3,13 +3,13 @@ import React, { FunctionComponent, useMemo } from 'react';
 import { CoordinateArray } from '../classes/Coordinate';
 import { color } from '../styles';
 import { SvgMouseInteractionProps } from '../types';
-import { InGameDistance, PERSPECTIVE } from './PERSPECTIVE';
+import { InGameDistance, perspective } from '../constants/perspective';
 
 const BORDER_WIDTH = 0;
 
 function coordsToPixels(coords: CoordinateArray[], borderWidth = BORDER_WIDTH) {
 	return coords
-		.map(coordinate => PERSPECTIVE.toPixels(...coordinate))
+		.map(coordinate => perspective.toPixels(...coordinate))
 		.map(cc => cc.map(c => c + borderWidth));
 }
 
@@ -39,7 +39,7 @@ export const SimpleRectangle: FunctionComponent<
 }) => {
 	const { COORDINATE_CLOSEST_TO_CAMERA, BORDER_NODES, XY_NODES, XZ_NODES, YZ_NODES } =
 		useMemo(() => {
-			const COORDINATE_CLOSEST_TO_CAMERA = PERSPECTIVE.toPixels(width, 0, height).map(
+			const COORDINATE_CLOSEST_TO_CAMERA = perspective.toPixels(width, 0, height).map(
 				c => c + BORDER_WIDTH
 			);
 

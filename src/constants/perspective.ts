@@ -9,7 +9,7 @@ import { CoordinateI } from '../classes/Coordinate';
 //             \__
 //                \__ x+, width
 
-const BASE_LENGTH = 32;
+const BASE_LENGTH = 64;
 
 export type InGameDistance = number;
 export type OnScreenDistance = number;
@@ -35,6 +35,7 @@ class TopDownPerspective implements PerspectiveI {
 		return [x * this.tileSize, y * this.tileSize];
 	}
 }
+
 class IsometricPerspective implements PerspectiveI {
 	private readonly degrees: OnSreenAngle;
 	public readonly tileSize: OnScreenDistance;
@@ -81,7 +82,7 @@ class IsometricPerspective implements PerspectiveI {
 	}
 }
 
-export const PERSPECTIVE = new IsometricPerspective(30, BASE_LENGTH);
+export const perspective = new IsometricPerspective(30, BASE_LENGTH);
 // export const PERSPECTIVE = new TopDownPerspective(BASE_LENGTH);
 
 export function distanceToCameraComparator(a: CoordinateI, b: CoordinateI) {

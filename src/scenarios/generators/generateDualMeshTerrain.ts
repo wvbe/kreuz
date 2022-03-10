@@ -22,10 +22,7 @@ export function generateDualMeshTerrain(seed: string, size: number, density: num
 	meshBuilder.points.forEach((p: [number, number]) => poisson.addPoint(p));
 	meshBuilder.points = poisson
 		.fill()
-		.map((xy: [number, number], i: number) => [
-			...xy,
-			(-0.2 + Random.float(seed, ...xy)) * 0.4
-		]);
+		.map((xy: [number, number], i: number) => [...xy, Math.random() < 0.3 ? -0.1 : 0]);
 
 	const mesh = meshBuilder.create();
 	const tiles = (meshBuilder.points as Array<CoordinateArray>)

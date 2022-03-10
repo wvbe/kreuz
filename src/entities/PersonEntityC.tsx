@@ -23,7 +23,7 @@ export const PersonEntityC: FunctionComponent<{
 			destination =>
 				animatePosition({
 					destination,
-					duration: entity.location.euclideanDistanceTo(destination) * 500
+					duration: entity.location.euclideanDistanceTo(destination) * 3000
 				}),
 			[entity.location]
 		),

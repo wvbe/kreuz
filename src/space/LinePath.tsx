@@ -1,7 +1,7 @@
 import React, { FunctionComponent, ReactElement } from 'react';
 import { CoordinateArray } from '../classes/Coordinate';
 
-import { PERSPECTIVE } from './PERSPECTIVE';
+import { perspective } from '../constants/perspective';
 
 const BORDER_WIDTH = 0;
 
@@ -11,7 +11,7 @@ export const LinePath: FunctionComponent<
 	}
 > = ({ path, stroke = 'black', strokeWidth = BORDER_WIDTH }) => {
 	let spatialCoordinates = path
-		.map(coordinate => PERSPECTIVE.toPixels(...coordinate))
+		.map(coordinate => perspective.toPixels(...coordinate))
 		.map(cc => cc.map(c => c + BORDER_WIDTH));
 
 	return (

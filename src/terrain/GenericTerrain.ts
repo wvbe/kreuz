@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'react';
-import { distanceToCameraComparator } from '../space/PERSPECTIVE';
+import { distanceToCameraComparator } from '../constants/perspective';
 import { TerrainI, TileFilter, TileI } from '../types';
 
 export class GenericTerrain implements TerrainI {

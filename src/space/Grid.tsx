@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { PERSPECTIVE } from './PERSPECTIVE';
+import { perspective } from '../constants/perspective';
 import { Anchor } from './Anchor';
 import { Coordinate } from '../classes/Coordinate';
 
@@ -22,8 +22,8 @@ export const FlatGrid: FunctionComponent<
 		<>
 			{[
 				...arrayOfLength(width).map(x => {
-					const start = PERSPECTIVE.toPixels(x * resolution, 0, z);
-					const end = PERSPECTIVE.toPixels(x * resolution, (height - 1) * resolution, z);
+					const start = perspective.toPixels(x * resolution, 0, z);
+					const end = perspective.toPixels(x * resolution, (height - 1) * resolution, z);
 					return (
 						<line
 							key={'x' + x}
@@ -37,8 +37,8 @@ export const FlatGrid: FunctionComponent<
 					);
 				}),
 				...arrayOfLength(height).map(y => {
-					const start = PERSPECTIVE.toPixels(0, y * resolution, z);
-					const end = PERSPECTIVE.toPixels((width - 1) * resolution, y * resolution, z);
+					const start = perspective.toPixels(0, y * resolution, z);
+					const end = perspective.toPixels((width - 1) * resolution, y * resolution, z);
 					return (
 						<line
 							key={'y' + y}
@@ -74,7 +74,7 @@ const DrawHeightGrid: FunctionComponent<{
 							points={arrayOfLength(height)
 								.map(y => {
 									const z = zValues[x * height + y];
-									return PERSPECTIVE.toPixels(
+									return perspective.toPixels(
 										x * resolution,
 										y * resolution,
 										z
@@ -94,7 +94,7 @@ const DrawHeightGrid: FunctionComponent<{
 							points={arrayOfLength(width)
 								.map(x => {
 									const z = zValues[x * height + y];
-									return PERSPECTIVE.toPixels(
+									return perspective.toPixels(
 										x * resolution,
 										y * resolution,
 										z
@@ -130,12 +130,12 @@ const DrawPoints: FunctionComponent<{
 	return (
 		<>
 			{coords.map(coord => {
-				const start = PERSPECTIVE.toPixels(
+				const start = perspective.toPixels(
 					coord.x * resolution,
 					coord.y * resolution,
 					coord.z
 				);
-				const end = PERSPECTIVE.toPixels(coord.x * resolution, coord.y * resolution, 0);
+				const end = perspective.toPixels(coord.x * resolution, coord.y * resolution, 0);
 
 				return [
 					zLineStrokeWidth && (

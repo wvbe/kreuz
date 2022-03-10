@@ -6,6 +6,13 @@ export class Game {
 	public readonly contextMenu = new ContextMenuManager();
 	public readonly scene: Scene;
 
+	/**
+	 * The "randomizer" logic/state
+	 *
+	 * @TODO implement game seed, save and load mechanismus
+	 */
+	public readonly random: unknown;
+
 	constructor(scene: Scene) {
 		this.scene = scene;
 	}

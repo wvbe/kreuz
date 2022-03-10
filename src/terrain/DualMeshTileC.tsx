@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useMemo, useState } from 'react';
-import { PERSPECTIVE } from '../space/PERSPECTIVE';
+import { perspective } from '../constants/perspective';
 import { color } from '../styles';
 import { SvgMouseInteractionProps, TileI } from '../types';
 
@@ -21,7 +21,13 @@ export const DualMeshTileC: FunctionComponent<
 		}
 		const outline = tile.getOutlineCoordinates();
 		const points = [...outline, outline[0]]
-			.map(n => PERSPECTIVE.toPixels(tile.x + n.x, tile.y + n.y, tile.z + n.z).join(','))
+			.map(n =>
+				perspective.toPixels(
+					tile.x + n.x,
+					tile.y + n.y,
+					tile.isLand() ? tile.z + n.z : -0.1
+				).join(',')
+			)
 			.join(' ');
 
 		return <polygon points={points} />;
@@ -42,8 +48,8 @@ export const DualMeshTileC: FunctionComponent<
 			}
 			stroke={tile.isLand() ? TERRAIN_STROKE : TERRAIN_STROKE_WATER}
 			{...svgProps}
-			onMouseEnter={() => setIsHovered(true)}
-			onMouseLeave={() => setIsHovered(false)}
+			onMouseEnter={tile.isLand() ? () => setIsHovered(true) : undefined}
+			onMouseLeave={tile.isLand() ? () => setIsHovered(false) : undefined}
 		>
 			{points}
 		</g>

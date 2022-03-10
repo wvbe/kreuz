@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent, ReactElement, useMemo } from 'react';
 import { CoordinateI } from '../classes/Coordinate';
-import { InGameDistance, PERSPECTIVE } from './PERSPECTIVE';
+import { InGameDistance, perspective } from '../constants/perspective';
 
 // The pythagoras distance (1/sqrt(2)) with a little tweaking for better looks
 const PIXEL_FRIENDLY_PYTHAGORAS = 1 / Math.pow(2, 1 / 2); //0.8;
@@ -43,7 +43,7 @@ export const Viewport: FunctionComponent<ViewportComponentProps> = ({
 }) => {
 	const [translateX, translateY] = useMemo(
 		() =>
-			PERSPECTIVE.toPixels(center.x, center.y, center.z).map(
+			perspective.toPixels(center.x, center.y, center.z).map(
 				(n, i) => mathRoundMaybe(-n) + (i ? 0 : 0.5)
 			),
 		[center]
@@ -119,9 +119,9 @@ export const ViewportHtmlContainer: FunctionComponent<{
 }> = ({ location, zoom = 1, axis, width, height, children }) => {
 	const { x, y, z } = location,
 		// @TODO use css variable to zoom instead of JS
-		[left, top] = PERSPECTIVE.toPixels(x, y, z).map(n => mathRoundMaybe(n * zoom));
+		[left, top] = perspective.toPixels(x, y, z).map(n => mathRoundMaybe(n * zoom));
 	// @TODO use css variable to zoom instead of JS
-	const [pixelWidth] = PERSPECTIVE.toPixels(0, width, height).map(n => mathRoundMaybe(n * zoom));
+	const [pixelWidth] = perspective.toPixels(0, width, height).map(n => mathRoundMaybe(n * zoom));
 	const Axis = /* axis === 'y' ? YAxis : axis === 'x' ? XAxis : axis === 'z' ? ZAxis : */ NoAxis;
 	return (
 		<Axis
@@ -134,7 +134,7 @@ export const ViewportHtmlContainer: FunctionComponent<{
 					'px',
 				height:
 					Math.abs(
-						(height * PERSPECTIVE.tileSize) /
+						(height * perspective.tileSize) /
 							(axis === 'z' ? PIXEL_FRIENDLY_PYTHAGORAS : 1)
 					) + 'px'
 			}}

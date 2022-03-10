@@ -3,7 +3,7 @@ import React, { FunctionComponent } from 'react';
 import { CoordinateArray } from '../classes/Coordinate';
 import { color } from '../styles';
 
-import { PERSPECTIVE } from './PERSPECTIVE';
+import { perspective } from '../constants/perspective';
 
 const BORDER_WIDTH = 1;
 const BORDER_NODES: CoordinateArray[] = [
@@ -13,7 +13,7 @@ const BORDER_NODES: CoordinateArray[] = [
 	[0, 0, 0]
 ];
 
-let spatialCoordinates = BORDER_NODES.map(coordinate => PERSPECTIVE.toPixels(...coordinate)).map(
+let spatialCoordinates = BORDER_NODES.map(coordinate => perspective.toPixels(...coordinate)).map(
 	cc => cc.map(c => c + BORDER_WIDTH)
 );
 

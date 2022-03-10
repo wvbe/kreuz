@@ -3,17 +3,17 @@ import React, { FunctionComponent } from 'react';
 import { CoordinateArray } from '../classes/Coordinate';
 import { color } from '../styles';
 import { SvgMouseInteractionProps } from '../types';
-import { InGameDistance, PERSPECTIVE } from './PERSPECTIVE';
+import { InGameDistance, perspective } from '../constants/perspective';
 
 const BORDER_WIDTH = 0;
 
 function coordsToPixels(coords: CoordinateArray[], borderWidth = BORDER_WIDTH) {
 	return coords
-		.map(coordinate => PERSPECTIVE.toPixels(...coordinate))
+		.map(coordinate => perspective.toPixels(...coordinate))
 		.map(cc => cc.map(c => c + borderWidth));
 }
 
-const COORDINATE_CLOSEST_TO_CAMERA = PERSPECTIVE.toPixels(1, 0, 1).map(c => c + BORDER_WIDTH);
+const COORDINATE_CLOSEST_TO_CAMERA = perspective.toPixels(1, 0, 1).map(c => c + BORDER_WIDTH);
 
 let BORDER_NODES = coordsToPixels([
 	[1, 1, 0], // 0

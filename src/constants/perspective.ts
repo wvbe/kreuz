@@ -1,5 +1,3 @@
-import { CoordinateI } from '../classes/Coordinate';
-
 //        z+, height
 //        |        __ y+, depth
 //        |     __/
@@ -8,6 +6,8 @@ import { CoordinateI } from '../classes/Coordinate';
 //          \__
 //             \__
 //                \__ x+, width
+
+import { CoordinateI } from '../types';
 
 const BASE_LENGTH = 64;
 

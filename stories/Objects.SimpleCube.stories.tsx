@@ -2,9 +2,9 @@ import { Meta, Story } from '@storybook/react';
 import Color from 'color';
 import React from 'react';
 import { Backdrop } from '../src/scenarios/util';
-import { Anchor } from '../src/space/Anchor';
-import { SimpleCube } from '../src/space/SimpleCube';
-import { Viewport } from '../src/space/Viewport';
+import { Anchor } from '../src/rendering/svg/Anchor';
+import { SimpleCube } from '../src/rendering/svg/SimpleCube';
+import { Viewport } from '../src/rendering/svg/Viewport';
 
 const meta: Meta = {
 	title: 'Objects/SimpleCube',

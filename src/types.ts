@@ -1,6 +1,6 @@
 import React, { ComponentType } from 'react';
-import { Coordinate } from './classes/Coordinate';
 import { Event } from './classes/Event';
+import { InGameDistance } from './constants/perspective';
 
 export type SvgMouseInteractionProps = Pick<
 	React.SVGProps<SVGGElement>,
@@ -13,16 +13,30 @@ export type SvgMouseInteractionProps = Pick<
 export type TileFilter<T extends TileI> = (tile: T) => boolean;
 
 /**
+ * A point in space
+ */
+export interface CoordinateI {
+	x: InGameDistance;
+	y: InGameDistance;
+	z: InGameDistance;
+	equals(coord: CoordinateI): boolean;
+	euclideanDistanceTo(x: InGameDistance, y: InGameDistance, z: InGameDistance): InGameDistance;
+	euclideanDistanceTo(coord: CoordinateI): InGameDistance;
+	hasNaN(): boolean;
+	manhattanDistanceTo(coord: CoordinateI): InGameDistance;
+	toString(): string;
+	transform(dx: InGameDistance, dy: InGameDistance, dz: InGameDistance): CoordinateI;
+}
+/**
  * A tile
  */
-export interface TileI extends Coordinate {
+export interface TileI extends CoordinateI {
 	terrain?: TerrainI;
 	equals(other: TileI): boolean;
-
-	isLand(): boolean;
-	isAdjacentToLand(): boolean;
+	getOutlineCoordinates(): CoordinateI[];
 	isAdjacentToEdge(): boolean;
-	getOutlineCoordinates(): Coordinate[];
+	isAdjacentToLand(): boolean;
+	isLand(): boolean;
 }
 
 /**
@@ -41,8 +55,8 @@ export interface TerrainI {
 	 */
 	Component: ComponentType<{
 		terrain: TerrainI;
-		onTileClick?: (event: React.MouseEvent<SVGGElement>, tile: TileI) => void;
-		onTileContextMenu?: (event: React.MouseEvent<SVGGElement>, tile: TileI) => void;
+		onTileClick?: (tile: TileI) => void;
+		onTileContextMenu?: (tile: TileI) => void;
 	}>;
 
 	/**
@@ -83,6 +97,8 @@ export interface TerrainI {
 	 * Get the tiles that are adjacent to another tile.
 	 */
 	getNeighborTiles(center: TileI): TileI[];
+
+	getMedianCoordinate(): CoordinateI;
 }
 
 export interface EntityI {

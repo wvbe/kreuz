@@ -1,7 +1,7 @@
 import React, { FunctionComponent, ReactElement } from 'react';
-import { CoordinateArray } from '../classes/Coordinate';
+import { CoordinateArray } from '../../classes/Coordinate';
 
-import { perspective } from '../constants/perspective';
+import { perspective } from '../../constants/perspective';
 
 const BORDER_WIDTH = 0;
 

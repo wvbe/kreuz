@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useCallback, useState } from 'react';
 import { useEventCallback } from '../hooks/events';
-import { MovingAnchor } from '../space/Anchor';
+import { MovingAnchor } from '../rendering/svg/Anchor';
 import { PersonEntity } from './PersonEntity';
 
 type OnEntityClick = (event: React.MouseEvent<SVGElement, MouseEvent>) => void;

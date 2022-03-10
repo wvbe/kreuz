@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent, ReactElement, useMemo } from 'react';
-import { CoordinateI } from '../classes/Coordinate';
-import { InGameDistance, perspective } from '../constants/perspective';
+import { InGameDistance, perspective } from '../../constants/perspective';
+import { CoordinateI } from '../../types';
 
 // The pythagoras distance (1/sqrt(2)) with a little tweaking for better looks
 const PIXEL_FRIENDLY_PYTHAGORAS = 1 / Math.pow(2, 1 / 2); //0.8;

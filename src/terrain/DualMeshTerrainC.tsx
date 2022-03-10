@@ -49,7 +49,7 @@ export const DualMeshTerrainC: TerrainI['Component'] = ({
 							? event => {
 									event.preventDefault();
 									event.stopPropagation();
-									onTileClick(event, tile);
+									onTileClick(tile);
 							  }
 							: onTileClick
 					}
@@ -57,7 +57,7 @@ export const DualMeshTerrainC: TerrainI['Component'] = ({
 						onTileContextMenu
 							? event => {
 									event.preventDefault();
-									onTileContextMenu(event, tile);
+									onTileContextMenu(tile);
 							  }
 							: onTileContextMenu
 					}

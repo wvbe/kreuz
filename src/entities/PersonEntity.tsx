@@ -47,11 +47,10 @@ export class PersonEntity extends Entity implements EntityPersonI {
 		Logger.log(`${this.location}-->${destination}: ${path.length}`);
 
 		if (!path.length) {
-			// This should never happen, even if it is harmless.
-			//   this.$stoppedWalking.emit();
-			//   return;
-
-			throw new Error('Path was zero steps long, finishing early.');
+			Logger.warn('Path was zero steps long, finishing early.');
+			// debugger;
+			this.$stoppedWalking.emit();
+			return;
 		}
 		const unlisten = this.$stoppedWalkStep.on(() => {
 			const nextStep = path.shift();

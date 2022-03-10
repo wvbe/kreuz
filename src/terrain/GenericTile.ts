@@ -1,5 +1,5 @@
-import { Coordinate, CoordinateI } from '../classes/Coordinate';
-import { TerrainI, TileI } from '../types';
+import { Coordinate } from '../classes/Coordinate';
+import { CoordinateI, TerrainI, TileI } from '../types';
 
 /**
  * A special type of coordinate that is equal to another terrain coordinate when the X and Y are equal, disregarding Z.
@@ -7,7 +7,7 @@ import { TerrainI, TileI } from '../types';
 export class GenericTile extends Coordinate implements TileI {
 	public terrain?: TerrainI;
 
-	equals(coord: CoordinateI) {
+	equals(coord: CoordinateI): boolean {
 		return this === coord || (coord && this.x === coord.x && this.y === coord.y);
 	}
 
@@ -38,7 +38,7 @@ export class GenericTile extends Coordinate implements TileI {
 		}
 		return this.terrain.getNeighborTiles(this).some(neighbor => neighbor.isLand());
 	}
-	getOutlineCoordinates(): Coordinate[] {
+	getOutlineCoordinates(): CoordinateI[] {
 		throw new Error('Not implemented');
 	}
 }

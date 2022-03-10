@@ -1,9 +1,9 @@
 import { Meta, Story } from '@storybook/react';
 import React from 'react';
 import { Backdrop } from '../src/scenarios/util';
-import { Anchor } from '../src/space/Anchor';
-import { SimpleRectangle } from '../src/space/SimpleRectangle';
-import { Viewport } from '../src/space/Viewport';
+import { Anchor } from '../src/rendering/svg/Anchor';
+import { SimpleRectangle } from '../src/rendering/svg/SimpleRectangle';
+import { Viewport } from '../src/rendering/svg/Viewport';
 const meta: Meta = {
 	title: 'Objects/SimpleRectangle',
 	component: SimpleRectangle,

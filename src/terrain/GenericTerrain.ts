@@ -1,4 +1,5 @@
 import { FunctionComponent } from 'react';
+import { Coordinate } from '../classes/Coordinate';
 import { distanceToCameraComparator } from '../constants/perspective';
 import { TerrainI, TileFilter, TileI } from '../types';
 
@@ -95,12 +96,36 @@ export class GenericTerrain implements TerrainI {
 
 	//
 	public getTileClosestToXy(x: number, y: number): TileI {
-		throw new Error('Not implemented');
+		if (!this.tiles.length) {
+			throw new Error('Terrain is empty');
+		}
+		let closestDistance = Infinity;
+		return this.tiles.reduce<TileI>((last, tile) => {
+			const distance = tile.euclideanDistanceTo(x, y, 0);
+			if (distance < closestDistance) {
+				closestDistance = distance;
+				return tile;
+			} else {
+				return last;
+			}
+		}, this.tiles[0]);
 	}
 
 	//
 	public getNeighborTiles(center: TileI): TileI[] {
 		return this.tiles.filter(tile => center.manhattanDistanceTo(tile) === 1);
+	}
+
+	public getMedianCoordinate() {
+		const { x, y, z } = this.tiles.reduce(
+			(totals, tile) => ({
+				x: totals.x + tile.x,
+				y: totals.y + tile.y,
+				z: totals.z + tile.z
+			}),
+			{ x: 0, y: 0, z: 0 }
+		);
+		return new Coordinate(x / this.tiles.length, y / this.tiles.length, z / this.tiles.length);
 	}
 
 	/**

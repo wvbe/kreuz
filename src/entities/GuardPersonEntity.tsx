@@ -1,8 +1,8 @@
 import Color from 'color';
 import React, { FunctionComponent } from 'react';
 import { Coordinate } from '../classes/Coordinate';
-import { Anchor } from '../space/Anchor';
-import { SimpleCube } from '../space/SimpleCube';
+import { Anchor } from '../rendering/svg/Anchor';
+import { SimpleCube } from '../rendering/svg/SimpleCube';
 import { EntityPersonI } from '../types';
 import { PersonEntity } from './PersonEntity';
 

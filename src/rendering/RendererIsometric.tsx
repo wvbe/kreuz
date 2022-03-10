@@ -1,12 +1,40 @@
-import React, { ComponentType, FunctionComponent, useMemo } from 'react';
+import React, { ComponentType, FunctionComponent, useCallback, useEffect, useMemo } from 'react';
 import { PersonEntity } from '../entities/PersonEntity';
 import { PersonEntityC } from '../entities/PersonEntityC';
+import { useEventReducer } from '../hooks/events';
 import { useGame } from '../hooks/game';
 import { DualMeshTerrainC } from '../terrain/DualMeshTerrainC';
 import { EntityPersonI, TileI } from '../types';
-import { ContextMenuContainer } from '../ui/ContextMenu';
-import { Viewport } from './Viewport';
+import { Viewport, ViewportHtmlContainer } from './svg/Viewport';
 
+const ContextMenuContainer: FunctionComponent<{ zoom?: number }> = ({ zoom = 1 }) => {
+	const { contextMenu } = useGame();
+	const managerState = useEventReducer(
+		contextMenu.$changed,
+		useCallback(() => contextMenu.state, [contextMenu]),
+		[]
+	);
+
+	useEffect(() => {
+		const cb = () => {
+			contextMenu.close();
+		};
+
+		window.addEventListener('click', cb);
+		return () => window.removeEventListener('click', cb);
+	}, [contextMenu]);
+
+	if (!managerState) {
+		// The context menu is closed.
+		return null;
+	}
+
+	return (
+		<ViewportHtmlContainer location={managerState.location} width={0} height={0} zoom={zoom}>
+			{managerState.contents}
+		</ViewportHtmlContainer>
+	);
+};
 export const RendererIsometric: FunctionComponent<{
 	onTileClick: (typeof DualMeshTerrainC extends ComponentType<infer P>
 		? P

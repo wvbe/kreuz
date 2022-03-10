@@ -1,9 +1,5 @@
 import { InGameDistance } from '../constants/perspective';
-export interface CoordinateI {
-	x: InGameDistance;
-	y: InGameDistance;
-	z: InGameDistance;
-}
+import { CoordinateI } from '../types';
 
 export type CoordinateArray = [InGameDistance, InGameDistance, InGameDistance];
 
@@ -18,14 +14,14 @@ export class Coordinate implements CoordinateI {
 		this.z = z;
 	}
 
-	equals(coord: CoordinateI) {
+	equals(coord: CoordinateI): boolean {
 		return (
 			this === coord ||
 			(coord && this.x === coord.x && this.y === coord.y && this.z === coord.z)
 		);
 	}
 
-	transform(dx: InGameDistance = 0, dy: InGameDistance = 0, dz: InGameDistance = 0) {
+	transform(dx: InGameDistance, dy: InGameDistance, dz: InGameDistance) {
 		this.x += dx;
 		this.y += dy;
 		this.z += dz;
@@ -41,9 +37,19 @@ export class Coordinate implements CoordinateI {
 		return Math.abs(this.x - coord.x) + Math.abs(this.y - coord.y) + Math.abs(this.z - coord.z);
 	}
 
-	euclideanDistanceTo(coord: CoordinateI) {
-		const xy = Math.sqrt((this.x - coord.x) ** 2 + (this.y - coord.y) ** 2);
-		const xyz = Math.sqrt(xy ** 2 + (this.z - coord.z) ** 2);
+	euclideanDistanceTo(x: number, y: number, z: number): number;
+	euclideanDistanceTo(coord: CoordinateI): number;
+	euclideanDistanceTo(x: number | CoordinateI, y?: number, z?: number) {
+		if (typeof x === 'object') {
+			y = x.y;
+			z = x.z;
+			x = x.x;
+		}
+		if (y === undefined || z === undefined) {
+			throw new Error();
+		}
+		const xy = Math.sqrt((this.x - x) ** 2 + (this.y - y) ** 2);
+		const xyz = Math.sqrt(xy ** 2 + (this.z - z) ** 2);
 		return xyz;
 	}
 

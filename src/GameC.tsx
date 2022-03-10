@@ -1,10 +1,10 @@
-import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
-import Logger from './classes/Logger';
+import React, { FunctionComponent, useCallback, useState } from 'react';
 import { Game } from './Game';
-import { RendererIsometric } from './space/RendererIsometric';
+import { RendererIsometric } from './rendering/RendererIsometric';
+import { RendererThree } from './rendering/RendererThree';
 import { EntityI, TileI } from './types';
 import { ActiveEntityOverlay } from './ui/ActiveEntityOverlay';
-import { ContextMenuButton, ContextMenuFooter } from './ui/ContextMenu';
+import { ContextMenu, ContextMenuButton, ContextMenuFooter } from './ui/ContextMenu';
 import { Overlay } from './ui/Overlay';
 
 function fancyTimeFormat(seconds: number) {
@@ -16,40 +16,33 @@ function fakeCoordinates(x: number, y: number) {
 export const GameC: FunctionComponent<{
 	game: Game;
 	initialViewportCenter: TileI;
-}> = ({ game, initialViewportCenter }) => {
+	asIsometric?: boolean;
+}> = ({ game, initialViewportCenter, asIsometric }) => {
 	const [center, setCenter] = useState(initialViewportCenter);
-	useEffect(() => {
-		const cb = () => {
-			game.contextMenu.close();
-		};
-
-		window.addEventListener('click', cb);
-		return () => window.removeEventListener('click', cb);
-	}, [game.contextMenu]);
 	const onTileClick = useCallback(
-		(event, tile) => {
+		tile => {
 			game.contextMenu.open(
 				tile,
-				<>
+				<ContextMenu>
 					<ContextMenuButton onClick={() => setCenter(tile)}>
 						Center camera
 					</ContextMenuButton>
 					<ContextMenuButton
 						onClick={() => {
-							Logger.group(`Tile ${tile}`);
-							Logger.log(tile);
-							Logger.groupEnd();
+							console.group(`Tile ${tile}`);
+							console.log(tile);
+							console.groupEnd();
 						}}
 					>
 						Show in console
 					</ContextMenuButton>
 					<ContextMenuFooter>{fakeCoordinates(tile.x, tile.y)}</ContextMenuFooter>
-				</>
+				</ContextMenu>
 			);
 		},
 		[game.contextMenu]
 	);
-	const onTileContextMenu = useCallback((event, tile) => {
+	const onTileContextMenu = useCallback(tile => {
 		setCenter(tile);
 	}, []);
 
@@ -61,12 +54,21 @@ export const GameC: FunctionComponent<{
 
 	return (
 		<>
-			<RendererIsometric
-				onTileClick={onTileClick}
-				onTileContextMenu={onTileContextMenu}
-				onEntityClick={onEntityClick}
-				center={center}
-			/>
+			{asIsometric ? (
+				<RendererIsometric
+					onTileClick={onTileClick}
+					onTileContextMenu={onTileContextMenu}
+					onEntityClick={onEntityClick}
+					center={center}
+				/>
+			) : (
+				<RendererThree
+					onTileClick={onTileClick}
+					onTileContextMenu={onTileContextMenu}
+					onEntityClick={onEntityClick}
+					center={center}
+				/>
+			)}
 			<Overlay>
 				<ActiveEntityOverlay entity={activeEntity} />
 				<p style={{ fontSize: '0.8em', opacity: '0.5' }}>

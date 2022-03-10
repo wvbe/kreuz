@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
-import { perspective } from '../constants/perspective';
+import { perspective } from '../../constants/perspective';
 import { Anchor } from './Anchor';
-import { Coordinate } from '../classes/Coordinate';
+import { Coordinate } from '../../classes/Coordinate';
 
 function arrayOfLength(l: number) {
 	const widthArr = [];

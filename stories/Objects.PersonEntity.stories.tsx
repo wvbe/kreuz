@@ -4,7 +4,7 @@ import { CivilianEntity } from '../src/entities/CivilianPersonEntity';
 import { GuardEntity } from '../src/entities/GuardPersonEntity';
 import { PersonEntityC } from '../src/entities/PersonEntityC';
 import { Backdrop } from '../src/scenarios/util';
-import { Viewport } from '../src/space/Viewport';
+import { Viewport } from '../src/rendering/svg/Viewport';
 import { GenericTile } from '../src/terrain/GenericTile';
 
 const meta: Meta = {

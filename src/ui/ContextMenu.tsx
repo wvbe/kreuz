@@ -1,10 +1,5 @@
 import styled from '@emotion/styled';
-import React, { FunctionComponent, ReactElement, useCallback } from 'react';
-import { CoordinateI } from '../classes/Coordinate';
-import { Event } from '../classes/Event';
-import { useEventReducer } from '../hooks/events';
-import { useGame } from '../hooks/game';
-import { ViewportHtmlContainer } from '../space/Viewport';
+import React, { FunctionComponent } from 'react';
 
 /**
  * Presentational components
@@ -52,6 +47,17 @@ export const ContextMenuButton = styled.button`
 	}
 `;
 
+export const ContextMenu: FunctionComponent = ({ children }) => {
+	return (
+		<>
+			<ContextMenuBoundary>
+				<ContextMenuBody>{children}</ContextMenuBody>
+			</ContextMenuBoundary>
+			<ContextMenuArrow />
+		</>
+	);
+};
+
 export const ContextMenuFooter = styled.button`
 	border: none;
 	display: block;
@@ -65,49 +71,3 @@ export const ContextMenuFooter = styled.button`
 	color: white;
 	background-color: ${borderColor};
 `;
-
-/**
- * Logic
- */
-type ContextManagerState = false | { location: CoordinateI; contents: ReactElement };
-export class ContextMenuManager {
-	public state: ContextManagerState = false;
-	public $changed = new Event<[ContextManagerState]>();
-
-	open(location: CoordinateI, contents: ReactElement) {
-		this.state = { location, contents };
-		this.$changed.emit(this.state);
-	}
-
-	isOpen() {
-		return !!this.state;
-	}
-
-	close() {
-		this.state = false;
-		this.$changed.emit(this.state);
-	}
-}
-
-export const ContextMenuContainer: FunctionComponent<{ zoom?: number }> = ({ zoom = 1 }) => {
-	const { contextMenu } = useGame();
-	const managerState = useEventReducer(
-		contextMenu.$changed,
-		useCallback(() => contextMenu.state, [contextMenu]),
-		[]
-	);
-
-	if (!managerState) {
-		// The context menu is closed.
-		return null;
-	}
-
-	return (
-		<ViewportHtmlContainer location={managerState.location} width={0} height={0} zoom={zoom}>
-			<ContextMenuBoundary>
-				<ContextMenuBody>{managerState.contents}</ContextMenuBody>
-			</ContextMenuBoundary>
-			<ContextMenuArrow />
-		</ViewportHtmlContainer>
-	);
-};

@@ -1,9 +1,9 @@
 import Color from 'color';
 import React, { FunctionComponent } from 'react';
-import { CoordinateArray } from '../classes/Coordinate';
-import { color } from '../styles';
+import { CoordinateArray } from '../../classes/Coordinate';
+import { color } from '../../styles';
 
-import { perspective } from '../constants/perspective';
+import { perspective } from '../../constants/perspective';
 
 const BORDER_WIDTH = 1;
 const BORDER_NODES: CoordinateArray[] = [

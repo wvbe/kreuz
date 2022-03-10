@@ -10,6 +10,14 @@ import { generateEntities } from './generators/generateEntities';
 // import nebulaTexture from './textures/water-2.png';
 
 const globalStyleRules = css`
+	html,
+	body,
+	#root {
+		height: 100%;
+		width: 100%;
+		padding: 0;
+		margin: 0;
+	}
 	p {
 		margin: 0;
 	}
@@ -31,7 +39,7 @@ function generateEverything(seed: string = String(Date.now())) {
 	};
 }
 
-function GameRoute() {
+const GameRoute: FunctionComponent<{ asIsometric: boolean }> = ({ asIsometric }) => {
 	const gameApplicationProps = useMemo(() => {
 		return generateEverything();
 	}, []);
@@ -41,15 +49,15 @@ function GameRoute() {
 	}, [gameApplicationProps.game]);
 	return (
 		<GameContext.Provider value={gameApplicationProps.game}>
-			<GameC {...gameApplicationProps} />
+			<GameC {...gameApplicationProps} asIsometric={asIsometric} />
 		</GameContext.Provider>
 	);
-}
+};
 
-const Demo: FunctionComponent = () => (
+const Demo: FunctionComponent<{ asIsometric: boolean }> = ({ asIsometric }) => (
 	<React.StrictMode>
 		<Global styles={globalStyleRules} />
-		<GameRoute />
+		<GameRoute asIsometric={asIsometric} />
 	</React.StrictMode>
 );
 

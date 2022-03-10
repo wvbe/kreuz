@@ -4,13 +4,7 @@ import { scenarios } from '../src/index';
 
 const meta: Meta = {
 	title: 'Demo',
-	argTypes: {
-		children: {
-			control: {
-				type: 'text'
-			}
-		}
-	},
+	component: scenarios.DualMesh,
 	parameters: {
 		controls: { expanded: true }
 	}
@@ -18,6 +12,7 @@ const meta: Meta = {
 
 export default meta;
 
-export const DualMesh: Story<
-	typeof scenarios.DualMesh extends ComponentType<infer P> ? P : unknown
-> = args => <scenarios.DualMesh {...args} />;
+export const SVG: Story<typeof scenarios.DualMesh extends ComponentType<infer P> ? P : unknown> =
+	args => <scenarios.DualMesh {...args} asIsometric={true} />;
+export const THREE: Story<typeof scenarios.DualMesh extends ComponentType<infer P> ? P : unknown> =
+	args => <scenarios.DualMesh {...args} asIsometric={false} />;

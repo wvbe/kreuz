@@ -1,9 +1,9 @@
 import Logger from './classes/Logger';
 import { TerrainI, EntityI } from './types';
-import { ContextMenuManager } from './ui/ContextMenu';
+import { ContextMenuController } from './ui/ContextMenuController';
 
 export class Game {
-	public readonly contextMenu = new ContextMenuManager();
+	public readonly contextMenu = new ContextMenuController();
 
 	/**
 	 * The "randomizer" logic/state

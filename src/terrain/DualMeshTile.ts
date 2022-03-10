@@ -55,7 +55,7 @@ export class DualMeshTile extends GenericTile implements TileI {
 
 					--maxDepth;
 					return item.neighbors.some(n => r(n, maxDepth)) || false;
-				})(this, 4);
+				})(this, 2);
 		}
 		return this._isLand;
 	}

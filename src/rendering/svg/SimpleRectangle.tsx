@@ -1,9 +1,9 @@
 import Color from 'color';
 import React, { FunctionComponent, useMemo } from 'react';
-import { CoordinateArray } from '../classes/Coordinate';
-import { color } from '../styles';
-import { SvgMouseInteractionProps } from '../types';
-import { InGameDistance, perspective } from '../constants/perspective';
+import { CoordinateArray } from '../../classes/Coordinate';
+import { color } from '../../styles';
+import { SvgMouseInteractionProps } from '../../types';
+import { InGameDistance, perspective } from '../../constants/perspective';
 
 const BORDER_WIDTH = 0;
 

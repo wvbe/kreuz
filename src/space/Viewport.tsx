@@ -28,6 +28,20 @@ export const AbsolutelyPositionedContainer = styled.div`
 		left: 0;
 	}
 `;
+const ViewportSvgContainer: FunctionComponent<
+	{
+		zoom?: number;
+	} & React.SVGProps<SVGSVGElement>
+> = ({ zoom = 1, ...rest }) => (
+	<svg
+		width="1px"
+		height="1px"
+		overflow="visible"
+		shapeRendering="geometricPrecision"
+		viewBox={[0, 0, 1 / zoom, 1 / zoom].join(' ')}
+		{...rest}
+	/>
+);
 
 type ViewportComponentProps = {
 	zoom?: number;
@@ -43,9 +57,9 @@ export const Viewport: FunctionComponent<ViewportComponentProps> = ({
 }) => {
 	const [translateX, translateY] = useMemo(
 		() =>
-			perspective.toPixels(center.x, center.y, center.z).map(
-				(n, i) => mathRoundMaybe(-n) + (i ? 0 : 0.5)
-			),
+			perspective
+				.toPixels(center.x, center.y, center.z)
+				.map((n, i) => mathRoundMaybe(-n) + (i ? 0 : 0.5)),
 		[center]
 	);
 
@@ -68,21 +82,6 @@ export const Viewport: FunctionComponent<ViewportComponentProps> = ({
 		</AbsolutelyPositionedContainer>
 	);
 };
-
-export const ViewportSvgContainer: FunctionComponent<
-	{
-		zoom?: number;
-	} & React.SVGProps<SVGSVGElement>
-> = ({ zoom = 1, ...rest }) => (
-	<svg
-		width="1px"
-		height="1px"
-		overflow="visible"
-		shapeRendering="geometricPrecision"
-		viewBox={[0, 0, 1 / zoom, 1 / zoom].join(' ')}
-		{...rest}
-	/>
-);
 
 const NoAxis = styled.div<{ zoom?: number }>`
 	--scale-val: ${({ zoom = 1 }) => zoom};

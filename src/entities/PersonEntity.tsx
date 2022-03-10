@@ -80,7 +80,9 @@ export class PersonEntity extends Entity implements EntityPersonI {
 	public get label(): string {
 		return this.passport.firstName;
 	}
-
+	/**
+	 * @deprecated
+	 */
 	Component: FunctionComponent = () => {
 		return <circle cx={0} cy={0} r="5" fill="white" stroke="black" />;
 	};

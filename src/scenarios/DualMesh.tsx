@@ -1,11 +1,10 @@
 import { css, Global } from '@emotion/react';
 import React, { FunctionComponent, useEffect, useMemo } from 'react';
-import { Scene } from '../classes/Scene';
 import { Game } from '../Game';
-import { generateEntities } from './generators/generateEntities';
+import { GameC } from '../GameC';
 import { GameContext } from '../hooks/game';
 import { generateDualMeshTerrain } from './generators/generateDualMeshTerrain';
-import { GameApplication } from '../ui/GameApplication';
+import { generateEntities } from './generators/generateEntities';
 
 // @TODO restore images some time
 // import nebulaTexture from './textures/water-2.png';
@@ -21,9 +20,8 @@ function generateEverything(seed: string = String(Date.now())) {
 	const density = 1;
 	const terrain = generateDualMeshTerrain(seed, size, density);
 	const entities = generateEntities(seed, terrain);
-	const scene = new Scene(seed, terrain, entities);
-	const game = new Game(scene);
-	const initialViewportCenter = game.scene.terrain.getTileClosestToXy(
+	const game = new Game(seed, terrain, entities);
+	const initialViewportCenter = game.terrain.getTileClosestToXy(
 		Math.floor(size / 2),
 		Math.floor(size / 2)
 	);
@@ -38,12 +36,12 @@ function GameRoute() {
 		return generateEverything();
 	}, []);
 	useEffect(() => {
-		gameApplicationProps.game.scene.play();
+		gameApplicationProps.game.play();
 		return () => gameApplicationProps.game.destroy();
 	}, [gameApplicationProps.game]);
 	return (
 		<GameContext.Provider value={gameApplicationProps.game}>
-			<GameApplication {...gameApplicationProps} />
+			<GameC {...gameApplicationProps} />
 		</GameContext.Provider>
 	);
 }

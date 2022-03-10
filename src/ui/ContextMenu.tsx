@@ -1,9 +1,10 @@
 import styled from '@emotion/styled';
-import React, { FunctionComponent, ReactElement, useEffect, useState } from 'react';
+import React, { FunctionComponent, ReactElement, useCallback } from 'react';
 import { CoordinateI } from '../classes/Coordinate';
+import { Event } from '../classes/Event';
+import { useEventReducer } from '../hooks/events';
 import { useGame } from '../hooks/game';
 import { ViewportHtmlContainer } from '../space/Viewport';
-import { Event } from '../classes/Event';
 
 /**
  * Presentational components
@@ -90,17 +91,17 @@ export class ContextMenuManager {
 
 export const ContextMenuContainer: FunctionComponent<{ zoom?: number }> = ({ zoom = 1 }) => {
 	const { contextMenu } = useGame();
-	const [managerState, setManagerState] = useState(contextMenu?.state);
-	useEffect(() => {
-		if (!contextMenu) {
-			throw new Error('Shit.');
-		}
-		return contextMenu.$changed.on(setManagerState);
-	}, [contextMenu]);
+	const managerState = useEventReducer(
+		contextMenu.$changed,
+		useCallback(() => contextMenu.state, [contextMenu]),
+		[]
+	);
 
 	if (!managerState) {
+		// The context menu is closed.
 		return null;
 	}
+
 	return (
 		<ViewportHtmlContainer location={managerState.location} width={0} height={0} zoom={zoom}>
 			<ContextMenuBoundary>

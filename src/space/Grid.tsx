@@ -74,11 +74,9 @@ const DrawHeightGrid: FunctionComponent<{
 							points={arrayOfLength(height)
 								.map(y => {
 									const z = zValues[x * height + y];
-									return perspective.toPixels(
-										x * resolution,
-										y * resolution,
-										z
-									).join(',');
+									return perspective
+										.toPixels(x * resolution, y * resolution, z)
+										.join(',');
 								})
 								.join(' ')}
 							fill={'none'}
@@ -94,11 +92,9 @@ const DrawHeightGrid: FunctionComponent<{
 							points={arrayOfLength(width)
 								.map(x => {
 									const z = zValues[x * height + y];
-									return perspective.toPixels(
-										x * resolution,
-										y * resolution,
-										z
-									).join(',');
+									return perspective
+										.toPixels(x * resolution, y * resolution, z)
+										.join(',');
 								})
 								.join(' ')}
 							fill={'none'}

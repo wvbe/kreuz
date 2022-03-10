@@ -22,11 +22,9 @@ export const DualMeshTileC: FunctionComponent<
 		const outline = tile.getOutlineCoordinates();
 		const points = [...outline, outline[0]]
 			.map(n =>
-				perspective.toPixels(
-					tile.x + n.x,
-					tile.y + n.y,
-					tile.isLand() ? tile.z + n.z : -0.1
-				).join(',')
+				perspective
+					.toPixels(tile.x + n.x, tile.y + n.y, tile.isLand() ? tile.z + n.z : -0.1)
+					.join(',')
 			)
 			.join(' ');
 

@@ -15,6 +15,9 @@ export class GuardEntity extends PersonEntity implements EntityPersonI {
 		return `Guardsman ${this.passport.firstName}`;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	Component: FunctionComponent = () => {
 		return (
 			<Anchor {...offset}>

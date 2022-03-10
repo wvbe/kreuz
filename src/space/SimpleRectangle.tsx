@@ -39,9 +39,9 @@ export const SimpleRectangle: FunctionComponent<
 }) => {
 	const { COORDINATE_CLOSEST_TO_CAMERA, BORDER_NODES, XY_NODES, XZ_NODES, YZ_NODES } =
 		useMemo(() => {
-			const COORDINATE_CLOSEST_TO_CAMERA = perspective.toPixels(width, 0, height).map(
-				c => c + BORDER_WIDTH
-			);
+			const COORDINATE_CLOSEST_TO_CAMERA = perspective
+				.toPixels(width, 0, height)
+				.map(c => c + BORDER_WIDTH);
 
 			let BORDER_NODES = coordsToPixels([
 				[width, length, 0], // 0

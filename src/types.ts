@@ -36,6 +36,8 @@ export interface TerrainI {
 
 	/**
 	 * The React component for rendering this.
+	 *
+	 * @deprecated This interface should not be tightly coupled with rendering
 	 */
 	Component: ComponentType<{
 		terrain: TerrainI;
@@ -121,6 +123,8 @@ export interface EntityI {
 
 	/**
 	 * The React component for rendering this.
+	 *
+	 * @deprecated This interface should not be tightly coupled with rendering
 	 */
 	Component: ComponentType<{
 		[key: string]: never;

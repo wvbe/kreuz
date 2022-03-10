@@ -1,10 +1,9 @@
 import Logger from './classes/Logger';
-import { Scene } from './classes/Scene';
+import { TerrainI, EntityI } from './types';
 import { ContextMenuManager } from './ui/ContextMenu';
 
 export class Game {
 	public readonly contextMenu = new ContextMenuManager();
-	public readonly scene: Scene;
 
 	/**
 	 * The "randomizer" logic/state
@@ -13,12 +12,28 @@ export class Game {
 	 */
 	public readonly random: unknown;
 
-	constructor(scene: Scene) {
-		this.scene = scene;
+	public readonly terrain: TerrainI;
+
+	// @TODO change to not readonly, and handle spontaneous changes
+	public readonly entities: EntityI[];
+
+	public readonly seed;
+	constructor(seed: string, terrain: TerrainI, entities: EntityI[]) {
+		this.seed = seed;
+		this.terrain = terrain;
+		this.entities = entities;
 	}
+
+	play() {
+		this.entities.forEach(entity => entity.play());
+		return () => {
+			this.destroy();
+		};
+	}
+
 	destroy() {
 		Logger.group(`Destroy ${this.constructor.name}`);
-		this.scene.destroy();
+		this.entities.forEach(entity => entity.destroy());
 		Logger.groupEnd();
 	}
 }

@@ -5,6 +5,8 @@ import { EntityPersonI, TileI } from '../types';
 import { Event } from '../classes/Event';
 import { Entity } from './Entity';
 import Logger from '../classes/Logger';
+import Color from 'color';
+import { activePalette } from '../constants/palettes';
 
 export class PersonEntity extends Entity implements EntityPersonI {
 	// The event that the person finishes a path, according to react-spring's timing
@@ -83,6 +85,14 @@ export class PersonEntity extends Entity implements EntityPersonI {
 	 * @deprecated
 	 */
 	Component: FunctionComponent = () => {
-		return <circle cx={0} cy={0} r="5" fill="white" stroke="black" />;
+		return (
+			<circle
+				cx={0}
+				cy={0}
+				r="5"
+				fill={Color(activePalette.light).toString()}
+				stroke={Color(activePalette.darkest).toString()}
+			/>
+		);
 	};
 }

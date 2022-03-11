@@ -1,6 +1,6 @@
 import React, { ComponentType } from 'react';
 import { Event } from './classes/Event';
-import { InGameDistance } from './constants/perspective';
+import { InGameDistance } from './rendering/svg/perspective';
 
 export type SvgMouseInteractionProps = Pick<
 	React.SVGProps<SVGGElement>,
@@ -177,3 +177,5 @@ export interface JobI {
 	start(): void;
 	destroy(): void;
 }
+
+export type SeedI = string | number | boolean;

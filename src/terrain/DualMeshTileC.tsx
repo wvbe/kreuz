@@ -1,13 +1,14 @@
+import Color from 'color';
 import React, { FunctionComponent, useMemo, useState } from 'react';
-import { perspective } from '../constants/perspective';
-import { color } from '../styles';
+import { activePalette } from '../constants/palettes';
+import { perspective } from '../rendering/svg/perspective';
 import { SvgMouseInteractionProps, TileI } from '../types';
 
-const TERRAIN_FILL = color.terrain.string();
-const TERRAIN_FILL_HIGHLIGHTED = color.beach.string();
+const TERRAIN_FILL = Color(activePalette.medium).toString(); //color.terrain.string();
+const TERRAIN_FILL_HIGHLIGHTED = Color(activePalette.light).toString();
 const TERRAIN_FILL_WATER = 'transparent';
-const TERRAIN_STROKE = color.terrainStroke.string();
-const TERRAIN_STROKE_WATER = color.terrainStroke.opaquer(-0.8).string();
+const TERRAIN_STROKE = Color(activePalette.darkest).toString(); // color.terrainStroke.string();
+const TERRAIN_STROKE_WATER = Color(activePalette.dark - 0x111111).toString(); //color.terrainStroke.opaquer(-0.8).string();
 
 export const DualMeshTileC: FunctionComponent<
 	SvgMouseInteractionProps & {

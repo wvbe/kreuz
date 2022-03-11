@@ -4,8 +4,9 @@ import { DualMeshTerrain } from '../../terrain/DualMeshTerrain';
 import { CoordinateArray } from '../../classes/Coordinate';
 import { Random } from '../../classes/Random';
 import { DualMeshTile } from '../../terrain/DualMeshTile';
+import { SeedI } from '../../types';
 
-export function generateDualMeshTerrain(seed: string, size: number, density: number = 1) {
+export function generateDualMeshTerrain(seed: SeedI, size: number, density: number = 1) {
 	// Use @redblobgames/dual-mesh to generate tiles and relationships.
 	// More information:
 	// - https://redblobgames.github.io/dual-mesh/
@@ -16,13 +17,14 @@ export function generateDualMeshTerrain(seed: string, size: number, density: num
 			shape: [size, size],
 			minDistance: 1 / density
 		},
-		() => Random.float(`${seed}/${++i}`)
+		() => Random.float(seed, ++i)
 	);
 	const meshBuilder = new MeshBuilder({ boundarySpacing: 1 });
 	meshBuilder.points.forEach((p: [number, number]) => poisson.addPoint(p));
-	meshBuilder.points = poisson
-		.fill()
-		.map((xy: [number, number], i: number) => [...xy, Math.random() < 0.3 ? -0.1 : 0]);
+	meshBuilder.points = poisson.fill().map((xy: [number, number], i: number) => {
+		const z = (Random.float(seed, 'poisson', i) - 0.3) * 2; // < 0.3 ? -0.1 : 0
+		return [...xy, z > 0 ? z * 0.25 : z];
+	});
 
 	const mesh = meshBuilder.create();
 	const tiles = (meshBuilder.points as Array<CoordinateArray>)
@@ -46,7 +48,7 @@ export function generateDualMeshTerrain(seed: string, size: number, density: num
 		})
 		.filter(Boolean);
 
-	const terrain = new DualMeshTerrain(tiles);
+	const terrain = new DualMeshTerrain(size, tiles);
 
 	return terrain;
 }

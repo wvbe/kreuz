@@ -4,7 +4,7 @@ import React, { FunctionComponent, useMemo } from 'react';
 import { CoordinateArray } from '../../classes/Coordinate';
 import { CoordinateI, SvgMouseInteractionProps } from '../../types';
 import { LinePath } from './LinePath';
-import { InGameDistance, perspective } from '../../constants/perspective';
+import { InGameDistance, perspective } from './perspective';
 
 const Crosshair: FunctionComponent<{ size: InGameDistance }> = ({ size = 4 }) => {
 	const lines: CoordinateArray[][] = [

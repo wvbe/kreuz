@@ -5,8 +5,11 @@ import { DualMeshTile } from './DualMeshTile';
 import { GenericTerrain } from './GenericTerrain';
 
 export class DualMeshTerrain extends GenericTerrain implements TerrainI {
-	constructor(tiles: TileI[]) {
+	public size: number;
+
+	constructor(size: number, tiles: TileI[]) {
 		super(tiles);
+		this.size = size;
 		// this.mesh = mesh;
 		this.tiles.forEach((coordinate, i) => {
 			coordinate.terrain = this;

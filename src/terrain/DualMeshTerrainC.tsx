@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { perspective } from '../constants/perspective';
+import { perspective } from '../rendering/svg/perspective';
 import { color } from '../styles';
 import { TerrainI, TileI } from '../types';
 import { DualMeshTileC } from './DualMeshTileC';

@@ -8,7 +8,7 @@ import React, {
 	useState
 } from 'react';
 import Logger from '../classes/Logger';
-import { terrainColors } from '../constants/palettes';
+import { activePalette } from '../constants/palettes';
 import { useEventReducer } from '../hooks/events';
 import { useGame } from '../hooks/game';
 import { DualMeshTerrainC } from '../terrain/DualMeshTerrainC';
@@ -29,9 +29,9 @@ export const RendererThree: FunctionComponent<{
 	onTileContextMenu: (typeof DualMeshTerrainC extends ComponentType<infer P>
 		? P
 		: never)['onTileContextMenu'];
-	onEntityClick: (event: unknown, entity: EntityPersonI) => void;
+	onEntityClick: (entity: EntityPersonI) => void;
 	center: TileI;
-}> = ({ onTileClick, center }) => {
+}> = ({ onTileClick, onEntityClick, center }) => {
 	const game = useGame();
 	const mounted = useRef(false);
 	const [controller, setController] = useState<ThreeController | null>(null);
@@ -49,36 +49,34 @@ export const RendererThree: FunctionComponent<{
 
 			Logger.group('Start ThreeJS');
 			const three = new ThreeController(element, {
-				backgroundColor: terrainColors.dark,
+				backgroundColor: activePalette.dark,
 				fieldOfView: 45
 			});
-			three.initForGame(game);
+			three.createGamePopulation(game);
 			three.startAnimationLoop();
 			Logger.groupEnd();
 
-			const destroyers: (() => void)[] = [
-				three.$click.on(intersections => {
-					if (!onTileClick) {
-						return;
-					}
-					const tiles = intersections
-						.filter(intersection => intersection.object.type === 'Mesh')
-						.map(intersection =>
-							three.tilesByMesh.get(intersection.object as THREE.Mesh)
-						)
-						.filter((tile): tile is TileI => Boolean(tile));
-					if (tiles.length !== 1) {
+			const destroyers: (undefined | (() => void))[] = [
+				onEntityClick &&
+					three.$clickEntity.on((event, entity) => {
+						event.preventDefault();
+						onEntityClick(entity);
 						game.contextMenu.close();
-					} else {
-						onTileClick(tiles[0]);
-					}
+					}),
+				onTileClick &&
+					three.$clickTile.on((event, tile) => {
+						event.preventDefault();
+						onTileClick(tile);
+					}),
+				three.$click.on(() => {
+					game.contextMenu.close();
 				})
 			];
 
 			setController(three);
-			return () => destroyers.forEach(d => d());
+			return () => destroyers.forEach(d => d && d());
 		},
-		[game, onTileClick]
+		[game, onTileClick, onEntityClick]
 	);
 
 	useEffect(() => {

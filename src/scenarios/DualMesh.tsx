@@ -3,6 +3,7 @@ import React, { FunctionComponent, useEffect, useMemo } from 'react';
 import { Game } from '../Game';
 import { GameC } from '../GameC';
 import { GameContext } from '../hooks/game';
+import { SeedI } from '../types';
 import { generateDualMeshTerrain } from './generators/generateDualMeshTerrain';
 import { generateEntities } from './generators/generateEntities';
 
@@ -23,8 +24,8 @@ const globalStyleRules = css`
 	}
 `;
 
-function generateEverything(seed: string = String(Date.now())) {
-	const size = 24;
+function generateEverything(seed: SeedI = String(Date.now())) {
+	const size = 40;
 	const density = 1;
 	const terrain = generateDualMeshTerrain(seed, size, density);
 	const entities = generateEntities(seed, terrain);
@@ -39,10 +40,13 @@ function generateEverything(seed: string = String(Date.now())) {
 	};
 }
 
-const GameRoute: FunctionComponent<{ asIsometric: boolean }> = ({ asIsometric }) => {
+const GameRoute: FunctionComponent<{ asIsometric: boolean; seed?: SeedI }> = ({
+	asIsometric,
+	seed
+}) => {
 	const gameApplicationProps = useMemo(() => {
-		return generateEverything();
-	}, []);
+		return generateEverything(seed);
+	}, [seed]);
 	useEffect(() => {
 		gameApplicationProps.game.play();
 		return () => gameApplicationProps.game.destroy();
@@ -54,10 +58,10 @@ const GameRoute: FunctionComponent<{ asIsometric: boolean }> = ({ asIsometric })
 	);
 };
 
-const Demo: FunctionComponent<{ asIsometric: boolean }> = ({ asIsometric }) => (
+const Demo: FunctionComponent<{ asIsometric: boolean; seed?: SeedI }> = ({ asIsometric, seed }) => (
 	<React.StrictMode>
 		<Global styles={globalStyleRules} />
-		<GameRoute asIsometric={asIsometric} />
+		<GameRoute asIsometric={asIsometric} seed={seed} />
 	</React.StrictMode>
 );
 

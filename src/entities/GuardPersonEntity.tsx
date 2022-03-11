@@ -1,12 +1,13 @@
 import Color from 'color';
 import React, { FunctionComponent } from 'react';
 import { Coordinate } from '../classes/Coordinate';
+import { activePalette } from '../constants/palettes';
 import { Anchor } from '../rendering/svg/Anchor';
 import { SimpleCube } from '../rendering/svg/SimpleCube';
 import { EntityPersonI } from '../types';
 import { PersonEntity } from './PersonEntity';
 
-const zoom = 0.1;
+const zoom = 0.2;
 const translate = zoom / 2;
 const offset = new Coordinate(-translate, -translate, -translate / 2);
 
@@ -23,9 +24,9 @@ export class GuardEntity extends PersonEntity implements EntityPersonI {
 			<Anchor {...offset}>
 				<SimpleCube
 					size={zoom}
-					fill={Color('#227d5e')}
-					stroke={Color('#227d5e').mix(Color('#000'), 0.3)}
-					innerStroke={Color('#227d5e').mix(Color('#fff'), 0.3)}
+					fill={Color(activePalette.light)}
+					stroke={Color(activePalette.darkest)}
+					innerStroke={null}
 				/>
 			</Anchor>
 		);

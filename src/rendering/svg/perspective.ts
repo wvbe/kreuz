@@ -7,9 +7,9 @@
 //             \__
 //                \__ x+, width
 
-import { CoordinateI } from '../types';
+import { CoordinateI } from '../../types';
 
-const BASE_LENGTH = 64;
+const BASE_LENGTH = 32;
 
 export type InGameDistance = number;
 export type OnScreenDistance = number;

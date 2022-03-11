@@ -1,8 +1,15 @@
 import styled from '@emotion/styled';
 
-export const Backdrop = styled.div<{ height?: number }>`
+export const Backdrop = styled.div<{ height?: number | string; padding?: number | string }>`
 	position: relative;
-	height: ${({ height = 180 }) => `${height}px`};
+	height: ${({ height }) =>
+		height === undefined
+			? 'auto'
+			: typeof height === 'number'
+			? `${height}px`
+			: String(height)};
+	padding: ${({ padding = '2em' }) =>
+		typeof padding === 'number' ? `${padding}px` : String(padding)};
 	background-image: linear-gradient(
 		45deg,
 		rgba(255, 255, 255, 0.02) 25%,
@@ -15,4 +22,5 @@ export const Backdrop = styled.div<{ height?: number }>`
 	);
 	background-size: 56.57px 56.57px;
 	margin-bottom: 1em;
+	box-sizing: border-box;
 `;

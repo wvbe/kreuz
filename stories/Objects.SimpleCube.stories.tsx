@@ -1,7 +1,7 @@
 import { Meta, Story } from '@storybook/react';
 import Color from 'color';
 import React from 'react';
-import { Backdrop } from '../src/scenarios/util';
+import { Backdrop } from './util';
 import { Anchor } from '../src/rendering/svg/Anchor';
 import { SimpleCube } from '../src/rendering/svg/SimpleCube';
 import { Viewport } from '../src/rendering/svg/Viewport';
@@ -18,7 +18,7 @@ const meta: Meta = {
 export default meta;
 
 export const differentColors: Story = args => (
-	<Backdrop>
+	<Backdrop height={360}>
 		<Viewport zoom={1} center={{ x: 0.5, y: 0.5, z: 0.5 }}>
 			<Anchor x={-2} y={-2} z={0}>
 				<SimpleCube />
@@ -37,7 +37,7 @@ export const differentColors: Story = args => (
 );
 
 export const differentSizes: Story = args => (
-	<Backdrop>
+	<Backdrop height={360}>
 		<Viewport center={{ x: 5, y: 0, z: 0.5 }}>
 			<Anchor x={0} y={0} z={0}>
 				<SimpleCube size={0.1} />
@@ -56,7 +56,7 @@ export const differentSizes: Story = args => (
 );
 
 export const adjacentBoxes: Story = args => (
-	<Backdrop>
+	<Backdrop height={360}>
 		<Viewport center={{ x: 1, y: 0, z: 0.5 }}>
 			<Anchor x={0} y={0} z={0}>
 				<SimpleCube />

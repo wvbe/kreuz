@@ -1,4 +1,4 @@
-import { Coordinate } from '../classes/Coordinate';
+import { Coordinate } from '../../classes/Coordinate';
 import { distanceToCameraComparator } from './perspective';
 
 test('sortCoordinatesByCameraDistance', () => {

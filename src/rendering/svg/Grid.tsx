@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { perspective } from '../../constants/perspective';
+import { perspective } from './perspective';
 import { Anchor } from './Anchor';
 import { Coordinate } from '../../classes/Coordinate';
 

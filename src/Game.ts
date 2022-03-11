@@ -1,5 +1,5 @@
 import Logger from './classes/Logger';
-import { TerrainI, EntityI } from './types';
+import { TerrainI, EntityI, SeedI } from './types';
 import { ContextMenuController } from './ui/ContextMenuController';
 
 export class Game {
@@ -8,7 +8,7 @@ export class Game {
 	/**
 	 * The "randomizer" logic/state
 	 *
-	 * @TODO implement game seed, save and load mechanismus
+	 * @deprecated not working yet.
 	 */
 	public readonly random: unknown;
 
@@ -18,10 +18,12 @@ export class Game {
 	public readonly entities: EntityI[];
 
 	public readonly seed;
-	constructor(seed: string, terrain: TerrainI, entities: EntityI[]) {
+	constructor(seed: SeedI, terrain: TerrainI, entities: EntityI[]) {
 		this.seed = seed;
 		this.terrain = terrain;
 		this.entities = entities;
+
+		console.log('New game with seed: ' + this.seed, this);
 	}
 
 	play() {

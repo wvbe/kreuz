@@ -1,5 +1,8 @@
 import Color from 'color';
 
+/**
+ * @deprecated use `activePalette` instead
+ */
 export const color: Record<string, Color> = {};
 color.background = Color('#cde1fc');
 color.white = Color('#fff');

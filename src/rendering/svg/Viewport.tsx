@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent, ReactElement, useMemo } from 'react';
-import { InGameDistance, perspective } from '../../constants/perspective';
+import { InGameDistance, perspective } from './perspective';
 import { CoordinateI } from '../../types';
 
 // The pythagoras distance (1/sqrt(2)) with a little tweaking for better looks

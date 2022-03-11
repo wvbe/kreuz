@@ -1,16 +1,16 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent } from 'react';
+import { activeUiPalette } from '../constants/palettes';
 
 /**
  * Presentational components
  */
-const borderColor = `rgba(0,0, 0, 0.5)`;
 const ContextMenuArrow = styled.div`
 	width: 0;
 	height: 0;
 	border-left: 6px solid transparent;
 	border-right: 6px solid transparent;
-	border-top: 6px solid ${borderColor};
+	border-top: 6px solid ${activeUiPalette.dark};
 	transform: translate(calc(-50% + 0px), -6px);
 `;
 
@@ -23,9 +23,8 @@ const ContextMenuBoundary = styled.div`
 `;
 
 const ContextMenuBody = styled.div`
-	border: 1px solid ${borderColor};
-	background-color: rgba(0, 0, 0, 0.4);
-	border-radius: 3px;
+	/* border: 1px solid ${activeUiPalette.dark}; */
+	/* border-radius: 3px; */
 	overflow: hidden;
 `;
 
@@ -40,9 +39,10 @@ export const ContextMenuButton = styled.button`
 	white-space: nowrap;
 	transition: background-color 0.5s;
 	color: white;
-	background-color: transparent;
+	background-color: ${activeUiPalette.medium};
+	border-top: 1px solid rgba(0, 0, 0, 0.2);
 	&:hover {
-		background-color: ${borderColor};
+		background-color: ${activeUiPalette.dark};
 		cursor: pointer;
 	}
 `;
@@ -69,5 +69,5 @@ export const ContextMenuFooter = styled.button`
 	white-space: nowrap;
 	transition: background-color 0.5s;
 	color: white;
-	background-color: ${borderColor};
+	background-color: ${activeUiPalette.dark};
 `;

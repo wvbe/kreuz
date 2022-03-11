@@ -13,7 +13,6 @@ const ActiveEntityOverlayBoundary = styled.div`
 const ActiveEntityOverlayBody = styled.div`
 	border: 1px solid ${borderColor};
 	background-color: rgba(0, 0, 0, 0.4);
-	border-radius: 3px;
 	padding: 1em;
 	display: flex;
 	flex-direction: row;

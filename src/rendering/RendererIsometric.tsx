@@ -42,7 +42,7 @@ export const RendererIsometric: FunctionComponent<{
 	onTileContextMenu: (typeof DualMeshTerrainC extends ComponentType<infer P>
 		? P
 		: never)['onTileContextMenu'];
-	onEntityClick: (event: unknown, entity: EntityPersonI) => void;
+	onEntityClick: (entity: EntityPersonI) => void;
 	center: TileI;
 }> = ({ onTileClick, onTileContextMenu, onEntityClick, center }) => {
 	const game = useGame();
@@ -67,8 +67,8 @@ export const RendererIsometric: FunctionComponent<{
 						entity={entity}
 						onClick={
 							onEntityClick
-								? event => {
-										onEntityClick(event, entity);
+								? () => {
+										onEntityClick(entity);
 								  }
 								: onEntityClick
 						}

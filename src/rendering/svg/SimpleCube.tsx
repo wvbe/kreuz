@@ -3,7 +3,7 @@ import React, { FunctionComponent } from 'react';
 import { CoordinateArray } from '../../classes/Coordinate';
 import { color } from '../../styles';
 import { SvgMouseInteractionProps } from '../../types';
-import { InGameDistance, perspective } from '../../constants/perspective';
+import { InGameDistance, perspective } from './perspective';
 
 const BORDER_WIDTH = 0;
 

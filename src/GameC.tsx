@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import React, { FunctionComponent, useCallback, useState } from 'react';
 import { Game } from './Game';
 import { RendererIsometric } from './rendering/RendererIsometric';
@@ -7,12 +8,16 @@ import { ActiveEntityOverlay } from './ui/ActiveEntityOverlay';
 import { ContextMenu, ContextMenuButton, ContextMenuFooter } from './ui/ContextMenu';
 import { Overlay } from './ui/Overlay';
 
-function fancyTimeFormat(seconds: number) {
-	return `${~~((seconds % 3600) / 60)}′ ${Math.floor(seconds % 60)}″`;
-}
-function fakeCoordinates(x: number, y: number) {
-	return `40° ${fancyTimeFormat(1000 - x * 13)} N 79° ${fancyTimeFormat(700 - y * 13)} W`;
-}
+// https://color.adobe.com/Fresh-flat-bright-color-theme-8718197
+const AxisX = styled.span`
+	color: #ff4639;
+`;
+const AxisY = styled.span`
+	color: #51a2ff;
+`;
+const AxisZ = styled.span`
+	color: #ffdd41;
+`;
 export const GameC: FunctionComponent<{
 	game: Game;
 	initialViewportCenter: TileI;
@@ -20,7 +25,7 @@ export const GameC: FunctionComponent<{
 }> = ({ game, initialViewportCenter, asIsometric }) => {
 	const [center, setCenter] = useState(initialViewportCenter);
 	const onTileClick = useCallback(
-		tile => {
+		(tile: TileI) => {
 			game.contextMenu.open(
 				tile,
 				<ContextMenu>
@@ -36,19 +41,25 @@ export const GameC: FunctionComponent<{
 					>
 						Show in console
 					</ContextMenuButton>
-					<ContextMenuFooter>{fakeCoordinates(tile.x, tile.y)}</ContextMenuFooter>
+					<ContextMenuFooter>
+						<AxisX>{tile.x.toFixed(2)}</AxisX>
+						{', '}
+						<AxisY>{tile.y.toFixed(2)}</AxisY>
+						{', '}
+						<AxisZ>{tile.z.toFixed(2)}</AxisZ>
+					</ContextMenuFooter>
 				</ContextMenu>
 			);
 		},
 		[game.contextMenu]
 	);
+
 	const onTileContextMenu = useCallback(tile => {
 		setCenter(tile);
 	}, []);
 
 	const [activeEntity, setActiveEntity] = useState<EntityI | undefined>(undefined);
-	const onEntityClick = useCallback((event, entity) => {
-		event.preventDefault();
+	const onEntityClick = useCallback(entity => {
 		setActiveEntity(entity);
 	}, []);
 

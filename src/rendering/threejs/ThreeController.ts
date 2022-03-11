@@ -1,11 +1,13 @@
 import * as THREE from 'three';
 import { Vector2 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { Coordinate } from '../../classes/Coordinate';
 import { Event } from '../../classes/Event';
-import { terrainColors } from '../../constants/palettes';
+import { activePalette } from '../../constants/palettes';
 import { GuardEntity } from '../../entities/GuardPersonEntity';
 import { Game } from '../../Game';
-import { CoordinateI, TileI } from '../../types';
+import { DualMeshTerrain } from '../../terrain/DualMeshTerrain';
+import { CoordinateI, EntityPersonI, TileI } from '../../types';
 import { convertCoordinate } from './utils';
 
 type ThreeControllerOptions = {
@@ -30,12 +32,6 @@ export class ThreeController {
 	raycaster: THREE.Raycaster;
 
 	/**
-	 * Maps meshes to the tiles they belong to. Useful for calculating which tile was clicked, if
-	 * raycasting determines the click intersects with a mesh
-	 */
-	tilesByMesh = new WeakMap<THREE.Mesh, TileI>();
-
-	/**
 	 * The event that the viewport is resized
 	 */
 	$resize = new Event('viewport resize');
@@ -49,16 +45,19 @@ export class ThreeController {
 	/**
 	 * The event that the ThreeJS canvas is clicked. Event data is an array of all objects that
 	 * intersect with the click.
+	 *
+	 * Not fired if the event is a $clickEntity or $clickTile.
 	 */
-	$click = new Event<[THREE.Intersection[]]>('left mouse button');
-	// $contextMenu = new Event<[MouseEvent]>('right mouse button');
+	$click = new Event<[MouseEvent, THREE.Intersection[]]>('clicked nothing in particular');
+	$clickEntity = new Event<[MouseEvent, EntityPersonI]>('clicked an entity');
+	$clickTile = new Event<[MouseEvent, TileI]>('clicked a tile');
 
 	public constructor(root: HTMLElement, options: ThreeControllerOptions) {
 		this.root = root;
 
 		// https://threejs.org/docs/#api/en/scenes/Scene
 		this.scene = new THREE.Scene();
-		this.scene.background = new THREE.Color(terrainColors.dark);
+		this.scene.background = new THREE.Color(activePalette.dark);
 
 		// https://threejs.org/docs/#api/en/renderers/WebGLRenderer
 		this.renderer = new THREE.WebGLRenderer({
@@ -99,7 +98,7 @@ export class ThreeController {
 				this.renderer.setSize(width, height);
 			});
 		}
-		this.camera.position.set(20, 20, 20);
+		this.camera.position.set(-20, 40, -20);
 		this.$resize.emit();
 
 		// Set the camera controls;
@@ -112,7 +111,9 @@ export class ThreeController {
 
 		// Add an axis helper;
 		const axesHelper = new THREE.AxesHelper(10);
-		axesHelper.layers.enableAll();
+		axesHelper.position.x = -1;
+		axesHelper.position.y = -1;
+		axesHelper.position.z = -1;
 		this.scene.add(axesHelper);
 
 		// https://threejs.org/docs/#api/en/core/Raycaster
@@ -122,18 +123,31 @@ export class ThreeController {
 		root.appendChild(this.renderer.domElement);
 		window.addEventListener('resize', this.$resize.emit.bind(this.$resize));
 		this.controls.addEventListener('change', this.$camera.emit.bind(this.$camera));
-		this.root.addEventListener('click', event => {
-			// https://stackoverflow.com/questions/12800150/
-			event.preventDefault();
-			this.raycaster.setFromCamera(
-				new Vector2(
-					(event.offsetX / this.root.clientWidth) * 2 - 1,
-					-(event.offsetY / this.root.clientHeight) * 2 + 1
-				),
-				this.camera
-			);
-			this.$click.emit(this.raycaster.intersectObjects(this.scene.children, true));
-		});
+		this.root.addEventListener('click', this.handleClick.bind(this));
+	}
+
+	private handleClick(event: MouseEvent) {
+		// https://stackoverflow.com/questions/12800150/
+		this.raycaster.setFromCamera(
+			new Vector2(
+				(event.offsetX / this.root.clientWidth) * 2 - 1,
+				-(event.offsetY / this.root.clientHeight) * 2 + 1
+			),
+			this.camera
+		);
+		const intersections = this.raycaster.intersectObjects(this.scene.children, true);
+		for (let i = 0; i < intersections.length; i++) {
+			const userData = intersections[i].object.userData;
+			if (userData.tile) {
+				return this.$clickTile.emit(event, userData.tile);
+			}
+			if (userData.entity) {
+				return this.$clickEntity.emit(event, userData.entity);
+			}
+		}
+
+		// If click wasn't anything more specific, trigger a normal click event and include all intersections.
+		this.$click.emit(event, intersections);
 	}
 
 	private getViewportSize() {
@@ -150,88 +164,103 @@ export class ThreeController {
 		this.controls.target = convertCoordinate(coordinate);
 	}
 
-	public initForGame(game: Game) {
+	private createGroupForGameEntities(game: Game, _options: { wireframe: boolean }) {
+		var group = new THREE.Group();
+		game.entities.forEach(entity => {
+			if (!entity.location) {
+				return;
+			}
+			const location = Coordinate.clone(entity.location).transform(0, 0, 0.175);
+			const geometry =
+				entity instanceof GuardEntity
+					? new THREE.IcosahedronGeometry(0.2)
+					: new THREE.TetrahedronGeometry(0.2);
+			const material = new THREE.MeshBasicMaterial({
+				color: activePalette.light
+			});
+			const mesh = new THREE.Mesh(geometry, material);
+			mesh.position.copy(convertCoordinate(location));
+			mesh.userData.entity = entity;
+			group.add(mesh);
+
+			const edges = new THREE.EdgesGeometry(geometry);
+			const line = new THREE.LineSegments(
+				edges,
+				new THREE.LineBasicMaterial({
+					color: activePalette.darkest,
+					linewidth: 1
+				})
+			);
+			line.position.copy(convertCoordinate(location));
+			group.add(line);
+		});
+
+		return group;
+	}
+	private createGroupForGameTerrain(game: Game, options: { fill: boolean; edge: boolean }) {
+		var group = new THREE.Group();
+
+		const loop = game.terrain.tiles
+			.filter(t => t.isLand())
+			.map((tile: TileI) => {
+				const outline = tile
+					.getOutlineCoordinates()
+					.map(coord => new THREE.Vector2(tile.x + coord.x, -tile.y - coord.y));
+				const geometry = new THREE.ShapeGeometry(new THREE.Shape(outline));
+				geometry.translate(0, 0, tile.z);
+				return {
+					tile,
+					geometry
+				};
+			});
+
+		if (options.fill) {
+			const material = new THREE.MeshBasicMaterial({
+				color: activePalette.medium
+				// wireframe: true
+			});
+			loop.forEach(({ geometry, tile }) => {
+				const mesh = new THREE.Mesh(geometry, material);
+				mesh.userData.tile = tile;
+				group.add(mesh);
+			});
+		}
+
+		if (options.edge) {
+			const material = new THREE.LineBasicMaterial({
+				color: activePalette.darkest,
+				linewidth: 1
+			});
+			loop.forEach(({ geometry }) => {
+				const edges = new THREE.EdgesGeometry(geometry);
+				const line = new THREE.LineSegments(edges, material);
+				group.add(line);
+			});
+		}
+
+		group.rotateX(-Math.PI / 2);
+		return group;
+	}
+
+	public createGamePopulation(game: Game) {
+		const group = new THREE.Group();
+		group.add(this.createGroupForGameTerrain(game, { fill: true, edge: true }));
+		group.add(this.createGroupForGameEntities(game, { wireframe: false }));
+
+		const gameSize = (game.terrain as DualMeshTerrain).size;
+		// https://threejs.org/docs/#api/en/helpers/GridHelper
+		const gridHelper = new THREE.GridHelper(
+			gameSize,
+			gameSize,
+			activePalette.medium,
+			activePalette.medium
+		);
+		gridHelper.position.add(new THREE.Vector3(gameSize / 2, 0, gameSize / 2));
+		group.add(gridHelper);
+
+		this.scene.add(group);
+
 		this.setCameraFocus(game.terrain.getMedianCoordinate());
-
-		// Render tile polygons;
-		this.scene.add(
-			((options: { fill: boolean; edge: boolean }) => {
-				var group = new THREE.Group();
-
-				const loop = game.terrain.tiles
-					.filter(t => t.isLand())
-					.map((tile: TileI) => {
-						const shape = new THREE.Shape(
-							tile
-								.getOutlineCoordinates()
-								.map(coord => new THREE.Vector2(tile.x + coord.x, tile.y + coord.y))
-						);
-						const geometry = new THREE.ShapeGeometry(shape);
-						return {
-							tile,
-							geometry
-						};
-					});
-
-				if (options.fill) {
-					const material = new THREE.MeshBasicMaterial({
-						color: terrainColors.medium
-					});
-					loop.forEach(({ geometry, tile }) => {
-						const mesh = new THREE.Mesh(geometry, material);
-						group.add(mesh);
-						this.tilesByMesh.set(mesh, tile);
-					});
-				}
-
-				if (options.edge) {
-					const material = new THREE.LineBasicMaterial({
-						color: terrainColors.darkest,
-						linewidth: 1
-					});
-					loop.forEach(({ geometry }) => {
-						const edges = new THREE.EdgesGeometry(geometry);
-						const line = new THREE.LineSegments(edges, material);
-						group.add(line);
-					});
-				}
-
-				group.rotateX(-Math.PI / 2);
-				return group;
-			})({ fill: true, edge: true })
-		);
-
-		// Render entities;
-		this.scene.add(
-			(function createEntitiesGroup(options: { wireframe: boolean }) {
-				var group = new THREE.Group();
-				game.entities.forEach(entity => {
-					if (!entity.location) {
-						return;
-					}
-					const geometry =
-						entity instanceof GuardEntity
-							? new THREE.IcosahedronGeometry(0.2)
-							: new THREE.TetrahedronGeometry(0.2);
-					const material = new THREE.MeshBasicMaterial({
-						color: terrainColors.light
-					});
-					const mesh = new THREE.Mesh(geometry, material);
-					mesh.position.copy(convertCoordinate(entity.location)).setY(0.2);
-					group.add(mesh);
-
-					const edges = new THREE.EdgesGeometry(geometry);
-					const line = new THREE.LineSegments(
-						edges,
-						new THREE.LineBasicMaterial({ color: terrainColors.darkest, linewidth: 1 })
-					);
-					line.position.copy(convertCoordinate(entity.location)).setY(0.2);
-					group.add(line);
-				});
-
-				return group;
-			})({ wireframe: false })
-		);
 	}
 
 	private renderOnce() {
@@ -260,7 +289,6 @@ export class ThreeController {
 	}
 
 	openHtmlOverlay(coordinate: CoordinateI, element: HTMLElement) {
-		// Mount DOM
 		this.root.appendChild(element);
 
 		// Compute normalized device coordinate and CSS positioning

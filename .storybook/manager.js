@@ -9,10 +9,10 @@ addons.setConfig({
 	showNav: true,
 	showPanel: false,
 	panelPosition: 'bottom',
-	enableShortcuts: true,
+	enableShortcuts: false,
 	isToolshown: true,
 	theme: create({
-		base: 'light',
+		base: 'dark',
 		brandTitle: 'Kreuzzeug im Nagelhosen',
 		brandUrl: 'https://github.com/wvbe/kreuzzeug-im-nagelhosen',
 		brandImage: false

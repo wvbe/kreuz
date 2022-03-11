@@ -3,7 +3,7 @@ import React, { FunctionComponent } from 'react';
 import { CoordinateArray } from '../../classes/Coordinate';
 import { color } from '../../styles';
 
-import { perspective } from '../../constants/perspective';
+import { perspective } from './perspective';
 
 const BORDER_WIDTH = 1;
 const BORDER_NODES: CoordinateArray[] = [

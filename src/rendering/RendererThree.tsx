@@ -11,7 +11,7 @@ import Logger from '../classes/Logger';
 import { activePalette } from '../constants/palettes';
 import { useEventReducer } from '../hooks/events';
 import { useGame } from '../hooks/game';
-import { DualMeshTerrainC } from '../terrain/DualMeshTerrainC';
+import { DualMeshTerrainC } from './svg/DualMeshTerrainC';
 import { EntityPersonI, TileI } from '../types';
 import { ThreeController } from './threejs/ThreeController';
 import { OverlayC } from './threejs/ThreeOverlay';
@@ -56,25 +56,35 @@ export const RendererThree: FunctionComponent<{
 			three.startAnimationLoop();
 			Logger.groupEnd();
 
-			const destroyers: (undefined | (() => void))[] = [
-				onEntityClick &&
+			if (onEntityClick) {
+				three.$dispose.once(
 					three.$clickEntity.on((event, entity) => {
 						event.preventDefault();
 						onEntityClick(entity);
 						game.contextMenu.close();
-					}),
-				onTileClick &&
+					})
+				);
+			}
+			if (onTileClick) {
+				three.$dispose.once(
 					three.$clickTile.on((event, tile) => {
 						event.preventDefault();
 						onTileClick(tile);
-					}),
+					})
+				);
+			}
+			three.$dispose.once(
 				three.$click.on(() => {
 					game.contextMenu.close();
 				})
-			];
+			);
 
 			setController(three);
-			return () => destroyers.forEach(d => d && d());
+
+			game.$destroy.once(three.dispose.bind(three));
+			return () => {
+				three.dispose();
+			};
 		},
 		[game, onTileClick, onEntityClick]
 	);

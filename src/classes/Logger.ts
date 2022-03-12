@@ -1,4 +1,4 @@
-const enabled = false;
+const enabled = true;
 export default enabled
 	? class LoggerEnabled {
 			static log(...data: Parameters<typeof console.log>) {
@@ -22,6 +22,7 @@ export default enabled
 			static groupCollapsed(...data: Parameters<typeof console.groupCollapsed>) {
 				console.groupCollapsed(...data);
 			}
+
 			static groupEnd(...data: Parameters<typeof console.groupEnd>) {
 				console.groupEnd(...data);
 			}

@@ -1,5 +1,5 @@
-import Logger from './classes/Logger';
-import { TerrainI, EntityI, SeedI } from './types';
+import { Event } from './classes/Event';
+import { EntityI, SeedI, TerrainI } from './types';
 import { ContextMenuController } from './ui/ContextMenuController';
 
 export class Game {
@@ -18,12 +18,14 @@ export class Game {
 	public readonly entities: EntityI[];
 
 	public readonly seed;
+
+	public readonly $destroy = new Event('Game#$destroy');
 	constructor(seed: SeedI, terrain: TerrainI, entities: EntityI[]) {
 		this.seed = seed;
 		this.terrain = terrain;
 		this.entities = entities;
 
-		console.log('New game with seed: ' + this.seed, this);
+		this.$destroy.on(() => this.entities.forEach(entity => entity.destroy()));
 	}
 
 	play() {
@@ -34,8 +36,6 @@ export class Game {
 	}
 
 	destroy() {
-		Logger.group(`Destroy ${this.constructor.name}`);
-		this.entities.forEach(entity => entity.destroy());
-		Logger.groupEnd();
+		this.$destroy.emit();
 	}
 }

@@ -30,7 +30,6 @@ const Avatar = styled.div`
 const HorizontalLinkList = styled.nav`
 	display: flex;
 	flex-direction: row;
-	font-size: 60%;
 	text-transform: uppercase;
 `;
 const HorizontalLinkListItem = styled.a`

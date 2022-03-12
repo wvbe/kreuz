@@ -1,8 +1,9 @@
+import Color from 'color';
 import React, { useMemo } from 'react';
-import { perspective } from '../rendering/svg/perspective';
-import { color } from '../styles';
-import { TerrainI, TileI } from '../types';
+import { activePalette } from '../../constants/palettes';
+import { TerrainI, TileI } from '../../types';
 import { DualMeshTileC } from './DualMeshTileC';
+import { perspective } from './perspective';
 
 export const DualMeshTerrainC: TerrainI['Component'] = ({
 	terrain,
@@ -25,6 +26,7 @@ export const DualMeshTerrainC: TerrainI['Component'] = ({
 					  )
 					: connections;
 			}, [])
+
 			.map(coords => coords.map(c => perspective.toPixels(c.x, c.y, c.z)))
 			.map(([origin, target]) => (
 				<line
@@ -33,7 +35,7 @@ export const DualMeshTerrainC: TerrainI['Component'] = ({
 					y1={origin[1]}
 					x2={target[0]}
 					y2={target[1]}
-					stroke={color.terrainStroke.opaquer(-0.6).string()}
+					stroke={Color(activePalette.light).toString()}
 					strokeDasharray="3"
 				/>
 			));

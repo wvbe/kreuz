@@ -10,6 +10,7 @@ export class Event<Args extends unknown[] = []> {
 
 	on(callback: (...args: Args) => void): () => void {
 		const cancel = () => {
+			// console.log('Destroy Event#on');
 			this.callbacks.splice(this.callbacks.indexOf(callback), 1);
 		};
 		this.callbacks.push(callback);
@@ -22,6 +23,7 @@ export class Event<Args extends unknown[] = []> {
 			cancel();
 		};
 		const cancel = () => {
+			// console.log('Destroy Event#once');
 			this.callbacks.splice(this.callbacks.indexOf(run), 1);
 		};
 		this.callbacks.push(run);
@@ -31,7 +33,7 @@ export class Event<Args extends unknown[] = []> {
 	emit(...args: Args) {
 		if (this.name && process.env.NODE_ENV !== 'test') {
 			// For debugging purposes only
-			Logger.group(`Event "${this.name}"`);
+			Logger.group(`🔔 ${this.name}`);
 		}
 		this.callbacks.forEach(cb => cb(...args));
 		if (this.name && process.env.NODE_ENV !== 'test') {
@@ -42,6 +44,7 @@ export class Event<Args extends unknown[] = []> {
 	static onAny(callback: () => void, events: Event[]) {
 		const destroyers = events.map(event => event.on(callback));
 		const destroy = () => {
+			// console.log('Destroy Event.onAny');
 			destroyers.forEach(destroy => destroy());
 		};
 		return destroy;
@@ -50,6 +53,7 @@ export class Event<Args extends unknown[] = []> {
 	static onceFirst(callback: () => void, events: Event[]) {
 		const destroyers: (() => void)[] = [];
 		const destroy = () => {
+			// console.log('Destroy Event.onceFirst');
 			destroyers.forEach(destroy => destroy());
 		};
 		const cb = () => {
@@ -63,6 +67,7 @@ export class Event<Args extends unknown[] = []> {
 	}
 
 	clear() {
+		// console.log('Event#clear on "' + this.name + '"');
 		this.callbacks = [];
 	}
 }

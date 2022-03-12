@@ -3,7 +3,7 @@ import { PersonEntity } from '../entities/PersonEntity';
 import { PersonEntityC } from '../entities/PersonEntityC';
 import { useEventReducer } from '../hooks/events';
 import { useGame } from '../hooks/game';
-import { DualMeshTerrainC } from '../terrain/DualMeshTerrainC';
+import { DualMeshTerrainC } from './svg/DualMeshTerrainC';
 import { EntityPersonI, TileI } from '../types';
 import { Viewport, ViewportHtmlContainer } from './svg/Viewport';
 

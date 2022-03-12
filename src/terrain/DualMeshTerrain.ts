@@ -1,6 +1,6 @@
 import { Coordinate } from '../classes/Coordinate';
 import { TerrainI, TileI } from '../types';
-import { DualMeshTerrainC } from './DualMeshTerrainC';
+import { DualMeshTerrainC } from '../rendering/svg/DualMeshTerrainC';
 import { DualMeshTile } from './DualMeshTile';
 import { GenericTerrain } from './GenericTerrain';
 

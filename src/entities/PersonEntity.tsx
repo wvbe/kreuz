@@ -46,8 +46,6 @@ export class PersonEntity extends Entity implements EntityPersonI {
 			destination
 		);
 
-		Logger.log(`${this.location}-->${destination}: ${path.length}`);
-
 		if (!path.length) {
 			Logger.warn('Path was zero steps long, finishing early.');
 			// debugger;

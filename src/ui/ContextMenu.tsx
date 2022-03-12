@@ -28,23 +28,11 @@ const ContextMenuBody = styled.div`
 	overflow: hidden;
 `;
 
+// Additional styles apply on <button>
+// @see src/ui/GlobalStyles.tsx
 export const ContextMenuButton = styled.button`
-	border: none;
 	display: block;
 	width: 100%;
-	box-sizing: border-box;
-
-	// Same as HorizontalLinkListItem
-	padding: 0.5em 1em;
-	white-space: nowrap;
-	transition: background-color 0.5s;
-	color: white;
-	background-color: ${activeUiPalette.medium};
-	border-top: 1px solid rgba(0, 0, 0, 0.2);
-	&:hover {
-		background-color: ${activeUiPalette.dark};
-		cursor: pointer;
-	}
 `;
 
 export const ContextMenu: FunctionComponent = ({ children }) => {
@@ -58,7 +46,7 @@ export const ContextMenu: FunctionComponent = ({ children }) => {
 	);
 };
 
-export const ContextMenuFooter = styled.button`
+export const ContextMenuFooter = styled.div`
 	border: none;
 	display: block;
 	width: 100%;

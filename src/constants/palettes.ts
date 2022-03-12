@@ -1,3 +1,5 @@
+import Color from 'color';
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const marineColors = {
 	/*
@@ -32,5 +34,8 @@ export const activeUiPalette = {
 	dark: 'rgba(0,0,0,0.6)',
 	medium: 'rgba(0,0,0,0.4)',
 	light: 'rgba(0,0,0,0.2)',
-	lightest: 'rgba(0,0,0,0.1)'
+	lightest: 'rgba(0,0,0,0.1)',
+
+	hyperlink: Color(activePalette.light).toString(),
+	text: Color(activePalette.lightest).toString()
 };

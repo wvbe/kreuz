@@ -1,8 +1,8 @@
 import Color from 'color';
 import React, { FunctionComponent, useMemo, useState } from 'react';
-import { activePalette } from '../constants/palettes';
-import { perspective } from '../rendering/svg/perspective';
-import { SvgMouseInteractionProps, TileI } from '../types';
+import { activePalette } from '../../constants/palettes';
+import { perspective } from './perspective';
+import { SvgMouseInteractionProps, TileI } from '../../types';
 
 const TERRAIN_FILL = Color(activePalette.medium).toString(); //color.terrain.string();
 const TERRAIN_FILL_HIGHLIGHTED = Color(activePalette.light).toString();

@@ -1,5 +1,4 @@
 import { FunctionComponent } from 'react';
-import Logger from '../classes/Logger';
 import { EntityI, JobI, TileI } from '../types';
 const noop = () => {};
 
@@ -40,8 +39,6 @@ export class Entity implements EntityI {
 		// @TODO maybe some events
 	}
 	public destroy() {
-		Logger.group(`Destroy ${this.constructor.name} ${this.id}`);
 		this.job?.destroy();
-		Logger.groupEnd();
 	}
 }

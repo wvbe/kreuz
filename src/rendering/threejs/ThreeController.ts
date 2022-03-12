@@ -34,13 +34,18 @@ export class ThreeController {
 	/**
 	 * The event that the viewport is resized
 	 */
-	$resize = new Event('viewport resize');
+	$dispose = new Event('ThreeController#$dispose');
+
+	/**
+	 * The event that the viewport is resized
+	 */
+	$resize = new Event();
 
 	/**
 	 * The event that the camera moves, or as ThreeJS puts it:
 	 *   "Fires when the camera has been transformed by the controls.""
 	 */
-	$camera = new Event('camera move');
+	$camera = new Event();
 
 	/**
 	 * The event that the ThreeJS canvas is clicked. Event data is an array of all objects that
@@ -48,11 +53,19 @@ export class ThreeController {
 	 *
 	 * Not fired if the event is a $clickEntity or $clickTile.
 	 */
-	$click = new Event<[MouseEvent, THREE.Intersection[]]>('clicked nothing in particular');
-	$clickEntity = new Event<[MouseEvent, EntityPersonI]>('clicked an entity');
-	$clickTile = new Event<[MouseEvent, TileI]>('clicked a tile');
+	$clickEntity = new Event<[MouseEvent, EntityPersonI]>('ThreeController#$clickEntity');
+	$clickTile = new Event<[MouseEvent, TileI]>('ThreeController#$clickTile');
+	$click = new Event<[MouseEvent, THREE.Intersection[]]>('ThreeController#$click');
 
 	public constructor(root: HTMLElement, options: ThreeControllerOptions) {
+		this.$dispose.on(() => {
+			this.$camera.clear();
+			this.$click.clear();
+			this.$clickEntity.clear();
+			this.$clickTile.clear();
+			this.$resize.clear();
+		});
+
 		this.root = root;
 
 		// https://threejs.org/docs/#api/en/scenes/Scene
@@ -98,7 +111,6 @@ export class ThreeController {
 				this.renderer.setSize(width, height);
 			});
 		}
-		this.camera.position.set(-20, 40, -20);
 		this.$resize.emit();
 
 		// Set the camera controls;
@@ -108,6 +120,7 @@ export class ThreeController {
 		this.controls.enableZoom = true;
 		this.controls.enableDamping = true;
 		this.controls.dampingFactor = 0.1;
+		this.$dispose.once(this.controls.dispose.bind(this.controls));
 
 		// Add an axis helper;
 		const axesHelper = new THREE.AxesHelper(10);
@@ -122,8 +135,16 @@ export class ThreeController {
 		// Mount the goddamn thing
 		root.appendChild(this.renderer.domElement);
 		window.addEventListener('resize', this.$resize.emit.bind(this.$resize));
-		this.controls.addEventListener('change', this.$camera.emit.bind(this.$camera));
-		this.root.addEventListener('click', this.handleClick.bind(this));
+
+		const handleCameraChange = this.$camera.emit.bind(this.$camera);
+		this.controls.addEventListener('change', handleCameraChange);
+		this.$dispose.once(() => this.controls.removeEventListener('change', handleCameraChange));
+
+		const handleClick = this.handleClick.bind(this);
+		this.root.addEventListener('click', handleClick);
+		this.$dispose.once(() => {
+			this.root.removeEventListener('click', handleClick);
+		});
 	}
 
 	private handleClick(event: MouseEvent) {
@@ -260,6 +281,8 @@ export class ThreeController {
 
 		this.scene.add(group);
 
+		const camPosition = convertCoordinate({ x: 0, y: gameSize, z: 0 });
+		this.camera.position.set(camPosition.x, camPosition.y, camPosition.z);
 		this.setCameraFocus(game.terrain.getMedianCoordinate());
 	}
 
@@ -318,22 +341,7 @@ export class ThreeController {
 		};
 	}
 
-	/*
-		MATERIALS
-	*/
-	// private materials: { [name: string]: THREE.Material } = {};
-	// private getMaterial(name: string): THREE.Material {
-	// 	const item = this.materials[name];
-	// 	if (!item) {
-	// 		throw new Error(`No such material: "${name}"`);
-	// 	}
-	// 	return item;
-	// }
-	// private setMaterial(name: string, material: THREE.Material) {
-	// 	this.materials[name] = material;
-	// }
-	// private removeMaterial(name: string): void {
-	// 	const item = this.getMaterial(name);
-	// 	// @TODO
-	// }
+	public dispose() {
+		this.$dispose.emit();
+	}
 }

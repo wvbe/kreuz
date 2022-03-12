@@ -1,7 +1,8 @@
 import React, { FunctionComponent } from 'react';
 import { Game } from './Game';
 import { useEventReducer } from './hooks/events';
-import { RendererThree } from './rendering/RendererThree';
+import { RendererMain } from './rendering/RendererMain';
+import { EntityI } from './types';
 import { ActiveEntityOverlay } from './ui/ActiveEntityOverlay';
 import { Overlay } from './ui/Overlay';
 
@@ -12,9 +13,9 @@ export const GameC: FunctionComponent<{
 
 	return (
 		<>
-			<RendererThree />
+			<RendererMain />
 			<Overlay>
-				<ActiveEntityOverlay entity={focusedItem} />
+				<ActiveEntityOverlay entity={focusedItem as EntityI} />
 				<p style={{ fontSize: '0.8em', opacity: '0.5' }}>
 					<a
 						href="https://github.com/wvbe/kreuzzeug-im-nagelhosen"

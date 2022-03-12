@@ -4,33 +4,36 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Coordinate } from '../../classes/Coordinate';
 import { Event } from '../../classes/Event';
 import { activePalette } from '../../constants/palettes';
-import { GuardEntity } from '../../entities/GuardPersonEntity';
 import { Game } from '../../Game';
 import { DualMeshTerrain } from '../../terrain/DualMeshTerrain';
-import { CoordinateI, TileI, ViewI } from '../../types';
-import { ViewController } from '../ViewController';
+import { CoordinateI, EntityPersonI, TileI, ViewI } from '../../types';
+import { createEntityObject } from './entities';
 import { convertCoordinate } from './utils';
 
 type ThreeControllerOptions = {
-	backgroundColor: number;
 	/**
 	 * Set to `Infinity` for isometric view, or a value between 45 and 70 for a normal-ish camera
 	 */
 	fieldOfView: number;
+
+	enableAutoRotate: boolean;
+	enablePan: boolean;
+	enableZoom: boolean;
+	restrictCameraAngle: boolean;
 };
 
-export class ThreeController extends ViewController implements ViewI {
+export class ThreeController implements ViewI {
 	public animating: boolean = false;
 
 	/**
 	 * The element into which the ThreeJS canvas as well as any overlay elements are placed
 	 */
-	private root: HTMLElement;
-	private scene: THREE.Scene;
-	private renderer: THREE.Renderer;
-	private camera: THREE.Camera;
-	private controls: OrbitControls;
-	private raycaster: THREE.Raycaster;
+	public root: HTMLElement;
+	public scene: THREE.Scene;
+	public renderer: THREE.Renderer;
+	public camera: THREE.Camera;
+	public controls: OrbitControls;
+	public raycaster: THREE.Raycaster;
 
 	/**
 	 * @deprecated Not currently in use
@@ -48,28 +51,51 @@ export class ThreeController extends ViewController implements ViewI {
 	public readonly $resize = new Event();
 
 	/**
+	 * The event that the viewport is resized
+	 */
+	public readonly $dispose = new Event('ViewController#$dispose');
+
+	/**
+	 * The event that an entity mesh is clicked
+	 */
+	public readonly $clickEntity = new Event<[MouseEvent, EntityPersonI]>(
+		'ViewController#$clickEntity'
+	);
+
+	/**
+	 * The event that a tile mesh is clicked
+	 */
+	public readonly $clickTile = new Event<[MouseEvent, TileI]>('ViewController#$clickTile');
+
+	/**
+	 * The event that the ThreeJS canvas was clicked, but it was not on an entity or tile.
+	 */
+	public readonly $click = new Event<[MouseEvent]>('ViewController#$click');
+
+	/**
 	 * The event that the camera moves, or as ThreeJS puts it:
 	 *   "Fires when the camera has been transformed by the controls.""
 	 */
 	public readonly $camera = new Event();
 
 	public constructor(root: HTMLElement, options: ThreeControllerOptions) {
-		super();
-
 		this.$dispose.on(() => {
 			this.$camera.clear();
 			this.$resize.clear();
+			this.$click.clear();
+			this.$clickEntity.clear();
+			this.$clickTile.clear();
 		});
 
 		this.root = root;
 
 		// https://threejs.org/docs/#api/en/scenes/Scene
 		this.scene = new THREE.Scene();
-		this.scene.background = new THREE.Color(activePalette.dark);
 
 		// https://threejs.org/docs/#api/en/renderers/WebGLRenderer
 		this.renderer = new THREE.WebGLRenderer({
-			antialias: true
+			antialias: true,
+			alpha: true
 		});
 
 		// Set the camera;
@@ -111,18 +137,15 @@ export class ThreeController extends ViewController implements ViewI {
 		// Set the camera controls;
 		//   https://threejs.org/docs/#examples/en/controls/OrbitControls
 		this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-		this.controls.maxPolarAngle = 0.45 * Math.PI;
-		this.controls.enableZoom = true;
+		if (options.restrictCameraAngle) {
+			this.controls.maxPolarAngle = 0.45 * Math.PI;
+		}
+		this.controls.enableZoom = options.enableZoom;
 		this.controls.enableDamping = true;
+		this.controls.enablePan = options.enablePan;
 		this.controls.dampingFactor = 0.1;
+		this.controls.autoRotate = options.enableAutoRotate;
 		this.$dispose.once(this.controls.dispose.bind(this.controls));
-
-		// Add an axis helper;
-		const axesHelper = new THREE.AxesHelper(10);
-		axesHelper.position.x = -1;
-		axesHelper.position.y = -1;
-		axesHelper.position.z = -1;
-		this.scene.add(axesHelper);
 
 		// https://threejs.org/docs/#api/en/core/Raycaster
 		this.raycaster = new THREE.Raycaster();
@@ -175,6 +198,11 @@ export class ThreeController extends ViewController implements ViewI {
 		};
 	}
 
+	public setCameraPosition(position: CoordinateI) {
+		const v = convertCoordinate(position);
+		this.camera.position.set(v.x, v.y, v.z);
+	}
+
 	public setCameraFocus(coordinate: CoordinateI) {
 		this.camera.lookAt(convertCoordinate(coordinate));
 		this.controls.target = convertCoordinate(coordinate);
@@ -186,29 +214,10 @@ export class ThreeController extends ViewController implements ViewI {
 			if (!entity.location) {
 				return;
 			}
+			const obj = createEntityObject(entity);
 			const location = Coordinate.clone(entity.location).transform(0, 0, 0.175);
-			const geometry =
-				entity instanceof GuardEntity
-					? new THREE.IcosahedronGeometry(0.2)
-					: new THREE.TetrahedronGeometry(0.2);
-			const material = new THREE.MeshBasicMaterial({
-				color: activePalette.light
-			});
-			const mesh = new THREE.Mesh(geometry, material);
-			mesh.position.copy(convertCoordinate(location));
-			mesh.userData.entity = entity;
-			group.add(mesh);
-
-			const edges = new THREE.EdgesGeometry(geometry);
-			const line = new THREE.LineSegments(
-				edges,
-				new THREE.LineBasicMaterial({
-					color: activePalette.darkest,
-					linewidth: 1
-				})
-			);
-			line.position.copy(convertCoordinate(location));
-			group.add(line);
+			obj.position.copy(convertCoordinate(location));
+			group.add(obj);
 		});
 
 		return group;
@@ -258,14 +267,52 @@ export class ThreeController extends ViewController implements ViewI {
 		return group;
 	}
 
+	public addAxisHelper(position: CoordinateI = new Coordinate(0, 0, 0), size = 10) {
+		const v = convertCoordinate(position);
+		const axesHelper = new THREE.AxesHelper(size);
+		axesHelper.position.set(v.x, v.y, v.z);
+		this.scene.add(axesHelper);
+	}
+
 	public attachToGame(game: Game) {
-		super.attachToGame(game);
+		game.$destroy.on(this.dispose.bind(this));
+
+		// Event handlers
+		this.$dispose.once(
+			this.$clickTile.on((event, tile) => {
+				event.preventDefault();
+				event.stopPropagation();
+				game.openContextMenuOnTile(tile);
+			})
+		);
+		this.$dispose.once(
+			this.$clickEntity.on((event, entity) => {
+				event.preventDefault();
+				event.stopPropagation();
+				game.ui.focus = entity;
+				game.contextMenu.close();
+			})
+		);
+		this.$dispose.once(
+			this.$click.on(event => {
+				event.preventDefault();
+				game.contextMenu.close();
+				// @TODO
+			})
+		);
+		this.$dispose.once(
+			game.ui.$lookAt.on(() => {
+				this.setCameraFocus(game.ui.lookAt);
+			})
+		);
+
+		// Meshes
 		const group = new THREE.Group();
 		group.add(this.createGroupForGameTerrain(game, { fill: true, edge: true }));
 		group.add(this.createGroupForGameEntities(game, { wireframe: false }));
 
-		const gameSize = (game.terrain as DualMeshTerrain).size;
 		// https://threejs.org/docs/#api/en/helpers/GridHelper
+		const gameSize = (game.terrain as DualMeshTerrain).size;
 		const gridHelper = new THREE.GridHelper(
 			gameSize,
 			gameSize,
@@ -277,8 +324,7 @@ export class ThreeController extends ViewController implements ViewI {
 
 		this.scene.add(group);
 
-		const camPosition = convertCoordinate({ x: 0, y: gameSize, z: 40 });
-		this.camera.position.set(camPosition.x, camPosition.y, camPosition.z);
+		this.setCameraPosition(new Coordinate(-5, -5, 60));
 		this.setCameraFocus(game.ui.lookAt);
 	}
 
@@ -341,6 +387,7 @@ export class ThreeController extends ViewController implements ViewI {
 
 	public dispose() {
 		this.stopAnimationLoop();
-		super.dispose();
+
+		this.$dispose.emit();
 	}
 }

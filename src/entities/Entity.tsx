@@ -17,7 +17,7 @@ export class Entity implements EntityI {
 	}
 
 	public get label(): string {
-		throw new Error(`${this.constructor.name} ${this.id}`);
+		return `${this.constructor.name} ${this.id}`;
 	}
 
 	public play() {

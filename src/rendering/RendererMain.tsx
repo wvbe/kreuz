@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent, useCallback, useRef, useState } from 'react';
+import { Coordinate } from '../classes/Coordinate';
 import Logger from '../classes/Logger';
-import { activePalette } from '../constants/palettes';
 import { useEventReducer } from '../hooks/events';
 import { useGame } from '../hooks/game';
 import { ThreeController } from './threejs/ThreeController';
 import { OverlayC } from './threejs/ThreeOverlay';
+
 const FullScreenContainer = styled.div`
 	width: 100%;
 	height: 100%;
@@ -13,7 +14,7 @@ const FullScreenContainer = styled.div`
 	position: relative;
 `;
 
-export const RendererThree: FunctionComponent = () => {
+export const RendererMain: FunctionComponent = () => {
 	const game = useGame();
 	const mounted = useRef(false);
 	const [controller, setController] = useState<ThreeController | null>(null);
@@ -30,27 +31,16 @@ export const RendererThree: FunctionComponent = () => {
 			mounted.current = true;
 
 			const three = new ThreeController(element, {
-				backgroundColor: activePalette.dark,
-				fieldOfView: 45
+				fieldOfView: 45,
+				enableAutoRotate: false,
+				enablePan: true,
+				enableZoom: true,
+				restrictCameraAngle: true
 			});
+			three.addAxisHelper(new Coordinate(-1, -1, -1));
 			three.attachToGame(game);
 			three.startAnimationLoop();
 			Logger.groupEnd();
-
-			// if (onEntityClick) {
-			// 	three.$dispose.once(
-			// 		three.$clickEntity.on((event, entity) => {
-			// 			event.preventDefault();
-			// 			onEntityClick(entity);
-			// 			game.contextMenu.close();
-			// 		})
-			// 	);
-			// }
-			// three.$dispose.once(
-			// 	three.$click.on(() => {
-			// 		game.contextMenu.close();
-			// 	})
-			// );
 
 			setController(three);
 

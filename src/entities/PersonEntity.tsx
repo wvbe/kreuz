@@ -15,17 +15,17 @@ export class PersonEntity extends Entity implements EntityPersonI {
 	// The person started finished one step, according to react-spring's timing
 	public readonly $stoppedWalkStep = new Event<[TileI]>();
 
-	protected readonly passport: { firstName: string };
+	protected readonly userData: { firstName: string };
 
 	constructor(
 		id: string,
 		location: TileI,
-		passport = {
+		userData = {
 			firstName: Math.random() < 0.5 ? getRandomFemaleFirstName() : getRandomMaleFirstName()
 		}
 	) {
 		super(id, location);
-		this.passport = passport;
+		this.userData = userData;
 
 		// Movement handling
 		this.$stoppedWalkStep.on(loc => {
@@ -74,6 +74,6 @@ export class PersonEntity extends Entity implements EntityPersonI {
 	}
 
 	public get label(): string {
-		return this.passport.firstName;
+		return this.userData.firstName;
 	}
 }

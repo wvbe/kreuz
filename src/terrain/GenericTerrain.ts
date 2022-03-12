@@ -77,7 +77,13 @@ export class GenericTerrain implements TerrainI {
 		return islands;
 	}
 
+	/**
+	 * @deprecated For legacy SVG only.
+	 */
 	private _tilesInRenderOrder: TileI[] | null = null;
+	/**
+	 * @deprecated For legacy SVG only.
+	 */
 	public getTilesInRenderOrder() {
 		if (!this._tilesInRenderOrder) {
 			this._tilesInRenderOrder = this.tiles.slice().sort(distanceToCameraComparator);

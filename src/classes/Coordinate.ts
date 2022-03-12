@@ -1,5 +1,4 @@
-import { InGameDistance } from '../rendering/svg/perspective';
-import { CoordinateI } from '../types';
+import { CoordinateI, InGameDistance } from '../types';
 
 export type CoordinateArray = [InGameDistance, InGameDistance, InGameDistance];
 

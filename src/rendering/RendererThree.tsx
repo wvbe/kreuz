@@ -1,18 +1,9 @@
 import styled from '@emotion/styled';
-import React, {
-	ComponentType,
-	FunctionComponent,
-	useCallback,
-	useEffect,
-	useRef,
-	useState
-} from 'react';
+import React, { FunctionComponent, useCallback, useRef, useState } from 'react';
 import Logger from '../classes/Logger';
 import { activePalette } from '../constants/palettes';
 import { useEventReducer } from '../hooks/events';
 import { useGame } from '../hooks/game';
-import { DualMeshTerrainC } from './svg/DualMeshTerrainC';
-import { EntityPersonI, TileI } from '../types';
 import { ThreeController } from './threejs/ThreeController';
 import { OverlayC } from './threejs/ThreeOverlay';
 const FullScreenContainer = styled.div`
@@ -22,16 +13,7 @@ const FullScreenContainer = styled.div`
 	position: relative;
 `;
 
-export const RendererThree: FunctionComponent<{
-	onTileClick: (typeof DualMeshTerrainC extends ComponentType<infer P>
-		? P
-		: never)['onTileClick'];
-	onTileContextMenu: (typeof DualMeshTerrainC extends ComponentType<infer P>
-		? P
-		: never)['onTileContextMenu'];
-	onEntityClick: (entity: EntityPersonI) => void;
-	center: TileI;
-}> = ({ onTileClick, onEntityClick, center }) => {
+export const RendererThree: FunctionComponent = () => {
 	const game = useGame();
 	const mounted = useRef(false);
 	const [controller, setController] = useState<ThreeController | null>(null);
@@ -47,51 +29,37 @@ export const RendererThree: FunctionComponent<{
 			}
 			mounted.current = true;
 
-			Logger.group('Start ThreeJS');
 			const three = new ThreeController(element, {
 				backgroundColor: activePalette.dark,
 				fieldOfView: 45
 			});
-			three.createGamePopulation(game);
+			three.attachToGame(game);
 			three.startAnimationLoop();
 			Logger.groupEnd();
 
-			if (onEntityClick) {
-				three.$dispose.once(
-					three.$clickEntity.on((event, entity) => {
-						event.preventDefault();
-						onEntityClick(entity);
-						game.contextMenu.close();
-					})
-				);
-			}
-			if (onTileClick) {
-				three.$dispose.once(
-					three.$clickTile.on((event, tile) => {
-						event.preventDefault();
-						onTileClick(tile);
-					})
-				);
-			}
-			three.$dispose.once(
-				three.$click.on(() => {
-					game.contextMenu.close();
-				})
-			);
+			// if (onEntityClick) {
+			// 	three.$dispose.once(
+			// 		three.$clickEntity.on((event, entity) => {
+			// 			event.preventDefault();
+			// 			onEntityClick(entity);
+			// 			game.contextMenu.close();
+			// 		})
+			// 	);
+			// }
+			// three.$dispose.once(
+			// 	three.$click.on(() => {
+			// 		game.contextMenu.close();
+			// 	})
+			// );
 
 			setController(three);
 
-			game.$destroy.once(three.dispose.bind(three));
 			return () => {
 				three.dispose();
 			};
 		},
-		[game, onTileClick, onEntityClick]
+		[game]
 	);
-
-	useEffect(() => {
-		controller?.setCameraFocus(center);
-	}, [controller, center]);
 
 	return (
 		<FullScreenContainer className="renderer-three" ref={mountController}>

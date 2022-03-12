@@ -1,6 +1,5 @@
 import { Coordinate } from '../classes/Coordinate';
 import { TerrainI, TileI } from '../types';
-import { DualMeshTerrainC } from '../rendering/svg/DualMeshTerrainC';
 import { DualMeshTile } from './DualMeshTile';
 import { GenericTerrain } from './GenericTerrain';
 
@@ -16,7 +15,6 @@ export class DualMeshTerrain extends GenericTerrain implements TerrainI {
 		});
 	}
 
-	Component = DualMeshTerrainC;
 	getTileClosestToXy(x: number, y: number): TileI {
 		const center = new Coordinate(x, y, 0);
 		const { tile } = this.tiles.reduce<{ tile?: TileI; distance: number }>(

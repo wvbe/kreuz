@@ -29,6 +29,3 @@ export const THREE_R: Story<
 	typeof scenarios.DualMesh extends ComponentType<infer P> ? P : unknown
 > = args => <scenarios.DualMesh {...args} asIsometric={false} />;
 THREE_R.storyName = 'Three.js (random)';
-
-export const SVG: Story<typeof scenarios.DualMesh extends ComponentType<infer P> ? P : unknown> =
-	args => <scenarios.DualMesh {...args} asIsometric={true} seed={MAIN_DEMO_SEED} />;

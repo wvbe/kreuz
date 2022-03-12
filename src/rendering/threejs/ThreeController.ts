@@ -7,7 +7,8 @@ import { activePalette } from '../../constants/palettes';
 import { GuardEntity } from '../../entities/GuardPersonEntity';
 import { Game } from '../../Game';
 import { DualMeshTerrain } from '../../terrain/DualMeshTerrain';
-import { CoordinateI, EntityPersonI, TileI } from '../../types';
+import { CoordinateI, TileI, ViewI } from '../../types';
+import { ViewController } from '../ViewController';
 import { convertCoordinate } from './utils';
 
 type ThreeControllerOptions = {
@@ -18,51 +19,45 @@ type ThreeControllerOptions = {
 	fieldOfView: number;
 };
 
-export class ThreeController {
-	animating: boolean = false;
+export class ThreeController extends ViewController implements ViewI {
+	public animating: boolean = false;
 
 	/**
 	 * The element into which the ThreeJS canvas as well as any overlay elements are placed
 	 */
-	root: HTMLElement;
-	scene: THREE.Scene;
-	renderer: THREE.Renderer;
-	camera: THREE.Camera;
-	controls: OrbitControls;
-	raycaster: THREE.Raycaster;
+	private root: HTMLElement;
+	private scene: THREE.Scene;
+	private renderer: THREE.Renderer;
+	private camera: THREE.Camera;
+	private controls: OrbitControls;
+	private raycaster: THREE.Raycaster;
+
+	/**
+	 * @deprecated Not currently in use
+	 */
+	public readonly $start = new Event('ThreeController#start');
+
+	/**
+	 * @deprecated Not currently in use
+	 */
+	public readonly $stop = new Event('ThreeController#stop');
 
 	/**
 	 * The event that the viewport is resized
 	 */
-	$dispose = new Event('ThreeController#$dispose');
-
-	/**
-	 * The event that the viewport is resized
-	 */
-	$resize = new Event();
+	public readonly $resize = new Event();
 
 	/**
 	 * The event that the camera moves, or as ThreeJS puts it:
 	 *   "Fires when the camera has been transformed by the controls.""
 	 */
-	$camera = new Event();
-
-	/**
-	 * The event that the ThreeJS canvas is clicked. Event data is an array of all objects that
-	 * intersect with the click.
-	 *
-	 * Not fired if the event is a $clickEntity or $clickTile.
-	 */
-	$clickEntity = new Event<[MouseEvent, EntityPersonI]>('ThreeController#$clickEntity');
-	$clickTile = new Event<[MouseEvent, TileI]>('ThreeController#$clickTile');
-	$click = new Event<[MouseEvent, THREE.Intersection[]]>('ThreeController#$click');
+	public readonly $camera = new Event();
 
 	public constructor(root: HTMLElement, options: ThreeControllerOptions) {
+		super();
+
 		this.$dispose.on(() => {
 			this.$camera.clear();
-			this.$click.clear();
-			this.$clickEntity.clear();
-			this.$clickTile.clear();
 			this.$resize.clear();
 		});
 
@@ -168,7 +163,7 @@ export class ThreeController {
 		}
 
 		// If click wasn't anything more specific, trigger a normal click event and include all intersections.
-		this.$click.emit(event, intersections);
+		this.$click.emit(event);
 	}
 
 	private getViewportSize() {
@@ -263,7 +258,8 @@ export class ThreeController {
 		return group;
 	}
 
-	public createGamePopulation(game: Game) {
+	public attachToGame(game: Game) {
+		super.attachToGame(game);
 		const group = new THREE.Group();
 		group.add(this.createGroupForGameTerrain(game, { fill: true, edge: true }));
 		group.add(this.createGroupForGameEntities(game, { wireframe: false }));
@@ -281,9 +277,9 @@ export class ThreeController {
 
 		this.scene.add(group);
 
-		const camPosition = convertCoordinate({ x: 0, y: gameSize, z: 0 });
+		const camPosition = convertCoordinate({ x: 0, y: gameSize, z: 40 });
 		this.camera.position.set(camPosition.x, camPosition.y, camPosition.z);
-		this.setCameraFocus(game.terrain.getMedianCoordinate());
+		this.setCameraFocus(game.ui.lookAt);
 	}
 
 	private renderOnce() {
@@ -304,10 +300,12 @@ export class ThreeController {
 			this.renderOnce();
 		};
 		this.animating = true;
+		this.$start.emit();
 		animate();
 	}
 
 	public stopAnimationLoop() {
+		this.$stop.emit();
 		this.animating = false;
 	}
 
@@ -342,6 +340,7 @@ export class ThreeController {
 	}
 
 	public dispose() {
-		this.$dispose.emit();
+		this.stopAnimationLoop();
+		super.dispose();
 	}
 }

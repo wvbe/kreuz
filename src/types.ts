@@ -1,11 +1,11 @@
-import React, { ComponentType } from 'react';
 import { Event } from './classes/Event';
-import { InGameDistance } from './rendering/svg/perspective';
 
-export type SvgMouseInteractionProps = Pick<
-	React.SVGProps<SVGGElement>,
-	'onClick' | 'onContextMenu' | 'onMouseEnter' | 'onMouseLeave'
->;
+export type InGameDistance = number;
+
+export type SvgMouseInteractionProps = {
+	onClick?: (event: MouseEvent) => void;
+	onContextMenu?: (event: MouseEvent) => void;
+};
 
 /**
  * A function that filters tiles.
@@ -49,17 +49,6 @@ export interface TerrainI {
 	tiles: TileI[];
 
 	/**
-	 * The React component for rendering this.
-	 *
-	 * @deprecated This interface should not be tightly coupled with rendering
-	 */
-	Component: ComponentType<{
-		terrain: TerrainI;
-		onTileClick?: (tile: TileI) => void;
-		onTileContextMenu?: (tile: TileI) => void;
-	}>;
-
-	/**
 	 * Select all the tiles that are adjacent to the starting tile, so long as they match the
 	 * selector.
 	 */
@@ -81,12 +70,6 @@ export interface TerrainI {
 	 * Get a list of contigious groups of tiles, aka a list of islands.
 	 */
 	getIslands(selector: TileFilter<TileI>): TileI[][];
-
-	/**
-	 * Sort tiles in order so that the DOM render order is such that the tiles closest to the camera
-	 * overlap the tiles further away.
-	 */
-	getTilesInRenderOrder(): TileI[];
 
 	/**
 	 * Get the tile closest to an XY coordinate.
@@ -136,15 +119,6 @@ export interface EntityI {
 	 * Set or change the job that this entity is currently on.
 	 */
 	doJob(job: JobI): void;
-
-	/**
-	 * The React component for rendering this.
-	 *
-	 * @deprecated This interface should not be tightly coupled with rendering
-	 */
-	Component: ComponentType<{
-		[key: string]: never;
-	}>;
 }
 
 export interface EntityPersonI extends EntityI {
@@ -179,3 +153,20 @@ export interface JobI {
 }
 
 export type SeedI = string | number | boolean;
+
+export interface ViewI {
+	/**
+	 * The event that an entity mesh is clicked
+	 */
+	$clickEntity: Event<[MouseEvent, EntityPersonI]>;
+
+	/**
+	 * The event that a tile mesh is clicked
+	 */
+	$clickTile: Event<[MouseEvent, TileI]>;
+
+	/**
+	 * The event that the ThreeJS canvas was clicked, but it was not on an entity or tile.
+	 */
+	$click: Event<[MouseEvent]>;
+}

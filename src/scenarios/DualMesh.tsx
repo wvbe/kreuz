@@ -16,38 +16,26 @@ function generateEverything(seed: SeedI = String(Date.now())) {
 	const terrain = generateDualMeshTerrain(seed, size, density);
 	const entities = generateEntities(seed, terrain);
 	const game = new Game(seed, terrain, entities);
-	const initialViewportCenter = game.terrain.getTileClosestToXy(
-		Math.floor(size / 2),
-		Math.floor(size / 2)
-	);
-	return {
-		game,
-		initialViewportCenter
-	};
+	return game;
 }
 
-const GameRoute: FunctionComponent<{ asIsometric: boolean; seed?: SeedI }> = ({
-	asIsometric,
-	seed
-}) => {
-	const gameApplicationProps = useMemo(() => {
-		return generateEverything(seed);
-	}, [seed]);
+const GameRoute: FunctionComponent<{ seed?: SeedI }> = ({ seed }) => {
+	const game = useMemo(() => generateEverything(seed), [seed]);
 	useEffect(() => {
-		gameApplicationProps.game.play();
-		return () => gameApplicationProps.game.destroy();
-	}, [gameApplicationProps.game]);
+		game.play();
+		return () => game.destroy();
+	}, [game]);
 	return (
-		<GameContext.Provider value={gameApplicationProps.game}>
-			<GameC {...gameApplicationProps} asIsometric={asIsometric} />
+		<GameContext.Provider value={game}>
+			<GameC game={game} />
 		</GameContext.Provider>
 	);
 };
 
-const Demo: FunctionComponent<{ asIsometric: boolean; seed?: SeedI }> = ({ asIsometric, seed }) => (
+const Demo: FunctionComponent<{ seed?: SeedI }> = ({ seed }) => (
 	<React.StrictMode>
 		<GlobalStyles />
-		<GameRoute asIsometric={asIsometric} seed={seed} />
+		<GameRoute seed={seed} />
 	</React.StrictMode>
 );
 

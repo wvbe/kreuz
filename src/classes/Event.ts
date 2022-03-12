@@ -30,7 +30,7 @@ export class Event<Args extends unknown[] = []> {
 		return cancel;
 	}
 
-	emit(...args: Args) {
+	emit(...args: Args): void {
 		if (this.name && process.env.NODE_ENV !== 'test') {
 			// For debugging purposes only
 			Logger.group(`🔔 ${this.name}`);

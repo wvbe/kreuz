@@ -92,7 +92,7 @@ export const ActiveEntityOverlay: FunctionComponent<{ entity?: EntityI; zoom?: n
 						shapeRendering="geometricPrecision"
 						viewBox={[0, 0, 1 / zoom, 1 / zoom].join(' ')}
 					>
-						<entity.Component />
+						X
 					</svg>
 				)}
 			</Avatar>

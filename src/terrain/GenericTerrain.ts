@@ -1,6 +1,5 @@
 import { FunctionComponent } from 'react';
 import { Coordinate } from '../classes/Coordinate';
-import { distanceToCameraComparator } from '../rendering/svg/perspective';
 import { TerrainI, TileFilter, TileI } from '../types';
 
 export class GenericTerrain implements TerrainI {
@@ -78,27 +77,8 @@ export class GenericTerrain implements TerrainI {
 	}
 
 	/**
-	 * @deprecated For legacy SVG only.
-	 */
-	private _tilesInRenderOrder: TileI[] | null = null;
-	/**
-	 * @deprecated For legacy SVG only.
-	 */
-	public getTilesInRenderOrder() {
-		if (!this._tilesInRenderOrder) {
-			this._tilesInRenderOrder = this.tiles.slice().sort(distanceToCameraComparator);
-		}
-		return this._tilesInRenderOrder;
-	}
-
-	/**
 	 * Abstract methods
 	 */
-
-	//
-	public Component: TerrainI['Component'] = () => {
-		throw new Error('Not implemented');
-	};
 
 	//
 	public getTileClosestToXy(x: number, y: number): TileI {
@@ -145,7 +125,6 @@ export class GenericTerrain implements TerrainI {
 }
 
 export type GenericTerrainComponentProps<Tile extends TileI> = {
-	onTileClick?: (event: React.MouseEvent<SVGGElement>, tile: Tile) => void;
 	onTileContextMenu?: (event: React.MouseEvent<SVGGElement>, tile: Tile) => void;
 };
 

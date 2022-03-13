@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useMemo } from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
 import { Game } from '../Game';
 import { GameC } from '../GameC';
 import { GameContext } from '../hooks/game';

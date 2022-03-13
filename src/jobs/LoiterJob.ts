@@ -1,4 +1,3 @@
-import Logger from '../classes/Logger';
 import { Random } from '../classes/Random';
 import { JobI } from '../types';
 import { Job } from './Job';

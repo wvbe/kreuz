@@ -30,7 +30,7 @@ export class ThreeController implements ViewI {
 	 */
 	public root: HTMLElement;
 	public scene: THREE.Scene;
-	public renderer: THREE.Renderer;
+	public renderer: THREE.WebGLRenderer;
 	public camera: THREE.Camera;
 	public controls: OrbitControls;
 	public raycaster: THREE.Raycaster;
@@ -92,6 +92,12 @@ export class ThreeController implements ViewI {
 			antialias: true,
 			alpha: true
 		});
+		// @NOTE sometimes an instance of ThreeRenderer is stopped and then reused. In this case the
+		// WebGLRenderre is disposed and (by ThreeJS) opened automatically again, but then not disposed
+		// again on the next stop. This is a memory leak!
+		//
+		// @TODO fix memory leak.
+		this.$stop.once(this.renderer.dispose.bind(this.renderer));
 
 		// Set the camera;
 		//   https://threejs.org/docs/#api/en/cameras/OrthographicCamera
@@ -285,7 +291,7 @@ export class ThreeController implements ViewI {
 			this.$clickEntity.on((event, entity) => {
 				event.preventDefault();
 				event.stopPropagation();
-				game.ui.focus = entity;
+				game.focus.set(entity);
 				game.contextMenu.close();
 			})
 		);
@@ -297,8 +303,8 @@ export class ThreeController implements ViewI {
 			})
 		);
 		this.$stop.once(
-			game.ui.$lookAt.on(() => {
-				this.setCameraFocus(game.ui.lookAt);
+			game.lookAt.$change.on(() => {
+				this.setCameraFocus(game.lookAt.get());
 			})
 		);
 
@@ -321,7 +327,7 @@ export class ThreeController implements ViewI {
 		this.scene.add(group);
 
 		this.setCameraPosition(new Coordinate(-5, -5, 60));
-		this.setCameraFocus(game.ui.lookAt);
+		this.setCameraFocus(game.lookAt.get());
 	}
 
 	private renderOnce() {
@@ -347,6 +353,9 @@ export class ThreeController implements ViewI {
 	}
 
 	public stopAnimationLoop() {
+		if (!this.animating) {
+			throw new Error('Animation not started');
+		}
 		this.$stop.emit();
 		this.animating = false;
 	}

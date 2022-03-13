@@ -1,5 +1,6 @@
 import { DependencyList, useCallback, useEffect, useState } from 'react';
 import { Event } from '../classes/Event';
+import { EventedValue } from '../classes/EventedValue';
 
 export function useEventCallback<Args extends unknown[]>(
 	event: Event<Args>,
@@ -43,4 +44,8 @@ export function useEventReducer<Data>(
 	]);
 	useEventCallback(event, callback, []);
 	return state;
+}
+
+export function useEventedValue<Data>(event: EventedValue<Data>): Data {
+	return useEventReducer(event.$change, event.get.bind(event), []);
 }

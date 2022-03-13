@@ -42,6 +42,7 @@ export const guardEntity: Story<
 				controller.scene.add(
 					createEntityObject(new GuardEntity('test', new GenericTile(0, 0, 0)))
 				);
+				return () => {};
 			}}
 		/>
 	</Backdrop>
@@ -59,6 +60,7 @@ export const e2: Story<typeof scenarios.DualMesh extends ComponentType<infer P> 
 					controller.scene.add(
 						createEntityObject(new CivilianEntity('test', new GenericTile(0, 0, 0)))
 					);
+					return () => {};
 				}}
 			/>
 		</Backdrop>
@@ -76,6 +78,7 @@ export const e3: Story<typeof scenarios.DualMesh extends ComponentType<infer P> 
 					controller.scene.add(
 						createEntityObject(new BuildingEntity('test', new GenericTile(0, 0, 0)))
 					);
+					return () => {};
 				}}
 			/>
 		</Backdrop>
@@ -93,6 +96,7 @@ export const e4: Story<typeof scenarios.DualMesh extends ComponentType<infer P> 
 					controller.scene.add(
 						createEntityObject(new TreeEntity('test', new GenericTile(0, 0, 0)))
 					);
+					return () => {};
 				}}
 			/>
 		</Backdrop>

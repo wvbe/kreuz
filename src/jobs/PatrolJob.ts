@@ -1,4 +1,3 @@
-import Logger from '../classes/Logger';
 import { EntityPersonI, JobI, TileI } from '../types';
 import { Job } from './Job';
 

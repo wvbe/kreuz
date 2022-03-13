@@ -1,8 +1,11 @@
 // const ActiveEntityOverlay: FunctionComponent = ({ children }) => null;
 
 import styled from '@emotion/styled';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useCallback } from 'react';
+import { Coordinate } from '../classes/Coordinate';
 import Logger from '../classes/Logger';
+import { createEntityObject } from '../rendering/threejs/entities';
+import { useRenderingController } from '../rendering/useRenderingController';
 import { EntityI } from '../types';
 
 const borderColor = `rgba(0,0, 0, 0.5)`;
@@ -20,6 +23,7 @@ const ActiveEntityOverlayBody = styled.div`
 const Avatar = styled.div`
 	border: 1px solid ${borderColor};
 	border-radius: 50%;
+	overflow: hidden;
 	width: 64px;
 	height: 64px;
 	justify-content: center;
@@ -77,25 +81,49 @@ const EntityTextBadge: FunctionComponent<{ entity: EntityI }> = ({ entity }) => 
 	</>
 );
 
+const CAMERA_POSITION = new Coordinate(-1, 1, 1);
+const CAMERA_FOCUS = new Coordinate(0, 0, 0.1);
+const RENDERER_OPTIONS = {
+	fieldOfView: 25,
+	enableAutoRotate: true,
+	enablePan: false,
+	enableZoom: true,
+	restrictCameraAngle: false
+};
+
+const ActiveEntityPreviewP = styled.div`
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	position: relative;
+`;
+const ActiveEntityPreview: FunctionComponent<{ entity: EntityI }> = ({ entity }) => {
+	const { onRef } = useRenderingController(
+		RENDERER_OPTIONS,
+		useCallback(
+			controller => {
+				controller.setCameraPosition(CAMERA_POSITION);
+				controller.setCameraFocus(CAMERA_FOCUS);
+				const object = createEntityObject(entity);
+				controller.scene.add(object);
+				return () => {
+					// Leave no trace
+					controller.scene.remove(object);
+				};
+			},
+			[entity]
+		)
+	);
+	return <ActiveEntityPreviewP ref={onRef} />;
+};
+
 export const ActiveEntityOverlay: FunctionComponent<{ entity?: EntityI; zoom?: number }> = ({
 	entity,
 	zoom = 4
 }) => (
 	<ActiveEntityOverlayBoundary>
 		<ActiveEntityOverlayBody>
-			<Avatar>
-				{entity && (
-					<svg
-						width="1"
-						height="1"
-						overflow="visible"
-						shapeRendering="geometricPrecision"
-						viewBox={[0, 0, 1 / zoom, 1 / zoom].join(' ')}
-					>
-						X
-					</svg>
-				)}
-			</Avatar>
+			<Avatar>{entity && <ActiveEntityPreview entity={entity} />}</Avatar>
 			<div>{entity ? <EntityTextBadge entity={entity} /> : null}</div>
 		</ActiveEntityOverlayBody>
 	</ActiveEntityOverlayBoundary>

@@ -47,5 +47,5 @@ export function useEventReducer<Data>(
 }
 
 export function useEventedValue<Data>(event: EventedValue<Data>): Data {
-	return useEventReducer(event.$change, event.get.bind(event), []);
+	return useEventReducer(event, event.get.bind(event), []);
 }

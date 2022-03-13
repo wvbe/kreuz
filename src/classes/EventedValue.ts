@@ -1,18 +1,14 @@
 import { Event } from './Event';
 
-export class EventedValue<T> {
-	private current: T;
-
-	/**
-	 * The event that this value changes.
-	 */
-	public readonly $change = new Event<[T]>();
+export class EventedValue<T> extends Event<[T]> {
+	protected current: T;
 
 	/**
 	 * Create a new value that emits an event when changed.
 	 */
-	public constructor(initialValue: T) {
-		this.current = initialValue;
+	public constructor(initial: T) {
+		super();
+		this.current = initial;
 	}
 
 	/**
@@ -36,6 +32,6 @@ export class EventedValue<T> {
 	 * Emit that there was an update
 	 */
 	public emit() {
-		this.$change.emit(this.current);
+		super.emit(this.current);
 	}
 }

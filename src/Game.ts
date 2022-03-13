@@ -2,6 +2,7 @@ import { createElement } from 'react';
 import { Coordinate } from './classes/Coordinate';
 import { Event } from './classes/Event';
 import { EventedValue } from './classes/EventedValue';
+import { TimeLine } from './classes/TimeLine';
 import { CoordinateI, EntityI, SeedI, TerrainI, TileI } from './types';
 import { ContextMenuController } from './ui/ContextMenuController';
 import { ContextMenuForTile } from './ui/ContextMenuForTile';
@@ -22,6 +23,8 @@ export class Game {
 
 	// @TODO change to not readonly, and handle spontaneous changes
 	public readonly entities: EntityI[];
+
+	public readonly time = new TimeLine();
 
 	public readonly seed;
 
@@ -48,7 +51,6 @@ export class Game {
 		this.seed = seed;
 		this.terrain = terrain;
 		this.entities = entities;
-
 		this.lookAt.set(terrain.getMedianCoordinate());
 
 		this.$start.on(() => {

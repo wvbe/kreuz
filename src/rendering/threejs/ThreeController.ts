@@ -352,7 +352,7 @@ export class ThreeController implements ViewI {
 			})
 		);
 		this.$detach.once(
-			game.lookAt.$change.on(() => {
+			game.lookAt.on(() => {
 				this.setCameraFocus(game.lookAt.get());
 			})
 		);

@@ -21,10 +21,6 @@ function generateEverything(seed: SeedI = String(Date.now())) {
 
 const GameRoute: FunctionComponent<{ seed?: SeedI }> = ({ seed }) => {
 	const game = useMemo(() => generateEverything(seed), [seed]);
-	useEffect(() => {
-		game.play();
-		return () => game.destroy();
-	}, [game]);
 	return (
 		<GameContext.Provider value={game}>
 			<GameC game={game} />

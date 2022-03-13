@@ -10,7 +10,7 @@ export class Event<Args extends unknown[] = []> {
 
 	on(callback: (...args: Args) => void): () => void {
 		const cancel = () => {
-			// console.log('Destroy Event#on');
+			// console.log('Cancel Event#on');
 			this.callbacks.splice(this.callbacks.indexOf(callback), 1);
 		};
 		this.callbacks.push(callback);
@@ -23,7 +23,7 @@ export class Event<Args extends unknown[] = []> {
 			cancel();
 		};
 		const cancel = () => {
-			// console.log('Destroy Event#once');
+			// console.log('Cancel Event#once');
 			this.callbacks.splice(this.callbacks.indexOf(run), 1);
 		};
 		this.callbacks.push(run);
@@ -33,7 +33,7 @@ export class Event<Args extends unknown[] = []> {
 	emit(...args: Args): void {
 		if (this.name && process.env.NODE_ENV !== 'test') {
 			// For debugging purposes only
-			Logger.group(`🔔 ${this.name}`);
+			Logger.groupCollapsed(`🔔 ${this.name}`);
 		}
 		this.callbacks.forEach(cb => cb(...args));
 		if (this.name && process.env.NODE_ENV !== 'test') {

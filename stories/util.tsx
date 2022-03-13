@@ -21,6 +21,6 @@ export const Backdrop = styled.div<{ height?: number | string; padding?: number 
 		rgba(0, 0, 0, 0.02) 100%
 	);
 	background-size: 56.57px 56.57px;
-	margin-bottom: 1em;
+	margin-bottom: ${({ height }) => (height === '100vh' ? 0 : '1em')};
 	box-sizing: border-box;
 `;

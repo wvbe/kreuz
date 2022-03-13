@@ -21,6 +21,7 @@ export class LoiterJob extends Job implements JobI {
 		return `Loitering`;
 	}
 	start() {
+		super.start();
 		let steps = 0;
 		let timer: NodeJS.Timeout | null = null;
 		const doTimeout = () => {
@@ -56,7 +57,7 @@ export class LoiterJob extends Job implements JobI {
 	}
 
 	destroy() {
-		Logger.log(`Destroy ${this.constructor.name}`);
+		super.destroy();
 		this.destroyers.forEach(destroy => destroy());
 	}
 }

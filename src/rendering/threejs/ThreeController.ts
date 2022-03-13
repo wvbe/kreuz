@@ -41,11 +41,6 @@ export class ThreeController implements ViewI {
 	public readonly $start = new Event('ThreeController#start');
 
 	/**
-	 * @deprecated Not currently in use
-	 */
-	public readonly $stop = new Event('ThreeController#stop');
-
-	/**
 	 * The event that the viewport is resized
 	 */
 	public readonly $resize = new Event();
@@ -53,24 +48,24 @@ export class ThreeController implements ViewI {
 	/**
 	 * The event that the viewport is resized
 	 */
-	public readonly $dispose = new Event('ViewController#$dispose');
+	public readonly $stop = new Event('ThreeController#$stop');
 
 	/**
 	 * The event that an entity mesh is clicked
 	 */
 	public readonly $clickEntity = new Event<[MouseEvent, EntityPersonI]>(
-		'ViewController#$clickEntity'
+		'ThreeController#$clickEntity'
 	);
 
 	/**
 	 * The event that a tile mesh is clicked
 	 */
-	public readonly $clickTile = new Event<[MouseEvent, TileI]>('ViewController#$clickTile');
+	public readonly $clickTile = new Event<[MouseEvent, TileI]>('ThreeController#$clickTile');
 
 	/**
 	 * The event that the ThreeJS canvas was clicked, but it was not on an entity or tile.
 	 */
-	public readonly $click = new Event<[MouseEvent]>('ViewController#$click');
+	public readonly $click = new Event<[MouseEvent]>('ThreeController#$click');
 
 	/**
 	 * The event that the camera moves, or as ThreeJS puts it:
@@ -79,7 +74,7 @@ export class ThreeController implements ViewI {
 	public readonly $camera = new Event();
 
 	public constructor(root: HTMLElement, options: ThreeControllerOptions) {
-		this.$dispose.on(() => {
+		this.$stop.once(() => {
 			this.$camera.clear();
 			this.$resize.clear();
 			this.$click.clear();
@@ -145,7 +140,7 @@ export class ThreeController implements ViewI {
 		this.controls.enablePan = options.enablePan;
 		this.controls.dampingFactor = 0.1;
 		this.controls.autoRotate = options.enableAutoRotate;
-		this.$dispose.once(this.controls.dispose.bind(this.controls));
+		this.$stop.once(this.controls.dispose.bind(this.controls));
 
 		// https://threejs.org/docs/#api/en/core/Raycaster
 		this.raycaster = new THREE.Raycaster();
@@ -156,11 +151,11 @@ export class ThreeController implements ViewI {
 
 		const handleCameraChange = this.$camera.emit.bind(this.$camera);
 		this.controls.addEventListener('change', handleCameraChange);
-		this.$dispose.once(() => this.controls.removeEventListener('change', handleCameraChange));
+		this.$stop.once(() => this.controls.removeEventListener('change', handleCameraChange));
 
 		const handleClick = this.handleClick.bind(this);
 		this.root.addEventListener('click', handleClick);
-		this.$dispose.once(() => {
+		this.$stop.once(() => {
 			this.root.removeEventListener('click', handleClick);
 		});
 	}
@@ -275,17 +270,18 @@ export class ThreeController implements ViewI {
 	}
 
 	public attachToGame(game: Game) {
-		game.$destroy.on(this.dispose.bind(this));
+		this.$start.once(game.play.bind(game));
+		this.$stop.once(game.destroy.bind(game));
 
 		// Event handlers
-		this.$dispose.once(
+		this.$stop.once(
 			this.$clickTile.on((event, tile) => {
 				event.preventDefault();
 				event.stopPropagation();
 				game.openContextMenuOnTile(tile);
 			})
 		);
-		this.$dispose.once(
+		this.$stop.once(
 			this.$clickEntity.on((event, entity) => {
 				event.preventDefault();
 				event.stopPropagation();
@@ -293,14 +289,14 @@ export class ThreeController implements ViewI {
 				game.contextMenu.close();
 			})
 		);
-		this.$dispose.once(
+		this.$stop.once(
 			this.$click.on(event => {
 				event.preventDefault();
 				game.contextMenu.close();
 				// @TODO
 			})
 		);
-		this.$dispose.once(
+		this.$stop.once(
 			game.ui.$lookAt.on(() => {
 				this.setCameraFocus(game.ui.lookAt);
 			})
@@ -383,11 +379,5 @@ export class ThreeController implements ViewI {
 			stopRespondingToCamera();
 			stopRespondingToResize();
 		};
-	}
-
-	public dispose() {
-		this.stopAnimationLoop();
-
-		this.$dispose.emit();
 	}
 }

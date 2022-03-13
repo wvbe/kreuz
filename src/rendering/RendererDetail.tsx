@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import React, { FunctionComponent, useCallback, useRef } from 'react';
+import React, { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
 import Logger from '../classes/Logger';
 import { ThreeController } from './threejs/ThreeController';
 
@@ -13,6 +13,8 @@ const FullScreenContainer = styled.div`
 export const RendererDetail: FunctionComponent<{ build: (controller: ThreeController) => void }> =
 	({ build }) => {
 		const mounted = useRef(false);
+		const [controller, setController] = useState<ThreeController | null>(null);
+		useEffect(() => () => controller?.stopAnimationLoop(), [controller]);
 		const mountController = useCallback(
 			(element: HTMLElement | null) => {
 				if (!element || mounted.current) {
@@ -29,10 +31,10 @@ export const RendererDetail: FunctionComponent<{ build: (controller: ThreeContro
 				});
 				build(three);
 				three.startAnimationLoop();
-				Logger.groupEnd();
+				setController(three);
 
 				return () => {
-					three.dispose();
+					three.stopAnimationLoop();
 				};
 			},
 			[build]

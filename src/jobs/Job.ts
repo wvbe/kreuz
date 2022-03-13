@@ -1,3 +1,4 @@
+import Logger from '../classes/Logger';
 import { EntityPersonI, JobI } from '../types';
 
 export class Job implements JobI {
@@ -11,10 +12,10 @@ export class Job implements JobI {
 	}
 
 	start() {
-		throw new Error(`Not implemented for ${this.constructor.name}`);
+		Logger.log(`Start ${this.constructor.name}`);
 	}
 
 	destroy() {
-		throw new Error(`Not implemented for ${this.constructor.name}`);
+		Logger.log(`Destroy ${this.constructor.name}`);
 	}
 }

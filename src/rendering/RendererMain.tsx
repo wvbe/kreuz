@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import React, { FunctionComponent, useCallback, useRef, useState } from 'react';
+import React, { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react';
 import { Coordinate } from '../classes/Coordinate';
 import Logger from '../classes/Logger';
 import { useEventReducer } from '../hooks/events';
@@ -17,12 +17,13 @@ const FullScreenContainer = styled.div`
 export const RendererMain: FunctionComponent = () => {
 	const game = useGame();
 	const mounted = useRef(false);
-	const [controller, setController] = useState<ThreeController | null>(null);
 	const contextMenuState = useEventReducer(
 		game.contextMenu.$changed,
 		() => game.contextMenu.state,
 		[]
 	);
+	const [controller, setController] = useState<ThreeController | null>(null);
+	useEffect(() => () => controller?.stopAnimationLoop(), [controller]);
 	const mountController = useCallback(
 		(element: HTMLElement | null) => {
 			if (!element || mounted.current) {
@@ -43,10 +44,6 @@ export const RendererMain: FunctionComponent = () => {
 			Logger.groupEnd();
 
 			setController(three);
-
-			return () => {
-				three.dispose();
-			};
 		},
 		[game]
 	);

@@ -49,9 +49,6 @@ export class Game {
 
 	public readonly seed;
 
-	/**
-	 * @deprecated Not in use yet
-	 */
 	public readonly $start = new Event('Game#$start');
 
 	public readonly $destroy = new Event('Game#$destroy');
@@ -62,11 +59,13 @@ export class Game {
 		this.entities = entities;
 		this.ui = new GameUI(this.terrain);
 
+		this.$start.on(() => {
+			this.entities.forEach(entity => entity.play());
+		});
 		this.$destroy.on(() => this.entities.forEach(entity => entity.destroy()));
 	}
 
 	play() {
-		this.entities.forEach(entity => entity.play());
 		this.$start.emit();
 		return () => {
 			this.destroy();

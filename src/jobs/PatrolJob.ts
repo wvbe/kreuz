@@ -21,6 +21,7 @@ export class PatrolJob extends Job implements JobI {
 	}
 
 	start() {
+		super.start();
 		this.destroyers.push(
 			this.entity.$stoppedWalking.on(() => {
 				// Guards move from one waypoint to another, pausing for a random amount of time in between
@@ -36,7 +37,7 @@ export class PatrolJob extends Job implements JobI {
 	}
 
 	destroy() {
-		Logger.log(`Destroy ${this.constructor.name}`);
+		super.destroy();
 		this.destroyers.forEach(destroy => destroy());
 	}
 }

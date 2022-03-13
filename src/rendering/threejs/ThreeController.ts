@@ -15,7 +15,7 @@ type ThreeControllerOptions = {
 	 * Set to `Infinity` for isometric view, or a value between 45 and 70 for a normal-ish camera
 	 */
 	fieldOfView: number;
-
+	pixelRatio: number;
 	enableAutoRotate: boolean;
 	enablePan: boolean;
 	enableZoom: boolean;
@@ -137,7 +137,11 @@ export class ThreeController implements ViewI {
 					camera.top = frustumSize / 2;
 					camera.bottom = -frustumSize / 2;
 					camera.updateProjectionMatrix();
-					this.renderer.setSize(width, height);
+					this.renderer.setSize(
+						width * options.pixelRatio,
+						height * options.pixelRatio,
+						false
+					);
 				})
 			);
 		} else {
@@ -148,11 +152,17 @@ export class ThreeController implements ViewI {
 					const camera = this.camera as THREE.PerspectiveCamera;
 					camera.aspect = aspect;
 					camera.updateProjectionMatrix();
-					this.renderer.setSize(width, height);
+					this.renderer.setSize(
+						width * options.pixelRatio,
+						height * options.pixelRatio,
+						false
+					);
 				})
 			);
 		}
 		this.$resize.emit();
+		this.renderer.domElement.style.width = '100%';
+		this.renderer.domElement.style.height = '100%';
 
 		// Set the camera controls;
 		//   https://threejs.org/docs/#examples/en/controls/OrbitControls

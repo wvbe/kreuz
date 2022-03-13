@@ -11,10 +11,11 @@ const AsLargeAsPossibleContainer = styled.section`
 `;
 
 const RENDERER_OPTIONS = {
-	fieldOfView: 45,
 	enableAutoRotate: true,
 	enablePan: false,
 	enableZoom: true,
+	fieldOfView: 45,
+	pixelRatio: window.devicePixelRatio || 1,
 	restrictCameraAngle: false
 };
 export const RendererDetail: FunctionComponent<{

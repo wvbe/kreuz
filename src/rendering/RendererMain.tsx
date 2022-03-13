@@ -14,10 +14,11 @@ const AsLargeAsPossibleContainer = styled.section`
 `;
 
 const RENDERER_OPTIONS = {
-	fieldOfView: 45,
 	enableAutoRotate: false,
 	enablePan: true,
 	enableZoom: true,
+	fieldOfView: 45,
+	pixelRatio: window.devicePixelRatio || 1,
 	restrictCameraAngle: true
 };
 

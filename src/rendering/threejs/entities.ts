@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { Random } from '../../classes/Random';
 import { activePalette } from '../../constants/palettes';
 import { BuildingEntity } from '../../entities/BuildingEntity';
 import { CivilianEntity } from '../../entities/CivilianPersonEntity';
@@ -74,11 +75,8 @@ export function createEntityObject(entity: EntityI) {
 			return createBuildingLikeGeometry(0.5, 0.6, 0.4, 0.2);
 		}
 		if (entity instanceof TreeEntity) {
-			return Array.from(new Array(5)).reduce(
-				flat => [
-					...flat,
-					...createTreeLikeGeometry(-0.5 + Math.random(), -0.5 + Math.random())
-				],
+			return Random.poisson(1, 1, 0.25, entity.id).reduce<THREE.CylinderGeometry[]>(
+				(flat, [x, y]) => [...flat, ...createTreeLikeGeometry(x, y)],
 				[]
 			);
 		}

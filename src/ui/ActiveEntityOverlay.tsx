@@ -84,10 +84,11 @@ const EntityTextBadge: FunctionComponent<{ entity: EntityI }> = ({ entity }) => 
 const CAMERA_POSITION = new Coordinate(-1, 1, 1);
 const CAMERA_FOCUS = new Coordinate(0, 0, 0.1);
 const RENDERER_OPTIONS = {
-	fieldOfView: 25,
 	enableAutoRotate: true,
 	enablePan: false,
 	enableZoom: true,
+	fieldOfView: 45,
+	pixelRatio: window.devicePixelRatio || 1,
 	restrictCameraAngle: false
 };
 

@@ -11,7 +11,7 @@ import { generateEntities } from './generators/generateEntities';
 // import nebulaTexture from './textures/water-2.png';
 
 function generateEverything(seed: SeedI = String(Date.now())) {
-	const size = 40;
+	const size = 20;
 	const density = 1;
 	const terrain = generateDualMeshTerrain(seed, size, density);
 	const entities = generateEntities(seed, terrain);

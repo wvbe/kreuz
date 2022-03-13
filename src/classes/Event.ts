@@ -46,7 +46,7 @@ export class Event<Args extends unknown[] = []> {
 	emit(...args: Args): void {
 		if (this.name && process.env.NODE_ENV !== 'test') {
 			// For debugging purposes only
-			Logger.groupCollapsed(`🔔 ${this.name}`);
+			Logger.group(`🔔 ${this.name} (${this.callbacks.length})`);
 		}
 
 		// Create a new array from callbacks so that the loop is not affected

@@ -3,10 +3,10 @@ import React, { FunctionComponent, useCallback } from 'react';
 import { Coordinate } from '../classes/Coordinate';
 import { useEventReducer } from '../hooks/events';
 import { useGame } from '../hooks/game';
-import { OverlayC } from './threejs/ThreeOverlay';
+import { ThreeOverlay } from './threejs/ThreeOverlay';
 import { useRenderingController } from './useRenderingController';
 
-const AsLargeAsPossibleContainer = styled.div`
+const AsLargeAsPossibleContainer = styled.section`
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
@@ -34,9 +34,10 @@ export const RendererMain: FunctionComponent = () => {
 			controller => {
 				controller.addAxisHelper(new Coordinate(-1, -1, -1));
 				controller.attachToGame(game);
+				game.play();
 
 				return () => {
-					// No further cleanup actions required, .attachToGame sets all the appropriate listeners
+					controller.detachFromGame();
 				};
 			},
 			[game]
@@ -46,9 +47,9 @@ export const RendererMain: FunctionComponent = () => {
 	return (
 		<AsLargeAsPossibleContainer className="renderer-three" ref={onRef}>
 			{controller && contextMenuState && (
-				<OverlayC three={controller} position={contextMenuState.location}>
+				<ThreeOverlay three={controller} position={contextMenuState.location}>
 					{contextMenuState.contents}
-				</OverlayC>
+				</ThreeOverlay>
 			)}
 		</AsLargeAsPossibleContainer>
 	);

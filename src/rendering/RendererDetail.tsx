@@ -3,7 +3,7 @@ import React, { FunctionComponent } from 'react';
 import { ThreeController } from './threejs/ThreeController';
 import { useRenderingController } from './useRenderingController';
 
-const AsLargeAsPossibleContainer = styled.div`
+const AsLargeAsPossibleContainer = styled.section`
 	width: 100%;
 	height: 100%;
 	overflow: hidden;

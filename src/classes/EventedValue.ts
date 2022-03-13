@@ -28,7 +28,14 @@ export class EventedValue<T> {
 	public set(value: T, skipUpdate?: boolean) {
 		this.current = value;
 		if (!skipUpdate) {
-			this.$change.emit(this.current);
+			this.emit();
 		}
+	}
+
+	/**
+	 * Emit that there was an update
+	 */
+	public emit() {
+		this.$change.emit(this.current);
 	}
 }

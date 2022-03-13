@@ -13,7 +13,7 @@ export function useRenderingController(
 			if (!mounted.current) {
 				return;
 			}
-			mounted.current.stopAnimationLoop();
+			mounted.current.destructor();
 			mounted.current = null;
 			setController(mounted.current);
 		};
@@ -24,11 +24,11 @@ export function useRenderingController(
 			if (!element) {
 				return;
 			}
-			const three = mounted.current ? mounted.current : new ThreeController(element, options);
 			if (mounted.current) {
-				mounted.current.stopAnimationLoop();
+				mounted.current.destructor();
 			}
-			three.$stop.once(build(three));
+			const three = new ThreeController(element, options);
+			three.$destruct.once(build(three));
 			three.startAnimationLoop();
 			setController(three);
 			mounted.current = three;

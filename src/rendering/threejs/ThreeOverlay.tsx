@@ -7,8 +7,10 @@ import { ThreeController } from './ThreeController';
  * Uses a React portal and ThreeJS projection to render children onto a specific location in the
  * ThreeJS canvas. The element gets stuck onto that spot and plays nice with moving the camera
  * around and resizing the canvas.
+ *
+ * See also {@link ThreeController#openHtmlOverlay}
  */
-export const OverlayC: FunctionComponent<{ three: ThreeController; position: CoordinateI }> = ({
+export const ThreeOverlay: FunctionComponent<{ three: ThreeController; position: CoordinateI }> = ({
 	three,
 	position,
 	children

@@ -6,7 +6,7 @@ import { Event } from '../../classes/Event';
 import { activePalette } from '../../constants/palettes';
 import { Game } from '../../Game';
 import { DualMeshTerrain } from '../../terrain/DualMeshTerrain';
-import { CoordinateI, EntityPersonI, TileI, ViewI } from '../../types';
+import { CoordinateI, EntityI, EntityPersonI, TileI, ViewI } from '../../types';
 import { createEntityObject } from './entities';
 import { convertCoordinate } from './utils';
 
@@ -22,13 +22,14 @@ type ThreeControllerOptions = {
 	restrictCameraAngle: boolean;
 };
 
+// This global mapping helps reduce the amount of new WebGLRenderer that need to be created. If
+// created too many, the oldest renderer will be cleaned up at some point -- which is probably the
+// main renderer, and the screen goes blank.
+const RENDERER_BY_ELEMENT = new WeakMap<HTMLElement, THREE.WebGLRenderer | null>();
+
 export class ThreeController implements ViewI {
 	public animating: boolean = false;
 
-	/**
-	 * The element into which the ThreeJS canvas as well as any overlay elements are placed
-	 */
-	public root: HTMLElement;
 	public scene: THREE.Scene;
 	public renderer: THREE.WebGLRenderer;
 	public camera: THREE.Camera;
@@ -36,19 +37,34 @@ export class ThreeController implements ViewI {
 	public raycaster: THREE.Raycaster;
 
 	/**
-	 * @deprecated Not currently in use
+	 * The element into which the ThreeJS canvas as well as any overlay elements are placed
+	 */
+	public root: HTMLElement;
+
+	/**
+	 * The controller starts controlling the Three canvas. The opposite of $detach.
+	 * @deprecated
 	 */
 	public readonly $start = new Event('ThreeController#start');
+
+	/**
+	 * The controller stops controlling the canvas, animation stops. The opposite of $start.
+	 */
+	public readonly $detach = new Event('ThreeController#$detach');
+
+	public readonly $destruct = new Event('ThreeController#$destruct');
+
+	/**
+	 * The event that a render happens, and the canvas/game state needs an update.
+	 *
+	 * This event fires probably 60 times per second while the controller is started.
+	 */
+	public readonly $update = new Event();
 
 	/**
 	 * The event that the viewport is resized
 	 */
 	public readonly $resize = new Event();
-
-	/**
-	 * The event that the viewport is resized
-	 */
-	public readonly $stop = new Event('ThreeController#$stop');
 
 	/**
 	 * The event that an entity mesh is clicked
@@ -74,9 +90,10 @@ export class ThreeController implements ViewI {
 	public readonly $camera = new Event();
 
 	public constructor(root: HTMLElement, options: ThreeControllerOptions) {
-		this.$stop.once(() => {
+		// @TODO remove these event listeners from the place where they are set.
+		this.$detach.once(() => {
 			this.$camera.clear();
-			this.$resize.clear();
+			// this.$resize.clear();
 			this.$click.clear();
 			this.$clickEntity.clear();
 			this.$clickTile.clear();
@@ -88,16 +105,14 @@ export class ThreeController implements ViewI {
 		this.scene = new THREE.Scene();
 
 		// https://threejs.org/docs/#api/en/renderers/WebGLRenderer
-		this.renderer = new THREE.WebGLRenderer({
-			antialias: true,
-			alpha: true
-		});
-		// @NOTE sometimes an instance of ThreeRenderer is stopped and then reused. In this case the
-		// WebGLRenderre is disposed and (by ThreeJS) opened automatically again, but then not disposed
-		// again on the next stop. This is a memory leak!
-		//
-		// @TODO fix memory leak.
-		this.$stop.once(this.renderer.dispose.bind(this.renderer));
+		this.renderer =
+			RENDERER_BY_ELEMENT.get(root) ||
+			new THREE.WebGLRenderer({
+				antialias: true,
+				alpha: true
+			});
+		RENDERER_BY_ELEMENT.set(root, this.renderer);
+		this.$destruct.once(() => this.renderer.dispose.bind(this.renderer));
 
 		// Set the camera;
 		//   https://threejs.org/docs/#api/en/cameras/OrthographicCamera
@@ -113,25 +128,29 @@ export class ThreeController implements ViewI {
 				1,
 				1000
 			);
-			this.$resize.on(() => {
-				const { aspect, width, height } = this.getViewportSize();
-				const camera = this.camera as THREE.OrthographicCamera;
-				camera.left = (-frustumSize * aspect) / 2;
-				camera.right = (frustumSize * aspect) / 2;
-				camera.top = frustumSize / 2;
-				camera.bottom = -frustumSize / 2;
-				camera.updateProjectionMatrix();
-				this.renderer.setSize(width, height);
-			});
+			this.$destruct.once(
+				this.$resize.on(() => {
+					const { aspect, width, height } = this.getViewportSize();
+					const camera = this.camera as THREE.OrthographicCamera;
+					camera.left = (-frustumSize * aspect) / 2;
+					camera.right = (frustumSize * aspect) / 2;
+					camera.top = frustumSize / 2;
+					camera.bottom = -frustumSize / 2;
+					camera.updateProjectionMatrix();
+					this.renderer.setSize(width, height);
+				})
+			);
 		} else {
 			this.camera = new THREE.PerspectiveCamera(options.fieldOfView, aspect, 0.1, 1000);
-			this.$resize.on(() => {
-				const { aspect, width, height } = this.getViewportSize();
-				const camera = this.camera as THREE.PerspectiveCamera;
-				camera.aspect = aspect;
-				camera.updateProjectionMatrix();
-				this.renderer.setSize(width, height);
-			});
+			this.$destruct.once(
+				this.$resize.on(() => {
+					const { aspect, width, height } = this.getViewportSize();
+					const camera = this.camera as THREE.PerspectiveCamera;
+					camera.aspect = aspect;
+					camera.updateProjectionMatrix();
+					this.renderer.setSize(width, height);
+				})
+			);
 		}
 		this.$resize.emit();
 
@@ -146,24 +165,31 @@ export class ThreeController implements ViewI {
 		this.controls.enablePan = options.enablePan;
 		this.controls.dampingFactor = 0.1;
 		this.controls.autoRotate = options.enableAutoRotate;
-		this.$stop.once(this.controls.dispose.bind(this.controls));
+		this.$destruct.once(this.controls.dispose.bind(this.controls));
 
 		// https://threejs.org/docs/#api/en/core/Raycaster
+		// @TODO maybe can be global?
 		this.raycaster = new THREE.Raycaster();
 
 		// Mount the goddamn thing
 		root.appendChild(this.renderer.domElement);
-		window.addEventListener('resize', this.$resize.emit.bind(this.$resize));
+		this.$destruct.once(() => root.removeChild(this.renderer.domElement));
+
+		const handleResize = this.$resize.emit.bind(this.$resize);
+		window.addEventListener('resize', handleResize);
+		this.$destruct.once(() => window.removeEventListener('resize', handleResize));
 
 		const handleCameraChange = this.$camera.emit.bind(this.$camera);
 		this.controls.addEventListener('change', handleCameraChange);
-		this.$stop.once(() => this.controls.removeEventListener('change', handleCameraChange));
+		this.$destruct.once(() => this.controls.removeEventListener('change', handleCameraChange));
 
 		const handleClick = this.handleClick.bind(this);
 		this.root.addEventListener('click', handleClick);
-		this.$stop.once(() => {
-			this.root.removeEventListener('click', handleClick);
-		});
+		this.$destruct.once(() => this.root.removeEventListener('click', handleClick));
+	}
+
+	public destructor() {
+		this.$destruct.emit();
 	}
 
 	private handleClick(event: MouseEvent) {
@@ -209,20 +235,36 @@ export class ThreeController implements ViewI {
 		this.controls.target = convertCoordinate(coordinate);
 	}
 
-	private createGroupForGameEntities(game: Game, _options: { wireframe: boolean }) {
-		var group = new THREE.Group();
-		game.entities.forEach(entity => {
-			if (!entity.location) {
-				return;
-			}
-			const obj = createEntityObject(entity);
-			const location = Coordinate.clone(entity.location).transform(0, 0, 0.175);
-			obj.position.copy(convertCoordinate(location));
-			group.add(obj);
-		});
-
-		return group;
+	public addAxisHelper(position: CoordinateI = new Coordinate(0, 0, 0), size = 10) {
+		const v = convertCoordinate(position);
+		const axesHelper = new THREE.AxesHelper(size);
+		axesHelper.position.set(v.x, v.y, v.z);
+		this.scene.add(axesHelper);
 	}
+
+	/*
+		ACTIVATE GAME STUFF AND THEIR LISTENERS
+		---------------------------------------
+	*/
+
+	/**
+	 * Add an entity to canvas, and make sure it can update/animate
+	 */
+	private attachEntity(entity: EntityI) {
+		if (!entity.location) {
+			return;
+		}
+		const obj = createEntityObject(entity);
+		const location = Coordinate.clone(entity.location).transform(0, 0, 0.175);
+		obj.position.copy(convertCoordinate(location));
+		this.scene.add(obj);
+
+		// @TODO listeners for walking around etc.
+	}
+
+	/**
+	 * Add the game terrain geometry to canvas
+	 */
 	private createGroupForGameTerrain(game: Game, options: { fill: boolean; edge: boolean }) {
 		var group = new THREE.Group();
 
@@ -268,26 +310,23 @@ export class ThreeController implements ViewI {
 		return group;
 	}
 
-	public addAxisHelper(position: CoordinateI = new Coordinate(0, 0, 0), size = 10) {
-		const v = convertCoordinate(position);
-		const axesHelper = new THREE.AxesHelper(size);
-		axesHelper.position.set(v.x, v.y, v.z);
-		this.scene.add(axesHelper);
-	}
-
+	/**
+	 * Start the game in this ThreeJS instance. Render all entities and terrain, set all
+	 * event listeners.
+	 */
 	public attachToGame(game: Game) {
 		this.$start.once(game.play.bind(game));
-		this.$stop.once(game.destroy.bind(game));
+		this.$detach.once(game.destroy.bind(game));
 
 		// Event handlers
-		this.$stop.once(
+		this.$detach.once(
 			this.$clickTile.on((event, tile) => {
 				event.preventDefault();
 				event.stopPropagation();
 				game.openContextMenuOnTile(tile);
 			})
 		);
-		this.$stop.once(
+		this.$detach.once(
 			this.$clickEntity.on((event, entity) => {
 				event.preventDefault();
 				event.stopPropagation();
@@ -295,23 +334,26 @@ export class ThreeController implements ViewI {
 				game.contextMenu.close();
 			})
 		);
-		this.$stop.once(
+		this.$detach.once(
 			this.$click.on(event => {
 				event.preventDefault();
 				game.contextMenu.close();
 				// @TODO
 			})
 		);
-		this.$stop.once(
+		this.$detach.once(
 			game.lookAt.$change.on(() => {
 				this.setCameraFocus(game.lookAt.get());
 			})
 		);
 
 		// Meshes
+		game.entities.forEach(entity => {
+			this.attachEntity(entity);
+		});
+
 		const group = new THREE.Group();
 		group.add(this.createGroupForGameTerrain(game, { fill: true, edge: true }));
-		group.add(this.createGroupForGameEntities(game, { wireframe: false }));
 
 		// https://threejs.org/docs/#api/en/helpers/GridHelper
 		const gameSize = (game.terrain as DualMeshTerrain).size;
@@ -326,41 +368,25 @@ export class ThreeController implements ViewI {
 
 		this.scene.add(group);
 
-		this.setCameraPosition(new Coordinate(-5, -5, 60));
+		this.setCameraPosition(new Coordinate(-5, -5, 20));
 		this.setCameraFocus(game.lookAt.get());
 	}
 
-	private renderOnce() {
-		this.controls.update();
-		this.renderer.render(this.scene, this.camera);
+	/**
+	 * The opposite of attaching to a game
+	 */
+	public detachFromGame() {
+		this.$detach.emit();
 	}
 
-	public startAnimationLoop() {
-		if (this.animating) {
-			throw new Error('Animation already started');
-		}
-
-		const animate = () => {
-			if (!this.animating) {
-				return;
-			}
-			requestAnimationFrame(animate);
-			this.renderOnce();
-		};
-		this.animating = true;
-		this.$start.emit();
-		animate();
-	}
-
-	public stopAnimationLoop() {
-		if (!this.animating) {
-			throw new Error('Animation not started');
-		}
-		this.$stop.emit();
-		this.animating = false;
-	}
-
-	openHtmlOverlay(coordinate: CoordinateI, element: HTMLElement) {
+	/**
+	 * Open an HTML element on the given 3D coordinate, and keep it there when the camera moves etc.
+	 *
+	 * Returns a function with which the element can be removed again, and all event handlers unset.
+	 *
+	 * Can be easily used in React by mounting {@link ThreeOverlay}.
+	 */
+	public openHtmlOverlay(coordinate: CoordinateI, element: HTMLElement) {
 		this.root.appendChild(element);
 
 		// Compute normalized device coordinate and CSS positioning
@@ -388,5 +414,52 @@ export class ThreeController implements ViewI {
 			stopRespondingToCamera();
 			stopRespondingToResize();
 		};
+	}
+
+	/*
+		THE RENDER LOOP
+		---------------------------
+	*/
+
+	/**
+	 * Start the animation loop
+	 */
+	public startAnimationLoop() {
+		if (this.animating) {
+			// @TODO maybe just return early.
+			throw new Error('Animation already started');
+		}
+
+		const animate = () => {
+			if (!this.animating) {
+				return;
+			}
+			requestAnimationFrame(animate);
+			this.renderAnimationFrame();
+		};
+
+		this.animating = true;
+
+		animate();
+	}
+
+	/**
+	 * Call for all objects etc. to be updated, and render once.
+	 */
+	private renderAnimationFrame() {
+		this.$update.emit();
+		this.controls.update();
+		this.renderer.render(this.scene, this.camera);
+	}
+
+	/**
+	 * Stop the animation loop, the opposite of startAnimationLoop(). Will also fire the opposite event.
+	 */
+	public stopAnimationLoop() {
+		if (!this.animating) {
+			// @TODO maybe just return early.
+			throw new Error('Animation not started');
+		}
+		this.animating = false;
 	}
 }

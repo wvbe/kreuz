@@ -10,12 +10,20 @@ possible!
 **About the name**, it's a bastardization of German and the title of
 [a book that intrigued me as a child](https://en.wikipedia.org/wiki/Crusade_in_Jeans).
 
-- [x] Have isometric rendering with React and SVG
-  - [ ] Try plugging ThreeJS
+**About the project goals**, a playable game including
+- [x] Rendering with ThreeJS
+  - [x] Controls
+  - [x] Picture in picture
+  - [ ] Animations
 - [x] Tile based pathfinding
 - [ ] Workers and jobs
+  - [ ] Traits, talents
+  - [ ] Family tree, trait inheritance
 - [ ] Production and trade channels
-
+  - [ ] Natural resources
+  - [ ] Recipes
+- [ ] Disasters, events
+- [ ] Factions, conflict, politics
 ---
 
 ## License

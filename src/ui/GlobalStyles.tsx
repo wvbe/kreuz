@@ -49,6 +49,13 @@ const GlobalStyles = (
 			cursor: pointer;
 		}
 	}
+	a {
+		text-decoration: none;
+		color: ${activeUiPalette.hyperlink};
+		&:hover {
+			text-decoration: underline;
+		}
+	}
 	p {
 		margin: 0;
 	}

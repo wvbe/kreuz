@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Coordinate } from '../../classes/Coordinate';
 import { Event } from '../../classes/Event';
 import { activePalette } from '../../constants/palettes';
+import { PersonEntity } from '../../entities/PersonEntity';
 import { Game } from '../../Game';
 import { DualMeshTerrain } from '../../terrain/DualMeshTerrain';
 import { CoordinateI, EntityI, EntityPersonI, TileI, ViewI } from '../../types';
@@ -35,6 +36,7 @@ export class ThreeController implements ViewI {
 	public camera: THREE.Camera;
 	public controls: OrbitControls;
 	public raycaster: THREE.Raycaster;
+	public clock: THREE.Clock;
 
 	/**
 	 * The element into which the ThreeJS canvas as well as any overlay elements are placed
@@ -90,6 +92,13 @@ export class ThreeController implements ViewI {
 	public readonly $camera = new Event();
 
 	public constructor(root: HTMLElement, options: ThreeControllerOptions) {
+		this.$destruct.once(() => {
+			console.log('>> $detach', this.animating);
+			if (this.animating) {
+				this.stopAnimationLoop();
+			}
+			this.detachFromGame();
+		});
 		// @TODO remove these event listeners from the place where they are set.
 		this.$detach.once(() => {
 			this.$camera.clear();
@@ -100,6 +109,8 @@ export class ThreeController implements ViewI {
 		});
 
 		this.root = root;
+
+		this.clock = new THREE.Clock();
 
 		// https://threejs.org/docs/#api/en/scenes/Scene
 		this.scene = new THREE.Scene();
@@ -257,19 +268,50 @@ export class ThreeController implements ViewI {
 		---------------------------------------
 	*/
 
+	private attachEntityPersonEvents(game: Game, entity: EntityPersonI, obj: THREE.Group) {
+		// @TODO handle when the entity is removed, but the game is not detached entirely
+
+		let walk: [CoordinateI, number] | null = null;
+		let destroy: (() => void) | null;
+		entity.$startedWalkStep.on((destination, duration) => {
+			if (!entity.location) {
+				return;
+			}
+			walk = [destination, duration];
+			const deltaPerFrame = convertCoordinate(
+				Coordinate.difference(destination, entity.location).scale(1 / duration)
+			);
+			destroy = game.time.on(() => {
+				obj.position.x += deltaPerFrame.x;
+				obj.position.y += deltaPerFrame.y;
+				obj.position.z += deltaPerFrame.z;
+				if (--duration <= 0) {
+					entity.$stoppedWalkStep.emit(destination);
+				}
+			});
+		});
+		const stop = () => {
+			walk = null;
+			destroy && destroy();
+		};
+		entity.$stoppedWalkStep.on(stop);
+		this.$detach.once(stop);
+	}
 	/**
 	 * Add an entity to canvas, and make sure it can update/animate
 	 */
-	private attachEntity(entity: EntityI) {
+	private attachEntity(game: Game, entity: EntityI) {
 		if (!entity.location) {
 			return;
 		}
 		const obj = createEntityObject(entity);
 		const location = Coordinate.clone(entity.location).transform(0, 0, 0.175);
 		obj.position.copy(convertCoordinate(location));
-		this.scene.add(obj);
 
-		// @TODO listeners for walking around etc.
+		if (entity instanceof PersonEntity) {
+			this.attachEntityPersonEvents(game, entity, obj);
+		}
+		this.scene.add(obj);
 	}
 
 	/**
@@ -320,15 +362,18 @@ export class ThreeController implements ViewI {
 		return group;
 	}
 
-	/**
-	 * Start the game in this ThreeJS instance. Render all entities and terrain, set all
-	 * event listeners.
-	 */
-	public attachToGame(game: Game) {
+	private attachEventListeners(game: Game) {
 		this.$start.once(game.play.bind(game));
 		this.$detach.once(game.destroy.bind(game));
 
-		// Event handlers
+		// On every frame, update the game clock with Three.js progress
+		this.$detach.on(
+			this.$update.on(() => {
+				const d = this.clock.getDelta();
+				game.time.steps(d * 1000);
+			})
+		);
+		// When a tile is clicked, open game context menu
 		this.$detach.once(
 			this.$clickTile.on((event, tile) => {
 				event.preventDefault();
@@ -336,6 +381,7 @@ export class ThreeController implements ViewI {
 				game.openContextMenuOnTile(tile);
 			})
 		);
+		// When an entity is clicked, focus it in game UI
 		this.$detach.once(
 			this.$clickEntity.on((event, entity) => {
 				event.preventDefault();
@@ -344,6 +390,7 @@ export class ThreeController implements ViewI {
 				game.contextMenu.close();
 			})
 		);
+		// When anything else is clicked, close context menu
 		this.$detach.once(
 			this.$click.on(event => {
 				event.preventDefault();
@@ -351,15 +398,24 @@ export class ThreeController implements ViewI {
 				// @TODO
 			})
 		);
+		// When the game requests to focus on a location, focus on that location
 		this.$detach.once(
 			game.lookAt.on(() => {
 				this.setCameraFocus(game.lookAt.get());
 			})
 		);
+	}
+
+	/**
+	 * Start the game in this ThreeJS instance. Render all entities and terrain, set all
+	 * event listeners.
+	 */
+	public attachToGame(game: Game) {
+		this.attachEventListeners(game);
 
 		// Meshes
 		game.entities.forEach(entity => {
-			this.attachEntity(entity);
+			this.attachEntity(game, entity);
 		});
 
 		const group = new THREE.Group();

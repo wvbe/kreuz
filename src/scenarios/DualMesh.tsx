@@ -19,20 +19,17 @@ function generateEverything(seed: SeedI = String(Date.now())) {
 	return game;
 }
 
-const GameRoute: FunctionComponent<{ seed?: SeedI }> = ({ seed }) => {
+const Demo: FunctionComponent<{ seed?: SeedI }> = ({ seed }) => {
 	const game = useMemo(() => generateEverything(seed), [seed]);
 	return (
-		<GameContext.Provider value={game}>
-			<GameC game={game} />
-		</GameContext.Provider>
+		<React.StrictMode>
+			<GlobalStyles />
+
+			<GameContext.Provider value={game}>
+				<GameC game={game} />
+			</GameContext.Provider>
+		</React.StrictMode>
 	);
 };
-
-const Demo: FunctionComponent<{ seed?: SeedI }> = ({ seed }) => (
-	<React.StrictMode>
-		<GlobalStyles />
-		<GameRoute seed={seed} />
-	</React.StrictMode>
-);
 
 export default Demo;

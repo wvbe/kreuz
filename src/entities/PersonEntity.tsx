@@ -10,7 +10,7 @@ export class PersonEntity extends Entity implements EntityPersonI {
 	public readonly $stoppedWalking = new Event<[]>();
 
 	// The person started one step
-	public readonly $startedWalkStep = new Event<[TileI]>();
+	public readonly $startedWalkStep = new Event<[TileI, number]>();
 
 	// The person started finished one step, according to react-spring's timing
 	public readonly $stoppedWalkStep = new Event<[TileI]>();
@@ -70,7 +70,9 @@ export class PersonEntity extends Entity implements EntityPersonI {
 			// @TODO remove or throw
 			debugger;
 		}
-		this.$startedWalkStep.emit(coordinate);
+		const distance = this.location.euclideanDistanceTo(coordinate);
+
+		this.$startedWalkStep.emit(coordinate, 1000);
 	}
 
 	public get label(): string {

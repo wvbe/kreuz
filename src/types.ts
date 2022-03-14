@@ -25,7 +25,8 @@ export interface CoordinateI {
 	hasNaN(): boolean;
 	manhattanDistanceTo(coord: CoordinateI): InGameDistance;
 	toString(): string;
-	transform(dx: InGameDistance, dy: InGameDistance, dz: InGameDistance): CoordinateI;
+	transform(dx: InGameDistance, dy: InGameDistance, dz: InGameDistance): this;
+	scale(multiplier: number): this;
 }
 /**
  * A tile
@@ -130,7 +131,18 @@ export interface EntityPersonI extends EntityI {
 	/**
 	 * Event: The person started one step
 	 */
-	$startedWalkStep: Event<[TileI]>;
+	$startedWalkStep: Event<
+		[
+			/**
+			 * The destination of this step
+			 */
+			TileI,
+			/**
+			 * The expected duration of time it takes to perform this step
+			 */
+			number
+		]
+	>;
 
 	/**
 	 * Event: The person started finished one step, according to react-spring's timing

@@ -27,6 +27,13 @@ export class Coordinate implements CoordinateI {
 
 		return this;
 	}
+	scale(r: number) {
+		this.x *= r;
+		this.y *= r;
+		this.z *= r;
+
+		return this;
+	}
 
 	hasNaN() {
 		return isNaN(this.x) || isNaN(this.y) || isNaN(this.z);
@@ -59,5 +66,9 @@ export class Coordinate implements CoordinateI {
 
 	static clone(coord: CoordinateI) {
 		return new Coordinate(coord.x, coord.y, coord.z);
+	}
+
+	static difference(coord1: CoordinateI, coord2: CoordinateI) {
+		return new Coordinate(coord1.x - coord2.x, coord1.y - coord2.y, coord1.z - coord2.z);
 	}
 }

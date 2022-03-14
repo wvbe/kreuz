@@ -20,6 +20,10 @@ export class Entity implements EntityI {
 		return `${this.constructor.name} ${this.id}`;
 	}
 
+	toString() {
+		return this.label;
+	}
+
 	public play() {
 		return this.job?.start() || noop;
 	}

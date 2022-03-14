@@ -26,27 +26,36 @@ export class TimeLine extends EventedValue<number> {
 	}
 
 	public steps(much: number) {
-		while (--much > 0) {
+		while (much-- > 0) {
 			this.step();
 		}
 	}
+
+	// @TOODO base this on a stateful property instead of reducing every time.
+	//    Then, use in jump()
+	public getNextEventTime() {
+		return Array.from(this.timers.keys()).reduce((min, k) => Math.min(min, k), Infinity);
+	}
+
 	/**
 	 * Returns a boolean indicating if (true) there are more events coming
 	 * after this jump is done.
+	 *
+	 * @deprecated Untested.
 	 */
 	public jump() {
-		const keys = Array.from(this.timers.keys());
-		if (!keys.length) {
+		const next = this.getNextEventTime();
+		if (!next) {
 			return false;
 		}
-		this.set(
-			keys.reduce((min, k) => Math.min(min, k), Infinity),
-			true
-		);
+		this.set(next, true);
 		this.step();
-		return this.timers.size > 1;
+		return true;
 	}
 
+	/**
+	 * @deprecated Untested.
+	 */
 	public jumps(much: number) {
 		while (--much >= 0) {
 			if (!this.jump()) {

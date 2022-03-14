@@ -81,31 +81,36 @@ const EntityTextBadge: FunctionComponent<{ entity: EntityI }> = ({ entity }) => 
 	</>
 );
 
-const CAMERA_POSITION = new Coordinate(-1, 1, 1);
-const CAMERA_FOCUS = new Coordinate(0, 0, 0.1);
-const RENDERER_OPTIONS = {
-	enableAutoRotate: true,
-	enablePan: false,
-	enableZoom: true,
-	fieldOfView: 45,
-	pixelRatio: window.devicePixelRatio || 1,
-	restrictCameraAngle: false
-};
-
 const ActiveEntityPreviewP = styled.div`
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
 	position: relative;
 `;
+
+const CAMERA_POSITION = new Coordinate(-1, 1, 1);
+const CAMERA_FOCUS = new Coordinate(0, 0, 0.2);
+const RENDERER_OPTIONS = {
+	enableAutoRotate: true,
+	enablePan: false,
+	enableZoom: false,
+	fieldOfView: 15,
+	pixelRatio: window.devicePixelRatio || 1,
+	restrictCameraAngle: false
+};
 const ActiveEntityPreview: FunctionComponent<{ entity: EntityI }> = ({ entity }) => {
 	const { onRef } = useRenderingController(
 		RENDERER_OPTIONS,
 		useCallback(
 			controller => {
 				controller.setCameraPosition(CAMERA_POSITION);
-				controller.setCameraFocus(CAMERA_FOCUS);
 				const object = createEntityObject(entity);
+				const firstMesh = object.children[0] as THREE.Mesh;
+				if (firstMesh) {
+					controller.setCameraFocusMesh(firstMesh);
+				} else {
+					controller.setCameraFocus(CAMERA_FOCUS);
+				}
 				controller.scene.add(object);
 				return () => {
 					// Leave no trace

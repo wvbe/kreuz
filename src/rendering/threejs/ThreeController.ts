@@ -251,9 +251,22 @@ export class ThreeController implements ViewI {
 		this.camera.position.set(v.x, v.y, v.z);
 	}
 
+	private setCameraFocusOnVector3(vector: THREE.Vector3) {
+		this.camera.lookAt(vector);
+		this.controls.target = vector;
+	}
 	public setCameraFocus(coordinate: CoordinateI) {
-		this.camera.lookAt(convertCoordinate(coordinate));
-		this.controls.target = convertCoordinate(coordinate);
+		this.setCameraFocusOnVector3(convertCoordinate(coordinate));
+	}
+
+	public setCameraFocusMesh(mesh: THREE.Mesh) {
+		const geometry = mesh.geometry;
+		const center = new THREE.Vector3();
+		geometry.computeBoundingBox();
+		geometry.boundingBox?.getCenter(center);
+		mesh.localToWorld(center);
+
+		this.setCameraFocusOnVector3(center);
 	}
 
 	public addAxisHelper(position: CoordinateI = new Coordinate(0, 0, 0), size = 10) {
@@ -273,6 +286,7 @@ export class ThreeController implements ViewI {
 
 		let walk: [CoordinateI, number] | null = null;
 		let destroy: (() => void) | null;
+
 		entity.$startedWalkStep.on((destination, duration) => {
 			if (!entity.location) {
 				return;
@@ -282,6 +296,7 @@ export class ThreeController implements ViewI {
 				Coordinate.difference(destination, entity.location).scale(1 / duration)
 			);
 			destroy = game.time.on(() => {
+				// @TODO maybe add an easing function some time
 				obj.position.x += deltaPerFrame.x;
 				obj.position.y += deltaPerFrame.y;
 				obj.position.z += deltaPerFrame.z;

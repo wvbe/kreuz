@@ -4,6 +4,7 @@ import { LoiterJob } from '../../jobs/LoiterJob';
 import { PatrolJob } from '../../jobs/PatrolJob';
 import { EntityPersonI, SeedI, TerrainI } from '../../types';
 import { Random } from '../../classes/Random';
+import { SettlementEntity } from '../../entities/SettlementEntity';
 
 function repeat<P>(n: number, cb: (i: number) => P): P[] {
 	return Array.from(new Array(n)).map((_, i) => cb(i));
@@ -39,20 +40,30 @@ export function generateEntities<T extends TerrainI>(seed: SeedI, terrain: T) {
 	const amountOfGuards = 5;
 	const amountOfCivilians = 10;
 	return [
-		...repeat(amountOfGuards, i => {
+		...repeat(Math.round(Random.between(2, 6, seed, 'guardamount')), i => {
 			const id = `${seed}-guard-${i}`;
-			const start = Random.fromArray(walkableTiles, id, 'start');
-			const guard = new GuardEntity(id, start);
-			const job = generatePatrolJob(seed, guard);
-			guard.doJob(job);
-			return guard;
+			const entity = new GuardEntity(id, Random.fromArray(walkableTiles, id, 'start'));
+			entity.doJob(generatePatrolJob(seed, entity));
+			return entity;
 		}),
-		...repeat(amountOfCivilians, i => {
-			const id = `${seed}-person-${i}`;
-			const start = Random.fromArray(walkableTiles, id, 'start');
-			const worker = new CivilianEntity(id, start);
-			worker.doJob(new LoiterJob(worker));
-			return worker;
+		...repeat(Math.round(Random.between(5, 14, seed, 'civvyamount')), i => {
+			const id = `${seed}-civvy-${i}`;
+			const entity = new CivilianEntity(id, Random.fromArray(walkableTiles, id, 'start'));
+			entity.doJob(new LoiterJob(entity));
+			return entity;
+		}),
+		...repeat(Math.round(Random.between(10, 14, seed, 'settlements')), i => {
+			const id = `${seed}-settlement-${i}`;
+			const building = new SettlementEntity(
+				id,
+				Random.fromArray(walkableTiles, id, 'start'),
+				{
+					areaSize: Random.between(0.3, 0.6, seed, 'setsize', i),
+					minimumBuildingLength: 0.2,
+					scale: 0.5
+				}
+			);
+			return building;
 		})
 	];
 }

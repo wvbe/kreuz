@@ -113,6 +113,7 @@ export function generateFamilyTree(seed: number, dateMax: number, dateIncrement:
 			// @TODO maybe not marry your cousin
 			return true;
 		}
+
 		marry(person: Person) {
 			this.partner = person;
 			person.partner = this;
@@ -146,11 +147,9 @@ export function generateFamilyTree(seed: number, dateMax: number, dateIncrement:
 
 			return true;
 		}
+
 		haveBaby(partner: Person) {
 			if (!this.canHaveBabyWith(partner)) {
-				// Dev should have checked this
-				console.log('A', this);
-				console.log('P', this.partner);
 				throw new Error(
 					`${TIME.now} @ Sorry, ${this} person cannot have babies with ${partner} right now`
 				);

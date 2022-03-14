@@ -1,14 +1,17 @@
 import { Meta, Story } from '@storybook/react';
-import React, { ComponentType } from 'react';
+import React, { ComponentType, FunctionComponent, useCallback, useState } from 'react';
 import { Coordinate } from '../src/classes/Coordinate';
 import { BuildingEntity } from '../src/entities/BuildingEntity';
 import { CivilianEntity } from '../src/entities/CivilianPersonEntity';
 import { GuardEntity } from '../src/entities/GuardPersonEntity';
+import { SettlementEntity } from '../src/entities/SettlementEntity';
 import { TreeEntity } from '../src/entities/TreeEntity';
 import { scenarios } from '../src/index';
 import { RendererDetail } from '../src/rendering/RendererDetail';
 import { createEntityObject } from '../src/rendering/threejs/entities';
+import { ThreeController } from '../src/rendering/threejs/ThreeController';
 import { GenericTile } from '../src/terrain/GenericTile';
+import { SeedI } from '../src/types';
 import { Backdrop } from './util';
 
 const meta: Meta = {
@@ -30,75 +33,76 @@ export default meta;
 const CAMERA_POSITION = new Coordinate(-1, 1, 1);
 const CAMERA_FOCUS = new Coordinate(0, 0, 0.25);
 
-export const guardEntity: Story<
-	typeof scenarios.DualMesh extends ComponentType<infer P> ? P : unknown
-> = args => (
-	<Backdrop height={'100vh'} padding={0}>
-		<RendererDetail
-			build={controller => {
-				controller.setCameraPosition(CAMERA_POSITION);
-				controller.setCameraFocus(CAMERA_FOCUS);
-				controller.addAxisHelper(undefined, 1);
-				controller.scene.add(
-					createEntityObject(new GuardEntity('test', new GenericTile(0, 0, 0)))
-				);
-				return () => {};
-			}}
-		/>
-	</Backdrop>
-);
-guardEntity.storyName = 'GuardEntity';
+function makeStory(
+	label: string,
+	maker: (controller: ThreeController, seed: string) => () => void
+) {
+	const story: Story = () => {
+		const [seed, setSeed] = useState('test');
+		const build = useCallback(controller => maker(controller, seed), [seed]);
 
-export const e2: Story<typeof scenarios.DualMesh extends ComponentType<infer P> ? P : unknown> =
-	args => (
-		<Backdrop height={'100vh'} padding={0}>
-			<RendererDetail
-				build={controller => {
-					controller.setCameraPosition(CAMERA_POSITION);
-					controller.setCameraFocus(CAMERA_FOCUS);
-					controller.addAxisHelper(undefined, 1);
-					controller.scene.add(
-						createEntityObject(new CivilianEntity('test', new GenericTile(0, 0, 0)))
-					);
-					return () => {};
-				}}
-			/>
-		</Backdrop>
-	);
-e2.storyName = 'CivilianEntity';
+		return (
+			<Backdrop height={'100vh'} padding={0}>
+				<RendererDetail build={build} />
+				<div style={{ position: 'absolute', top: '1em', left: '1em' }}>
+					<button
+						onClick={() => {
+							const newSeed = String(Date.now());
+							console.log(`Setting new seed to ${newSeed}`);
+							setSeed(newSeed);
+						}}
+					>
+						Random seed
+					</button>
+				</div>
+			</Backdrop>
+		);
+	};
+	story.storyName = label;
 
-export const e3: Story<typeof scenarios.DualMesh extends ComponentType<infer P> ? P : unknown> =
-	args => (
-		<Backdrop height={'100vh'} padding={0}>
-			<RendererDetail
-				build={controller => {
-					controller.setCameraPosition(CAMERA_POSITION);
-					controller.setCameraFocus(CAMERA_FOCUS);
-					controller.addAxisHelper(undefined, 1);
-					controller.scene.add(
-						createEntityObject(new BuildingEntity('test', new GenericTile(0, 0, 0)))
-					);
-					return () => {};
-				}}
-			/>
-		</Backdrop>
-	);
-e3.storyName = 'BuildingEntity';
+	return story;
+}
 
-export const e4: Story<typeof scenarios.DualMesh extends ComponentType<infer P> ? P : unknown> =
-	args => (
-		<Backdrop height={'100vh'} padding={0}>
-			<RendererDetail
-				build={controller => {
-					controller.setCameraPosition(CAMERA_POSITION);
-					controller.setCameraFocus(CAMERA_FOCUS);
-					controller.addAxisHelper(undefined, 1);
-					controller.scene.add(
-						createEntityObject(new TreeEntity('test', new GenericTile(0, 0, 0)))
-					);
-					return () => {};
-				}}
-			/>
-		</Backdrop>
+export const guardStory = makeStory('Guard', (controller, seed) => {
+	controller.setCameraPosition(CAMERA_POSITION);
+	controller.setCameraFocus(CAMERA_FOCUS);
+	controller.addAxisHelper(undefined, 1);
+	controller.scene.add(createEntityObject(new GuardEntity(seed, new GenericTile(0, 0, 0))));
+	return () => {};
+});
+export const civvy = makeStory('Civvy', (controller, seed) => {
+	controller.setCameraPosition(CAMERA_POSITION);
+	controller.setCameraFocus(CAMERA_FOCUS);
+	controller.addAxisHelper(undefined, 1);
+	controller.scene.add(createEntityObject(new CivilianEntity(seed, new GenericTile(0, 0, 0))));
+	return () => {};
+});
+export const building = makeStory('Building', (controller, seed) => {
+	controller.setCameraPosition(CAMERA_POSITION);
+	controller.setCameraFocus(CAMERA_FOCUS);
+	controller.addAxisHelper(undefined, 1);
+	controller.scene.add(createEntityObject(new BuildingEntity(seed, new GenericTile(0, 0, 0))));
+	return () => {};
+});
+export const settlement = makeStory('Settlement', (controller, seed) => {
+	controller.setCameraPosition(CAMERA_POSITION);
+	controller.setCameraFocus(CAMERA_FOCUS);
+	controller.addAxisHelper(undefined, 1);
+	controller.scene.add(
+		createEntityObject(
+			new SettlementEntity(seed, new GenericTile(0, 0, 0), {
+				areaSize: 1,
+				minimumBuildingLength: 0.3,
+				scale: 1
+			})
+		)
 	);
-e4.storyName = 'TreeEntity';
+	return () => {};
+});
+export const forest = makeStory('Forest', (controller, seed) => {
+	controller.setCameraPosition(CAMERA_POSITION);
+	controller.setCameraFocus(CAMERA_FOCUS);
+	controller.addAxisHelper(undefined, 1);
+	controller.scene.add(createEntityObject(new TreeEntity(seed, new GenericTile(0, 0, 0))));
+	return () => {};
+});

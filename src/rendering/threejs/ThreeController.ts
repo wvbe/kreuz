@@ -93,7 +93,6 @@ export class ThreeController implements ViewI {
 
 	public constructor(root: HTMLElement, options: ThreeControllerOptions) {
 		this.$destruct.once(() => {
-			console.log('>> $detach', this.animating);
 			if (this.animating) {
 				this.stopAnimationLoop();
 			}
@@ -320,9 +319,7 @@ export class ThreeController implements ViewI {
 			return;
 		}
 		const obj = createEntityObject(entity);
-		const location = Coordinate.clone(entity.location).transform(0, 0, 0.175);
-		obj.position.copy(convertCoordinate(location));
-
+		obj.position.copy(convertCoordinate(entity.location));
 		if (entity instanceof PersonEntity) {
 			this.attachEntityPersonEvents(game, entity, obj);
 		}

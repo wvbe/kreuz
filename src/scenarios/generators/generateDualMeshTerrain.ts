@@ -1,6 +1,6 @@
 import MeshBuilder from '@redblobgames/dual-mesh/create';
 import Poisson from 'poisson-disk-sampling';
-import { DualMeshTerrain } from '../../terrain/DualMeshTerrain';
+import { Terrain } from '../../terrain/Terrain';
 import { CoordinateArray } from '../../classes/Coordinate';
 import { Random } from '../../classes/Random';
 import { DualMeshTile } from '../../terrain/DualMeshTile';
@@ -38,7 +38,7 @@ export function generateDualMeshTerrain(seed: SeedI, size: number, density: numb
 		})
 		.map((tile, i, tiles) => {
 			mesh.r_circulate_r([], i)
-				.map((x: keyof DualMeshTerrain['tiles']) => tiles[x])
+				.map((x: keyof Terrain['tiles']) => tiles[x])
 				.filter(Boolean)
 				.forEach((neighbor: DualMeshTile) => {
 					tile.neighbors.push(neighbor);
@@ -48,7 +48,7 @@ export function generateDualMeshTerrain(seed: SeedI, size: number, density: numb
 		})
 		.filter(Boolean);
 
-	const terrain = new DualMeshTerrain(size, tiles);
+	const terrain = new Terrain(size, tiles);
 
 	return terrain;
 }

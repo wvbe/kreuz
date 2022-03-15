@@ -1,4 +1,5 @@
 import { Random } from '../classes/Random';
+import { Game } from '../Game';
 import { JobI } from '../types';
 import { Job } from './Job';
 
@@ -17,18 +18,18 @@ export class LoiterJob extends Job implements JobI {
 	private walkMaxDistance = 3;
 
 	get label() {
-		return `Loitering`;
+		return `Wandering around aimlessly…`;
 	}
-	start() {
-		super.start();
+	public start(game: Game) {
+		super.start(game);
 		let steps = 0;
-		let timer: NodeJS.Timeout | null = null;
+		let clearTimer: (() => void) | null = null;
 		const doTimeout = () => {
-			if (timer) {
+			if (clearTimer) {
 				throw new Error('Timer for LoiterJob already exists');
 			}
-			timer = setTimeout(() => {
-				timer = null;
+			clearTimer = game.time.setTimeout(() => {
+				clearTimer = null;
 				if (Math.random() > this.walkChanceOnRoll) {
 					doTimeout();
 					return;
@@ -47,8 +48,8 @@ export class LoiterJob extends Job implements JobI {
 
 		this.destroyers.push(this.entity.$stoppedWalking.on(doTimeout));
 		this.destroyers.push(() => {
-			if (timer) {
-				clearTimeout(timer);
+			if (clearTimer) {
+				clearTimer();
 			}
 		});
 

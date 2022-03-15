@@ -1,21 +1,48 @@
+import * as THREE from 'three';
 import { EntityI, TileI } from '../types';
 import { Entity } from './Entity';
 
-export class BuildingEntity extends Entity implements EntityI {
-	protected readonly userData: { label: string };
+export type BuildingParameters = {
+	baseWidth: number;
+	baseDepth: number;
+	baseHeight: number;
+	roofHeight: number;
+};
 
-	constructor(
-		id: string,
-		location: TileI,
-		userData = {
-			label: 'Test building'
-		}
-	) {
+export class BuildingEntity extends Entity implements EntityI {
+	protected readonly parameters: BuildingParameters;
+
+	constructor(id: string, location: TileI, parameters: BuildingParameters) {
 		super(id, location);
-		this.userData = userData;
+		this.parameters = parameters;
 	}
 
 	public get label(): string {
-		return this.userData.label;
+		return this.id;
+	}
+
+	protected createGeometries() {
+		return [BuildingEntity.createGeometry(this.parameters)];
+	}
+
+	/**
+	 * Exposed to SettlementEntity
+	 */
+	public static createGeometry(parameters: BuildingParameters) {
+		const { baseWidth, baseHeight, baseDepth, roofHeight } = parameters;
+		const shape = new THREE.Shape();
+		shape.moveTo(0, 0);
+		shape.lineTo(0, baseHeight);
+		shape.lineTo(baseWidth / 2, baseHeight + roofHeight);
+		shape.lineTo(baseWidth, baseHeight);
+		shape.lineTo(baseWidth, 0);
+		shape.lineTo(0, 0);
+		const geo = new THREE.ExtrudeGeometry(shape, {
+			steps: 1,
+			depth: baseDepth,
+			bevelEnabled: false
+		});
+		geo.translate(-baseWidth / 2, 0, -baseDepth / 2);
+		return geo;
 	}
 }

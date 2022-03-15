@@ -4,40 +4,40 @@ import { CoordinateI, TerrainI, TileI } from '../types';
 /**
  * A special type of coordinate that is equal to another terrain coordinate when the X and Y are equal, disregarding Z.
  */
-export class GenericTile extends Coordinate implements TileI {
+export class Tile extends Coordinate implements TileI {
 	public terrain?: TerrainI;
+	public readonly neighbors: Tile[] = [];
 
-	equals(coord: CoordinateI): boolean {
+	public equals(coord: CoordinateI): boolean {
 		return this === coord || (coord && this.x === coord.x && this.y === coord.y);
 	}
 
-	static clone(coord: TileI) {
-		const coord2 = new GenericTile(coord.x, coord.y, coord.z);
+	/**
+	 * @deprecated not currently in use?
+	 */
+	public static clone(coord: TileI) {
+		const coord2 = new Tile(coord.x, coord.y, coord.z);
 		coord2.terrain = coord.terrain;
 		return coord2;
 	}
 
-	isLand() {
+	public isLand() {
 		return this.z >= 0;
 	}
 
 	// For debugging purposes only, may change without notice or tests
-	toString() {
+	public toString() {
 		return '(' + [this.x, this.y].map((num: number) => num.toFixed(2)).join(',') + ')';
 	}
 
+	public isAdjacentToLand() {
+		return this.neighbors.some(n => n.isLand());
+	}
+
 	isAdjacentToEdge(): boolean {
-		if (!this.terrain) {
-			return false;
-		}
-		return this.terrain.getNeighborTiles(this).length < 4;
+		throw new Error('Not implemented');
 	}
-	isAdjacentToLand(): boolean {
-		if (!this.terrain) {
-			return false;
-		}
-		return this.terrain.getNeighborTiles(this).some(neighbor => neighbor.isLand());
-	}
+
 	getOutlineCoordinates(): CoordinateI[] {
 		throw new Error('Not implemented');
 	}

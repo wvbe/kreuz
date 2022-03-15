@@ -1,8 +1,8 @@
 import { Coordinate } from '../classes/Coordinate';
 import { TileI } from '../types';
-import { GenericTile } from './GenericTile';
+import { Tile } from './Tile';
 
-export class DualMeshTile extends GenericTile implements TileI {
+export class DualMeshTile extends Tile implements TileI {
 	public readonly neighbors: DualMeshTile[] = [];
 
 	constructor(
@@ -15,6 +15,7 @@ export class DualMeshTile extends GenericTile implements TileI {
 		super(x, y, z);
 		this.addOutlineFromCirculation(points, anyPointIsAdjacentToEdge);
 	}
+
 	/**
 	 * Designed to be used with the Mesh r_circulate_t() method.
 	 */
@@ -58,10 +59,6 @@ export class DualMeshTile extends GenericTile implements TileI {
 				})(this, 2);
 		}
 		return this._isLand;
-	}
-
-	public isAdjacentToLand() {
-		return this.neighbors.some(n => n.isLand());
 	}
 
 	public isAdjacentToEdge() {

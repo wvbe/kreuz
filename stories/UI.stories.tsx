@@ -3,7 +3,7 @@ import { Meta, Story } from '@storybook/react';
 import { scenarios } from '../src/index';
 import { ActiveEntityOverlay } from '../src/ui/ActiveEntityOverlay';
 import { GuardEntity } from '../src/entities/GuardPersonEntity';
-import { GenericTile } from '../src/terrain/GenericTile';
+import { Tile } from '../src/terrain/Tile';
 import { JobI } from '../src/types';
 import { Backdrop } from './util';
 import { ContextMenu, ContextMenuButton, ContextMenuFooter } from '../src/ui/ContextMenu';
@@ -45,7 +45,7 @@ export const ui1: Story<typeof scenarios.DualMesh extends ComponentType<infer P>
 			<Backdrop>
 				<ActiveEntityOverlay
 					entity={(() => {
-						const entity = new GuardEntity('test', new GenericTile(0, 0, 0));
+						const entity = new GuardEntity('test', new Tile(0, 0, 0));
 						entity.doJob(new DemoJob('Doing the rounds'));
 						return entity;
 					})()}
@@ -54,7 +54,7 @@ export const ui1: Story<typeof scenarios.DualMesh extends ComponentType<infer P>
 			<Backdrop>
 				<ActiveEntityOverlay
 					entity={(() => {
-						const entity = new CivilianEntity('test', new GenericTile(0, 0, 0));
+						const entity = new CivilianEntity('test', new Tile(0, 0, 0));
 						entity.doJob(new DemoJob('Wandering around'));
 						return entity;
 					})()}

@@ -1,4 +1,28 @@
+import * as THREE from 'three';
 import { Event } from './classes/Event';
+import { Game } from './Game';
+
+export type GeometryI =
+	| THREE.BoxGeometry
+	| THREE.CircleGeometry
+	| THREE.ConeGeometry
+	| THREE.CylinderGeometry
+	| THREE.DodecahedronGeometry
+	| THREE.EdgesGeometry
+	| THREE.ExtrudeGeometry
+	| THREE.IcosahedronGeometry
+	| THREE.LatheGeometry
+	| THREE.OctahedronGeometry
+	| THREE.PlaneGeometry
+	| THREE.PolyhedronGeometry
+	| THREE.RingGeometry
+	| THREE.ShapeGeometry
+	| THREE.SphereGeometry
+	| THREE.TetrahedronGeometry
+	| THREE.TorusGeometry
+	| THREE.TorusKnotGeometry
+	| THREE.TubeGeometry
+	| THREE.WireframeGeometry;
 
 export type InGameDistance = number;
 
@@ -33,6 +57,7 @@ export interface CoordinateI {
  */
 export interface TileI extends CoordinateI {
 	terrain?: TerrainI;
+	neighbors: TileI[];
 	equals(other: TileI): boolean;
 	getOutlineCoordinates(): CoordinateI[];
 	isAdjacentToEdge(): boolean;
@@ -97,6 +122,12 @@ export interface EntityI {
 	label: string;
 
 	/**
+	 * A short description of what this entity is or does. For example, they are the bailiff or they're
+	 * guarding a place.
+	 */
+	title: string;
+
+	/**
 	 * The location of this entity, if it is standing on any particular tile.
 	 */
 	location?: TileI;
@@ -109,7 +140,7 @@ export interface EntityI {
 	/**
 	 * Sets the entity in motion on any job or other type of event handling.
 	 */
-	play(): void;
+	play(game: Game): void;
 
 	/**
 	 * Undoes any event handling that this entity does.
@@ -120,6 +151,11 @@ export interface EntityI {
 	 * Set or change the job that this entity is currently on.
 	 */
 	doJob(job: JobI): void;
+
+	/**
+	 * Should return any Three.js geometry
+	 */
+	createObject(): THREE.Group;
 }
 
 export interface EntityPersonI extends EntityI {
@@ -160,7 +196,7 @@ export interface EntityPersonI extends EntityI {
  */
 export interface JobI {
 	label: string;
-	start(): void;
+	start(game: Game): void;
 	destroy(): void;
 }
 

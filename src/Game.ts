@@ -40,21 +40,21 @@ export class Game {
 	 * EVENTED VALUES
 	 */
 
-	public readonly focus = new EventedValue<GameUiFocusable>(undefined);
+	public readonly $$focus = new EventedValue<GameUiFocusable>(undefined);
 
 	/**
-	 * @deprecated This evented value should probably live on ThreeController
+	 * @deprecated This evented value should maybe live on ThreeController
 	 */
-	public readonly lookAt = new EventedValue<CoordinateI>(new Coordinate(0, 0, 0));
+	public readonly $$lookAt = new EventedValue<CoordinateI>(new Coordinate(0, 0, 0));
 
 	constructor(seed: SeedI, terrain: TerrainI, entities: EntityI[]) {
 		this.seed = seed;
 		this.terrain = terrain;
 		this.entities = entities;
-		this.lookAt.set(terrain.getMedianCoordinate());
+		this.$$lookAt.set(terrain.getMedianCoordinate());
 
 		this.$start.on(() => {
-			this.entities.forEach(entity => entity.play());
+			this.entities.forEach(entity => entity.play(this));
 		});
 
 		this.$destroy.on(() => this.entities.forEach(entity => entity.destroy()));

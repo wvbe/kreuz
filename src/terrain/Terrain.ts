@@ -1,24 +1,18 @@
-import { FunctionComponent } from 'react';
 import { Coordinate } from '../classes/Coordinate';
 import { TerrainI, TileFilter, TileI } from '../types';
+import { Tile } from './Tile';
 
-export class GenericTerrain implements TerrainI {
-	/**
-	 * Private
-	 */
-
-	//
-
-	/**
-	 * Public, shared code
-	 */
-
+export class Terrain implements TerrainI {
 	public readonly tiles: TileI[] = [];
+	public readonly size: number;
 
-	//
-
-	constructor(tiles: TileI[]) {
+	constructor(size: number, tiles: TileI[]) {
 		this.tiles = tiles;
+		this.size = size;
+		// this.mesh = mesh;
+		this.tiles.forEach((coordinate, i) => {
+			coordinate.terrain = this;
+		});
 	}
 
 	public selectContiguousTiles(
@@ -43,7 +37,6 @@ export class GenericTerrain implements TerrainI {
 		return island;
 	}
 
-	//
 	public selectClosestTiles(start: TileI, maxDistance: number): TileI[] {
 		return this.selectContiguousTiles(
 			start,
@@ -52,10 +45,9 @@ export class GenericTerrain implements TerrainI {
 		);
 	}
 
-	//
-	protected islands: Map<TileFilter<TileI>, TileI[][]> = new Map();
+	private _islands: Map<TileFilter<TileI>, TileI[][]> = new Map();
 	public getIslands(selector: TileFilter<TileI> = t => t.isLand()): TileI[][] {
-		const fromCache = this.islands.get(selector);
+		const fromCache = this._islands.get(selector);
 		if (fromCache) {
 			return fromCache;
 		}
@@ -72,15 +64,10 @@ export class GenericTerrain implements TerrainI {
 			islands.push(island);
 		}
 
-		this.islands.set(selector, islands);
+		this._islands.set(selector, islands);
 		return islands;
 	}
 
-	/**
-	 * Abstract methods
-	 */
-
-	//
 	public getTileClosestToXy(x: number, y: number): TileI {
 		if (!this.tiles.length) {
 			throw new Error('Terrain is empty');
@@ -97,9 +84,8 @@ export class GenericTerrain implements TerrainI {
 		}, this.tiles[0]);
 	}
 
-	//
 	public getNeighborTiles(center: TileI): TileI[] {
-		return this.tiles.filter(tile => center.manhattanDistanceTo(tile) === 1);
+		return center.neighbors;
 	}
 
 	public getMedianCoordinate() {
@@ -114,23 +100,32 @@ export class GenericTerrain implements TerrainI {
 		return new Coordinate(x / this.tiles.length, y / this.tiles.length, z / this.tiles.length);
 	}
 
-	/**
-	 * Statics
-	 */
+	static fromAscii(ascii: string) {
+		const cleanString = ascii.trim().replace(/\t/g, '');
 
-	//
-	static generateRandom(seed: string, size: number): GenericTerrain {
-		throw new Error('Not implemented');
+		const characters = cleanString.split('\n').map(line => line.split(''));
+		const tiles = characters.map(line => new Array(line.length));
+		const size = Math.max(
+			characters.length,
+			characters.reduce((max, line) => Math.max(max, line.length), 0)
+		);
+
+		characters.forEach((line, y) => {
+			line.forEach((char, x) => {
+				const tile = new Tile(x, y, char === 'X' ? 1 : -1);
+				tiles[y][x] = tile;
+				[tiles[y - 1]?.[x], tiles[y][x - 1], tiles[y + 1]?.[x], tiles[y][x + 1]]
+					.filter(Boolean)
+					.forEach(neighbor => {
+						tile.neighbors.push(neighbor);
+						neighbor.neighbors.push(tile);
+					});
+			});
+		});
+
+		return new Terrain(
+			size,
+			tiles.reduce((flat, line) => [...flat, ...line], [])
+		);
 	}
 }
-
-export type GenericTerrainComponentProps<Tile extends TileI> = {
-	onTileContextMenu?: (event: React.MouseEvent<SVGGElement>, tile: Tile) => void;
-};
-
-export type GenericTerrainComponentI<Terrain extends TerrainI, Tile extends TileI> =
-	FunctionComponent<
-		{
-			terrain: Terrain;
-		} & GenericTerrainComponentProps<Tile>
-	>;

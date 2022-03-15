@@ -1,7 +1,8 @@
 import { Event } from '../classes/Event';
 import Logger from '../classes/Logger';
 import { Path } from '../classes/Path';
-import { getRandomFemaleFirstName, getRandomMaleFirstName } from '../constants/names';
+import { Random } from '../classes/Random';
+import { FIRST_NAMES_F, FIRST_NAMES_M } from '../constants/names';
 import { EntityPersonI, TileI } from '../types';
 import { Entity } from './Entity';
 
@@ -15,17 +16,22 @@ export class PersonEntity extends Entity implements EntityPersonI {
 	// The person started finished one step, according to react-spring's timing
 	public readonly $stoppedWalkStep = new Event<[TileI]>();
 
-	protected readonly userData: { firstName: string };
+	protected readonly userData: { gender: 'm' | 'f'; firstName: string };
 
-	constructor(
-		id: string,
-		location: TileI,
-		userData = {
-			firstName: Math.random() < 0.5 ? getRandomFemaleFirstName() : getRandomMaleFirstName()
-		}
-	) {
+	constructor(id: string, location: TileI) {
 		super(id, location);
-		this.userData = userData;
+
+		const gender = Random.boolean([id, this.constructor.name, 'gender']);
+		const firstName = Random.fromArray(
+			gender ? FIRST_NAMES_M : FIRST_NAMES_F,
+			id,
+			this.constructor.name,
+			'firstName'
+		);
+		this.userData = {
+			gender: gender ? 'm' : 'f',
+			firstName
+		};
 
 		// Movement handling
 		this.$stoppedWalkStep.on(loc => {
@@ -77,5 +83,8 @@ export class PersonEntity extends Entity implements EntityPersonI {
 
 	public get label(): string {
 		return this.userData.firstName;
+	}
+	public get title() {
+		return this.job?.label || 'Sitting around…';
 	}
 }

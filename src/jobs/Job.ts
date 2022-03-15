@@ -1,4 +1,5 @@
 import Logger from '../classes/Logger';
+import { Game } from '../Game';
 import { EntityPersonI, JobI } from '../types';
 
 export class Job implements JobI {
@@ -11,7 +12,7 @@ export class Job implements JobI {
 		throw new Error(`Not implemented for ${this.constructor.name}`);
 	}
 
-	start() {
+	start(_game: Game) {
 		Logger.log(`Start ${this.constructor.name}`);
 	}
 

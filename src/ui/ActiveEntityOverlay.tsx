@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import React, { FunctionComponent, useCallback } from 'react';
 import { Coordinate } from '../classes/Coordinate';
 import Logger from '../classes/Logger';
-import { createEntityObject } from '../rendering/threejs/entities';
 import { useRenderingController } from '../rendering/useRenderingController';
 import { EntityI } from '../types';
 
@@ -59,7 +58,7 @@ const EntityTextBadge: FunctionComponent<{ entity: EntityI }> = ({ entity }) => 
 		<p>
 			<b>{entity.label}</b>
 		</p>
-		<p>{entity.job?.label || 'Jobless'}</p>
+		<p>{entity.title}</p>
 		<HorizontalLinkList style={{ marginTop: '1em' }}>
 			<HorizontalLinkListItem
 				onClick={() => {
@@ -104,7 +103,7 @@ const ActiveEntityPreview: FunctionComponent<{ entity: EntityI }> = ({ entity })
 		useCallback(
 			controller => {
 				controller.setCameraPosition(CAMERA_POSITION);
-				const object = createEntityObject(entity);
+				const object = entity.createObject();
 				const firstMesh = object.children[0] as THREE.Mesh;
 				if (firstMesh) {
 					controller.setCameraFocusMesh(firstMesh);

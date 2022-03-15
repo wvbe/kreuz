@@ -10,7 +10,7 @@ import { Overlay } from './ui/Overlay';
 export const GameC: FunctionComponent<{
 	game: Game;
 }> = ({ game }) => {
-	const focusedItem = useEventedValue(game.focus);
+	const focusedItem = useEventedValue(game.$$focus);
 
 	return (
 		<>

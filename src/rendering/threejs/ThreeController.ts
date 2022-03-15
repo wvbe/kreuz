@@ -6,9 +6,8 @@ import { Event } from '../../classes/Event';
 import { activePalette } from '../../constants/palettes';
 import { PersonEntity } from '../../entities/PersonEntity';
 import { Game } from '../../Game';
-import { DualMeshTerrain } from '../../terrain/DualMeshTerrain';
+import { Terrain } from '../../terrain/Terrain';
 import { CoordinateI, EntityI, EntityPersonI, TileI, ViewI } from '../../types';
-import { createEntityObject } from './entities';
 import { convertCoordinate } from './utils';
 
 type ThreeControllerOptions = {
@@ -318,7 +317,7 @@ export class ThreeController implements ViewI {
 		if (!entity.location) {
 			return;
 		}
-		const obj = createEntityObject(entity);
+		const obj = entity.createObject();
 		obj.position.copy(convertCoordinate(entity.location));
 		if (entity instanceof PersonEntity) {
 			this.attachEntityPersonEvents(game, entity, obj);
@@ -398,7 +397,7 @@ export class ThreeController implements ViewI {
 			this.$clickEntity.on((event, entity) => {
 				event.preventDefault();
 				event.stopPropagation();
-				game.focus.set(entity);
+				game.$$focus.set(entity);
 				game.contextMenu.close();
 			})
 		);
@@ -412,8 +411,8 @@ export class ThreeController implements ViewI {
 		);
 		// When the game requests to focus on a location, focus on that location
 		this.$detach.once(
-			game.lookAt.on(() => {
-				this.setCameraFocus(game.lookAt.get());
+			game.$$lookAt.on(() => {
+				this.setCameraFocus(game.$$lookAt.get());
 			})
 		);
 	}
@@ -434,7 +433,7 @@ export class ThreeController implements ViewI {
 		group.add(this.createGroupForGameTerrain(game, { fill: true, edge: true }));
 
 		// https://threejs.org/docs/#api/en/helpers/GridHelper
-		const gameSize = (game.terrain as DualMeshTerrain).size;
+		const gameSize = (game.terrain as Terrain).size;
 		const gridHelper = new THREE.GridHelper(
 			gameSize,
 			gameSize,
@@ -447,7 +446,7 @@ export class ThreeController implements ViewI {
 		this.scene.add(group);
 
 		this.setCameraPosition(new Coordinate(-5, -5, 20));
-		this.setCameraFocus(game.lookAt.get());
+		this.setCameraFocus(game.$$lookAt.get());
 	}
 
 	/**

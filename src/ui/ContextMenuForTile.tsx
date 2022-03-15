@@ -24,7 +24,7 @@ export const ContextMenuForTile: FunctionComponent<{ game: Game; tile: TileI }> 
 	<ContextMenu>
 		<ContextMenuButton
 			onClick={() => {
-				game.lookAt.set(tile);
+				game.$$lookAt.set(tile);
 			}}
 		>
 			Center camera

@@ -282,14 +282,12 @@ export class ThreeController implements ViewI {
 	private attachEntityPersonEvents(game: Game, entity: EntityPersonI, obj: THREE.Group) {
 		// @TODO handle when the entity is removed, but the game is not detached entirely
 
-		let walk: [CoordinateI, number] | null = null;
 		let destroy: (() => void) | null;
 
 		entity.$startedWalkStep.on((destination, duration) => {
 			if (!entity.location) {
 				return;
 			}
-			walk = [destination, duration];
 			const deltaPerFrame = convertCoordinate(
 				Coordinate.difference(destination, entity.location).scale(1 / duration)
 			);
@@ -304,7 +302,6 @@ export class ThreeController implements ViewI {
 			});
 		});
 		const stop = () => {
-			walk = null;
 			destroy && destroy();
 		};
 		entity.$stoppedWalkStep.on(stop);
@@ -381,7 +378,7 @@ export class ThreeController implements ViewI {
 		this.$detach.on(
 			this.$update.on(() => {
 				const d = this.clock.getDelta();
-				game.time.steps(d * 1000);
+				game.time.steps(d * 1000 * game.time.multiplier);
 			})
 		);
 		// When a tile is clicked, open game context menu
@@ -398,14 +395,14 @@ export class ThreeController implements ViewI {
 				event.preventDefault();
 				event.stopPropagation();
 				game.$$focus.set(entity);
-				game.contextMenu.close();
+				game.closeContextMenu();
 			})
 		);
 		// When anything else is clicked, close context menu
 		this.$detach.once(
 			this.$click.on(event => {
 				event.preventDefault();
-				game.contextMenu.close();
+				game.closeContextMenu();
 				// @TODO
 			})
 		);

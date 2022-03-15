@@ -1,5 +1,4 @@
 import { Terrain } from '../terrain/Terrain';
-import { Tile } from '../terrain/Tile';
 import { Path } from './Path';
 
 describe('Path', () => {

@@ -1,5 +1,4 @@
-import { Coordinate } from '../classes/Coordinate';
-import { CoordinateI, TerrainI, TileI } from '../types';
+import { CoordinateI, TileI } from '../types';
 import { Tile } from './Tile';
 
 /**

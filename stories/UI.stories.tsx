@@ -6,8 +6,12 @@ import { GuardEntity } from '../src/entities/GuardPersonEntity';
 import { Tile } from '../src/terrain/Tile';
 import { JobI } from '../src/types';
 import { Backdrop } from './util';
-import { ContextMenu, ContextMenuButton, ContextMenuFooter } from '../src/ui/ContextMenu';
-import GlobalStyles from '../src/ui/GlobalStyles';
+import {
+	ContextMenu,
+	ContextMenuButton,
+	ContextMenuFooter
+} from '../src/ui/components/ContextMenu';
+import GlobalStyles from '../src/ui/components/GlobalStyles';
 import { CivilianEntity } from '../src/entities/CivilianPersonEntity';
 
 const meta: Meta = {

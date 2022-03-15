@@ -1,17 +1,14 @@
-import { createElement } from 'react';
+import { createElement, ReactElement } from 'react';
 import { Coordinate } from './classes/Coordinate';
 import { Event } from './classes/Event';
 import { EventedValue } from './classes/EventedValue';
 import { TimeLine } from './classes/TimeLine';
 import { CoordinateI, EntityI, SeedI, TerrainI, TileI } from './types';
-import { ContextMenuController } from './ui/ContextMenuController';
 import { ContextMenuForTile } from './ui/ContextMenuForTile';
 
 type GameUiFocusable = TileI | EntityI | undefined;
 
 export class Game {
-	public readonly contextMenu = new ContextMenuController();
-
 	/**
 	 * The "randomizer" logic/state
 	 *
@@ -24,7 +21,7 @@ export class Game {
 	// @TODO change to not readonly, and handle spontaneous changes
 	public readonly entities: EntityI[];
 
-	public readonly time = new TimeLine();
+	public readonly time = new TimeLine(1);
 
 	public readonly seed;
 
@@ -47,6 +44,14 @@ export class Game {
 	 */
 	public readonly $$lookAt = new EventedValue<CoordinateI>(new Coordinate(0, 0, 0));
 
+	public readonly $$contextMenu = new EventedValue<
+		| false
+		| {
+				location: CoordinateI;
+				contents: ReactElement;
+		  }
+	>(false);
+
 	constructor(seed: SeedI, terrain: TerrainI, entities: EntityI[]) {
 		this.seed = seed;
 		this.terrain = terrain;
@@ -67,8 +72,23 @@ export class Game {
 		};
 	}
 
-	openContextMenuOnTile(tile: TileI) {
-		this.contextMenu.open(tile, createElement(ContextMenuForTile, { game: this, tile }));
+	public openContextMenuOnTile(tile: TileI) {
+		this.openContextMenuOnCoordinate(
+			tile,
+			createElement(ContextMenuForTile, { game: this, tile })
+		);
+	}
+	private openContextMenuOnCoordinate(location: CoordinateI, contents: ReactElement) {
+		this.$$contextMenu.set({ location, contents });
+	}
+	public closeContextMenu() {
+		if (!this.isContextMenuOpen()) {
+			return;
+		}
+		this.$$contextMenu.set(false);
+	}
+	private isContextMenuOpen() {
+		return !!this.$$contextMenu.get();
 	}
 
 	destroy() {

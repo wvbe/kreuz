@@ -2,9 +2,11 @@ import { EventedValue } from './EventedValue';
 
 export class TimeLine extends EventedValue<number> {
 	public timers = new Map<number, (() => void)[]>();
+	public readonly multiplier: number;
 
-	constructor(initial: number = 0) {
+	constructor(multiplier: number = 1, initial: number = 0) {
 		super(initial);
+		this.multiplier = multiplier;
 	}
 
 	get now() {
@@ -65,7 +67,7 @@ export class TimeLine extends EventedValue<number> {
 	}
 
 	setTimeout(fn: () => void, time: number) {
-		const mark = this.get() + time;
+		const mark = Math.ceil(this.now + time);
 		if (!this.timers.has(mark)) {
 			this.timers.set(mark, [fn]);
 		} else {

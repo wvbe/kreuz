@@ -7,6 +7,8 @@ import { EntityPersonI, TileI } from '../types';
 import { Entity } from './Entity';
 
 export class PersonEntity extends Entity implements EntityPersonI {
+	// The amount of game coordinate per millisecond
+	private readonly walkSpeed = 1 / 1000;
 	// The event that the person finishes a path, according to react-spring's timing
 	public readonly $stoppedWalking = new Event<[]>();
 
@@ -78,7 +80,7 @@ export class PersonEntity extends Entity implements EntityPersonI {
 		}
 		const distance = this.location.euclideanDistanceTo(coordinate);
 
-		this.$startedWalkStep.emit(coordinate, 1000);
+		this.$startedWalkStep.emit(coordinate, distance / this.walkSpeed);
 	}
 
 	public get label(): string {

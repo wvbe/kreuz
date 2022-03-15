@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import React, { FunctionComponent } from 'react';
 import { Game } from '../Game';
 import { TileI } from '../types';
-import { ContextMenu, ContextMenuButton, ContextMenuFooter } from './ContextMenu';
+import { ContextMenu, ContextMenuButton, ContextMenuFooter } from './components/ContextMenu';
 
 // https://color.adobe.com/Fresh-flat-bright-color-theme-8718197
 const AxisX = styled.span`

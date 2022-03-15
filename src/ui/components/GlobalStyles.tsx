@@ -1,7 +1,7 @@
 import { css, Global } from '@emotion/react';
 import Color from 'color';
 import React, { FunctionComponent } from 'react';
-import { activeUiPalette } from '../constants/palettes';
+import { activeUiPalette } from '../../constants/palettes';
 
 // @TODO restore images some time
 // import nebulaTexture from './textures/water-2.png';

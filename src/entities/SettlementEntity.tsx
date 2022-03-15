@@ -3,7 +3,7 @@ import { Random } from '../classes/Random';
 import { getRandomSettlementName } from '../constants/names';
 import { convertCoordinate } from '../rendering/threejs/utils';
 import { RectangleParty } from '../scenarios/generators/generateRectangles';
-import { EntityI, GeometryI, TileI } from '../types';
+import { EntityI, TileI } from '../types';
 import { BuildingEntity } from './BuildingEntity';
 import { Entity } from './Entity';
 

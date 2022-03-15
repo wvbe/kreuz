@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent } from 'react';
-import { activeUiPalette } from '../constants/palettes';
+import { activeUiPalette } from '../../constants/palettes';
 
 /**
  * Presentational components

@@ -37,8 +37,6 @@ export function generateEntities<T extends TerrainI>(seed: SeedI, terrain: T) {
 	if (!walkableTiles.length) {
 		throw new Error('The terrain does not contain any walkable tiles!');
 	}
-	const amountOfGuards = 5;
-	const amountOfCivilians = 10;
 	return [
 		...repeat(Math.round(Random.between(2, 6, seed, 'guardamount')), i => {
 			const id = `${seed}-guard-${i}`;

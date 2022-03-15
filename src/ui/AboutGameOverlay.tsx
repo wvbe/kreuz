@@ -9,6 +9,7 @@ const Wrapper = styled.div`
 	margin-top: 1em;
 	font-size: 0.8em;
 `;
+
 export const AboutGameOverlay: FunctionComponent = () => {
 	const game = useGame();
 

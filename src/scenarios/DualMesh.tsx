@@ -3,7 +3,7 @@ import { Game } from '../Game';
 import { GameC } from '../GameC';
 import { GameContext } from '../hooks/game';
 import { SeedI } from '../types';
-import GlobalStyles from '../ui/GlobalStyles';
+import GlobalStyles from '../ui/components/GlobalStyles';
 import { generateDualMeshTerrain } from './generators/generateDualMeshTerrain';
 import { generateEntities } from './generators/generateEntities';
 

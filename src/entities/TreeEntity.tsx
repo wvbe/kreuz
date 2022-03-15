@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Random } from '../classes/Random';
-import { EntityI, GeometryI, SeedI } from '../types';
+import { EntityI, GeometryI } from '../types';
 import { Entity } from './Entity';
 
 export class TreeEntity extends Entity implements EntityI {

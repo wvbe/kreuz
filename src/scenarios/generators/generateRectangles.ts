@@ -1,8 +1,6 @@
 import { Random } from '../../classes/Random';
 import { SeedI } from '../../types';
 
-let seeed = 0;
-
 type Options = {
 	minimumBuildingLength: number;
 };

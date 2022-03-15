@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent, useCallback } from 'react';
 import { Coordinate } from '../classes/Coordinate';
-import { useEventReducer } from '../hooks/events';
+import { useEventedValue } from '../hooks/events';
 import { useGame } from '../hooks/game';
 import { ThreeOverlay } from './threejs/ThreeOverlay';
 import { useRenderingController } from './useRenderingController';
@@ -24,11 +24,7 @@ const RENDERER_OPTIONS = {
 
 export const RendererMain: FunctionComponent = () => {
 	const game = useGame();
-	const contextMenuState = useEventReducer(
-		game.contextMenu.$changed,
-		() => game.contextMenu.state,
-		[]
-	);
+	const contextMenuState = useEventedValue(game.$$contextMenu);
 	const { controller, onRef } = useRenderingController(
 		RENDERER_OPTIONS,
 		useCallback(

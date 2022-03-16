@@ -32,9 +32,10 @@ export class Coordinate implements CoordinateI {
 			this.y += dy;
 			this.z += dz;
 		} else {
-			this.x += dxOrDelta.x;
-			this.y += dxOrDelta.y;
-			this.z += dxOrDelta.z;
+			const delta = dxOrDelta as CoordinateI;
+			this.x += delta.x;
+			this.y += delta.y;
+			this.z += delta.z;
 		}
 		return this;
 	}

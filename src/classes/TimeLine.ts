@@ -1,7 +1,7 @@
 import { EventedValue } from './EventedValue';
 
 export class TimeLine extends EventedValue<number> {
-	public timers = new Map<number, (() => void)[]>();
+	private timers = new Map<number, (() => void)[]>();
 	public readonly multiplier: number;
 
 	constructor(multiplier: number = 1, initial: number = 0) {
@@ -14,12 +14,13 @@ export class TimeLine extends EventedValue<number> {
 	}
 
 	private runAllImmediates() {
-		const timers = this.timers.get(this.now);
+		const frame = this.now + 1;
+		const timers = this.timers.get(frame);
 		while (timers && timers.length > 0) {
 			const runTimeout = timers.shift();
 			runTimeout && runTimeout();
 		}
-		this.timers.delete(this.now);
+		this.timers.delete(frame);
 	}
 
 	public step() {
@@ -28,14 +29,15 @@ export class TimeLine extends EventedValue<number> {
 	}
 
 	public steps(much: number) {
-		while (much-- > 0) {
+		let remaining = much;
+		while (remaining-- > 0) {
 			this.step();
 		}
 	}
 
 	// @TOODO base this on a stateful property instead of reducing every time.
 	//    Then, use in jump()
-	public getNextEventTime() {
+	public getNextEventAbsoluteTime() {
 		return Array.from(this.timers.keys()).reduce((min, k) => Math.min(min, k), Infinity);
 	}
 
@@ -46,33 +48,34 @@ export class TimeLine extends EventedValue<number> {
 	 * @deprecated Untested.
 	 */
 	public jump() {
-		const next = this.getNextEventTime();
+		const next = this.getNextEventAbsoluteTime();
 		if (!next) {
-			return false;
+			return;
 		}
-		this.set(next, true);
+		// Quietly update to one frame _before_ the next event time
+		this.set(next - 1, true);
+
 		this.step();
-		return true;
 	}
 
-	/**
-	 * @deprecated Untested.
-	 */
-	public jumps(much: number) {
-		while (--much >= 0) {
-			if (!this.jump()) {
+	public setTimeout(fn: () => void, time: number) {
+		const frame = Math.ceil(this.now + time);
+		if (!this.timers.has(frame)) {
+			this.timers.set(frame, [fn]);
+		} else {
+			this.timers.get(frame)?.push(fn);
+		}
+		return () => {
+			const timers = this.timers.get(frame);
+			if (!timers) {
 				return;
 			}
-		}
-	}
-
-	setTimeout(fn: () => void, time: number) {
-		const mark = Math.ceil(this.now + time);
-		if (!this.timers.has(mark)) {
-			this.timers.set(mark, [fn]);
-		} else {
-			this.timers.get(mark)?.push(fn);
-		}
-		return () => this.timers.set(mark, this.timers.get(mark)?.filter(f => f !== fn) || []);
+			const filteredTimers = timers.filter(f => f !== fn);
+			if (filteredTimers.length) {
+				this.timers.set(frame, filteredTimers);
+			} else {
+				this.timers.delete(frame);
+			}
+		};
 	}
 }

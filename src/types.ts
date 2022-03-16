@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Event } from './classes/Event';
+import { EventedValue } from './classes/EventedValue';
 import { Game } from './Game';
 
 export type GeometryI =
@@ -50,6 +51,7 @@ export interface CoordinateI {
 	manhattanDistanceTo(coord: CoordinateI): InGameDistance;
 	toString(): string;
 	transform(dx: InGameDistance, dy: InGameDistance, dz: InGameDistance): this;
+	transform(delta: CoordinateI): this;
 	scale(multiplier: number): this;
 }
 /**
@@ -130,7 +132,7 @@ export interface EntityI {
 	/**
 	 * The location of this entity, if it is standing on any particular tile.
 	 */
-	location?: TileI;
+	$$location: EventedValue<TileI>;
 
 	/**
 	 * The job that this entity is currently on.

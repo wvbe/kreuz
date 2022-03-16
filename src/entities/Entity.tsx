@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { EventedValue } from '../classes/EventedValue';
 import { MATERIAL_LINES, MATERIAL_PERSONS } from '../constants/materials';
 import { Game } from '../Game';
 import { EntityI, GeometryI, JobI, TileI } from '../types';
@@ -7,7 +8,7 @@ const noop = () => {};
 export class Entity implements EntityI {
 	public readonly id: string;
 
-	public location: TileI;
+	public $$location: EventedValue<TileI>;
 
 	/**
 	 * The set of behaviour/tasks given to this entity.
@@ -16,7 +17,7 @@ export class Entity implements EntityI {
 
 	constructor(id: string, location: TileI) {
 		this.id = id;
-		this.location = location;
+		this.$$location = new EventedValue(location);
 	}
 
 	public get label(): string {

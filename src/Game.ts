@@ -37,13 +37,19 @@ export class Game {
 	 * EVENTED VALUES
 	 */
 
+	/**
+	 * The game entity that is shown in the "active entity" overlay.
+	 */
 	public readonly $$focus = new EventedValue<GameUiFocusable>(undefined);
 
 	/**
-	 * @deprecated This evented value should maybe live on ThreeController
+	 * The coordinates at which the camera is pointed.
 	 */
-	public readonly $$lookAt = new EventedValue<CoordinateI>(new Coordinate(0, 0, 0));
+	public readonly $$cameraFocus = new EventedValue<CoordinateI>(new Coordinate(0, 0, 0));
 
+	/**
+	 * The context menu information if it is opened, or false if it is not
+	 */
 	public readonly $$contextMenu = new EventedValue<
 		| false
 		| {
@@ -56,7 +62,7 @@ export class Game {
 		this.seed = seed;
 		this.terrain = terrain;
 		this.entities = entities;
-		this.$$lookAt.set(terrain.getMedianCoordinate());
+		this.$$cameraFocus.set(terrain.getMedianCoordinate());
 
 		this.$start.on(() => {
 			this.entities.forEach(entity => entity.play(this));
@@ -89,6 +95,27 @@ export class Game {
 	}
 	private isContextMenuOpen() {
 		return !!this.$$contextMenu.get();
+	}
+
+	private _destroyCameraFollowEntity: (() => void) | null = null;
+	public setCameraFollowEntity(entity: EntityI) {
+		if (this._destroyCameraFollowEntity) {
+			this._destroyCameraFollowEntity();
+		}
+		this.$$cameraFocus.set(entity.$$location.get());
+		const destroy = entity.$$location.on(() => {
+			this.$$cameraFocus.set(entity.$$location.get());
+		});
+
+		this._destroyCameraFollowEntity = () => {
+			destroy();
+			destroyOnDestroy();
+			this._destroyCameraFollowEntity = null;
+		};
+
+		const destroyOnDestroy = this.$destroy.on(this._destroyCameraFollowEntity);
+
+		return this._destroyCameraFollowEntity;
 	}
 
 	destroy() {

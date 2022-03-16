@@ -20,11 +20,22 @@ export class Coordinate implements CoordinateI {
 		);
 	}
 
-	transform(dx: InGameDistance, dy: InGameDistance, dz: InGameDistance) {
-		this.x += dx;
-		this.y += dy;
-		this.z += dz;
-
+	transform(dx: InGameDistance, dy: InGameDistance, dz: InGameDistance): this;
+	transform(delta: CoordinateI): this;
+	transform(
+		dxOrDelta: InGameDistance | CoordinateI,
+		dy?: InGameDistance,
+		dz?: InGameDistance
+	): this {
+		if (typeof dxOrDelta === 'number' && dy !== undefined && dz !== undefined) {
+			this.x += dxOrDelta;
+			this.y += dy;
+			this.z += dz;
+		} else {
+			this.x += dxOrDelta.x;
+			this.y += dxOrDelta.y;
+			this.z += dxOrDelta.z;
+		}
 		return this;
 	}
 	scale(r: number) {

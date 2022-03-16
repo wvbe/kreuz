@@ -1,9 +1,10 @@
 // const ActiveEntityOverlay: FunctionComponent = ({ children }) => null;
 
 import styled from '@emotion/styled';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import Logger from '../classes/Logger';
 import { activeUiPalette } from '../constants/palettes';
+import { useGame } from '../hooks/game';
 import { EntityI } from '../types';
 import { ActiveEntityPreview } from './ActiveEntityPreview';
 import { Button } from './components/Button';
@@ -45,26 +46,45 @@ export const EntityTextBadge: FunctionComponent<{ entity: EntityI }> = ({ entity
 	</>
 );
 
-const EntityOptions: FunctionComponent<{ entity: EntityI }> = ({ entity }) => (
-	<HorizontalLinkList style={{ marginTop: '1em' }}>
-		<Button
-			onClick={() => {
-				Logger.group('Selected entity');
-				Logger.log(entity);
-				Logger.groupEnd();
-			}}
-		>
-			LOG
-		</Button>
-		<Button
-			onClick={() => {
-				Logger.warn('Following entity not implemented yet', entity);
-			}}
-		>
-			FOLLOW
-		</Button>
-	</HorizontalLinkList>
-);
+const EntityOptions: FunctionComponent<{ entity: EntityI }> = ({ entity }) => {
+	const game = useGame();
+	const [unfollow, setUnfollow] = useState<{ fn: () => void } | null>(null);
+	useEffect(() => {
+		if (unfollow) {
+			unfollow.fn();
+		}
+		setUnfollow(null);
+	}, [entity]);
+	const handleFollowClick = useCallback(() => {
+		const unfollow = game.setCameraFollowEntity(entity);
+		setUnfollow({ fn: unfollow });
+	}, [entity]);
+	const handleUnfollowClick = useCallback(() => {
+		if (unfollow) {
+			unfollow.fn();
+		}
+		setUnfollow(null);
+	}, [unfollow]);
+	return (
+		<HorizontalLinkList style={{ marginTop: '1em' }}>
+			<Button
+				onClick={() => {
+					Logger.group('Selected entity');
+					Logger.log(entity);
+					Logger.groupEnd();
+				}}
+			>
+				LOG
+			</Button>
+
+			{unfollow ? (
+				<Button onClick={handleUnfollowClick}>Stop following</Button>
+			) : (
+				<Button onClick={handleFollowClick}>Follow</Button>
+			)}
+		</HorizontalLinkList>
+	);
+};
 
 const LocalPreviewContainer = styled.div`
 	border: 1px solid ${borderColor};

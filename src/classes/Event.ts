@@ -17,8 +17,12 @@ export class Event<Args extends unknown[] = []> {
 			);
 		}
 		const cancel = () => {
-			// console.log('Cancel Event#on');
-			this.callbacks.splice(this.callbacks.indexOf(callback), 1);
+			const index = this.callbacks.indexOf(callback);
+			if (index === -1) {
+				// Already destroyed
+				return;
+			}
+			this.callbacks.splice(index, 1);
 		};
 		this.callbacks.push(callback);
 		return cancel;
@@ -38,7 +42,12 @@ export class Event<Args extends unknown[] = []> {
 		};
 		this.callbacks.push(run);
 		const cancel = () => {
-			this.callbacks.splice(this.callbacks.indexOf(run), 1);
+			const index = this.callbacks.indexOf(run);
+			if (index === -1) {
+				// Already destroyed
+				return;
+			}
+			this.callbacks.splice(index, 1);
 		};
 		return cancel;
 	}

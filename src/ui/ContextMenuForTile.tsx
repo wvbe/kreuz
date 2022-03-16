@@ -26,7 +26,7 @@ export const ContextMenuForTile: FunctionComponent<{ game: Game; tile: TileI }> 
 		<Button
 			wide
 			onClick={() => {
-				game.$$lookAt.set(tile);
+				game.$$cameraFocus.set(tile);
 			}}
 		>
 			Center camera

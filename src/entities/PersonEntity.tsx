@@ -38,7 +38,7 @@ export class PersonEntity extends Entity implements EntityPersonI {
 
 		// Movement handling
 		this.$stoppedWalkStep.on(loc => {
-			this.location = loc;
+			this.$$location.set(loc);
 		});
 	}
 
@@ -51,13 +51,11 @@ export class PersonEntity extends Entity implements EntityPersonI {
 
 	// Calculate a path and emit animations to walk it the whole way. `this.location` is updated in between each step
 	public walkTo(destination: TileI) {
-		if (!this.location.terrain) {
+		const terrain = this.$$location.get().terrain;
+		if (!terrain) {
 			throw new Error(`Entity "${this.id}" is trying to path in a detached coordinate`);
 		}
-		const path = new Path(this.location.terrain, { closest: true }).find(
-			this.location,
-			destination
-		);
+		const path = new Path(terrain, { closest: true }).find(this.$$location.get(), destination);
 
 		if (!path.length) {
 			Logger.warn('Path was zero steps long, finishing early.');
@@ -86,7 +84,7 @@ export class PersonEntity extends Entity implements EntityPersonI {
 			// @TODO remove or throw
 			debugger;
 		}
-		const distance = this.location.euclideanDistanceTo(coordinate);
+		const distance = this.$$location.get().euclideanDistanceTo(coordinate);
 
 		this.$startedWalkStep.emit(coordinate, distance / this.walkSpeed);
 	}

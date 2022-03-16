@@ -173,12 +173,12 @@ export class ThreeController implements ViewI {
 		this.renderer.domElement.style.width = '100%';
 		this.renderer.domElement.style.height = '100%';
 
-		// Set the camera controls;
-		//   https://threejs.org/docs/#examples/en/controls/OrbitControls
+		// https://threejs.org/docs/#examples/en/controls/OrbitControls
 		this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 		if (options.restrictCameraAngle) {
 			this.controls.maxPolarAngle = 0.45 * Math.PI;
 		}
+		this.controls.screenSpacePanning = false;
 		this.controls.enableZoom = options.enableZoom;
 		this.controls.enableDamping = true;
 		this.controls.enablePan = options.enablePan;
@@ -253,6 +253,7 @@ export class ThreeController implements ViewI {
 		this.camera.lookAt(vector);
 		this.controls.target = vector;
 	}
+
 	public setCameraFocus(coordinate: CoordinateI) {
 		this.setCameraFocusOnVector3(convertCoordinate(coordinate));
 	}
@@ -285,17 +286,26 @@ export class ThreeController implements ViewI {
 		let destroy: (() => void) | null;
 
 		entity.$startedWalkStep.on((destination, duration) => {
-			if (!entity.location) {
-				return;
-			}
-			const deltaPerFrame = convertCoordinate(
-				Coordinate.difference(destination, entity.location).scale(1 / duration)
-			);
+			const deltaGameCoordinatePerFrame = Coordinate.difference(
+				destination,
+				entity.$$location.get()
+			).scale(1 / duration);
+			const deltaThreeCoodinatePerFrame = convertCoordinate(deltaGameCoordinatePerFrame);
 			destroy = game.time.on(() => {
 				// @TODO maybe add an easing function some time
-				obj.position.x += deltaPerFrame.x;
-				obj.position.y += deltaPerFrame.y;
-				obj.position.z += deltaPerFrame.z;
+				obj.position.x += deltaThreeCoodinatePerFrame.x;
+				obj.position.y += deltaThreeCoodinatePerFrame.y;
+				obj.position.z += deltaThreeCoodinatePerFrame.z;
+				// entity.$$location.set(
+				// @BUG
+				// This event should not update the $$location because $$location is a tile,
+				// which lives in Terrain.
+				//
+				// @TODO
+				// As a fix, entity location should be a coordinate, which must at various places
+				// be mapped back to a tile, if a tile is needed.
+				entity.$$location.get().transform(deltaGameCoordinatePerFrame);
+				// );
 				if (--duration <= 0) {
 					entity.$stoppedWalkStep.emit(destination);
 				}
@@ -311,11 +321,8 @@ export class ThreeController implements ViewI {
 	 * Add an entity to canvas, and make sure it can update/animate
 	 */
 	private attachEntity(game: Game, entity: EntityI) {
-		if (!entity.location) {
-			return;
-		}
 		const obj = entity.createObject();
-		obj.position.copy(convertCoordinate(entity.location));
+		obj.position.copy(convertCoordinate(entity.$$location.get()));
 		if (entity instanceof PersonEntity) {
 			this.attachEntityPersonEvents(game, entity, obj);
 		}
@@ -408,8 +415,8 @@ export class ThreeController implements ViewI {
 		);
 		// When the game requests to focus on a location, focus on that location
 		this.$detach.once(
-			game.$$lookAt.on(() => {
-				this.setCameraFocus(game.$$lookAt.get());
+			game.$$cameraFocus.on(() => {
+				this.setCameraFocus(game.$$cameraFocus.get());
 			})
 		);
 	}
@@ -443,7 +450,7 @@ export class ThreeController implements ViewI {
 		this.scene.add(group);
 
 		this.setCameraPosition(new Coordinate(-5, -5, 20));
-		this.setCameraFocus(game.$$lookAt.get());
+		this.setCameraFocus(game.$$cameraFocus.get());
 	}
 
 	/**

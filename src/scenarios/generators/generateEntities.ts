@@ -5,6 +5,7 @@ import { PatrolJob } from '../../jobs/PatrolJob';
 import { EntityPersonI, SeedI, TerrainI } from '../../types';
 import { Random } from '../../classes/Random';
 import { SettlementEntity } from '../../entities/SettlementEntity';
+import { Tile } from '../../terrain/Tile';
 
 function repeat<P>(n: number, cb: (i: number) => P): P[] {
 	return Array.from(new Array(n)).map((_, i) => cb(i));
@@ -15,7 +16,7 @@ export const RATIO_WATER_OF_TOTAL = 0.25;
 export function generateTerrain(seed: string, size: number) {}
 
 function generatePatrolJob(seed: SeedI, entity: EntityPersonI) {
-	const start = entity.location;
+	const start = entity.$$location.get();
 	const island = start?.terrain
 		?.getIslands(t => t.isLand())
 		.find(island => island.includes(start));

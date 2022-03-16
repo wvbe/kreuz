@@ -1,10 +1,7 @@
 import { css, Global } from '@emotion/react';
 import Color from 'color';
 import React, { FunctionComponent } from 'react';
-import { activeUiPalette } from '../../constants/palettes';
-
-// @TODO restore images some time
-// import nebulaTexture from './textures/water-2.png';
+import { activeUiPalette } from '../constants/palettes';
 
 const GlobalStyles = (
 	(styles): FunctionComponent =>
@@ -34,20 +31,6 @@ const GlobalStyles = (
 	}
 
 	button {
-		border: none;
-		box-sizing: border-box;
-		// Same as HorizontalLinkListItem
-		padding: 0.5em 1em;
-		white-space: nowrap;
-		transition: background-color 0.5s;
-		color: white;
-		background-color: ${activeUiPalette.medium};
-		border-top: 1px solid rgba(0, 0, 0, 0.2);
-		&:hover {
-			background-color: ${activeUiPalette.dark};
-			color: ${activeUiPalette.hyperlink};
-			cursor: pointer;
-		}
 	}
 	a {
 		text-decoration: none;

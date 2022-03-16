@@ -9,6 +9,7 @@ import { Entity } from './Entity';
 export class PersonEntity extends Entity implements EntityPersonI {
 	// The amount of game coordinate per millisecond
 	private readonly walkSpeed = 1 / 1000;
+
 	// The event that the person finishes a path, according to react-spring's timing
 	public readonly $stoppedWalking = new Event<[]>();
 
@@ -39,6 +40,13 @@ export class PersonEntity extends Entity implements EntityPersonI {
 		this.$stoppedWalkStep.on(loc => {
 			this.location = loc;
 		});
+	}
+
+	public get label(): string {
+		return `${this.userData.gender === 'm' ? '♂' : '♀'} ${this.userData.firstName}`;
+	}
+	public get title() {
+		return this.job?.label || 'Sitting around…';
 	}
 
 	// Calculate a path and emit animations to walk it the whole way. `this.location` is updated in between each step
@@ -81,12 +89,5 @@ export class PersonEntity extends Entity implements EntityPersonI {
 		const distance = this.location.euclideanDistanceTo(coordinate);
 
 		this.$startedWalkStep.emit(coordinate, distance / this.walkSpeed);
-	}
-
-	public get label(): string {
-		return this.userData.firstName;
-	}
-	public get title() {
-		return this.job?.label || 'Sitting around…';
 	}
 }

@@ -30,11 +30,11 @@ const storybookColors = {
 export const activePalette = storybookColors;
 
 export const activeUiPalette = {
-	darkest: 'rgba(0,0,0,0.9)',
-	dark: 'rgba(0,0,0,0.6)',
-	medium: 'rgba(0,0,0,0.4)',
-	light: 'rgba(0,0,0,0.2)',
-	lightest: 'rgba(0,0,0,0.1)',
+	darkest: 'rgba(30,30,30,0.9)',
+	dark: 'rgba(30,30,30,0.6)',
+	medium: 'rgba(30,30,30,0.4)',
+	light: 'rgba(30,30,30,0.2)',
+	lightest: 'rgba(30,30,30,0.1)',
 
 	hyperlink: Color(activePalette.light).toString(),
 	text: Color(activePalette.lightest).toString()

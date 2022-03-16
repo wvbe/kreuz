@@ -1,4 +1,5 @@
-const enabled = true;
+const enabled = false;
+
 export default enabled
 	? class LoggerEnabled {
 			static log(...data: Parameters<typeof console.log>) {

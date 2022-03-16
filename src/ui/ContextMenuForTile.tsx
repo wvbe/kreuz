@@ -2,7 +2,8 @@ import styled from '@emotion/styled';
 import React, { FunctionComponent } from 'react';
 import { Game } from '../Game';
 import { TileI } from '../types';
-import { ContextMenu, ContextMenuButton, ContextMenuFooter } from './components/ContextMenu';
+import { Button } from './components/Button';
+import { ContextMenu, ContextMenuFooter } from './components/ContextMenu';
 
 // https://color.adobe.com/Fresh-flat-bright-color-theme-8718197
 const AxisX = styled.span`
@@ -22,14 +23,16 @@ export const ContextMenuForTile: FunctionComponent<{ game: Game; tile: TileI }> 
 	tile
 }) => (
 	<ContextMenu>
-		<ContextMenuButton
+		<Button
+			wide
 			onClick={() => {
 				game.$$lookAt.set(tile);
 			}}
 		>
 			Center camera
-		</ContextMenuButton>
-		<ContextMenuButton
+		</Button>
+		<Button
+			wide
 			onClick={() => {
 				console.group(`Tile ${tile}`);
 				console.log(tile);
@@ -37,7 +40,7 @@ export const ContextMenuForTile: FunctionComponent<{ game: Game; tile: TileI }> 
 			}}
 		>
 			Show in console
-		</ContextMenuButton>
+		</Button>
 		<ContextMenuFooter>
 			<AxisX>{tile.x.toFixed(2)}</AxisX>
 			{', '}

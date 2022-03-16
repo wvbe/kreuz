@@ -3,69 +3,67 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent } from 'react';
 import Logger from '../classes/Logger';
+import { activeUiPalette } from '../constants/palettes';
 import { EntityI } from '../types';
 import { ActiveEntityPreview } from './ActiveEntityPreview';
+import { Button } from './components/Button';
 
-const borderColor = `rgba(0,0, 0, 0.5)`;
+const borderColor = activeUiPalette.darkest;
+
 const LocalBoundary = styled.div`
 	backdrop-filter: blur(2px);
+	border-bottom: 3px solid ${activeUiPalette.darkest};
 `;
 
 const LocalBody = styled.div`
-	border: 1px solid ${borderColor};
-	background-color: rgba(0, 0, 0, 0.4);
+	background-color: ${activeUiPalette.medium};
 	padding: 1em;
 	display: flex;
 	flex-direction: row;
 `;
 
 const HorizontalLinkList = styled.nav`
-	display: flex;
-	flex-direction: row;
-	text-transform: uppercase;
-`;
+	& > * {
+		margin-left: 1em;
+	}
 
-const HorizontalLinkListItem = styled.a`
-	flex: 0 0 auto;
-	background-color: rgba(255, 255, 255, 0.1);
-	margin-right: 3px;
-
-	// Same as ContextMenuItem
-	padding: 0.125em 0.5em;
-	white-space: nowrap;
-	transition: background-color 0.5s;
-	color: white;
-	&:hover {
-		background-color: ${borderColor};
-		cursor: pointer;
+	/*
+		The pseudo class ":first-child" is potentially unsafe when doing server-side rendering.
+		Try changing it to ":first-of-type"
+	 */
+	& > :first-of-type {
+		margin-left: 0;
 	}
 `;
 
-const EntityTextBadge: FunctionComponent<{ entity: EntityI }> = ({ entity }) => (
+export const EntityTextBadge: FunctionComponent<{ entity: EntityI }> = ({ entity }) => (
 	<>
 		<p>
 			<b>{entity.label}</b>
 		</p>
 		<p>{entity.title}</p>
-		<HorizontalLinkList style={{ marginTop: '1em' }}>
-			<HorizontalLinkListItem
-				onClick={() => {
-					Logger.group('Selected entity');
-					Logger.log(entity);
-					Logger.groupEnd();
-				}}
-			>
-				LOG
-			</HorizontalLinkListItem>
-			<HorizontalLinkListItem
-				onClick={() => {
-					Logger.warn('Following entity not implemented yet', entity);
-				}}
-			>
-				FOLLOW
-			</HorizontalLinkListItem>
-		</HorizontalLinkList>
 	</>
+);
+
+const EntityOptions: FunctionComponent<{ entity: EntityI }> = ({ entity }) => (
+	<HorizontalLinkList style={{ marginTop: '1em' }}>
+		<Button
+			onClick={() => {
+				Logger.group('Selected entity');
+				Logger.log(entity);
+				Logger.groupEnd();
+			}}
+		>
+			LOG
+		</Button>
+		<Button
+			onClick={() => {
+				Logger.warn('Following entity not implemented yet', entity);
+			}}
+		>
+			FOLLOW
+		</Button>
+	</HorizontalLinkList>
 );
 
 const LocalPreviewContainer = styled.div`
@@ -89,7 +87,14 @@ export const ActiveEntityOverlay: FunctionComponent<{ entity?: EntityI; zoom?: n
 			<LocalPreviewContainer>
 				{entity && <ActiveEntityPreview entity={entity} />}
 			</LocalPreviewContainer>
-			<div>{entity ? <EntityTextBadge entity={entity} /> : null}</div>
+			<div>
+				{entity ? (
+					<>
+						<EntityTextBadge entity={entity} />
+						<EntityOptions entity={entity} />
+					</>
+				) : null}
+			</div>
 		</LocalBody>
 	</LocalBoundary>
 );

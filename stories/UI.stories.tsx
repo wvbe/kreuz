@@ -1,18 +1,15 @@
-import React, { ComponentType } from 'react';
 import { Meta, Story } from '@storybook/react';
-import { scenarios } from '../src/index';
-import { ActiveEntityOverlay } from '../src/ui/ActiveEntityOverlay';
+import React, { ComponentType, useCallback, useState } from 'react';
+import { CivilianEntity } from '../src/entities/CivilianPersonEntity';
 import { GuardEntity } from '../src/entities/GuardPersonEntity';
+import { scenarios } from '../src/index';
+import GlobalStyles from '../src/style/GlobalStyles';
 import { Tile } from '../src/terrain/Tile';
 import { JobI } from '../src/types';
+import { ActiveEntityOverlay } from '../src/ui/ActiveEntityOverlay';
+import { Button } from '../src/ui/components/Button';
+import { ContextMenu, ContextMenuFooter } from '../src/ui/components/ContextMenu';
 import { Backdrop } from './util';
-import {
-	ContextMenu,
-	ContextMenuButton,
-	ContextMenuFooter
-} from '../src/ui/components/ContextMenu';
-import GlobalStyles from '../src/ui/components/GlobalStyles';
-import { CivilianEntity } from '../src/entities/CivilianPersonEntity';
 
 const meta: Meta = {
 	title: 'UI',
@@ -74,16 +71,54 @@ export const ui2: Story<typeof scenarios.DualMesh extends ComponentType<infer P>
 			<GlobalStyles />
 			<div style={{ position: 'absolute', bottom: '1em', left: '50%' }}>
 				<ContextMenu>
-					<ContextMenuButton onClick={() => window.alert('You asked for it')}>
+					<Button wide onClick={() => window.alert('You asked for it')}>
 						Do something
-					</ContextMenuButton>
-					<ContextMenuButton>Don't something</ContextMenuButton>
-					<ContextMenuButton>Don't something else</ContextMenuButton>
-					<ContextMenuButton>Don't anything</ContextMenuButton>
-					<ContextMenuButton>Don't all</ContextMenuButton>
+					</Button>
+					<Button wide>Don't something</Button>
+					<Button wide>Don't something else</Button>
+					<Button wide>Don't anything</Button>
+					<Button wide>Don't all</Button>
 					<ContextMenuFooter>What else?</ContextMenuFooter>
 				</ContextMenu>
 			</div>
 		</Backdrop>
 	);
 ui2.storyName = '<ContextMenu>';
+
+export const Ui3: Story<typeof scenarios.DualMesh extends ComponentType<infer P> ? P : unknown> =
+	args => {
+		const [clicks, setClicks] = useState(0);
+		const click = useCallback(() => {
+			setClicks(clicks + 1);
+		}, [clicks]);
+		return (
+			<>
+				<GlobalStyles />
+				<p>Clicks: {clicks}.</p>
+				<Backdrop>
+					<Button onClick={click}>Normal button</Button>
+				</Backdrop>
+				<Backdrop>
+					<Button onClick={click} wide>
+						Wide button
+					</Button>
+				</Backdrop>
+				<Backdrop>
+					<Button onClick={click} active>
+						Active button
+					</Button>
+				</Backdrop>
+				<Backdrop>
+					<Button onClick={click} disabled>
+						Disabled button
+					</Button>
+				</Backdrop>
+				<Backdrop>
+					<Button onClick={click} active disabled>
+						Active & disabled button
+					</Button>
+				</Backdrop>
+			</>
+		);
+	};
+Ui3.storyName = '<Button>';

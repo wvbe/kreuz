@@ -1,23 +1,25 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { FunctionComponent } from 'react';
+import { activeUiPalette } from '../../constants/palettes';
 
 const ModalBoundary = styled.div`
 	position: absolute;
-	bottom: 100%;
-	left: 50%;
 	backdrop-filter: blur(2px);
-	transform: translate(-50%, -6px);
+	display: flex;
 `;
 
 const ModalBody = styled.div`
-	overflow: hidden;
+	background-color: ${activeUiPalette.medium};
+	overflow: auto;
 `;
 
-export const Modal: FunctionComponent = ({ children }) => {
+export const Modal: FunctionComponent<
+	React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
+> = ({ children, ...rest }) => {
 	return (
-		<ModalBoundary>
-			<ModalBody></ModalBody>
+		<ModalBoundary {...rest}>
+			<ModalBody>{children}</ModalBody>
 		</ModalBoundary>
 	);
 };

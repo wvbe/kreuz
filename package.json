@@ -84,6 +84,8 @@
 	"dependencies": {
 		"@emotion/react": "^11.8.1",
 		"@emotion/styled": "^11.8.1",
+		"@fortawesome/free-solid-svg-icons": "^6.1.0",
+		"@fortawesome/react-fontawesome": "^0.1.17",
 		"@redblobgames/dual-mesh": "github:wvbe/dual-mesh",
 		"color": "^3.2.1",
 		"poisson-disk-sampling": "^2.2.3",

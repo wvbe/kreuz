@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent } from 'react';
 import { activeUiPalette } from '../../constants/palettes';
+import { Button } from './Button';
 
 /**
  * Presentational components
@@ -30,9 +31,8 @@ const ContextMenuBody = styled.div`
 
 // Additional styles apply on <button>
 // @see src/ui/GlobalStyles.tsx
-export const ContextMenuButton = styled.button`
-	display: block;
-	width: 100%;
+export const ContextMenuButton = styled(Button)`
+	text-align: center;
 `;
 
 export const ContextMenu: FunctionComponent = ({ children }) => {

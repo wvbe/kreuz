@@ -6,6 +6,7 @@ import { RendererMain } from './rendering/RendererMain';
 import { EntityI } from './types';
 import { AboutGameOverlay } from './ui/AboutGameOverlay';
 import { ActiveEntityOverlay } from './ui/ActiveEntityOverlay';
+import { Overview } from './ui/StuffOverview';
 
 const UiHost = styled.section`
 	position: absolute;
@@ -25,6 +26,7 @@ export const GameC: FunctionComponent<{
 				<ActiveEntityOverlay entity={focusedItem as EntityI} />
 				<AboutGameOverlay />
 			</UiHost>
+			<Overview></Overview>
 		</>
 	);
 };

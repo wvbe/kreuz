@@ -80,6 +80,10 @@ export class Coordinate implements CoordinateI {
 		return new Coordinate(coord.x, coord.y, coord.z);
 	}
 
+	static transform(coord1: CoordinateI, coord2: CoordinateI) {
+		return new Coordinate(coord1.x + coord2.x, coord1.y + coord2.y, coord1.z + coord2.z);
+	}
+
 	static difference(coord1: CoordinateI, coord2: CoordinateI) {
 		return new Coordinate(coord1.x - coord2.x, coord1.y - coord2.y, coord1.z - coord2.z);
 	}

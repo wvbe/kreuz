@@ -51,11 +51,12 @@ export class PersonEntity extends Entity implements EntityPersonI {
 
 	// Calculate a path and emit animations to walk it the whole way. `this.location` is updated in between each step
 	public walkTo(destination: TileI) {
-		const terrain = this.$$location.get().terrain;
+		const terrain = destination.terrain;
 		if (!terrain) {
 			throw new Error(`Entity "${this.id}" is trying to path in a detached coordinate`);
 		}
-		const path = new Path(terrain, { closest: true }).find(this.$$location.get(), destination);
+		const start = terrain.getTileClosestToXy(this.$$location.get().x, this.$$location.get().y);
+		const path = new Path(terrain, { closest: true }).find(start, destination);
 
 		if (!path.length) {
 			Logger.warn('Path was zero steps long, finishing early.');

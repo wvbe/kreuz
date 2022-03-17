@@ -1,23 +1,24 @@
 import * as THREE from 'three';
+import { Coordinate } from '../classes/Coordinate';
 import { EventedValue } from '../classes/EventedValue';
 import { MATERIAL_LINES, MATERIAL_PERSONS } from '../constants/materials';
 import { Game } from '../Game';
-import { EntityI, GeometryI, JobI, TileI } from '../types';
+import { CoordinateI, EntityI, GeometryI, JobI, TileI } from '../types';
 const noop = () => {};
 
 export class Entity implements EntityI {
 	public readonly id: string;
 
-	public $$location: EventedValue<TileI>;
+	public $$location: EventedValue<CoordinateI>;
 
 	/**
 	 * The set of behaviour/tasks given to this entity.
 	 */
 	public job?: JobI;
 
-	constructor(id: string, location: TileI) {
+	constructor(id: string, location: CoordinateI) {
 		this.id = id;
-		this.$$location = new EventedValue(location);
+		this.$$location = new EventedValue(Coordinate.clone(location));
 	}
 
 	public get label(): string {

@@ -1,5 +1,5 @@
 import { Coordinate } from '../classes/Coordinate';
-import { TerrainI, TileFilter, TileI } from '../types';
+import { CoordinateI, TerrainI, TileFilter, TileI } from '../types';
 import { Tile } from './Tile';
 
 export class Terrain implements TerrainI {
@@ -37,9 +37,9 @@ export class Terrain implements TerrainI {
 		return island;
 	}
 
-	public selectClosestTiles(start: TileI, maxDistance: number): TileI[] {
+	public selectClosestTiles(start: CoordinateI, maxDistance: number): TileI[] {
 		return this.selectContiguousTiles(
-			start,
+			this.getTileClosestToXy(start.x, start.y),
 			other => other.isLand() && start.euclideanDistanceTo(other) <= maxDistance,
 			false
 		);

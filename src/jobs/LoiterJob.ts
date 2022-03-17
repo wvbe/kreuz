@@ -36,12 +36,10 @@ export class LoiterJob extends Job implements JobI {
 				}
 				steps++;
 				const destinations =
-					this.entity.$$location
-						.get()
-						.terrain?.selectClosestTiles(
-							this.entity.$$location.get(),
-							this.walkMaxDistance
-						) || [];
+					game.terrain.selectClosestTiles(
+						this.entity.$$location.get(),
+						this.walkMaxDistance
+					) || [];
 				this.entity.walkTo(
 					Random.fromArray(destinations, this.entity.id, 'roam-destination', steps)
 				);

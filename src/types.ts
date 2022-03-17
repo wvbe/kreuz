@@ -92,7 +92,7 @@ export interface TerrainI {
 	/**
 	 * Get the tiles closest to the starting tile (not counting the starting tile itself).
 	 */
-	selectClosestTiles(start: TileI, maxDistance: number): TileI[];
+	selectClosestTiles(start: CoordinateI, maxDistance: number): TileI[];
 
 	/**
 	 * Get a list of contigious groups of tiles, aka a list of islands.
@@ -132,7 +132,7 @@ export interface EntityI {
 	/**
 	 * The location of this entity, if it is standing on any particular tile.
 	 */
-	$$location: EventedValue<TileI>;
+	$$location: EventedValue<CoordinateI>;
 
 	/**
 	 * The job that this entity is currently on.

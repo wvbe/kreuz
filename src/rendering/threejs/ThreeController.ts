@@ -296,16 +296,16 @@ export class ThreeController implements ViewI {
 				obj.position.x += deltaThreeCoodinatePerFrame.x;
 				obj.position.y += deltaThreeCoodinatePerFrame.y;
 				obj.position.z += deltaThreeCoodinatePerFrame.z;
-				// entity.$$location.set(
-				// @BUG
-				// This event should not update the $$location because $$location is a tile,
-				// which lives in Terrain.
-				//
-				// @TODO
-				// As a fix, entity location should be a coordinate, which must at various places
-				// be mapped back to a tile, if a tile is needed.
-				entity.$$location.get().transform(deltaGameCoordinatePerFrame);
-				// );
+				entity.$$location.set(
+					// @BUG
+					// This event should not update the $$location because $$location is a tile,
+					// which lives in Terrain.
+					//
+					// @TODO
+					// As a fix, entity location should be a coordinate, which must at various places
+					// be mapped back to a tile, if a tile is needed.
+					Coordinate.transform(entity.$$location.get(), deltaGameCoordinatePerFrame)
+				);
 				if (--duration <= 0) {
 					entity.$stoppedWalkStep.emit(destination);
 				}

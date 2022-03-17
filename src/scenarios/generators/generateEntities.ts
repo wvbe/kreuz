@@ -15,11 +15,9 @@ export const RATIO_WATER_OF_TOTAL = 0.25;
 
 export function generateTerrain(seed: string, size: number) {}
 
-function generatePatrolJob(seed: SeedI, entity: EntityPersonI) {
-	const start = entity.$$location.get();
-	const island = start?.terrain
-		?.getIslands(t => t.isLand())
-		.find(island => island.includes(start));
+function generatePatrolJob(terrain: TerrainI, seed: SeedI, entity: EntityPersonI) {
+	const start = terrain.getTileClosestToXy(entity.$$location.get().x, entity.$$location.get().y);
+	const island = terrain.getIslands(t => t.isLand()).find(island => island.includes(start));
 	if (!start || !island) {
 		// Expect to never throw this:
 		throw new Error('Got falsy start from none of the islands');
@@ -33,7 +31,7 @@ function generatePatrolJob(seed: SeedI, entity: EntityPersonI) {
 	]);
 }
 
-export function generateEntities<T extends TerrainI>(seed: SeedI, terrain: T) {
+export function generateEntities(seed: SeedI, terrain: TerrainI) {
 	const walkableTiles = terrain.tiles.filter(c => c.isLand());
 	if (!walkableTiles.length) {
 		throw new Error('The terrain does not contain any walkable tiles!');
@@ -42,7 +40,7 @@ export function generateEntities<T extends TerrainI>(seed: SeedI, terrain: T) {
 		...repeat(Math.round(Random.between(2, 6, seed, 'guardamount')), i => {
 			const id = `${seed}-guard-${i}`;
 			const entity = new GuardEntity(id, Random.fromArray(walkableTiles, id, 'start'));
-			entity.doJob(generatePatrolJob(seed, entity));
+			entity.doJob(generatePatrolJob(terrain, seed, entity));
 			return entity;
 		}),
 		...repeat(Math.round(Random.between(5, 14, seed, 'civvyamount')), i => {

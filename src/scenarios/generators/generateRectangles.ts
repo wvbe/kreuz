@@ -78,12 +78,12 @@ export class RectangleParty {
 		].join('\n');
 	}
 
-	emit(): RectangleParty[] {
+	flatten(): RectangleParty[] {
 		if (!this.children.length) {
 			return [this];
 		} else {
 			return this.children.reduce<RectangleParty[]>(
-				(all, child) => [...all, ...child.emit()],
+				(all, child) => [...all, ...child.flatten()],
 				[]
 			);
 		}

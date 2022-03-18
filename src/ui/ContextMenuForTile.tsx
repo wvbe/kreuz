@@ -5,8 +5,10 @@ import React, { FunctionComponent } from 'react';
 import { BuildingEntity } from '../entities/BuildingEntity';
 import { Entity } from '../entities/Entity';
 import { PersonEntity } from '../entities/PersonEntity';
+import { SettlementEntity } from '../entities/SettlementEntity';
 import { Game } from '../Game';
 import { TileI } from '../types';
+import { EntityTextBadge } from './ActiveEntityOverlay';
 import { Button } from './components/Button';
 import { ContextMenu, ContextMenuFooter } from './components/ContextMenu';
 
@@ -27,26 +29,18 @@ export const ContextMenuForTile: FunctionComponent<{ game: Game; tile: TileI }> 
 	game,
 	tile
 }) => {
-	const entities = game.entities.filter(
+	const settlement = game.entities.find(
 		entity =>
 			game.terrain.getTileClosestToXy(
 				entity.$$location.get().x,
 				entity.$$location.get().y
-			) === tile
+			) === tile && entity instanceof SettlementEntity
 	);
 	return (
 		<ContextMenu>
-			{entities.length ? (
+			{settlement ? (
 				<ContextMenuFooter>
-					{entities.map(e => {
-						if (e instanceof PersonEntity) {
-							return <FontAwesomeIcon icon={faUser} />;
-						}
-						if (e instanceof Entity) {
-							return <FontAwesomeIcon icon={faCity} />;
-						}
-						return null;
-					})}
+					<EntityTextBadge entity={settlement} />
 				</ContextMenuFooter>
 			) : null}
 			<Button

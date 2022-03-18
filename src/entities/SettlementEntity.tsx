@@ -3,7 +3,7 @@ import { Random } from '../classes/Random';
 import { getRandomSettlementName } from '../constants/names';
 import { convertCoordinate } from '../rendering/threejs/utils';
 import { RectangleParty } from '../scenarios/generators/generateRectangles';
-import { CoordinateI, EntityI } from '../types';
+import { CoordinateI, EntityI, SeedI } from '../types';
 import { BuildingEntity } from './BuildingEntity';
 import { Entity } from './Entity';
 
@@ -13,10 +13,61 @@ export type SettlementParametersI = {
 	scale: number;
 };
 
+function generateBuildings(
+	seed: SeedI[],
+	areaSize: number,
+	minimumBuildingLength: number,
+	scale: number
+) {
+	const center = new Coordinate(areaSize / 2, areaSize / 2, 0);
+	const root = RectangleParty.init(seed, areaSize, areaSize, {
+		minimumBuildingLength: minimumBuildingLength
+	});
+
+	return root
+		.flatten()
+		.map(rect => ({
+			rect,
+			center: new Coordinate(rect.x + rect.w / 2, rect.y + rect.h / 2, 0)
+		}))
+		.map(obj => ({
+			...obj,
+			dist: center.euclideanDistanceTo(obj.center)
+		}))
+		.sort((a, b) => a.dist - b.dist)
+		.map(({ rect, center }, i) => {
+			let size = (rect.w + rect.h) / 2;
+
+			// Wether this building faces north/south or east/west
+			const orientation = Random.boolean([...seed, 'orientation']);
+			const baseHeight = Random.between(0.3 * size, 0.8 * size, ...seed, 'size', i);
+			const jostle = {
+				x: Random.between(areaSize / 1.8, areaSize / 2.2, ...seed, 'jx', i),
+				y: Random.between(areaSize / 1.8, areaSize / 2.2, ...seed, 'jy', i)
+			};
+			return {
+				baseWidth:
+					(orientation ? rect.w : rect.h) *
+					Random.between(0.3, 0.8, ...seed, 'length', 1),
+				baseDepth:
+					(orientation ? rect.h : rect.w) * Random.between(0.3, 0.8, ...seed, 'width', 1),
+				baseHeight,
+				roofHeight: Random.between(0.1 * baseHeight, 0.4 * baseHeight, ...seed, 'roof', i),
+				rotateY:
+					(orientation ? Math.PI / 2 : 0) +
+					Random.between(-Math.PI, Math.PI, ...seed, 'rotate', i),
+				translate: { x: center.x - jostle.x, y: center.y - jostle.y, z: center.z },
+				scale
+			};
+		});
+}
+
 export class SettlementEntity extends Entity implements EntityI {
 	public readonly parameters: SettlementParametersI & {
 		name: string;
 	};
+
+	public readonly buildings: ReturnType<typeof generateBuildings>;
 
 	constructor(id: string, location: CoordinateI, parameters: SettlementParametersI) {
 		super(id, location);
@@ -24,6 +75,12 @@ export class SettlementEntity extends Entity implements EntityI {
 			...parameters,
 			name: getRandomSettlementName([this.id])
 		};
+		this.buildings = generateBuildings(
+			[this.id],
+			this.parameters.areaSize,
+			this.parameters.minimumBuildingLength,
+			this.parameters.scale
+		);
 	}
 
 	public get label(): string {
@@ -35,65 +92,20 @@ export class SettlementEntity extends Entity implements EntityI {
 	}
 
 	protected createGeometries() {
-		const { areaSize, minimumBuildingLength, scale } = this.parameters;
-		const seed = [this.id];
-		const center = new Coordinate(areaSize / 2, areaSize / 2, 0);
-		const root = RectangleParty.init(seed, areaSize, areaSize, {
-			minimumBuildingLength: minimumBuildingLength
-		});
-
-		return (
-			root
-				.emit()
-				.map(rect => ({
-					rect,
-					center: new Coordinate(rect.x + rect.w / 2, rect.y + rect.h / 2, 0)
-				}))
-				.map(obj => ({
-					...obj,
-					dist: center.euclideanDistanceTo(obj.center)
-				}))
-				.sort((a, b) => a.dist - b.dist)
-				// .slice(0, 10)
-				.map(({ rect, center }, i) => {
-					let size = (rect.w + rect.h) / 2;
-
-					// Wether this building faces north/south or east/west
-					const orientation = Random.boolean([...seed, 'orientation']);
-					// Shrink or grow this thing in different places
-					const lengthScale = Random.between(0.3, 0.8, ...seed, 'length', 1);
-					const widthScale = Random.between(0.3, 0.8, ...seed, 'width', 1);
-					const baseHeight = Random.between(0.3 * size, 0.8 * size, ...seed, 'size', i);
-					const roofHeight = Random.between(
-						0.1 * baseHeight,
-						0.4 * baseHeight,
-						...seed,
-						'roof',
-						i
-					);
-					const geo = BuildingEntity.createGeometry({
-						baseWidth: (orientation ? rect.w : rect.h) * lengthScale,
-						baseDepth: (orientation ? rect.h : rect.w) * widthScale,
-						baseHeight,
-						roofHeight
-					});
-					if (orientation) {
-						geo.rotateY(Math.PI / 2);
-					}
-
-					// Build it more sloppily, rotate a little bit more
-					// geo.rotateY(Random.between(-0.4, 0.4, ...seed, 'rotate', i));
-					geo.rotateY(Random.between(-Math.PI, Math.PI, ...seed, 'rotate', i));
-
-					const c = convertCoordinate(center);
-					const jostle = {
-						x: Random.between(areaSize / 1.8, areaSize / 2.2, ...seed, 'jx', i),
-						y: Random.between(areaSize / 1.8, areaSize / 2.2, ...seed, 'jy', i)
-					};
-					geo.translate(c.x - jostle.x, c.y, c.z - jostle.y);
-					geo.scale(scale, scale, scale);
-					return geo;
-				})
+		return this.buildings.map(
+			({ baseWidth, baseDepth, baseHeight, roofHeight, rotateY, translate, scale }) => {
+				const geo = BuildingEntity.createGeometry({
+					baseWidth,
+					baseDepth,
+					baseHeight,
+					roofHeight
+				});
+				geo.rotateY(rotateY);
+				const center = convertCoordinate(translate);
+				geo.translate(center.x, center.y, center.z);
+				geo.scale(scale, scale, scale);
+				return geo;
+			}
 		);
 	}
 }

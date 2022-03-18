@@ -3,7 +3,7 @@ import { Random } from '../classes/Random';
 import { getRandomSettlementName } from '../constants/names';
 import { convertCoordinate } from '../rendering/threejs/utils';
 import { RectangleParty } from '../scenarios/generators/generateRectangles';
-import { EntityI, TileI } from '../types';
+import { CoordinateI, EntityI } from '../types';
 import { BuildingEntity } from './BuildingEntity';
 import { Entity } from './Entity';
 
@@ -18,7 +18,7 @@ export class SettlementEntity extends Entity implements EntityI {
 		name: string;
 	};
 
-	constructor(id: string, location: TileI, parameters: SettlementParametersI) {
+	constructor(id: string, location: CoordinateI, parameters: SettlementParametersI) {
 		super(id, location);
 		this.parameters = {
 			...parameters,

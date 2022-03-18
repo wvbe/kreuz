@@ -285,7 +285,9 @@ export class ThreeController implements ViewI {
 
 		let destroy: (() => void) | null;
 
-		entity.$startedWalkStep.on((destination, duration) => {
+		// @TODO maybe invent TweenedValue (as a specialization of EventedValue and the update loop)
+		// some time.
+		entity.$startedWalking.on((destination, duration) => {
 			const deltaGameCoordinatePerFrame = Coordinate.difference(
 				destination,
 				entity.$$location.get()

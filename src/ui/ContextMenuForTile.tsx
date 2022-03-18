@@ -1,5 +1,10 @@
 import styled from '@emotion/styled';
+import { faCity, faUser } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { FunctionComponent } from 'react';
+import { BuildingEntity } from '../entities/BuildingEntity';
+import { Entity } from '../entities/Entity';
+import { PersonEntity } from '../entities/PersonEntity';
 import { Game } from '../Game';
 import { TileI } from '../types';
 import { Button } from './components/Button';
@@ -21,32 +26,54 @@ const AxisZ = styled.span`
 export const ContextMenuForTile: FunctionComponent<{ game: Game; tile: TileI }> = ({
 	game,
 	tile
-}) => (
-	<ContextMenu>
-		<Button
-			wide
-			onClick={() => {
-				game.$$cameraFocus.set(tile);
-			}}
-		>
-			Center camera
-		</Button>
-		<Button
-			wide
-			onClick={() => {
-				console.group(`Tile ${tile}`);
-				console.log(tile);
-				console.groupEnd();
-			}}
-		>
-			Show in console
-		</Button>
-		<ContextMenuFooter>
-			<AxisX>{tile.x.toFixed(2)}</AxisX>
-			{', '}
-			<AxisY>{tile.y.toFixed(2)}</AxisY>
-			{', '}
-			<AxisZ>{tile.z.toFixed(2)}</AxisZ>
-		</ContextMenuFooter>
-	</ContextMenu>
-);
+}) => {
+	const entities = game.entities.filter(
+		entity =>
+			game.terrain.getTileClosestToXy(
+				entity.$$location.get().x,
+				entity.$$location.get().y
+			) === tile
+	);
+	return (
+		<ContextMenu>
+			{entities.length ? (
+				<ContextMenuFooter>
+					{entities.map(e => {
+						if (e instanceof PersonEntity) {
+							return <FontAwesomeIcon icon={faUser} />;
+						}
+						if (e instanceof Entity) {
+							return <FontAwesomeIcon icon={faCity} />;
+						}
+						return null;
+					})}
+				</ContextMenuFooter>
+			) : null}
+			<Button
+				wide
+				onClick={() => {
+					game.$$cameraFocus.set(tile);
+				}}
+			>
+				Center camera
+			</Button>
+			<Button
+				wide
+				onClick={() => {
+					console.group(`Tile ${tile}`);
+					console.log(tile);
+					console.groupEnd();
+				}}
+			>
+				Show in console
+			</Button>
+			<ContextMenuFooter>
+				<AxisX>{tile.x.toFixed(2)}</AxisX>
+				{', '}
+				<AxisY>{tile.y.toFixed(2)}</AxisY>
+				{', '}
+				<AxisZ>{tile.z.toFixed(2)}</AxisZ>
+			</ContextMenuFooter>
+		</ContextMenu>
+	);
+};

@@ -57,6 +57,7 @@ export interface CoordinateI {
 /**
  * A tile
  */
+
 export interface TileI extends CoordinateI {
 	terrain?: TerrainI;
 	neighbors: TileI[];
@@ -169,12 +170,12 @@ export interface EntityPersonI extends EntityI {
 	/**
 	 * Event: The person started one step
 	 */
-	$startedWalkStep: Event<
+	$startedWalking: Event<
 		[
 			/**
 			 * The destination of this step
 			 */
-			TileI,
+			CoordinateI,
 			/**
 			 * The expected duration of time it takes to perform this step
 			 */
@@ -185,12 +186,12 @@ export interface EntityPersonI extends EntityI {
 	/**
 	 * Event: The person started finished one step, according to react-spring's timing
 	 */
-	$stoppedWalkStep: Event<[TileI]>;
+	$stoppedWalkStep: Event<[CoordinateI]>;
 
 	/**
 	 * Make the entity choose a path from its current location to the destination, and start an animation.
 	 */
-	walkTo(destination: TileI): void;
+	walkToTile(destination: TileI): void;
 }
 
 /**

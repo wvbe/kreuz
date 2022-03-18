@@ -16,3 +16,7 @@ export const PRETTY_SCROLLBAR = css`
 		background-color: ${activeUiPalette.darkest};
 	}
 `;
+
+export const BLURRY_BACKGROUND = css`
+	backdrop-filter: blur(8px);
+`;

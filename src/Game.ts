@@ -19,7 +19,7 @@ export class Game {
 	public readonly terrain: TerrainI;
 
 	// @TODO change to not readonly, and handle spontaneous changes
-	public readonly entities: EntityI[];
+	public readonly entities: EntityI[] = [];
 
 	public readonly time = new TimeLine(1);
 
@@ -61,14 +61,9 @@ export class Game {
 	constructor(seed: SeedI, terrain: TerrainI, entities: EntityI[]) {
 		this.seed = seed;
 		this.terrain = terrain;
-		this.entities = entities;
 		this.$$cameraFocus.set(terrain.getMedianCoordinate());
 
-		this.$start.on(() => {
-			this.entities.forEach(entity => entity.play(this));
-		});
-
-		this.$destroy.on(() => this.entities.forEach(entity => entity.destroy()));
+		entities.forEach(entity => this.registerEntity(entity));
 	}
 
 	play() {
@@ -76,6 +71,21 @@ export class Game {
 		return () => {
 			this.destroy();
 		};
+	}
+
+	/**
+	 * Private because AFAIK no usecase for this method outside class
+	 */
+	private registerEntity(entity: EntityI) {
+		this.entities.push(entity);
+
+		this.$start.on(() => {
+			entity.play(this);
+		});
+
+		this.$destroy.on(() => {
+			entity.destroy();
+		});
 	}
 
 	public openContextMenuOnTile(tile: TileI) {
@@ -87,12 +97,14 @@ export class Game {
 	private openContextMenuOnCoordinate(location: CoordinateI, contents: ReactElement) {
 		this.$$contextMenu.set({ location, contents });
 	}
+
 	public closeContextMenu() {
 		if (!this.isContextMenuOpen()) {
 			return;
 		}
 		this.$$contextMenu.set(false);
 	}
+
 	private isContextMenuOpen() {
 		return !!this.$$contextMenu.get();
 	}

@@ -89,6 +89,7 @@
 		"@redblobgames/dual-mesh": "github:wvbe/dual-mesh",
 		"color": "^3.2.1",
 		"poisson-disk-sampling": "^2.2.3",
+		"react-draggable": "^4.4.4",
 		"react-spring": "^9.4.3",
 		"seedrandom": "^3.0.5",
 		"three": "^0.138.3"

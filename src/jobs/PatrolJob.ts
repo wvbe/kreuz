@@ -28,14 +28,14 @@ export class PatrolJob extends Job implements JobI {
 				const destroy = game.time.setTimeout(() => {
 					this.waypointIndex += 1;
 					const next = this.waypoints[this.waypointIndex % this.waypoints.length];
-					this.entity.walkTo(next);
+					this.entity.walkToTile(next);
 					this.destroyers.splice(this.destroyers.indexOf(destroy), 1);
 				}, 3000);
 				this.destroyers.push(destroy);
 			})
 		);
 
-		this.entity.walkTo(this.waypoints[0]);
+		this.entity.walkToTile(this.waypoints[0]);
 	}
 
 	destroy() {

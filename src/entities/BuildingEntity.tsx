@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { EntityI, TileI } from '../types';
+import { CoordinateI, EntityI } from '../types';
 import { Entity } from './Entity';
 
 export type BuildingParameters = {
@@ -12,7 +12,7 @@ export type BuildingParameters = {
 export class BuildingEntity extends Entity implements EntityI {
 	protected readonly parameters: BuildingParameters;
 
-	constructor(id: string, location: TileI, parameters: BuildingParameters) {
+	constructor(id: string, location: CoordinateI, parameters: BuildingParameters) {
 		super(id, location);
 		this.parameters = parameters;
 	}

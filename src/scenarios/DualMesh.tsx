@@ -3,7 +3,6 @@ import { Game } from '../Game';
 import { GameC } from '../GameC';
 import { GameContext } from '../hooks/game';
 import { SeedI } from '../types';
-import GlobalStyles from '../style/GlobalStyles';
 import { generateDualMeshTerrain } from './generators/generateDualMeshTerrain';
 import { generateEntities } from './generators/generateEntities';
 
@@ -23,11 +22,7 @@ const Demo: FunctionComponent<{ seed?: SeedI }> = ({ seed }) => {
 	const game = useMemo(() => generateEverything(seed), [seed]);
 	return (
 		<React.StrictMode>
-			<GlobalStyles />
-
-			<GameContext.Provider value={game}>
-				<GameC game={game} />
-			</GameContext.Provider>
+			<GameC game={game} />
 		</React.StrictMode>
 	);
 };

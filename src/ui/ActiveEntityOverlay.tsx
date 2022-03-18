@@ -5,6 +5,7 @@ import React, { FunctionComponent, useCallback, useEffect, useState } from 'reac
 import Logger from '../classes/Logger';
 import { activeUiPalette } from '../constants/palettes';
 import { useGame } from '../hooks/game';
+import { BLURRY_BACKGROUND } from '../style/mixins';
 import { EntityI } from '../types';
 import { ActiveEntityPreview } from './ActiveEntityPreview';
 import { Button } from './components/Button';
@@ -12,7 +13,7 @@ import { Button } from './components/Button';
 const borderColor = activeUiPalette.darkest;
 
 const LocalBoundary = styled.div`
-	backdrop-filter: blur(2px);
+	${BLURRY_BACKGROUND};
 	border-bottom: 3px solid ${activeUiPalette.darkest};
 `;
 
@@ -47,7 +48,7 @@ export const EntityTextBadge: FunctionComponent<{ entity: EntityI }> = ({ entity
 );
 
 const EntityOptions: FunctionComponent<{ entity: EntityI }> = ({ entity }) => {
-	const game = useGame();
+	const game = useGame(true);
 	const [unfollow, setUnfollow] = useState<{ fn: () => void } | null>(null);
 	useEffect(() => {
 		if (unfollow) {
@@ -56,9 +57,13 @@ const EntityOptions: FunctionComponent<{ entity: EntityI }> = ({ entity }) => {
 		setUnfollow(null);
 	}, [entity]);
 	const handleFollowClick = useCallback(() => {
+		if (!game) {
+			window.alert('This is a no-op when the game is not running');
+			return;
+		}
 		const unfollow = game.setCameraFollowEntity(entity);
 		setUnfollow({ fn: unfollow });
-	}, [entity]);
+	}, [entity, game]);
 	const handleUnfollowClick = useCallback(() => {
 		if (unfollow) {
 			unfollow.fn();

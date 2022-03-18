@@ -10,7 +10,7 @@ import { ActiveEntityOverlay } from '../src/ui/ActiveEntityOverlay';
 import { Button } from '../src/ui/components/Button';
 import { ContextMenu, ContextMenuFooter } from '../src/ui/components/ContextMenu';
 import { Backdrop } from './util';
-
+import { Modal, ModalBounds } from '../src/ui/components/Modal';
 const meta: Meta = {
 	title: 'UI',
 	argTypes: {
@@ -122,3 +122,16 @@ export const Ui3: Story<typeof scenarios.DualMesh extends ComponentType<infer P>
 		);
 	};
 Ui3.storyName = '<Button>';
+
+export const Ui4: Story<typeof scenarios.DualMesh extends ComponentType<infer P> ? P : unknown> =
+	args => (
+		<>
+			<GlobalStyles />
+			<Backdrop height={'100%'}>
+				<Modal initialPosition={[100, 200]}>
+					<p>Fucking hell</p>
+				</Modal>
+			</Backdrop>
+		</>
+	);
+Ui4.storyName = '<Modal>';

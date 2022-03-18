@@ -1,19 +1,10 @@
 import styled from '@emotion/styled';
 import { faCity, faPerson, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, {
-	ComponentType,
-	FunctionComponent,
-	useCallback,
-	useMemo,
-	useRef,
-	useState
-} from 'react';
-import { EventedValue } from '../classes/EventedValue';
+import React, { ComponentType, FunctionComponent, useCallback, useMemo, useState } from 'react';
 import { activeUiPalette } from '../constants/palettes';
 import { PersonEntity } from '../entities/PersonEntity';
 import { SettlementEntity } from '../entities/SettlementEntity';
-import { Game } from '../Game';
 import { useGame } from '../hooks/game';
 import { PRETTY_SCROLLBAR } from '../style/mixins';
 import { EntityI } from '../types';
@@ -26,27 +17,24 @@ const List = styled.ul`
 	margin: 0;
 	padding: 0;
 `;
+
 const Item = styled.li`
 	margin: 0;
 	padding: 0;
 `;
+
 const OverviewButton: FunctionComponent<{ entity: EntityI }> = ({ entity }) => {
 	const game = useGame();
-	const lastFocused =
-		useRef<Game['$$focus'] extends EventedValue<infer P> ? P : unknown>(undefined);
-	const handleMouseEnter = useCallback(() => {
-		lastFocused.current = game.$$focus.get();
+	const handleClick = useCallback(() => {
 		game.$$focus.set(entity);
 	}, [game, entity]);
-	const handleMouseLeave = useCallback(() => {
-		game.$$focus.set(lastFocused.current);
-	}, [game]);
 	return (
-		<Button wide onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+		<Button wide onClick={handleClick}>
 			<EntityTextBadge entity={entity} />
 		</Button>
 	);
 };
+
 function createOverviewComponent(filter: (entity: EntityI) => boolean) {
 	const EntitiesOverview: FunctionComponent = () => {
 		const game = useGame();
@@ -69,6 +57,7 @@ type StuffOverviewI = {
 	icon: IconDefinition;
 	Component: ComponentType;
 };
+
 const OVERVIEWS: StuffOverviewI[] = [
 	{
 		label: 'Places',
@@ -81,6 +70,7 @@ const OVERVIEWS: StuffOverviewI[] = [
 		Component: createOverviewComponent(entity => entity instanceof PersonEntity)
 	}
 ];
+
 const Wrapper = styled.section`
 	position: absolute;
 	z-index: 1;
@@ -92,6 +82,7 @@ const Wrapper = styled.section`
 	overflow: auto;
 	${PRETTY_SCROLLBAR};
 `;
+
 const ButtonBar = styled.nav`
 	margin-bottom: 1em;
 	& > * {

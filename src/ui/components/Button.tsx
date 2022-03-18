@@ -6,6 +6,7 @@ import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { ComponentType, FunctionComponent } from 'react';
 import { activeUiPalette } from '../../constants/palettes';
+import { BLURRY_BACKGROUND } from '../../style/mixins';
 
 // @see src/ui/GlobalStyles.tsx
 const InnerButton = styled.button<{ active?: boolean; disabled?: boolean }>`
@@ -20,7 +21,7 @@ const InnerButton = styled.button<{ active?: boolean; disabled?: boolean }>`
 
 	background-color: ${({ active }) =>
 		active ? activeUiPalette.darkest : activeUiPalette.medium};
-	backdrop-filter: blur(20px);
+	${BLURRY_BACKGROUND};
 	transition: background-color 0.5s;
 
 	${({ disabled }) =>

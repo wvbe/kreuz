@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent } from 'react';
 import { activeUiPalette } from '../../constants/palettes';
+import { BLURRY_BACKGROUND } from '../../style/mixins';
 import { Button } from './Button';
 
 /**
@@ -19,7 +20,7 @@ const ContextMenuBoundary = styled.div`
 	position: absolute;
 	bottom: 100%;
 	left: 50%;
-	backdrop-filter: blur(2px);
+	${BLURRY_BACKGROUND};
 	transform: translate(-50%, -6px);
 `;
 

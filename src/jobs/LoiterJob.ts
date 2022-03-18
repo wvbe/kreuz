@@ -40,7 +40,7 @@ export class LoiterJob extends Job implements JobI {
 						this.entity.$$location.get(),
 						this.walkMaxDistance
 					) || [];
-				this.entity.walkTo(
+				this.entity.walkToTile(
 					Random.fromArray(destinations, this.entity.id, 'roam-destination', steps)
 				);
 			}, this.walkMinWait + Random.float(this.entity.id, 'roam-delay', steps) * (this.walkMaxWait - this.walkMinWait));

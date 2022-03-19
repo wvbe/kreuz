@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { Coordinate } from '../classes/Coordinate';
 import { EventedValue } from '../classes/EventedValue';
 import { MATERIAL_LINES, MATERIAL_PERSONS } from '../constants/materials';
-import { Game } from '../Game';
+import Game from '../Game';
 import { CoordinateI, EntityI, GeometryI, JobI } from '../types';
 const noop = () => {};
 

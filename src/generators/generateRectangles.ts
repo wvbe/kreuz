@@ -1,5 +1,5 @@
-import { Random } from '../../classes/Random';
-import { SeedI } from '../../types';
+import { Random } from '../classes/Random';
+import { SeedI } from '../types';
 
 type Options = {
 	minimumBuildingLength: number;

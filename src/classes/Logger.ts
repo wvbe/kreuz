@@ -1,4 +1,4 @@
-const enabled = false;
+const enabled = true;
 
 export default enabled
 	? class LoggerEnabled {

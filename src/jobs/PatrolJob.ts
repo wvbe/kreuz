@@ -1,4 +1,4 @@
-import { Game } from '../Game';
+import Game from '../Game';
 import { EntityPersonI, JobI, TileI } from '../types';
 import { Job } from './Job';
 

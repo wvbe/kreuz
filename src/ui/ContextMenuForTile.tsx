@@ -1,12 +1,7 @@
 import styled from '@emotion/styled';
-import { faCity, faUser } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { FunctionComponent } from 'react';
-import { BuildingEntity } from '../entities/BuildingEntity';
-import { Entity } from '../entities/Entity';
-import { PersonEntity } from '../entities/PersonEntity';
 import { SettlementEntity } from '../entities/SettlementEntity';
-import { Game } from '../Game';
+import Game from '../Game';
 import { TileI } from '../types';
 import { EntityTextBadge } from './ActiveEntityOverlay';
 import { Button } from './components/Button';

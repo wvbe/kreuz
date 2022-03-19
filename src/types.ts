@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { Event } from './classes/Event';
 import { EventedValue } from './classes/EventedValue';
-import { Game } from './Game';
+import Game from './Game';
 
 export type GeometryI =
 	| THREE.BoxGeometry

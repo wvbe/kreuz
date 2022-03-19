@@ -2,7 +2,7 @@ import { Coordinate } from '../classes/Coordinate';
 import { Random } from '../classes/Random';
 import { getRandomSettlementName } from '../constants/names';
 import { convertCoordinate } from '../rendering/threejs/utils';
-import { RectangleParty } from '../scenarios/generators/generateRectangles';
+import { RectangleParty } from '../generators/generateRectangles';
 import { CoordinateI, EntityI, SeedI } from '../types';
 import { BuildingEntity } from './BuildingEntity';
 import { Entity } from './Entity';

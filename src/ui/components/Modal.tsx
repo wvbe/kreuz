@@ -1,9 +1,7 @@
-import React, { useContext, useMemo } from 'react';
 import styled from '@emotion/styled';
-import { FunctionComponent } from 'react';
-import { activeUiPalette } from '../../constants/palettes';
+import React, { FunctionComponent, useContext, useMemo } from 'react';
 import Draggable from 'react-draggable';
-import { Backdrop } from '../../../stories/util';
+import { activeUiPalette } from '../../constants/palettes';
 import { BLURRY_BACKGROUND } from '../../style/mixins';
 
 const ModalWrapper = styled.div`

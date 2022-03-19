@@ -1,11 +1,10 @@
-import { CivilianEntity } from '../../entities/CivilianPersonEntity';
-import { GuardEntity } from '../../entities/GuardPersonEntity';
-import { LoiterJob } from '../../jobs/LoiterJob';
-import { PatrolJob } from '../../jobs/PatrolJob';
-import { EntityPersonI, SeedI, TerrainI } from '../../types';
-import { Random } from '../../classes/Random';
-import { SettlementEntity } from '../../entities/SettlementEntity';
-import { Tile } from '../../terrain/Tile';
+import { Random } from '../classes/Random';
+import { CivilianEntity } from '../entities/CivilianPersonEntity';
+import { GuardEntity } from '../entities/GuardPersonEntity';
+import { SettlementEntity } from '../entities/SettlementEntity';
+import { LoiterJob } from '../jobs/LoiterJob';
+import { PatrolJob } from '../jobs/PatrolJob';
+import { EntityPersonI, SeedI, TerrainI } from '../types';
 
 function repeat<P>(n: number, cb: (i: number) => P): P[] {
 	return Array.from(new Array(n)).map((_, i) => cb(i));

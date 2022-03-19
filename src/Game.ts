@@ -8,7 +8,7 @@ import { ContextMenuForTile } from './ui/ContextMenuForTile';
 
 type GameUiFocusable = TileI | EntityI | undefined;
 
-export class Game {
+export default class Game {
 	/**
 	 * The "randomizer" logic/state
 	 *

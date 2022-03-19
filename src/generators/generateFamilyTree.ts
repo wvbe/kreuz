@@ -1,5 +1,5 @@
-import { Random } from '../../classes/Random';
-import { TimeLine } from '../../classes/TimeLine';
+import { Random } from '../classes/Random';
+import { TimeLine } from '../classes/TimeLine';
 
 type Sexuality = 'hetero' | 'homo' | 'bi';
 // type TraditionalGender = 'm' | 'f';

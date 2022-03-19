@@ -1,31 +1,33 @@
-import React, { ComponentType } from 'react';
 import { Meta, Story } from '@storybook/react';
-import { scenarios } from '../src/index';
+import React, { useMemo } from 'react';
+import { Generator, Ui } from '../src/index';
 
 const meta: Meta = {
-	title: 'Demos',
-	component: scenarios.DualMesh,
-	parameters: {
-		controls: { expanded: true }
+	title: 'Demo',
+	args: {
+		seed: 'test'
 	}
 };
 
 export default meta;
 
-const DOPE_SEEDS = [1647022336452];
-const POSSIBLY_BROKEN_SEEDS = [1647039315571];
-const MAIN_DEMO_SEED = DOPE_SEEDS[0];
+type Props = {
+	seed: string;
+} & Parameters<typeof Generator.randomGame>[1];
+export const Demo: Story<Props> = args => {
+	const game = useMemo(() => {
+		const { seed, ...options } = args;
+		console.log(seed, options);
+		return Generator.randomGame(seed, options);
+	}, [args]);
+	return <Ui game={game} />;
+};
+Demo.args = { density: 1, size: 20, seed: 'test' };
 
-export const THREE: Story<typeof scenarios.DualMesh extends ComponentType<infer P> ? P : unknown> =
-	args => <scenarios.DualMesh {...args} asIsometric={false} seed={MAIN_DEMO_SEED} />;
-THREE.storyName = 'Three.js';
+// export const THREE_D: Story<Props> = args => (
+// 	<scenarios.DualMesh {...args} seed={POSSIBLY_BROKEN_SEEDS[0]} />
+// );
+// THREE_D.storyName = 'Three.js (debug)';
 
-export const THREE_D: Story<
-	typeof scenarios.DualMesh extends ComponentType<infer P> ? P : unknown
-> = args => <scenarios.DualMesh {...args} asIsometric={false} seed={POSSIBLY_BROKEN_SEEDS[0]} />;
-THREE_D.storyName = 'Three.js (debug)';
-
-export const THREE_R: Story<
-	typeof scenarios.DualMesh extends ComponentType<infer P> ? P : unknown
-> = args => <scenarios.DualMesh {...args} asIsometric={false} />;
-THREE_R.storyName = 'Three.js (random)';
+// export const THREE_R: Story<Props> = args => <scenarios.DualMesh {...args} />;
+// THREE_R.storyName = 'Three.js (random)';

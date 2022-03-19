@@ -5,7 +5,7 @@ import { Coordinate } from '../../classes/Coordinate';
 import { Event } from '../../classes/Event';
 import { activePalette } from '../../constants/palettes';
 import { PersonEntity } from '../../entities/PersonEntity';
-import { Game } from '../../Game';
+import Game from '../../Game';
 import { Terrain } from '../../terrain/Terrain';
 import { CoordinateI, EntityI, EntityPersonI, TileI, ViewI } from '../../types';
 import { convertCoordinate } from './utils';

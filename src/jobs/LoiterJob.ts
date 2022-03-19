@@ -1,5 +1,5 @@
 import { Random } from '../classes/Random';
-import { Game } from '../Game';
+import Game from '../Game';
 import { JobI } from '../types';
 import { Job } from './Job';
 
@@ -30,7 +30,7 @@ export class LoiterJob extends Job implements JobI {
 			}
 			clearTimer = game.time.setTimeout(() => {
 				clearTimer = null;
-				if (Math.random() > this.walkChanceOnRoll) {
+				if (Random.boolean([this.entity.id, 'strp', steps], this.walkChanceOnRoll)) {
 					doTimeout();
 					return;
 				}

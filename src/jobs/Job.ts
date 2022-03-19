@@ -1,5 +1,5 @@
 import Logger from '../classes/Logger';
-import { Game } from '../Game';
+import Game from '../Game';
 import { EntityPersonI, JobI } from '../types';
 
 export class Job implements JobI {

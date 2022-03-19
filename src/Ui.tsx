@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent } from 'react';
-import { Game } from './Game';
+import Game from './Game';
 import { useEventedValue } from './hooks/events';
 import { GameContext } from './hooks/game';
 import { RendererMain } from './rendering/RendererMain';
@@ -25,7 +25,7 @@ const UiHostFullScreen = styled.section`
 	right: 0;
 `;
 
-export const GameC: FunctionComponent<{
+const Ui: FunctionComponent<{
 	game: Game;
 }> = ({ game }) => {
 	const focusedItem = useEventedValue(game.$$focus);
@@ -46,3 +46,5 @@ export const GameC: FunctionComponent<{
 		</GameContext.Provider>
 	);
 };
+
+export default Ui;

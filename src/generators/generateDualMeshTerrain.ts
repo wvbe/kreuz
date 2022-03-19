@@ -1,10 +1,10 @@
 import MeshBuilder from '@redblobgames/dual-mesh/create';
 import Poisson from 'poisson-disk-sampling';
-import { Terrain } from '../../terrain/Terrain';
-import { CoordinateArray } from '../../classes/Coordinate';
-import { Random } from '../../classes/Random';
-import { DualMeshTile } from '../../terrain/DualMeshTile';
-import { SeedI } from '../../types';
+import { Terrain } from '../terrain/Terrain';
+import { CoordinateArray } from '../classes/Coordinate';
+import { Random } from '../classes/Random';
+import { DualMeshTile } from '../terrain/DualMeshTile';
+import { SeedI } from '../types';
 
 export function generateDualMeshTerrain(seed: SeedI, size: number, density: number = 1) {
 	// Use @redblobgames/dual-mesh to generate tiles and relationships.

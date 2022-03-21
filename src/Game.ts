@@ -94,6 +94,7 @@ export default class Game {
 			createElement(ContextMenuForTile, { game: this, tile })
 		);
 	}
+
 	private openContextMenuOnCoordinate(location: CoordinateI, contents: ReactElement) {
 		this.$$contextMenu.set({ location, contents });
 	}

@@ -5,6 +5,7 @@ import { Coordinate } from '../../classes/Coordinate';
 import { Event } from '../../classes/Event';
 import { activePalette } from '../../constants/palettes';
 import { PersonEntity } from '../../entities/PersonEntity';
+import { SettlementEntity } from '../../entities/SettlementEntity';
 import Game from '../../Game';
 import { Terrain } from '../../terrain/Terrain';
 import { CoordinateI, EntityI, EntityPersonI, TileI, ViewI } from '../../types';
@@ -421,6 +422,26 @@ export class ThreeController implements ViewI {
 				this.setCameraFocus(game.$$cameraFocus.get());
 			})
 		);
+
+		const arcs: (() => void)[] = [];
+		this.$detach.once(
+			game.$$focus.on(thing => {
+				arcs.forEach(arc => arc());
+				arcs.splice(0, arcs.length);
+
+				if (!(thing instanceof SettlementEntity)) {
+					return;
+				}
+				const relationships = game.entities.filter(
+					e => e instanceof SettlementEntity && e !== thing
+				);
+				relationships.forEach(rel => {
+					arcs.push(
+						this.showRelationshipArc(thing.$$location.get(), rel.$$location.get())
+					);
+				});
+			})
+		);
 	}
 
 	/**
@@ -499,6 +520,34 @@ export class ThreeController implements ViewI {
 		};
 	}
 
+	showRelationshipArc(from: CoordinateI, to: CoordinateI) {
+		console.log('From', from);
+		console.log('To', to);
+		const length = from.euclideanDistanceTo(to);
+		console.log('Distance', length);
+		const curve = new THREE.EllipseCurve(
+			length / 2,
+			0, // ax, aY
+			length / 2,
+			length / 4,
+			0,
+			Math.PI,
+			false, // aClockwise
+			0 // aRotation
+		);
+
+		const points = curve.getPoints(50);
+		const geometry = new THREE.BufferGeometry().setFromPoints(points);
+		const material = new THREE.LineBasicMaterial({ color: activePalette.light });
+		const ellipse = new THREE.Line(geometry, material);
+		ellipse.position.copy(convertCoordinate(new Coordinate(from.x, from.y, 0.1)));
+		ellipse.rotateY(-from.angleTo(to));
+		this.scene.add(ellipse);
+
+		return () => {
+			this.scene.remove(ellipse);
+		};
+	}
 	/*
 		THE RENDER LOOP
 		---------------------------

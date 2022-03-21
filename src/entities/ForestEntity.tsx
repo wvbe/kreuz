@@ -3,7 +3,11 @@ import { Random } from '../classes/Random';
 import { EntityI, GeometryI } from '../types';
 import { Entity } from './Entity';
 
-export class TreeEntity extends Entity implements EntityI {
+export class ForestEntity extends Entity implements EntityI {
+	/**
+	 * @deprecated not used yet.
+	 */
+	public type = 'forest';
 	public get label(): string {
 		return 'Tree';
 	}

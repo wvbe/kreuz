@@ -9,7 +9,7 @@ import { EntityI } from './types';
 import { AboutGameOverlay } from './ui/AboutGameOverlay';
 import { ActiveEntityOverlay } from './ui/ActiveEntityOverlay';
 import { ModalBoundsContext } from './ui/components/Modal';
-import { Overview } from './ui/StuffOverview';
+import { EntityOverview } from './ui/EntityOverview';
 
 const UiHostBottomRight = styled.section`
 	position: absolute;
@@ -40,7 +40,7 @@ const Ui: FunctionComponent<{
 					<AboutGameOverlay />
 				</UiHostBottomRight>
 				<ModalBoundsContext.Provider value="modal-bounds">
-					<Overview></Overview>
+					<EntityOverview></EntityOverview>
 				</ModalBoundsContext.Provider>
 			</UiHostFullScreen>
 		</GameContext.Provider>

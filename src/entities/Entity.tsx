@@ -10,7 +10,10 @@ export class Entity implements EntityI {
 	public readonly id: string;
 
 	public $$location: EventedValue<CoordinateI>;
-
+	/**
+	 * @deprecated not used yet.
+	 */
+	public type = 'entity';
 	/**
 	 * The set of behaviour/tasks given to this entity.
 	 */

@@ -20,7 +20,10 @@ export class PersonEntity extends Entity implements EntityPersonI {
 	public readonly $stoppedWalkStep = new Event<[CoordinateI]>();
 
 	protected readonly userData: { gender: 'm' | 'f'; firstName: string };
-
+	/**
+	 * @deprecated not used yet.
+	 */
+	public type = 'person';
 	constructor(id: string, location: CoordinateI) {
 		super(id, location);
 

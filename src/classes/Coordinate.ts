@@ -71,6 +71,25 @@ export class Coordinate implements CoordinateI {
 		return xyz;
 	}
 
+	angleTo(to: CoordinateI) {
+		// https://www.cimt.org.uk/projects/mepres/step-up/sect4/ratbig.gif
+		// https://meneerriksen.nl/onewebmedia/Wiskunde%20LJ2p4%20Goniometrie%20oefeningen.pages.pdf
+		const adjacent = to.x - this.x;
+		const opposite = to.y - this.y;
+		let angle = Math.atan(opposite / adjacent);
+		if (opposite < 0 && adjacent < 0) {
+			// The bottom left quadrant
+			return Math.PI + Math.abs(angle);
+		} else if (opposite < 0) {
+			// The bottom right quadrant
+			return 2 * Math.PI - Math.abs(angle);
+		} else if (adjacent < 0) {
+			// The top left quadrant
+			return angle + Math.PI;
+		} else {
+			return angle;
+		}
+	}
 	// For debugging purposes only, may change without notice or tests
 	toString() {
 		return [this.x, this.y, this.z].join(',');

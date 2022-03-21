@@ -5,7 +5,7 @@ import { BuildingEntity } from '../src/entities/BuildingEntity';
 import { CivilianEntity } from '../src/entities/CivilianPersonEntity';
 import { GuardEntity } from '../src/entities/GuardPersonEntity';
 import { SettlementEntity } from '../src/entities/SettlementEntity';
-import { TreeEntity } from '../src/entities/TreeEntity';
+import { ForestEntity } from '../src/entities/ForestEntity';
 import { RendererDetail } from '../src/rendering/RendererDetail';
 import { ThreeController } from '../src/rendering/threejs/ThreeController';
 import { Tile } from '../src/terrain/Tile';
@@ -107,12 +107,12 @@ export const settlemententity = makeStory<
 );
 
 export const treeentity = makeStory(
-	'TreeEntity',
+	'ForestEntity',
 	(controller, args) => {
 		controller.setCameraPosition(CAMERA_POSITION);
 		controller.setCameraFocus(CAMERA_FOCUS);
 		controller.addAxisHelper(undefined, 1);
-		controller.scene.add(new TreeEntity(args.seed, new Tile(0, 0, 0)).createObject());
+		controller.scene.add(new ForestEntity(args.seed, new Tile(0, 0, 0)).createObject());
 		return () => {};
 	},
 	{ seed: 'test' }

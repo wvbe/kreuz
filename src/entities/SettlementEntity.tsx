@@ -69,6 +69,11 @@ export class SettlementEntity extends Entity implements EntityI {
 
 	public readonly buildings: ReturnType<typeof generateBuildings>;
 
+	/**
+	 * @deprecated not used yet.
+	 */
+	public type = 'settlement';
+
 	constructor(id: string, location: CoordinateI, parameters: SettlementParametersI) {
 		super(id, location);
 		this.parameters = {

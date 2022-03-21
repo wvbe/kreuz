@@ -52,13 +52,13 @@ function createOverviewComponent(filter: (entity: EntityI) => boolean) {
 	return EntitiesOverview;
 }
 
-type StuffOverviewI = {
+type EntityOverviewTabI = {
 	label: string;
 	icon: IconDefinition;
 	Component: ComponentType;
 };
 
-const OVERVIEWS: StuffOverviewI[] = [
+const OVERVIEWS: EntityOverviewTabI[] = [
 	{
 		label: 'Places',
 		icon: faCity,
@@ -90,8 +90,8 @@ const ButtonBar = styled.nav`
 	}
 `;
 
-export const Overview: FunctionComponent = () => {
-	const [activeOverview, setActiveOverview] = useState<StuffOverviewI>(OVERVIEWS[0]);
+export const EntityOverview: FunctionComponent = () => {
+	const [activeOverview, setActiveOverview] = useState<EntityOverviewTabI>(OVERVIEWS[0]);
 
 	return (
 		<Wrapper>

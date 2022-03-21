@@ -44,6 +44,7 @@ export interface CoordinateI {
 	x: InGameDistance;
 	y: InGameDistance;
 	z: InGameDistance;
+	angleTo(to: CoordinateI): number;
 	equals(coord: CoordinateI): boolean;
 	euclideanDistanceTo(x: InGameDistance, y: InGameDistance, z: InGameDistance): InGameDistance;
 	euclideanDistanceTo(coord: CoordinateI): InGameDistance;
@@ -114,6 +115,8 @@ export interface TerrainI {
 }
 
 export interface EntityI {
+	type: string;
+
 	/**
 	 * A unique identifier for this entity
 	 */

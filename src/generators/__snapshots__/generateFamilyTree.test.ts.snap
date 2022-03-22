@@ -3,16 +3,16 @@
 exports[`generateFamilyTree Age group matches 1`] = `
 "
 pie title Age distribution
-    \\"0-10\\" : 1334
-    \\"10-20\\" : 1093
+    \\"0-10\\" : 1035
+    \\"10-20\\" : 1392
     \\"20-30\\" : 1518
-    \\"30-40\\" : 1632
-    \\"40-50\\" : 1648
-    \\"50-60\\" : 1351
-    \\"60-70\\" : 980
-    \\"70-80\\" : 361
-    \\"80-90\\" : 131
-    \\"90-100\\" : 40
+    \\"30-40\\" : 1432
+    \\"40-50\\" : 1681
+    \\"50-60\\" : 1503
+    \\"60-70\\" : 798
+    \\"70-80\\" : 457
+    \\"80-90\\" : 116
+    \\"90-100\\" : 29
 "
 `;
 
@@ -3225,5 +3225,56 @@ Array [
   "On day 199, [#1937 0/M] born, son of [#1303 23/M] and [#1194 29/F]",
   "On day 199, [#1938 0/F] born, daughter of [#1271 25/M] and [#1307 23/F]",
   "On day 199, [#1939 0/F] born, daughter of [#1430 18/M] and [#1450 17/F]",
+  "On day 200, [#469 84/M] died at age 84",
+  "On day 200, [#477 83/F] died at age 83",
+  "On day 200, [#479 82/F] died at age 82",
+  "On day 200, [#508 79/F] died at age 79",
+  "On day 200, [#509 79/F] died at age 79",
+  "On day 200, [#511 79/M] died at age 79",
+  "On day 200, [#540 76/M] died at age 76",
+  "On day 200, [#558 74/M] died at age 74",
+  "On day 200, [#634 67/M] died at age 67",
+  "On day 200, [#641 66/M] died at age 66",
+  "On day 200, [#668 64/M] died at age 64",
+  "On day 200, [#676 64/M] died at age 64",
+  "On day 200, [#677 64/M] died at age 64",
+  "On day 200, [#701 62/F] died at age 62",
+  "On day 200, [#715 60/F] died at age 60",
+  "On day 200, [#720 60/M] died at age 60",
+  "On day 200, [#724 60/M] died at age 60",
+  "On day 200, [#785 55/M] died at age 55",
+  "On day 200, [#1157 31/M] and [#1246 27/F] married!",
+  "On day 200, [#1264 26/M] and [#1448 18/F] married!",
+  "On day 200, [#1286 25/M] and [#1503 16/F] married!",
+  "On day 200, [#1288 25/M] and [#1433 19/F] married!",
+  "On day 200, [#1305 24/M] and [#1514 16/F] married!",
+  "On day 200, [#1320 24/M] and [#1451 18/F] married!",
+  "On day 200, [#1321 24/M] and [#1362 22/F] married!",
+  "On day 200, [#1328 23/M] and [#1417 19/F] married!",
+  "On day 200, [#1336 23/F] and [#1356 22/F] married!",
+  "On day 200, [#1340 23/M] and [#1480 17/F] married!",
+  "On day 200, [#1349 22/M] and [#1511 16/F] married!",
+  "On day 200, [#1357 22/F] and [#1507 16/F] married!",
+  "On day 200, [#1382 21/M] and [#1475 17/M] married!",
+  "On day 200, [#1940 0/M] born, son of [#855 50/M] and [#936 44/F]",
+  "On day 200, [#1941 0/M] born, son of [#861 50/M] and [#985 41/F]",
+  "On day 200, [#1942 0/F] born, daughter of [#947 43/M] and [#929 44/F]",
+  "On day 200, [#1943 0/F] born, daughter of [#983 41/M] and [#1011 39/F]",
+  "On day 200, [#1944 0/F] born, daughter of [#1395 20/M] and [#1033 38/F]",
+  "On day 200, [#1945 0/M] born, son of [#1070 36/M] and [#1159 31/F]",
+  "On day 200, [#1946 0/F] born, daughter of [#1077 35/M] and [#1046 37/F]",
+  "On day 200, [#1947 0/F] born, daughter of [#1146 32/M] and [#1126 33/F]",
+  "On day 200, [#1948 0/F] born, daughter of [#1169 31/M] and [#1029 38/F]",
+  "On day 200, [#1949 0/F] born, daughter of [#1096 34/M] and [#1189 30/F]",
+  "On day 200, [#1950 0/F] born, daughter of [#1280 25/M] and [#1202 29/F]",
+  "On day 200, [#1951 0/M] born, son of [#1297 25/M] and [#1204 29/F]",
+  "On day 200, [#1952 0/M] born, son of [#1361 22/M] and [#1237 28/F]",
+  "On day 200, [#1953 0/M] born, son of [#1269 26/M] and [#1131 33/F]",
+  "On day 200, [#1954 0/F] born, daughter of [#1359 22/M] and [#1272 26/F]",
+  "On day 200, [#1955 0/F] born, daughter of [#1337 23/M] and [#1223 28/F]",
+  "On day 200, [#1956 0/M] born, son of [#1340 23/M] and [#1480 17/F]",
+  "On day 200, [#1957 0/F] born, daughter of [#1388 21/M] and [#1287 25/F]",
+  "On day 200, [#1958 0/F] born, daughter of [#1062 36/M] and [#1393 20/F]",
+  "On day 200, [#1959 0/M] born, son of [#1452 18/M] and [#1468 18/F]",
 ]
 `;

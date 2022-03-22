@@ -10,11 +10,11 @@ xdescribe('generateFamilyTree', () => {
 	it('Data matches', () =>
 		expect(result.makeData()).toMatchInlineSnapshot(`
 		Object {
-		  "couples": 2998,
-		  "percentageHasChildren": 0.4326923076923077,
-		  "population": 10088,
+		  "couples": 2934,
+		  "percentageHasChildren": 0.42927416926011447,
+		  "population": 9961,
 		  "populationCumulative": 37944,
-		  "widowers": 835,
+		  "widowers": 836,
 		}
 	`));
 	it('Age group matches', () =>

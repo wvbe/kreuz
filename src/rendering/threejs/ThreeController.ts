@@ -3,6 +3,7 @@ import { Vector2 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { Coordinate } from '../../classes/Coordinate';
 import { Event } from '../../classes/Event';
+import { MATERIAL_LINES, MATERIAL_TERRAIN } from '../../constants/materials';
 import { activePalette } from '../../constants/palettes';
 import { PersonEntity } from '../../entities/PersonEntity';
 import { SettlementEntity } from '../../entities/SettlementEntity';
@@ -191,6 +192,19 @@ export class ThreeController implements ViewI {
 		// @TODO maybe can be global?
 		this.raycaster = new THREE.Raycaster();
 
+		const light = new THREE.AmbientLight(0xffffff, 0.3);
+		this.scene.add(light);
+
+		const light2 = new THREE.DirectionalLight(0xffffff, 0.7);
+		light2.position.set(1, 1, 1).normalize();
+		this.scene.add(light2);
+		// this.scene.add(new THREE.DirectionalLightHelper(light2, 1));
+
+		const light3 = new THREE.DirectionalLight(0xffffff, 0.5);
+		light3.position.set(-1, 1, -1).normalize();
+		this.scene.add(light3);
+		// this.scene.add(new THREE.DirectionalLightHelper(light3, 1));
+
 		// Mount the goddamn thing
 		root.appendChild(this.renderer.domElement);
 		this.$destruct.once(() => root.removeChild(this.renderer.domElement));
@@ -344,8 +358,11 @@ export class ThreeController implements ViewI {
 				const outline = tile
 					.getOutlineCoordinates()
 					.map(coord => new THREE.Vector2(tile.x + coord.x, -tile.y - coord.y));
-				const geometry = new THREE.ShapeGeometry(new THREE.Shape(outline));
-				geometry.translate(0, 0, tile.z);
+				const geometry = new THREE.ExtrudeGeometry(new THREE.Shape(outline), {
+					steps: 1,
+					depth: tile.z,
+					bevelEnabled: false
+				});
 				return {
 					tile,
 					geometry
@@ -353,25 +370,17 @@ export class ThreeController implements ViewI {
 			});
 
 		if (options.fill) {
-			const material = new THREE.MeshBasicMaterial({
-				color: activePalette.medium
-				// wireframe: true
-			});
 			loop.forEach(({ geometry, tile }) => {
-				const mesh = new THREE.Mesh(geometry, material);
+				const mesh = new THREE.Mesh(geometry, MATERIAL_TERRAIN);
 				mesh.userData.tile = tile;
 				group.add(mesh);
 			});
 		}
 
 		if (options.edge) {
-			const material = new THREE.LineBasicMaterial({
-				color: activePalette.darkest,
-				linewidth: 1
-			});
 			loop.forEach(({ geometry }) => {
 				const edges = new THREE.EdgesGeometry(geometry);
-				const line = new THREE.LineSegments(edges, material);
+				const line = new THREE.LineSegments(edges, MATERIAL_LINES);
 				group.add(line);
 			});
 		}
@@ -450,7 +459,6 @@ export class ThreeController implements ViewI {
 	 */
 	public attachToGame(game: Game) {
 		this.attachEventListeners(game);
-
 		// Meshes
 		game.entities.forEach(entity => {
 			this.attachEntity(game, entity);

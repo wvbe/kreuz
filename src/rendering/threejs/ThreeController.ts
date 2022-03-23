@@ -178,7 +178,13 @@ export class ThreeController implements ViewI {
 		// https://threejs.org/docs/#examples/en/controls/OrbitControls
 		this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 		if (options.restrictCameraAngle) {
-			this.controls.maxPolarAngle = 0.45 * Math.PI;
+			const polar = (1 / 3) * Math.PI;
+			const azimuth = (1 / 3) * Math.PI;
+			const wiggle = 0;
+			this.controls.minPolarAngle = polar - wiggle;
+			this.controls.maxPolarAngle = polar + wiggle;
+			this.controls.maxAzimuthAngle = azimuth + wiggle;
+			this.controls.minAzimuthAngle = azimuth - wiggle;
 		}
 		this.controls.screenSpacePanning = false;
 		this.controls.enableZoom = options.enableZoom;
@@ -491,6 +497,7 @@ export class ThreeController implements ViewI {
 		this.$detach.emit();
 	}
 
+	
 	/**
 	 * Open an HTML element on the given 3D coordinate, and keep it there when the camera moves etc.
 	 *

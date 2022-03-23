@@ -17,7 +17,7 @@ const RENDERER_OPTIONS = {
 	enableAutoRotate: false,
 	enablePan: true,
 	enableZoom: true,
-	fieldOfView: 45,
+	fieldOfView: Infinity,
 	pixelRatio: window.devicePixelRatio || 1,
 	restrictCameraAngle: true
 };

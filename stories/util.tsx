@@ -1,5 +1,12 @@
 import styled from '@emotion/styled';
 
+import { Global } from '@emotion/react';
+import React, { FunctionComponent } from 'react';
+import GLOBAL_STYLE_RULES from '../src/style/global';
+
+export const GlobalStyles: FunctionComponent = () =>
+	React.createElement(Global, { styles: GLOBAL_STYLE_RULES });
+
 export const Backdrop = styled.div<{ height?: number | string; padding?: number | string }>`
 	position: relative;
 	height: ${({ height }) =>

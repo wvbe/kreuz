@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import Game from '../Game';
+import Game from '../../Game';
 
 export const GameContext = createContext<null | Game>(null);
 

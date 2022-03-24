@@ -1,3 +1,4 @@
+import { SaveTimeJson } from '../types-savedgame';
 import { EventedValue } from './EventedValue';
 
 export class TimeLine extends EventedValue<number> {
@@ -77,5 +78,12 @@ export class TimeLine extends EventedValue<number> {
 				this.timers.delete(frame);
 			}
 		};
+	}
+
+	/**
+	 * Serialize for a save game JSON
+	 */
+	public serializeToSaveJson(): SaveTimeJson {
+		return {};
 	}
 }

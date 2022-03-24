@@ -1,5 +1,6 @@
 import { Coordinate } from '../classes/Coordinate';
 import { CoordinateI, TerrainI, TileI } from '../types';
+import { SaveTileJson } from '../types-savedgame';
 
 /**
  * A special type of coordinate that is equal to another terrain coordinate when the X and Y are equal, disregarding Z.
@@ -40,5 +41,14 @@ export class Tile extends Coordinate implements TileI {
 
 	getOutlineCoordinates(): CoordinateI[] {
 		throw new Error('Not implemented');
+	}
+	/**
+	 * Serialize for a save game JSON
+	 */
+	public serializeToSaveJson(): SaveTileJson {
+		return {
+			center: this.toArray(),
+			outline: this.getOutlineCoordinates().map(coord => coord.toArray())
+		};
 	}
 }

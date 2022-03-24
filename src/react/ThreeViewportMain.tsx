@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent, useCallback } from 'react';
 import { Coordinate } from '../classes/Coordinate';
-import { useEventedValue } from '../hooks/events';
-import { useGame } from '../hooks/game';
-import { ThreeOverlay } from './threejs/ThreeOverlay';
-import { useRenderingController } from './useRenderingController';
+import { useEventedValue } from './hooks/events';
+import { useGame } from './hooks/game';
+import { ThreeHtmlOverlayPortal } from './ThreeHtmlOverlayPortal';
+import { useRenderingController } from './hooks/three';
 
 const AsLargeAsPossibleContainer = styled.section`
 	width: 100%;
@@ -44,9 +44,9 @@ export const RendererMain: FunctionComponent = () => {
 	return (
 		<AsLargeAsPossibleContainer className="renderer-three" ref={onRef}>
 			{controller && contextMenuState && (
-				<ThreeOverlay three={controller} position={contextMenuState.location}>
+				<ThreeHtmlOverlayPortal three={controller} position={contextMenuState.location}>
 					{contextMenuState.contents}
-				</ThreeOverlay>
+				</ThreeHtmlOverlayPortal>
 			)}
 		</AsLargeAsPossibleContainer>
 	);

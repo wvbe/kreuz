@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent } from 'react';
-import { ThreeController } from './threejs/ThreeController';
-import { useRenderingController } from './useRenderingController';
+import { ThreeController } from '../rendering/ThreeController';
+import { useRenderingController } from './hooks/three';
 
 const AsLargeAsPossibleContainer = styled.section`
 	width: 100%;

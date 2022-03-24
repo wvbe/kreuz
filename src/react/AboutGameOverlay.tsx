@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent } from 'react';
-import { useGame } from '../hooks/game';
+import { useGame } from './hooks/game';
 
 const Wrapper = styled.div`
 	display: flex;

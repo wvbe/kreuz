@@ -5,7 +5,7 @@ import React, { ComponentType, FunctionComponent, useCallback, useMemo, useState
 import { activeUiPalette } from '../constants/palettes';
 import { PersonEntity } from '../entities/PersonEntity';
 import { SettlementEntity } from '../entities/SettlementEntity';
-import { useGame } from '../hooks/game';
+import { useGame } from './hooks/game';
 import { PRETTY_SCROLLBAR } from '../style/mixins';
 import { EntityI } from '../types';
 import { EntityTextBadge } from './ActiveEntityOverlay';

@@ -1,7 +1,7 @@
 import { FunctionComponent, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { CoordinateI } from '../../types';
-import { ThreeController } from './ThreeController';
+import { CoordinateI } from '../types';
+import { ThreeController } from '../rendering/ThreeController';
 
 /**
  * Uses a React portal and ThreeJS projection to render children onto a specific location in the
@@ -10,11 +10,10 @@ import { ThreeController } from './ThreeController';
  *
  * See also {@link ThreeController#openHtmlOverlay}
  */
-export const ThreeOverlay: FunctionComponent<{ three: ThreeController; position: CoordinateI }> = ({
-	three,
-	position,
-	children
-}) => {
+export const ThreeHtmlOverlayPortal: FunctionComponent<{
+	three: ThreeController;
+	position: CoordinateI;
+}> = ({ three, position, children }) => {
 	const container = useMemo(() => window.document.createElement('div'), []);
 	useEffect(() => three.openHtmlOverlay(position, container), [three, container, position]);
 

@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import Logger from '../classes/Logger';
 import { activeUiPalette } from '../constants/palettes';
-import { useGame } from '../hooks/game';
+import { useGame } from './hooks/game';
 import { BLURRY_BACKGROUND } from '../style/mixins';
 import { EntityI } from '../types';
 import { ActiveEntityPreview } from './ActiveEntityPreview';
@@ -50,12 +50,16 @@ export const EntityTextBadge: FunctionComponent<{ entity: EntityI }> = ({ entity
 const EntityOptions: FunctionComponent<{ entity: EntityI }> = ({ entity }) => {
 	const game = useGame(true);
 	const [unfollow, setUnfollow] = useState<{ fn: () => void } | null>(null);
-	useEffect(() => {
-		if (unfollow) {
-			unfollow.fn();
-		}
-		setUnfollow(null);
-	}, [entity]);
+	useEffect(
+		() => {
+			if (unfollow) {
+				unfollow.fn();
+			}
+			setUnfollow(null);
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[entity]
+	);
 	const handleFollowClick = useCallback(() => {
 		if (!game) {
 			window.alert('This is a no-op when the game is not running');

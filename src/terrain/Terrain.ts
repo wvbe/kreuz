@@ -1,5 +1,6 @@
 import { Coordinate } from '../classes/Coordinate';
 import { CoordinateI, TerrainI, TileFilter, TileI } from '../types';
+import { SaveTerrainJson } from '../types-savedgame';
 import { Tile } from './Tile';
 
 export class Terrain implements TerrainI {
@@ -46,6 +47,9 @@ export class Terrain implements TerrainI {
 	}
 
 	private _islands: Map<TileFilter<TileI>, TileI[][]> = new Map();
+	/**
+	 * Get a list of tiles that are geographically contiguous.
+	 */
 	public getIslands(selector: TileFilter<TileI> = t => t.isLand()): TileI[][] {
 		const fromCache = this._islands.get(selector);
 		if (fromCache) {
@@ -88,16 +92,24 @@ export class Terrain implements TerrainI {
 		return center.neighbors;
 	}
 
-	public getMedianCoordinate() {
-		const { x, y, z } = this.tiles.reduce(
-			(totals, tile) => ({
-				x: totals.x + tile.x,
-				y: totals.y + tile.y,
-				z: totals.z + tile.z
-			}),
-			{ x: 0, y: 0, z: 0 }
-		);
-		return new Coordinate(x / this.tiles.length, y / this.tiles.length, z / this.tiles.length);
+	private _medianCoordinate: Coordinate | null = null;
+	public getMedianCoordinate(forceRenew?: boolean) {
+		if (!this._medianCoordinate || forceRenew) {
+			const { x, y, z } = this.tiles.reduce(
+				(totals, tile) => ({
+					x: totals.x + tile.x,
+					y: totals.y + tile.y,
+					z: totals.z + tile.z
+				}),
+				{ x: 0, y: 0, z: 0 }
+			);
+			this._medianCoordinate = new Coordinate(
+				x / this.tiles.length,
+				y / this.tiles.length,
+				z / this.tiles.length
+			);
+		}
+		return this._medianCoordinate;
 	}
 
 	static fromAscii(ascii: string) {
@@ -127,5 +139,15 @@ export class Terrain implements TerrainI {
 			size,
 			tiles.reduce((flat, line) => [...flat, ...line], [])
 		);
+	}
+
+	/**
+	 * Serialize for a save game JSON
+	 */
+	public serializeToSaveJson(): SaveTerrainJson {
+		return {
+			tiles: this.tiles.map(tile => tile.serializeToSaveJson()),
+			size: this.size
+		};
 	}
 }

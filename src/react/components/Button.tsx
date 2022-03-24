@@ -8,7 +8,7 @@ import React, { ComponentType, FunctionComponent } from 'react';
 import { activeUiPalette } from '../../constants/palettes';
 import { BLURRY_BACKGROUND } from '../../style/mixins';
 
-// @see src/ui/GlobalStyles.tsx
+// @see src/react/GlobalStyles.tsx
 const InnerButton = styled.button<{ active?: boolean; disabled?: boolean }>`
 	color: white;
 	text-align: left;

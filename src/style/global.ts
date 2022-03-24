@@ -1,13 +1,8 @@
-import { css, Global } from '@emotion/react';
+import { css } from '@emotion/react';
 import Color from 'color';
-import React, { FunctionComponent } from 'react';
 import { activeUiPalette } from '../constants/palettes';
 
-const GlobalStyles = (
-	(styles): FunctionComponent =>
-	() =>
-		<Global styles={styles} />
-)(css`
+export default css`
 	html,
 	body,
 	#root {
@@ -42,6 +37,4 @@ const GlobalStyles = (
 	p {
 		margin: 0;
 	}
-`);
-
-export default GlobalStyles;
+`;

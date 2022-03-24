@@ -2,14 +2,13 @@ import { Meta, Story } from '@storybook/react';
 import React, { useCallback, useState } from 'react';
 import { CivilianEntity } from '../src/entities/CivilianPersonEntity';
 import { GuardEntity } from '../src/entities/GuardPersonEntity';
-import GlobalStyles from '../src/style/GlobalStyles';
 import { Tile } from '../src/terrain/Tile';
 import { JobI } from '../src/types';
-import { ActiveEntityOverlay } from '../src/ui/ActiveEntityOverlay';
-import { Button } from '../src/ui/components/Button';
-import { ContextMenu, ContextMenuFooter } from '../src/ui/components/ContextMenu';
-import { Modal } from '../src/ui/components/Modal';
-import { Backdrop } from './util';
+import { ActiveEntityOverlay } from '../src/react/ActiveEntityOverlay';
+import { Button } from '../src/react/components/Button';
+import { ContextMenu, ContextMenuFooter } from '../src/react/components/ContextMenu';
+import { Modal } from '../src/react/components/Modal';
+import { Backdrop, GlobalStyles } from './util';
 const meta: Meta = {
 	title: 'UI',
 	argTypes: {},

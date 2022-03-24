@@ -31,7 +31,7 @@ const ContextMenuBody = styled.div`
 `;
 
 // Additional styles apply on <button>
-// @see src/ui/GlobalStyles.tsx
+// @see src/react/GlobalStyles.tsx
 export const ContextMenuButton = styled(Button)`
 	text-align: center;
 `;

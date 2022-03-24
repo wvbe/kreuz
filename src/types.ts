@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { Event } from './classes/Event';
 import { EventedValue } from './classes/EventedValue';
 import Game from './Game';
+import { SaveEntityJson, SaveTerrainJson, SaveTileJson } from './types-savedgame';
 
 export type GeometryI =
 	| THREE.BoxGeometry
@@ -25,7 +26,7 @@ export type GeometryI =
 	| THREE.TubeGeometry
 	| THREE.WireframeGeometry;
 
-export type InGameDistance = number;
+export type GameDistance = number;
 
 export type SvgMouseInteractionProps = {
 	onClick?: (event: MouseEvent) => void;
@@ -41,17 +42,18 @@ export type TileFilter<T extends TileI> = (tile: T) => boolean;
  * A point in space
  */
 export interface CoordinateI {
-	x: InGameDistance;
-	y: InGameDistance;
-	z: InGameDistance;
+	x: GameDistance;
+	y: GameDistance;
+	z: GameDistance;
 	angleTo(to: CoordinateI): number;
 	equals(coord: CoordinateI): boolean;
-	euclideanDistanceTo(x: InGameDistance, y: InGameDistance, z: InGameDistance): InGameDistance;
-	euclideanDistanceTo(coord: CoordinateI): InGameDistance;
+	euclideanDistanceTo(x: GameDistance, y: GameDistance, z: GameDistance): GameDistance;
+	euclideanDistanceTo(coord: CoordinateI): GameDistance;
 	hasNaN(): boolean;
-	manhattanDistanceTo(coord: CoordinateI): InGameDistance;
+	manhattanDistanceTo(coord: CoordinateI): GameDistance;
 	toString(): string;
-	transform(dx: InGameDistance, dy: InGameDistance, dz: InGameDistance): this;
+	toArray(): [GameDistance, GameDistance, GameDistance];
+	transform(dx: GameDistance, dy: GameDistance, dz: GameDistance): this;
 	transform(delta: CoordinateI): this;
 	scale(multiplier: number): this;
 }
@@ -67,6 +69,7 @@ export interface TileI extends CoordinateI {
 	isAdjacentToEdge(): boolean;
 	isAdjacentToLand(): boolean;
 	isLand(): boolean;
+	serializeToSaveJson(): SaveTileJson;
 }
 
 /**
@@ -112,6 +115,8 @@ export interface TerrainI {
 	getNeighborTiles(center: TileI): TileI[];
 
 	getMedianCoordinate(): CoordinateI;
+
+	serializeToSaveJson(): SaveTerrainJson;
 }
 
 export interface EntityI {
@@ -162,6 +167,8 @@ export interface EntityI {
 	 * Should return any Three.js geometry
 	 */
 	createObject(): THREE.Group;
+
+	serializeToSaveJson(): SaveEntityJson;
 }
 
 export interface EntityPersonI extends EntityI {
@@ -206,7 +213,7 @@ export interface JobI {
 	destroy(): void;
 }
 
-export type SeedI = string | number | boolean;
+export type SeedI = string | number;
 
 export interface ViewI {
 	/**

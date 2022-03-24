@@ -4,7 +4,8 @@ import { Event } from './classes/Event';
 import { EventedValue } from './classes/EventedValue';
 import { TimeLine } from './classes/TimeLine';
 import { CoordinateI, EntityI, SeedI, TerrainI, TileI } from './types';
-import { ContextMenuForTile } from './ui/ContextMenuForTile';
+import { SavedGameJson } from './types-savedgame';
+import { ContextMenuForTile } from './react/ContextMenuForTile';
 
 type GameUiFocusable = TileI | EntityI | undefined;
 
@@ -23,7 +24,7 @@ export default class Game {
 
 	public readonly time = new TimeLine(1);
 
-	public readonly seed;
+	public readonly seed: SeedI;
 
 	/*
 	 * EVENTS
@@ -62,8 +63,11 @@ export default class Game {
 		this.seed = seed;
 		this.terrain = terrain;
 		this.$$cameraFocus.set(terrain.getMedianCoordinate());
-
 		entities.forEach(entity => this.registerEntity(entity));
+
+		(window as any).getSaveGame = () => {
+			console.log(JSON.stringify(this.serializeToSaveJson(), null, '\t'));
+		};
 	}
 
 	play() {
@@ -111,6 +115,9 @@ export default class Game {
 	}
 
 	private _destroyCameraFollowEntity: (() => void) | null = null;
+	/**
+	 * Set the camera focus on an entity, and keep following it when the entity moves.
+	 */
 	public setCameraFollowEntity(entity: EntityI) {
 		if (this._destroyCameraFollowEntity) {
 			this._destroyCameraFollowEntity();
@@ -133,5 +140,18 @@ export default class Game {
 
 	destroy() {
 		this.$destroy.emit();
+	}
+
+	/**
+	 * Serialize for a save game JSON
+	 */
+	public serializeToSaveJson(): SavedGameJson {
+		return {
+			version: 'alpha', // todo version some time,
+			terrain: this.terrain.serializeToSaveJson(),
+			entities: this.entities.map(entity => entity.serializeToSaveJson()),
+			time: this.time.serializeToSaveJson(),
+			seed: this.seed
+		};
 	}
 }

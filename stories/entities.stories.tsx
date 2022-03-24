@@ -6,8 +6,8 @@ import { CivilianEntity } from '../src/entities/CivilianPersonEntity';
 import { GuardEntity } from '../src/entities/GuardPersonEntity';
 import { SettlementEntity } from '../src/entities/SettlementEntity';
 import { ForestEntity } from '../src/entities/ForestEntity';
-import { RendererDetail } from '../src/rendering/RendererDetail';
-import { ThreeController } from '../src/rendering/threejs/ThreeController';
+import { RendererDetail } from '../src/react/ThreeViewportDetail';
+import { ThreeController } from '../src/rendering/ThreeController';
 import { Tile } from '../src/terrain/Tile';
 import { Backdrop } from './util';
 

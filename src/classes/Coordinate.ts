@@ -1,13 +1,13 @@
-import { CoordinateI, InGameDistance } from '../types';
+import { CoordinateI, GameDistance } from '../types';
 
-export type CoordinateArray = [InGameDistance, InGameDistance, InGameDistance];
+export type CoordinateArray = [GameDistance, GameDistance, GameDistance];
 
 export class Coordinate implements CoordinateI {
-	x: InGameDistance;
-	y: InGameDistance;
-	z: InGameDistance;
+	x: GameDistance;
+	y: GameDistance;
+	z: GameDistance;
 
-	constructor(x: InGameDistance, y: InGameDistance, z: InGameDistance) {
+	constructor(x: GameDistance, y: GameDistance, z: GameDistance) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -20,13 +20,9 @@ export class Coordinate implements CoordinateI {
 		);
 	}
 
-	transform(dx: InGameDistance, dy: InGameDistance, dz: InGameDistance): this;
+	transform(dx: GameDistance, dy: GameDistance, dz: GameDistance): this;
 	transform(delta: CoordinateI): this;
-	transform(
-		dxOrDelta: InGameDistance | CoordinateI,
-		dy?: InGameDistance,
-		dz?: InGameDistance
-	): this {
+	transform(dxOrDelta: GameDistance | CoordinateI, dy?: GameDistance, dz?: GameDistance): this {
 		if (typeof dxOrDelta === 'number' && dy !== undefined && dz !== undefined) {
 			this.x += dxOrDelta;
 			this.y += dy;
@@ -90,9 +86,18 @@ export class Coordinate implements CoordinateI {
 			return angle;
 		}
 	}
-	// For debugging purposes only, may change without notice or tests
+	/**
+	 * @deprecated For debugging purposes only, may change without notice or tests
+	 */
 	toString() {
-		return [this.x, this.y, this.z].join(',');
+		return this.toArray().join(',');
+	}
+
+	/**
+	 * Convert X, Y and Z value to a number array
+	 */
+	public toArray(): [number, number, number] {
+		return [this.x, this.y, this.z];
 	}
 
 	static clone(coord: CoordinateI) {

@@ -1,6 +1,6 @@
 import { DependencyList, useCallback, useEffect, useState } from 'react';
-import { Event } from '../classes/Event';
-import { EventedValue } from '../classes/EventedValue';
+import { Event } from '../../classes/Event';
+import { EventedValue } from '../../classes/EventedValue';
 
 export function useEventCallback<Args extends unknown[]>(
 	event: Event<Args>,

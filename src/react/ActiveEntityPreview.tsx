@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent, useCallback } from 'react';
 import { Coordinate } from '../classes/Coordinate';
-import { useRenderingController } from '../rendering/useRenderingController';
+import { useRenderingController } from './hooks/three';
 import { EntityI } from '../types';
 
 const CAMERA_POSITION = new Coordinate(-1, 1, 1);

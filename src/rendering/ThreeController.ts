@@ -1,15 +1,15 @@
 import * as THREE from 'three';
 import { Vector2 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { Coordinate } from '../../classes/Coordinate';
-import { Event } from '../../classes/Event';
-import { MATERIAL_LINES, MATERIAL_TERRAIN } from '../../constants/materials';
-import { activePalette } from '../../constants/palettes';
-import { PersonEntity } from '../../entities/PersonEntity';
-import { SettlementEntity } from '../../entities/SettlementEntity';
-import Game from '../../Game';
-import { Terrain } from '../../terrain/Terrain';
-import { CoordinateI, EntityI, EntityPersonI, TileI, ViewI } from '../../types';
+import { Coordinate } from '../classes/Coordinate';
+import { Event } from '../classes/Event';
+import { MATERIAL_LINES, MATERIAL_TERRAIN } from '../constants/materials';
+import { activePalette } from '../constants/palettes';
+import { PersonEntity } from '../entities/PersonEntity';
+import { SettlementEntity } from '../entities/SettlementEntity';
+import Game from '../Game';
+import { Terrain } from '../terrain/Terrain';
+import { CoordinateI, EntityI, EntityPersonI, TileI, ViewI } from '../types';
 import { convertCoordinate } from './utils';
 
 type ThreeControllerOptions = {
@@ -217,16 +217,23 @@ export class ThreeController implements ViewI {
 		this.controls.addEventListener('change', handleCameraChange);
 		this.$destruct.once(() => this.controls.removeEventListener('change', handleCameraChange));
 
-		const handleClick = this.handleClick.bind(this);
+		const handleClick = this._handleClick.bind(this);
 		this.root.addEventListener('click', handleClick);
 		this.$destruct.once(() => this.root.removeEventListener('click', handleClick));
 	}
 
+	/**
+	 * Do the opposite of constructing a ThreeController
+	 */
 	public destructor() {
 		this.$destruct.emit();
 	}
 
-	private handleClick(event: MouseEvent) {
+	/**
+	 * Handle a mouse click anywhere in the ThreeJS canvas. Use raycasting to find the objects the
+	 * click ray intersects with. Then emits an event ($clickTile or $clickEntity) accordingly.
+	 */
+	private _handleClick(event: MouseEvent) {
 		// https://stackoverflow.com/questions/12800150/
 		this.raycaster.setFromCamera(
 			new Vector2(
@@ -259,20 +266,32 @@ export class ThreeController implements ViewI {
 		};
 	}
 
+	/**
+	 * Position the camera at a game coordinate
+	 */
 	public setCameraPosition(position: CoordinateI) {
 		const v = convertCoordinate(position);
 		this.camera.position.set(v.x, v.y, v.z);
 	}
 
+	/**
+	 * Point the camera right at a game coordinate
+	 */
+	public setCameraFocus(coordinate: CoordinateI) {
+		this.setCameraFocusOnVector3(convertCoordinate(coordinate));
+	}
+
+	/**
+	 * Point the camera right at a ThreeJS coordinate
+	 */
 	private setCameraFocusOnVector3(vector: THREE.Vector3) {
 		this.camera.lookAt(vector);
 		this.controls.target = vector;
 	}
 
-	public setCameraFocus(coordinate: CoordinateI) {
-		this.setCameraFocusOnVector3(convertCoordinate(coordinate));
-	}
-
+	/**
+	 * Point the camera right at a ThreeJS mesh
+	 */
 	public setCameraFocusMesh(mesh: THREE.Mesh) {
 		const geometry = mesh.geometry;
 		const center = new THREE.Vector3();
@@ -283,6 +302,9 @@ export class ThreeController implements ViewI {
 		this.setCameraFocusOnVector3(center);
 	}
 
+	/**
+	 * Show a 3D cross-hair in red, blue and green, correlating to X, Y and Z
+	 */
 	public addAxisHelper(position: CoordinateI = new Coordinate(0, 0, 0), size = 10) {
 		const v = convertCoordinate(position);
 		const axesHelper = new THREE.AxesHelper(size);
@@ -290,64 +312,9 @@ export class ThreeController implements ViewI {
 		this.scene.add(axesHelper);
 	}
 
-	/*
-		ACTIVATE GAME STUFF AND THEIR LISTENERS
-		---------------------------------------
-	*/
-
-	private attachEntityPersonEvents(game: Game, entity: EntityPersonI, obj: THREE.Group) {
-		// @TODO handle when the entity is removed, but the game is not detached entirely
-
-		let destroy: (() => void) | null;
-
-		// @TODO maybe invent TweenedValue (as a specialization of EventedValue and the update loop)
-		// some time.
-		entity.$startedWalking.on((destination, duration) => {
-			const deltaGameCoordinatePerFrame = Coordinate.difference(
-				destination,
-				entity.$$location.get()
-			).scale(1 / duration);
-			const deltaThreeCoodinatePerFrame = convertCoordinate(deltaGameCoordinatePerFrame);
-			destroy = game.time.on(() => {
-				// @TODO maybe add an easing function some time
-				obj.position.x += deltaThreeCoodinatePerFrame.x;
-				obj.position.y += deltaThreeCoodinatePerFrame.y;
-				obj.position.z += deltaThreeCoodinatePerFrame.z;
-				entity.$$location.set(
-					// @BUG
-					// This event should not update the $$location because $$location is a tile,
-					// which lives in Terrain.
-					//
-					// @TODO
-					// As a fix, entity location should be a coordinate, which must at various places
-					// be mapped back to a tile, if a tile is needed.
-					Coordinate.transform(entity.$$location.get(), deltaGameCoordinatePerFrame)
-				);
-				if (--duration <= 0) {
-					entity.$stoppedWalkStep.emit(destination);
-				}
-			});
-		});
-		const stop = () => {
-			destroy && destroy();
-		};
-		entity.$stoppedWalkStep.on(stop);
-		this.$detach.once(stop);
-	}
 	/**
-	 * Add an entity to canvas, and make sure it can update/animate
-	 */
-	private attachEntity(game: Game, entity: EntityI) {
-		const obj = entity.createObject();
-		obj.position.copy(convertCoordinate(entity.$$location.get()));
-		if (entity instanceof PersonEntity) {
-			this.attachEntityPersonEvents(game, entity, obj);
-		}
-		this.scene.add(obj);
-	}
-
-	/**
-	 * Add the game terrain geometry to canvas
+	 * Add the game terrain geometry to canvas. This tells ThreeJS to render terrain where there
+	 * are tiles.
 	 */
 	private createGroupForGameTerrain(game: Game, options: { fill: boolean; edge: boolean }) {
 		var group = new THREE.Group();
@@ -389,7 +356,44 @@ export class ThreeController implements ViewI {
 		return group;
 	}
 
-	private attachEventListeners(game: Game) {
+	/**
+	 * Start the game in this ThreeJS instance. Render all entities and terrain, set all
+	 * event listeners.
+	 */
+	public attachToGame(game: Game) {
+		this.attachToGameEvents(game);
+		// Meshes
+		game.entities.forEach(entity => {
+			this.attachToGameEntity(game, entity);
+		});
+
+		const group = new THREE.Group();
+		group.add(this.createGroupForGameTerrain(game, { fill: true, edge: true }));
+
+		// https://threejs.org/docs/#api/en/helpers/GridHelper
+		const gameSize = (game.terrain as Terrain).size;
+		const gridHelper = new THREE.GridHelper(
+			gameSize,
+			gameSize,
+			activePalette.medium,
+			activePalette.medium
+		);
+		gridHelper.position.add(new THREE.Vector3(gameSize / 2, 0, gameSize / 2));
+		group.add(gridHelper);
+
+		this.scene.add(group);
+
+		this.setCameraPosition(new Coordinate(-5, -5, 20));
+		this.setCameraFocus(game.$$cameraFocus.get());
+	}
+
+	/**
+	 * Listen to some game event, and some of ThreeController's own vents, and bind them
+	 * with the appropriate methods on the other side of the fence.
+	 *
+	 * All events are destroyed when the controller detaches from game.
+	 */
+	private attachToGameEvents(game: Game) {
 		this.$start.once(game.play.bind(game));
 		this.$detach.once(game.destroy.bind(game));
 
@@ -425,13 +429,16 @@ export class ThreeController implements ViewI {
 				// @TODO
 			})
 		);
-		// When the game requests to focus on a location, focus on that location
+
+		// Put the camera onto this entity, and follow it around.
 		this.$detach.once(
 			game.$$cameraFocus.on(() => {
 				this.setCameraFocus(game.$$cameraFocus.get());
 			})
 		);
 
+		// When the focused entity changes to a settlement, different "relationship arcs" are drawn
+		// between that settlement and neighbors/trade partners/etc.
 		const arcs: (() => void)[] = [];
 		this.$detach.once(
 			game.$$focus.on(thing => {
@@ -454,34 +461,62 @@ export class ThreeController implements ViewI {
 	}
 
 	/**
-	 * Start the game in this ThreeJS instance. Render all entities and terrain, set all
-	 * event listeners.
+	 * Add an entity to canvas, and make sure it can update/animate. Contains some logic to handle
+	 * one type of entity different from another.
 	 */
-	public attachToGame(game: Game) {
-		this.attachEventListeners(game);
-		// Meshes
-		game.entities.forEach(entity => {
-			this.attachEntity(game, entity);
+	private attachToGameEntity(game: Game, entity: EntityI) {
+		const obj = entity.createObject();
+		obj.position.copy(convertCoordinate(entity.$$location.get()));
+		if (entity instanceof PersonEntity) {
+			this.attachEntityPersonEvents(game, entity, obj);
+		}
+		this.scene.add(obj);
+	}
+
+	/**
+	 * Listen to the events of a person event --> walking, mostly.
+	 *
+	 * @bug there's some bugs, see code comments
+	 */
+	private attachEntityPersonEvents(game: Game, entity: EntityPersonI, obj: THREE.Group) {
+		// @TODO handle when the entity is removed, but the game is not detached entirely
+
+		let destroy: (() => void) | null;
+
+		// @TODO maybe invent TweenedValue (as a specialization of EventedValue and the update loop)
+		// some time.
+		// @TODO destroy event listener when entity stops being part of the game
+		entity.$startedWalking.on((destination, duration) => {
+			const deltaGameCoordinatePerFrame = Coordinate.difference(
+				destination,
+				entity.$$location.get()
+			).scale(1 / duration);
+			const deltaThreeCoodinatePerFrame = convertCoordinate(deltaGameCoordinatePerFrame);
+			destroy = game.time.on(() => {
+				// @TODO maybe add an easing function some time
+				obj.position.x += deltaThreeCoodinatePerFrame.x;
+				obj.position.y += deltaThreeCoodinatePerFrame.y;
+				obj.position.z += deltaThreeCoodinatePerFrame.z;
+				entity.$$location.set(
+					// @BUG
+					// This event should not update the $$location because $$location is a tile,
+					// which lives in Terrain.
+					//
+					// @TODO
+					// As a fix, entity location should be a coordinate, which must at various places
+					// be mapped back to a tile, if a tile is needed.
+					Coordinate.transform(entity.$$location.get(), deltaGameCoordinatePerFrame)
+				);
+				if (--duration <= 0) {
+					entity.$stoppedWalkStep.emit(destination);
+				}
+			});
 		});
-
-		const group = new THREE.Group();
-		group.add(this.createGroupForGameTerrain(game, { fill: true, edge: true }));
-
-		// https://threejs.org/docs/#api/en/helpers/GridHelper
-		const gameSize = (game.terrain as Terrain).size;
-		const gridHelper = new THREE.GridHelper(
-			gameSize,
-			gameSize,
-			activePalette.medium,
-			activePalette.medium
-		);
-		gridHelper.position.add(new THREE.Vector3(gameSize / 2, 0, gameSize / 2));
-		group.add(gridHelper);
-
-		this.scene.add(group);
-
-		this.setCameraPosition(new Coordinate(-5, -5, 20));
-		this.setCameraFocus(game.$$cameraFocus.get());
+		const stop = () => {
+			destroy && destroy();
+		};
+		entity.$stoppedWalkStep.on(stop);
+		this.$detach.once(stop);
 	}
 
 	/**

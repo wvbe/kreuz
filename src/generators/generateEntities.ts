@@ -10,10 +10,6 @@ function repeat<P>(n: number, cb: (i: number) => P): P[] {
 	return Array.from(new Array(n)).map((_, i) => cb(i));
 }
 
-export const RATIO_WATER_OF_TOTAL = 0.25;
-
-export function generateTerrain(seed: string, size: number) {}
-
 function generatePatrolJob(terrain: TerrainI, seed: SeedI, entity: EntityPersonI) {
 	const start = terrain.getTileClosestToXy(entity.$$location.get().x, entity.$$location.get().y);
 	const island = terrain.getIslands(t => t.isLand()).find(island => island.includes(start));

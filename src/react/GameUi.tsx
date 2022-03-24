@@ -1,15 +1,16 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent } from 'react';
-import Game from './Game';
+import Game from '../Game';
 import { useEventedValue } from './hooks/events';
 import { GameContext } from './hooks/game';
-import { RendererMain } from './rendering/RendererMain';
-import GlobalStyles from './style/GlobalStyles';
-import { EntityI } from './types';
-import { AboutGameOverlay } from './ui/AboutGameOverlay';
-import { ActiveEntityOverlay } from './ui/ActiveEntityOverlay';
-import { ModalBoundsContext } from './ui/components/Modal';
-import { EntityOverview } from './ui/EntityOverview';
+import { RendererMain } from './ThreeViewportMain';
+import GLOBAL_STYLE_RULES from '../style/global';
+import { EntityI } from '../types';
+import { AboutGameOverlay } from './AboutGameOverlay';
+import { ActiveEntityOverlay } from './ActiveEntityOverlay';
+import { ModalBoundsContext } from './components/Modal';
+import { EntityOverview } from './EntityOverview';
+import { Global } from '@emotion/react';
 
 const UiHostBottomRight = styled.section`
 	position: absolute;
@@ -25,7 +26,7 @@ const UiHostFullScreen = styled.section`
 	right: 0;
 `;
 
-const Ui: FunctionComponent<{
+const GameUi: FunctionComponent<{
 	game: Game;
 }> = ({ game }) => {
 	const focusedItem = useEventedValue(game.$$focus);
@@ -33,7 +34,7 @@ const Ui: FunctionComponent<{
 	return (
 		<GameContext.Provider value={game}>
 			<UiHostFullScreen className="modal-bounds">
-				<GlobalStyles />
+				<Global styles={GLOBAL_STYLE_RULES} />
 				<RendererMain />
 				<UiHostBottomRight>
 					<ActiveEntityOverlay entity={focusedItem as EntityI} />
@@ -47,4 +48,4 @@ const Ui: FunctionComponent<{
 	);
 };
 
-export default Ui;
+export default GameUi;

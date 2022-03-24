@@ -4,6 +4,7 @@ import { EventedValue } from '../classes/EventedValue';
 import { MATERIAL_LINES, MATERIAL_PERSONS } from '../constants/materials';
 import Game from '../Game';
 import { CoordinateI, EntityI, GeometryI, JobI } from '../types';
+import { SaveEntityJson } from '../types-savedgame';
 const noop = () => {};
 
 export class Entity implements EntityI {
@@ -11,7 +12,7 @@ export class Entity implements EntityI {
 
 	public $$location: EventedValue<CoordinateI>;
 	/**
-	 * @deprecated not used yet.
+	 * Used for generating a save
 	 */
 	public type = 'entity';
 	/**
@@ -67,5 +68,16 @@ export class Entity implements EntityI {
 		});
 
 		return group;
+	}
+
+	/**
+	 * Serialize for a save game JSON
+	 */
+	public serializeToSaveJson(): SaveEntityJson {
+		return {
+			type: this.type,
+			id: this.id,
+			location: this.$$location.get().toArray()
+		};
 	}
 }

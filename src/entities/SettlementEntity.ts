@@ -1,7 +1,7 @@
 import { Coordinate } from '../classes/Coordinate';
 import { Random } from '../classes/Random';
 import { getRandomSettlementName } from '../constants/names';
-import { convertCoordinate } from '../rendering/threejs/utils';
+import { convertCoordinate } from '../rendering/utils';
 import { RectangleParty } from '../generators/generateRectangles';
 import { CoordinateI, EntityI, SeedI } from '../types';
 import { BuildingEntity } from './BuildingEntity';

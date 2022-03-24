@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ThreeController } from './threejs/ThreeController';
+import { ThreeController } from '../../rendering/ThreeController';
 
 export function useRenderingController(
 	options: ConstructorParameters<typeof ThreeController>[1],

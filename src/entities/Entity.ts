@@ -1,10 +1,10 @@
 import * as THREE from 'three';
-import { Coordinate } from '../classes/Coordinate';
-import { EventedValue } from '../classes/EventedValue';
-import { MATERIAL_LINES, MATERIAL_PERSONS } from '../constants/materials';
-import Game from '../Game';
-import { CoordinateI, EntityI, GeometryI, JobI } from '../types';
-import { SaveEntityJson } from '../types-savedgame';
+import { Coordinate } from '../classes/Coordinate.ts';
+import { EventedValue } from '../classes/EventedValue.ts';
+import { MATERIAL_LINES, MATERIAL_PERSONS } from '../constants/materials.ts';
+import Game from '../Game.ts';
+import { CoordinateI, EntityI, GeometryI, JobI } from '../types.ts';
+import { SaveEntityJson } from '../types-savedgame.ts';
 const noop = () => {};
 
 export class Entity implements EntityI {
@@ -58,7 +58,7 @@ export class Entity implements EntityI {
 			geometries = Array.isArray(_geometries) ? _geometries : [_geometries];
 
 		const group = new THREE.Group();
-		geometries.forEach(geo => {
+		geometries.forEach((geo) => {
 			const mesh = new THREE.Mesh(geo, material);
 			mesh.userData.entity = this;
 			group.add(mesh);
@@ -77,7 +77,7 @@ export class Entity implements EntityI {
 		return {
 			type: this.type,
 			id: this.id,
-			location: this.$$location.get().toArray()
+			location: this.$$location.get().toArray(),
 		};
 	}
 }

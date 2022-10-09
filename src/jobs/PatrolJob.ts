@@ -1,6 +1,6 @@
-import Game from '../Game';
-import { EntityPersonI, JobI, TileI } from '../types';
-import { Job } from './Job';
+import Game from '../Game.ts';
+import { EntityPersonI, JobI, TileI } from '../types.ts';
+import { Job } from './Job.ts';
 
 export class PatrolJob extends Job implements JobI {
 	private readonly destroyers: (() => void)[] = [];
@@ -22,6 +22,7 @@ export class PatrolJob extends Job implements JobI {
 
 	public start(game: Game) {
 		super.start(game);
+
 		this.destroyers.push(
 			this.entity.$stoppedWalking.on(() => {
 				// Guards move from one waypoint to another, pausing for a random amount of time in between
@@ -32,7 +33,7 @@ export class PatrolJob extends Job implements JobI {
 					this.destroyers.splice(this.destroyers.indexOf(destroy), 1);
 				}, 3000);
 				this.destroyers.push(destroy);
-			})
+			}),
 		);
 
 		this.entity.walkToTile(this.waypoints[0]);
@@ -40,6 +41,6 @@ export class PatrolJob extends Job implements JobI {
 
 	destroy() {
 		super.destroy();
-		this.destroyers.forEach(destroy => destroy());
+		this.destroyers.forEach((destroy) => destroy());
 	}
 }

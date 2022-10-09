@@ -1,7 +1,7 @@
-import Game from './Game';
-import { generateDualMeshTerrain } from './generators/generateDualMeshTerrain';
-import { generateEntities } from './generators/generateEntities';
-import { SeedI } from './types';
+import Game from './Game.ts';
+import { generateDualMeshTerrain } from './generators/generateDualMeshTerrain.ts';
+import { generateEntities } from './generators/generateEntities.ts';
+import { SeedI } from './types.ts';
 
 type RandomGameOptions = {
 	size: number;
@@ -13,7 +13,7 @@ class Generator {
 		const { size, density } = {
 			size: 20,
 			density: 1,
-			...options
+			...options,
 		};
 		const terrain = generateDualMeshTerrain(seed, size, density);
 		const entities = generateEntities(seed, terrain);

@@ -1,8 +1,8 @@
-import { RectangleParty } from './generateRectangles';
+import { RectangleParty } from './generateRectangles.ts';
 
 it('RectangleParty', () => {
 	const root = RectangleParty.init(['test'], 50, 50, {
-		minimumBuildingLength: 20
+		minimumBuildingLength: 20,
 	});
 
 	expect(root.debug()).toMatchInlineSnapshot(`
@@ -15,7 +15,7 @@ it('RectangleParty', () => {
 		- [0, 32.4440510863205, 50, 17.555948913679497]"
 	`);
 
-	expect(root.flatten().map(r => r.label())).toMatchInlineSnapshot(`
+	expect(root.flatten().map((r) => r.label())).toMatchInlineSnapshot(`
 		Array [
 		  "[0, 0, 50, 17.83482779655932]",
 		  "[0, 17.83482779655932, 31.19705432817692, 14.60922328976118]",

@@ -1,13 +1,13 @@
-import { Random } from '../classes/Random';
-import { TimeLine } from '../classes/TimeLine';
+import { Random } from '../classes/Random.ts';
+import { TimeLine } from '../classes/TimeLine.ts';
 
 type Sexuality = 'hetero' | 'homo' | 'bi';
 // type TraditionalGender = 'm' | 'f';
 
 function mermaidPieChart(label: string, data: { [key: string]: number }) {
 	return (
-		['\npie title ' + label, ...Object.keys(data).map(key => `"${key}" : ${data[key]}`)].join(
-			'\n    '
+		['\npie title ' + label, ...Object.keys(data).map((key) => `"${key}" : ${data[key]}`)].join(
+			'\n    ',
 		) + '\n'
 	);
 }
@@ -19,7 +19,7 @@ export function generateFamilyTree(seed: number, dateMax: number, dateIncrement:
 	function EVENT<Things extends unknown[] = []>(str: TemplateStringsArray, ...things: Things) {
 		const message = str.reduce(
 			(message, text, i) => message + text + (i < things.length ? String(things[i]) : ''),
-			`On day ${TIME.now}, `
+			`On day ${TIME.now}, `,
 		);
 		events.push(message);
 		return message;
@@ -46,7 +46,7 @@ export function generateFamilyTree(seed: number, dateMax: number, dateIncrement:
 			this.gender = Random.fromArray(['m', 'f'], ++seedIncrement);
 			this.sexuality = Random.fromArray(
 				['hetero', 'hetero', 'hetero', 'hetero', 'hetero', 'homo', 'bi'],
-				++seedIncrement
+				++seedIncrement,
 			);
 
 			const c = this.gender === 'f' ? 'daughter' : 'son';
@@ -151,7 +151,7 @@ export function generateFamilyTree(seed: number, dateMax: number, dateIncrement:
 		haveBaby(partner: Person) {
 			if (!this.canHaveBabyWith(partner)) {
 				throw new Error(
-					`${TIME.now} @ Sorry, ${this} person cannot have babies with ${partner} right now`
+					`${TIME.now} @ Sorry, ${this} person cannot have babies with ${partner} right now`,
 				);
 			}
 			let child: Person;
@@ -169,16 +169,16 @@ export function generateFamilyTree(seed: number, dateMax: number, dateIncrement:
 	}
 
 	const PERSONS = Array.from(new Array(50)).map(() => new Person());
-	TIME.on(c => {
-		const populationAlive = PERSONS.filter(p => p.alive);
+	TIME.on((c) => {
+		const populationAlive = PERSONS.filter((p) => p.alive);
 		populationAlive
-			.filter(p => p.age > 99 || Random.boolean([++seedIncrement], (p.age - 50) / 300))
-			.forEach(p => p.die());
+			.filter((p) => p.age > 99 || Random.boolean([++seedIncrement], (p.age - 50) / 300))
+			.forEach((p) => p.die());
 		if (populationAlive.length > 9999) {
 			return;
 			// throw new Error('Max population reached');
 		}
-		const populationElegibleToMarry = populationAlive.filter(p => p.canMarry());
+		const populationElegibleToMarry = populationAlive.filter((p) => p.canMarry());
 		populationElegibleToMarry
 			// Not everybody wants to get married all the time;
 			.filter(() => {
@@ -191,7 +191,7 @@ export function generateFamilyTree(seed: number, dateMax: number, dateIncrement:
 					return;
 				}
 				// @TODO make it more likely to marry between ages 25-30
-				const candidates = all.filter(p => person.canMarryWith(p, false));
+				const candidates = all.filter((p) => person.canMarryWith(p, false));
 				if (!candidates.length) {
 					// Partner was just married, possibly to someone else.
 					return;
@@ -201,9 +201,9 @@ export function generateFamilyTree(seed: number, dateMax: number, dateIncrement:
 			});
 
 		populationAlive
-			.filter(p => p.partner && p.canHaveBabyWith(p.partner))
+			.filter((p) => p.partner && p.canHaveBabyWith(p.partner))
 			.filter(() => Random.boolean([++seedIncrement], 0.1))
-			.forEach(person => {
+			.forEach((person) => {
 				if (!person.canHaveBabyWith(person.partner as Person)) {
 					// Partner is female and just had a baby
 					return;
@@ -217,29 +217,28 @@ export function generateFamilyTree(seed: number, dateMax: number, dateIncrement:
 	return {
 		log: events,
 		makeData: () => {
-			const populationAlive = PERSONS.filter(p => p.alive);
+			const populationAlive = PERSONS.filter((p) => p.alive);
 			return {
 				population: populationAlive.length,
 				populationCumulative: PERSONS.length,
-				couples: populationAlive.filter(p => p.partner?.alive).length / 2,
-				widowers: populationAlive.filter(p => p.partner && !p.partner.alive).length,
+				couples: populationAlive.filter((p) => p.partner?.alive).length / 2,
+				widowers: populationAlive.filter((p) => p.partner && !p.partner.alive).length,
 				percentageHasChildren:
-					populationAlive.filter(p => p.children.length).length / populationAlive.length
+					populationAlive.filter((p) => p.children.length).length / populationAlive.length,
 			};
 		},
 		makeMermaidPiechartOfAgeDistribution: () => {
-			const populationAlive = PERSONS.filter(p => p.alive);
+			const populationAlive = PERSONS.filter((p) => p.alive);
 			return mermaidPieChart(
 				'Age distribution',
 				[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].reduce((all, to, i, ages) => {
 					const from = i ? ages[i - 1] : 0;
 					return {
 						...all,
-						[`${from}-${to}`]: populationAlive.filter(p => p.age >= from && p.age < to)
-							.length
+						[`${from}-${to}`]: populationAlive.filter((p) => p.age >= from && p.age < to).length,
 					};
-				}, {})
+				}, {}),
 			);
-		}
+		},
 	};
 }

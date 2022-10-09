@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent } from 'react';
-import { useGame } from './hooks/game';
+import { useGame } from './hooks/game.ts';
 
 const Wrapper = styled.div`
 	display: flex;
@@ -15,11 +15,7 @@ export const AboutGameOverlay: FunctionComponent = () => {
 
 	return (
 		<Wrapper>
-			<a
-				href="https://github.com/wvbe/kreuzzeug-im-nagelhosen"
-				target="_blank"
-				rel="noreferrer"
-			>
+			<a href="https://github.com/wvbe/kreuzzeug-im-nagelhosen" target="_blank" rel="noreferrer">
 				GitHub
 			</a>
 			<div style={{ width: '4em' }}></div>

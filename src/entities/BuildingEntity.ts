@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { CoordinateI, EntityI } from '../types';
-import { Entity } from './Entity';
+import { CoordinateI, EntityI } from '../types.ts';
+import { Entity } from './Entity.ts';
 
 export type BuildingParameters = {
 	baseWidth: number;
@@ -47,7 +47,7 @@ export class BuildingEntity extends Entity implements EntityI {
 		const geo = new THREE.ExtrudeGeometry(shape, {
 			steps: 1,
 			depth: baseDepth,
-			bevelEnabled: false
+			bevelEnabled: false,
 		});
 		geo.translate(-baseWidth / 2, 0, -baseDepth / 2);
 		return geo;

@@ -1,10 +1,10 @@
-import { Event } from '../classes/Event';
-import Logger from '../classes/Logger';
-import { Path } from '../classes/Path';
-import { Random } from '../classes/Random';
-import { FIRST_NAMES_F, FIRST_NAMES_M } from '../constants/names';
-import { EntityPersonI, CoordinateI, TileI } from '../types';
-import { Entity } from './Entity';
+import { Event } from '../classes/Event.ts';
+import Logger from '../classes/Logger.ts';
+import { Path } from '../classes/Path.ts';
+import { Random } from '../classes/Random.ts';
+import { FIRST_NAMES_F, FIRST_NAMES_M } from '../constants/names.tsx';
+import { EntityPersonI, CoordinateI, TileI } from '../types.ts';
+import { Entity } from './Entity.ts';
 
 export class PersonEntity extends Entity implements EntityPersonI {
 	// The amount of game coordinate per millisecond
@@ -32,15 +32,15 @@ export class PersonEntity extends Entity implements EntityPersonI {
 			gender ? FIRST_NAMES_M : FIRST_NAMES_F,
 			id,
 			this.constructor.name,
-			'firstName'
+			'firstName',
 		);
 		this.userData = {
 			gender: gender ? 'm' : 'f',
-			firstName
+			firstName,
 		};
 
 		// Movement handling
-		this.$stoppedWalkStep.on(loc => {
+		this.$stoppedWalkStep.on((loc) => {
 			this.$$location.set(loc);
 		});
 	}

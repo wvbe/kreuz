@@ -2,13 +2,13 @@
 
 import styled from '@emotion/styled';
 import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
-import Logger from '../classes/Logger';
-import { activeUiPalette } from '../constants/palettes';
-import { useGame } from './hooks/game';
-import { BLURRY_BACKGROUND } from '../style/mixins';
-import { EntityI } from '../types';
-import { ActiveEntityPreview } from './ActiveEntityPreview';
-import { Button } from './components/Button';
+import Logger from '../classes/Logger.ts';
+import { activeUiPalette } from '../constants/palettes.ts';
+import { useGame } from './hooks/game.ts';
+import { BLURRY_BACKGROUND } from '../style/mixins.ts';
+import { EntityI } from '../types.ts';
+import { ActiveEntityPreview } from './ActiveEntityPreview.tsx';
+import { Button } from './components/Button.tsx';
 
 const borderColor = activeUiPalette.darkest;
 
@@ -58,7 +58,7 @@ const EntityOptions: FunctionComponent<{ entity: EntityI }> = ({ entity }) => {
 			setUnfollow(null);
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[entity]
+		[entity],
 	);
 	const handleFollowClick = useCallback(() => {
 		if (!game) {
@@ -109,7 +109,7 @@ const LocalPreviewContainer = styled.div`
 
 export const ActiveEntityOverlay: FunctionComponent<{ entity?: EntityI; zoom?: number }> = ({
 	entity,
-	zoom = 4
+	zoom = 4,
 }) => (
 	<LocalBoundary>
 		<LocalBody>

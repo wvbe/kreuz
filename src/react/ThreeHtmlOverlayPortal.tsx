@@ -1,7 +1,7 @@
 import { FunctionComponent, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { CoordinateI } from '../types';
-import { ThreeController } from '../rendering/ThreeController';
+import { CoordinateI } from '../types.ts';
+import { ThreeController } from '../rendering/ThreeController.ts';
 
 /**
  * Uses a React portal and ThreeJS projection to render children onto a specific location in the

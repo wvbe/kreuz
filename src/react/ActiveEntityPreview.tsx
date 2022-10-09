@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent, useCallback } from 'react';
-import { Coordinate } from '../classes/Coordinate';
-import { useRenderingController } from './hooks/three';
-import { EntityI } from '../types';
+import { Coordinate } from '../classes/Coordinate.ts';
+import { useRenderingController } from './hooks/three.ts';
+import { EntityI } from '../types.ts';
 
 const CAMERA_POSITION = new Coordinate(-1, 1, 1);
 
@@ -14,7 +14,7 @@ const RENDERER_OPTIONS = {
 	enableZoom: false,
 	fieldOfView: 15,
 	pixelRatio: window.devicePixelRatio || 1,
-	restrictCameraAngle: false
+	restrictCameraAngle: false,
 };
 
 const ActiveEntityPreviewP = styled.div`
@@ -28,7 +28,7 @@ export const ActiveEntityPreview: FunctionComponent<{ entity: EntityI }> = ({ en
 	const { onRef } = useRenderingController(
 		RENDERER_OPTIONS,
 		useCallback(
-			controller => {
+			(controller) => {
 				controller.setCameraPosition(CAMERA_POSITION);
 				const object = entity.createObject();
 				const firstMesh = object.children[0] as THREE.Mesh;
@@ -43,8 +43,8 @@ export const ActiveEntityPreview: FunctionComponent<{ entity: EntityI }> = ({ en
 					controller.scene.remove(object);
 				};
 			},
-			[entity]
-		)
+			[entity],
+		),
 	);
 	return <ActiveEntityPreviewP ref={onRef} />;
 };

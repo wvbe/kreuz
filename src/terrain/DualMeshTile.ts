@@ -1,6 +1,6 @@
-import { Coordinate } from '../classes/Coordinate';
-import { TileI } from '../types';
-import { Tile } from './Tile';
+import { Coordinate } from '../classes/Coordinate.ts';
+import { TileI } from '../types.ts';
+import { Tile } from './Tile.ts';
 
 export class DualMeshTile extends Tile implements TileI {
 	public readonly neighbors: DualMeshTile[] = [];
@@ -10,7 +10,7 @@ export class DualMeshTile extends Tile implements TileI {
 		y: number,
 		z: number,
 		points: [number, number][],
-		anyPointIsAdjacentToEdge: boolean
+		anyPointIsAdjacentToEdge: boolean,
 	) {
 		super(x, y, z);
 		this.addOutlineFromCirculation(points, anyPointIsAdjacentToEdge);
@@ -19,10 +19,7 @@ export class DualMeshTile extends Tile implements TileI {
 	/**
 	 * Designed to be used with the Mesh r_circulate_t() method.
 	 */
-	private addOutlineFromCirculation(
-		points: [number, number][],
-		anyPointIsAdjacentToEdge: boolean
-	) {
+	private addOutlineFromCirculation(points: [number, number][], anyPointIsAdjacentToEdge: boolean) {
 		points.forEach(([x, y]) => {
 			this._outlinePoints.push(new Coordinate(x - this.x, y - this.y, 0));
 		});
@@ -55,7 +52,7 @@ export class DualMeshTile extends Tile implements TileI {
 					}
 
 					--maxDepth;
-					return item.neighbors.some(n => r(n, maxDepth)) || false;
+					return item.neighbors.some((n) => r(n, maxDepth)) || false;
 				})(this, 2);
 		}
 		return this._isLand;

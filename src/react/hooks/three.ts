@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ThreeController } from '../../rendering/ThreeController';
+import { ThreeController } from '../../rendering/ThreeController.ts';
 
 export function useRenderingController(
 	options: ConstructorParameters<typeof ThreeController>[1],
-	build: (controller: ThreeController) => () => void
+	build: (controller: ThreeController) => () => void,
 ): { controller: ThreeController | null; onRef: (element: HTMLElement | null) => void } {
 	const mounted = useRef<null | ThreeController>(null);
 	const [controller, setController] = useState<ThreeController | null>(null);
@@ -33,7 +33,7 @@ export function useRenderingController(
 			setController(three);
 			mounted.current = three;
 		},
-		[options, build]
+		[options, build],
 	);
 
 	return { controller, onRef };

@@ -1,6 +1,6 @@
-import { Coordinate } from '../classes/Coordinate';
-import { CoordinateI, TerrainI, TileI } from '../types';
-import { SaveTileJson } from '../types-savedgame';
+import { Coordinate } from '../classes/Coordinate.ts';
+import { CoordinateI, TerrainI, TileI } from '../types.ts';
+import { SaveTileJson } from '../types-savedgame.ts';
 
 /**
  * A special type of coordinate that is equal to another terrain coordinate when the X and Y are equal, disregarding Z.
@@ -32,7 +32,7 @@ export class Tile extends Coordinate implements TileI {
 	}
 
 	public isAdjacentToLand() {
-		return this.neighbors.some(n => n.isLand());
+		return this.neighbors.some((n) => n.isLand());
 	}
 
 	isAdjacentToEdge(): boolean {
@@ -48,7 +48,7 @@ export class Tile extends Coordinate implements TileI {
 	public serializeToSaveJson(): SaveTileJson {
 		return {
 			center: this.toArray(),
-			outline: this.getOutlineCoordinates().map(coord => coord.toArray())
+			outline: this.getOutlineCoordinates().map((coord) => coord.toArray()),
 		};
 	}
 }

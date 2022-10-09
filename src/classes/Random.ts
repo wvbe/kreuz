@@ -3,7 +3,7 @@ import Poisson from 'poisson-disk-sampling';
 //https://www.npmjs.com/package/seedrandom
 import seedrandom from 'seedrandom';
 
-import { SeedI } from '../types';
+import { SeedI } from '../types.ts';
 
 export class Random {
 	static float(...seed: SeedI[]): number {
@@ -31,7 +31,7 @@ export class Random {
 	): [number, number][] {
 		let i = 0;
 		const poisson = new Poisson({ shape: [width, height], minDistance }, () =>
-			Random.float(...seed, ++i)
+			Random.float(...seed, ++i),
 		);
 		return poisson.fill();
 	}

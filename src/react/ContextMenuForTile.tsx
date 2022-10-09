@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent } from 'react';
-import { SettlementEntity } from '../entities/SettlementEntity';
-import Game from '../Game';
-import { TileI } from '../types';
-import { EntityTextBadge } from './ActiveEntityOverlay';
-import { Button } from './components/Button';
-import { ContextMenu, ContextMenuFooter } from './components/ContextMenu';
+import { SettlementEntity } from '../entities/SettlementEntity.ts';
+import Game from '../Game.ts';
+import { TileI } from '../types.ts';
+import { EntityTextBadge } from './ActiveEntityOverlay.tsx';
+import { Button } from './components/Button.tsx';
+import { ContextMenu, ContextMenuFooter } from './components/ContextMenu.tsx';
 
 // https://color.adobe.com/Fresh-flat-bright-color-theme-8718197
 const AxisX = styled.span`
@@ -22,14 +22,12 @@ const AxisZ = styled.span`
 
 export const ContextMenuForTile: FunctionComponent<{ game: Game; tile: TileI }> = ({
 	game,
-	tile
+	tile,
 }) => {
 	const settlement = game.entities.find(
-		entity =>
-			game.terrain.getTileClosestToXy(
-				entity.$$location.get().x,
-				entity.$$location.get().y
-			) === tile && entity instanceof SettlementEntity
+		(entity) =>
+			game.terrain.getTileClosestToXy(entity.$$location.get().x, entity.$$location.get().y) ===
+				tile && entity instanceof SettlementEntity,
 	);
 	return (
 		<ContextMenu>

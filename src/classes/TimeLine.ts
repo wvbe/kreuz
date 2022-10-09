@@ -1,9 +1,19 @@
-import { SaveTimeJson } from '../types-savedgame';
-import { EventedValue } from './EventedValue';
+import { SaveTimeJson } from '../types-savedgame.ts';
+import { Event } from './Event.ts';
+import { EventedValue } from './EventedValue.ts';
 
 export class TimeLine extends EventedValue<number> {
 	private timers = new Map<number, (() => void)[]>();
 	public readonly multiplier: number;
+
+	// /**
+	//  * @deprecated Probably not useful
+	//  */
+	// public readonly $timeoutAdded = new Event<[number]>('Timeout added');
+	// /**
+	//  * @deprecated Probably not useful
+	//  */
+	// public readonly $timeoutEnded = new Event('Timeout ended');
 
 	constructor(multiplier: number = 1, initial: number = 0) {
 		super(initial);
@@ -19,7 +29,11 @@ export class TimeLine extends EventedValue<number> {
 		const timers = this.timers.get(frame);
 		while (timers && timers.length > 0) {
 			const runTimeout = timers.shift();
-			runTimeout && runTimeout();
+			if (!runTimeout) {
+				continue;
+			}
+			runTimeout();
+			// this.$timeoutEnded.emit();
 		}
 		this.timers.delete(frame);
 	}
@@ -38,7 +52,7 @@ export class TimeLine extends EventedValue<number> {
 
 	// @TOODO base this on a stateful property instead of reducing every time.
 	//    Then, use in jump()
-	public getNextEventAbsoluteTime() {
+	public getNextEventAbsoluteTime(): number {
 		return Array.from(this.timers.keys()).reduce((min, k) => Math.min(min, k), Infinity);
 	}
 
@@ -57,6 +71,8 @@ export class TimeLine extends EventedValue<number> {
 		this.set(next - 1, true);
 
 		this.step();
+
+		return this.getNextEventAbsoluteTime();
 	}
 
 	public setTimeout(fn: () => void, time: number) {
@@ -66,12 +82,13 @@ export class TimeLine extends EventedValue<number> {
 		} else {
 			this.timers.get(frame)?.push(fn);
 		}
+		// this.$timeoutAdded.emit(time);
 		return () => {
 			const timers = this.timers.get(frame);
 			if (!timers) {
 				return;
 			}
-			const filteredTimers = timers.filter(f => f !== fn);
+			const filteredTimers = timers.filter((f) => f !== fn);
 			if (filteredTimers.length) {
 				this.timers.set(frame, filteredTimers);
 			} else {

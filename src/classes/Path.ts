@@ -6,9 +6,9 @@
 //   Includes Binary Heap (with modifications) from Marijn Haverbeke.
 //   http://eloquentjavascript.net/appendix2.html
 
-import { TerrainI, TileI } from '../types';
-import { BinaryHeap } from './BinaryHeap';
-import Logger from './Logger';
+import { TerrainI, TileI } from '../types.ts';
+import { BinaryHeap } from './BinaryHeap.ts';
+import Logger from './Logger.ts';
 
 // See list of heuristics: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
 type HeuristicScorer = (a: TileI, b: TileI) => number;
@@ -49,7 +49,7 @@ export class Path {
 
 		this.cache = new Map<TileI, HeuristicReport>();
 
-		this.heap = new BinaryHeap<TileI>(node => {
+		this.heap = new BinaryHeap<TileI>((node) => {
 			const heuristic = this.cache.get(node);
 			if (!heuristic) {
 				throw new Error('This is weird');
@@ -74,7 +74,7 @@ export class Path {
 
 			// Unsure what the default value should be
 			closed: true,
-			visited: true
+			visited: true,
 		};
 
 		// At this stage `start` is also `closestNode`, so lets associate those heuristics
@@ -113,8 +113,7 @@ export class Path {
 				// The g score is the shortest distance from start to current node.
 				// We need to check if the path we have arrived at this neighbor is the shortest one we have seen yet.
 				const gScore =
-					currentNodeHeuristics.g +
-					getVisitationCost(this.terrain, currentNode, neighbor);
+					currentNodeHeuristics.g + getVisitationCost(this.terrain, currentNode, neighbor);
 				const beenVisited = !!neighborHeuristics;
 
 				if (!beenVisited || (neighborHeuristics && gScore < neighborHeuristics.g)) {
@@ -127,7 +126,7 @@ export class Path {
 						f: gScore + hScore,
 						parent: currentNodeHeuristics,
 						closed: true,
-						visited: true
+						visited: true,
 					};
 					this.cache.set(neighbor, neighborHeuristics as HeuristicReport);
 
@@ -171,6 +170,6 @@ export class Path {
 			path.unshift(curr);
 			curr = curr.parent;
 		}
-		return path.map(heuristicReport => heuristicReport.coordinate);
+		return path.map((heuristicReport) => heuristicReport.coordinate);
 	}
 }

@@ -1,16 +1,17 @@
 import * as THREE from 'three';
 import { Vector2 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { Coordinate } from '../classes/Coordinate';
-import { Event } from '../classes/Event';
-import { MATERIAL_LINES, MATERIAL_TERRAIN } from '../constants/materials';
-import { activePalette } from '../constants/palettes';
-import { PersonEntity } from '../entities/PersonEntity';
-import { SettlementEntity } from '../entities/SettlementEntity';
-import Game from '../Game';
-import { Terrain } from '../terrain/Terrain';
-import { CoordinateI, EntityI, EntityPersonI, TileI, ViewI } from '../types';
-import { convertCoordinate } from './utils';
+import { Coordinate } from '../classes/Coordinate.ts';
+import { Event } from '../classes/Event.ts';
+import { MATERIAL_LINES, MATERIAL_TERRAIN } from '../constants/materials.ts';
+import { activePalette } from '../constants/palettes.ts';
+import { PersonEntity } from '../entities/PersonEntity.ts';
+import { SettlementEntity } from '../entities/SettlementEntity.ts';
+import Game from '../Game.ts';
+import { Terrain } from '../terrain/Terrain.ts';
+import { ControllerI, CoordinateI, EntityI, EntityPersonI, TileI, ViewI } from '../types.ts';
+import { Controller } from './Controller.ts';
+import { convertCoordinate } from './utils.ts';
 
 type ThreeControllerOptions = {
 	/**
@@ -29,9 +30,7 @@ type ThreeControllerOptions = {
 // main renderer, and the screen goes blank.
 const RENDERER_BY_ELEMENT = new WeakMap<HTMLElement, THREE.WebGLRenderer | null>();
 
-export class ThreeController implements ViewI {
-	public animating: boolean = false;
-
+export class ThreeController extends Controller implements ViewI, ControllerI {
 	public scene: THREE.Scene;
 	public renderer: THREE.WebGLRenderer;
 	public camera: THREE.Camera;
@@ -73,7 +72,7 @@ export class ThreeController implements ViewI {
 	 * The event that an entity mesh is clicked
 	 */
 	public readonly $clickEntity = new Event<[MouseEvent, EntityPersonI]>(
-		'ThreeController#$clickEntity'
+		'ThreeController#$clickEntity',
 	);
 
 	/**
@@ -94,7 +93,7 @@ export class ThreeController implements ViewI {
 
 	public constructor(root: HTMLElement, options: ThreeControllerOptions) {
 		this.$destruct.once(() => {
-			if (this.animating) {
+			if (this.$$animating.get()) {
 				this.stopAnimationLoop();
 			}
 			this.detachFromGame();
@@ -120,7 +119,7 @@ export class ThreeController implements ViewI {
 			RENDERER_BY_ELEMENT.get(root) ||
 			new THREE.WebGLRenderer({
 				antialias: true,
-				alpha: true
+				alpha: true,
 			});
 		RENDERER_BY_ELEMENT.set(root, this.renderer);
 		this.$destruct.once(() => this.renderer.dispose.bind(this.renderer));
@@ -137,7 +136,7 @@ export class ThreeController implements ViewI {
 				frustumSize,
 				-frustumSize,
 				1,
-				1000
+				1000,
 			);
 			this.$destruct.once(
 				this.$resize.on(() => {
@@ -148,12 +147,8 @@ export class ThreeController implements ViewI {
 					camera.top = frustumSize / 2;
 					camera.bottom = -frustumSize / 2;
 					camera.updateProjectionMatrix();
-					this.renderer.setSize(
-						width * options.pixelRatio,
-						height * options.pixelRatio,
-						false
-					);
-				})
+					this.renderer.setSize(width * options.pixelRatio, height * options.pixelRatio, false);
+				}),
 			);
 		} else {
 			this.camera = new THREE.PerspectiveCamera(options.fieldOfView, aspect, 0.1, 1000);
@@ -163,12 +158,8 @@ export class ThreeController implements ViewI {
 					const camera = this.camera as THREE.PerspectiveCamera;
 					camera.aspect = aspect;
 					camera.updateProjectionMatrix();
-					this.renderer.setSize(
-						width * options.pixelRatio,
-						height * options.pixelRatio,
-						false
-					);
-				})
+					this.renderer.setSize(width * options.pixelRatio, height * options.pixelRatio, false);
+				}),
 			);
 		}
 		this.$resize.emit();
@@ -238,9 +229,9 @@ export class ThreeController implements ViewI {
 		this.raycaster.setFromCamera(
 			new Vector2(
 				(event.offsetX / this.root.clientWidth) * 2 - 1,
-				-(event.offsetY / this.root.clientHeight) * 2 + 1
+				-(event.offsetY / this.root.clientHeight) * 2 + 1,
 			),
-			this.camera
+			this.camera,
 		);
 		const intersections = this.raycaster.intersectObjects(this.scene.children, true);
 		for (let i = 0; i < intersections.length; i++) {
@@ -262,7 +253,7 @@ export class ThreeController implements ViewI {
 		return {
 			width: boundingClientRect.width,
 			height: boundingClientRect.height,
-			aspect: boundingClientRect.width / boundingClientRect.height
+			aspect: boundingClientRect.width / boundingClientRect.height,
 		};
 	}
 
@@ -320,19 +311,19 @@ export class ThreeController implements ViewI {
 		var group = new THREE.Group();
 
 		const loop = game.terrain.tiles
-			.filter(t => t.isLand())
+			.filter((t) => t.isLand())
 			.map((tile: TileI) => {
 				const outline = tile
 					.getOutlineCoordinates()
-					.map(coord => new THREE.Vector2(tile.x + coord.x, -tile.y - coord.y));
+					.map((coord) => new THREE.Vector2(tile.x + coord.x, -tile.y - coord.y));
 				const geometry = new THREE.ExtrudeGeometry(new THREE.Shape(outline), {
 					steps: 1,
 					depth: tile.z,
-					bevelEnabled: false
+					bevelEnabled: false,
 				});
 				return {
 					tile,
-					geometry
+					geometry,
 				};
 			});
 
@@ -361,9 +352,12 @@ export class ThreeController implements ViewI {
 	 * event listeners.
 	 */
 	public attachToGame(game: Game) {
+		super.attachToGame(game);
+
 		this.attachToGameEvents(game);
+
 		// Meshes
-		game.entities.forEach(entity => {
+		game.entities.forEach((entity) => {
 			this.attachToGameEntity(game, entity);
 		});
 
@@ -376,7 +370,7 @@ export class ThreeController implements ViewI {
 			gameSize,
 			gameSize,
 			activePalette.medium,
-			activePalette.medium
+			activePalette.medium,
 		);
 		gridHelper.position.add(new THREE.Vector3(gameSize / 2, 0, gameSize / 2));
 		group.add(gridHelper);
@@ -394,15 +388,12 @@ export class ThreeController implements ViewI {
 	 * All events are destroyed when the controller detaches from game.
 	 */
 	private attachToGameEvents(game: Game) {
-		this.$start.once(game.play.bind(game));
-		this.$detach.once(game.destroy.bind(game));
-
 		// On every frame, update the game clock with Three.js progress
-		this.$detach.on(
+		this.$detach.once(
 			this.$update.on(() => {
 				const d = this.clock.getDelta();
 				game.time.steps(d * 1000 * game.time.multiplier);
-			})
+			}),
 		);
 		// When a tile is clicked, open game context menu
 		this.$detach.once(
@@ -410,7 +401,7 @@ export class ThreeController implements ViewI {
 				event.preventDefault();
 				event.stopPropagation();
 				game.openContextMenuOnTile(tile);
-			})
+			}),
 		);
 		// When an entity is clicked, focus it in game UI
 		this.$detach.once(
@@ -419,44 +410,42 @@ export class ThreeController implements ViewI {
 				event.stopPropagation();
 				game.$$focus.set(entity);
 				game.closeContextMenu();
-			})
+			}),
 		);
 		// When anything else is clicked, close context menu
 		this.$detach.once(
-			this.$click.on(event => {
+			this.$click.on((event) => {
 				event.preventDefault();
 				game.closeContextMenu();
 				// @TODO
-			})
+			}),
 		);
 
 		// Put the camera onto this entity, and follow it around.
 		this.$detach.once(
 			game.$$cameraFocus.on(() => {
 				this.setCameraFocus(game.$$cameraFocus.get());
-			})
+			}),
 		);
 
 		// When the focused entity changes to a settlement, different "relationship arcs" are drawn
 		// between that settlement and neighbors/trade partners/etc.
 		const arcs: (() => void)[] = [];
 		this.$detach.once(
-			game.$$focus.on(thing => {
-				arcs.forEach(arc => arc());
+			game.$$focus.on((thing) => {
+				arcs.forEach((arc) => arc());
 				arcs.splice(0, arcs.length);
 
 				if (!(thing instanceof SettlementEntity)) {
 					return;
 				}
 				const relationships = game.entities.filter(
-					e => e instanceof SettlementEntity && e !== thing
+					(e) => e instanceof SettlementEntity && e !== thing,
 				);
-				relationships.forEach(rel => {
-					arcs.push(
-						this.showRelationshipArc(thing.$$location.get(), rel.$$location.get())
-					);
+				relationships.forEach((rel) => {
+					arcs.push(this.showRelationshipArc(thing.$$location.get(), rel.$$location.get()));
 				});
-			})
+			}),
 		);
 	}
 
@@ -489,7 +478,7 @@ export class ThreeController implements ViewI {
 		entity.$startedWalking.on((destination, duration) => {
 			const deltaGameCoordinatePerFrame = Coordinate.difference(
 				destination,
-				entity.$$location.get()
+				entity.$$location.get(),
 			).scale(1 / duration);
 			const deltaThreeCoodinatePerFrame = convertCoordinate(deltaGameCoordinatePerFrame);
 			destroy = game.time.on(() => {
@@ -505,7 +494,7 @@ export class ThreeController implements ViewI {
 					// @TODO
 					// As a fix, entity location should be a coordinate, which must at various places
 					// be mapped back to a tile, if a tile is needed.
-					Coordinate.transform(entity.$$location.get(), deltaGameCoordinatePerFrame)
+					Coordinate.transform(entity.$$location.get(), deltaGameCoordinatePerFrame),
 				);
 				if (--duration <= 0) {
 					entity.$stoppedWalkStep.emit(destination);
@@ -517,13 +506,6 @@ export class ThreeController implements ViewI {
 		};
 		entity.$stoppedWalkStep.on(stop);
 		this.$detach.once(stop);
-	}
-
-	/**
-	 * The opposite of attaching to a game
-	 */
-	public detachFromGame() {
-		this.$detach.emit();
 	}
 
 	/**
@@ -576,7 +558,7 @@ export class ThreeController implements ViewI {
 			0,
 			Math.PI,
 			false, // aClockwise
-			0 // aRotation
+			0, // aRotation
 		);
 
 		const points = curve.getPoints(50);
@@ -600,20 +582,15 @@ export class ThreeController implements ViewI {
 	 * Start the animation loop
 	 */
 	public startAnimationLoop() {
-		if (this.animating) {
-			// @TODO maybe just return early.
-			throw new Error('Animation already started');
-		}
+		super.startAnimationLoop();
 
 		const animate = () => {
-			if (!this.animating) {
+			if (!this.$$animating.get()) {
 				return;
 			}
 			requestAnimationFrame(animate);
 			this.renderAnimationFrame();
 		};
-
-		this.animating = true;
 
 		animate();
 	}
@@ -625,16 +602,5 @@ export class ThreeController implements ViewI {
 		this.$update.emit();
 		this.controls.update();
 		this.renderer.render(this.scene, this.camera);
-	}
-
-	/**
-	 * Stop the animation loop, the opposite of startAnimationLoop(). Will also fire the opposite event.
-	 */
-	public stopAnimationLoop() {
-		if (!this.animating) {
-			// @TODO maybe just return early.
-			throw new Error('Animation not started');
-		}
-		this.animating = false;
 	}
 }

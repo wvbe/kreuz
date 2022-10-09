@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import { Random } from '../classes/Random';
-import { EntityI, GeometryI } from '../types';
-import { Entity } from './Entity';
+import { Random } from '../classes/Random.ts';
+import { EntityI, GeometryI } from '../types.ts';
+import { Entity } from './Entity.ts';
 
 export class ForestEntity extends Entity implements EntityI {
 	/**
@@ -45,7 +45,7 @@ export class ForestEntity extends Entity implements EntityI {
 			h = 1;
 		return Random.poisson(w, h, 0.25, this.id).reduce<GeometryI[]>(
 			(flat, [x, y]) => [...flat, ...this.createSingleTreeGeometry(w, h, x, y)],
-			[]
+			[],
 		);
 	}
 }

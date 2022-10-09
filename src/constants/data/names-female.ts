@@ -1,4 +1,4 @@
-[
+export default [
 	"Aaren",
 	"Aarika",
 	"Abagael",

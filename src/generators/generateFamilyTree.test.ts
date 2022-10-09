@@ -1,4 +1,4 @@
-import { generateFamilyTree } from './generateFamilyTree';
+import { generateFamilyTree } from './generateFamilyTree.ts';
 
 xdescribe('generateFamilyTree', () => {
 	let result: ReturnType<typeof generateFamilyTree>;

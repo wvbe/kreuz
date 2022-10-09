@@ -1,4 +1,4 @@
-import { TimeLine } from './TimeLine';
+import { TimeLine } from './TimeLine.ts';
 
 function noop() {
 	/* no-op */

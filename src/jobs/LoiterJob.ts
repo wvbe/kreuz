@@ -1,7 +1,7 @@
-import { Random } from '../classes/Random';
-import Game from '../Game';
-import { JobI } from '../types';
-import { Job } from './Job';
+import { Random } from '../classes/Random.ts';
+import Game from '../Game.ts';
+import { JobI } from '../types.ts';
+import { Job } from './Job.ts';
 
 export class LoiterJob extends Job implements JobI {
 	private readonly destroyers: (() => void)[] = [];
@@ -36,12 +36,9 @@ export class LoiterJob extends Job implements JobI {
 				}
 				steps++;
 				const destinations =
-					game.terrain.selectClosestTiles(
-						this.entity.$$location.get(),
-						this.walkMaxDistance
-					) || [];
+					game.terrain.selectClosestTiles(this.entity.$$location.get(), this.walkMaxDistance) || [];
 				this.entity.walkToTile(
-					Random.fromArray(destinations, this.entity.id, 'roam-destination', steps)
+					Random.fromArray(destinations, this.entity.id, 'roam-destination', steps),
 				);
 			}, this.walkMinWait + Random.float(this.entity.id, 'roam-delay', steps) * (this.walkMaxWait - this.walkMinWait));
 		};
@@ -58,6 +55,6 @@ export class LoiterJob extends Job implements JobI {
 
 	destroy() {
 		super.destroy();
-		this.destroyers.forEach(destroy => destroy());
+		this.destroyers.forEach((destroy) => destroy());
 	}
 }

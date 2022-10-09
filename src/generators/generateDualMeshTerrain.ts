@@ -1,10 +1,10 @@
 import MeshBuilder from '@redblobgames/dual-mesh/create';
 import Poisson from 'poisson-disk-sampling';
-import { Terrain } from '../terrain/Terrain';
-import { CoordinateArray } from '../classes/Coordinate';
-import { Random } from '../classes/Random';
-import { DualMeshTile } from '../terrain/DualMeshTile';
-import { SeedI } from '../types';
+import { Terrain } from '../terrain/Terrain.ts';
+import { CoordinateArray } from '../classes/Coordinate.ts';
+import { Random } from '../classes/Random.ts';
+import { DualMeshTile } from '../terrain/DualMeshTile.ts';
+import { SeedI } from '../types.ts';
 
 export function generateDualMeshTerrain(seed: SeedI, size: number, density: number = 1) {
 	// Use @redblobgames/dual-mesh to generate tiles and relationships.
@@ -15,9 +15,9 @@ export function generateDualMeshTerrain(seed: SeedI, size: number, density: numb
 	const poisson = new Poisson(
 		{
 			shape: [size, size],
-			minDistance: 1 / density
+			minDistance: 1 / density,
 		},
-		() => Random.float(seed, ++i)
+		() => Random.float(seed, ++i),
 	);
 	const meshBuilder = new MeshBuilder({ boundarySpacing: 1 });
 	meshBuilder.points.forEach((p: [number, number]) => poisson.addPoint(p));
@@ -33,11 +33,12 @@ export function generateDualMeshTerrain(seed: SeedI, size: number, density: numb
 			return new DualMeshTile(
 				...coordinates,
 				outline.map((i: number) => [mesh.t_x(i), mesh.t_y(i)]),
-				outline.some((index: number) => mesh.t_ghost(index))
+				outline.some((index: number) => mesh.t_ghost(index)),
 			);
 		})
 		.map((tile, i, tiles) => {
-			mesh.r_circulate_r([], i)
+			mesh
+				.r_circulate_r([], i)
 				.map((x: keyof Terrain['tiles']) => tiles[x])
 				.filter(Boolean)
 				.forEach((neighbor: DualMeshTile) => {

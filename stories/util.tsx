@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 import { Global } from '@emotion/react';
 import React, { FunctionComponent } from 'react';
-import GLOBAL_STYLE_RULES from '../src/style/global';
+import GLOBAL_STYLE_RULES from '../src/style/global.ts';
 
 export const GlobalStyles: FunctionComponent = () =>
 	React.createElement(Global, { styles: GLOBAL_STYLE_RULES });
@@ -10,11 +10,7 @@ export const GlobalStyles: FunctionComponent = () =>
 export const Backdrop = styled.div<{ height?: number | string; padding?: number | string }>`
 	position: relative;
 	height: ${({ height }) =>
-		height === undefined
-			? 'auto'
-			: typeof height === 'number'
-			? `${height}px`
-			: String(height)};
+		height === undefined ? 'auto' : typeof height === 'number' ? `${height}px` : String(height)};
 	padding: ${({ padding = '2em' }) =>
 		typeof padding === 'number' ? `${padding}px` : String(padding)};
 	background-image: linear-gradient(

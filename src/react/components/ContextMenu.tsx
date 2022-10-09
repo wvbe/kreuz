@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent } from 'react';
-import { activeUiPalette } from '../../constants/palettes';
-import { BLURRY_BACKGROUND } from '../../style/mixins';
-import { Button } from './Button';
+import { activeUiPalette } from '../../constants/palettes.ts';
+import { BLURRY_BACKGROUND } from '../../style/mixins.ts';
+import { Button } from './Button.tsx';
 
 /**
  * Presentational components

@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent, useCallback } from 'react';
-import { Coordinate } from '../classes/Coordinate';
-import { useEventedValue } from './hooks/events';
-import { useGame } from './hooks/game';
-import { ThreeHtmlOverlayPortal } from './ThreeHtmlOverlayPortal';
-import { useRenderingController } from './hooks/three';
+import { Coordinate } from '../classes/Coordinate.ts';
+import { useEventedValue } from './hooks/events.ts';
+import { useGame } from './hooks/game.ts';
+import { ThreeHtmlOverlayPortal } from './ThreeHtmlOverlayPortal.tsx';
+import { useRenderingController } from './hooks/three.ts';
 
 const AsLargeAsPossibleContainer = styled.section`
 	width: 100%;
@@ -19,7 +19,7 @@ const RENDERER_OPTIONS = {
 	enableZoom: true,
 	fieldOfView: 45,
 	pixelRatio: window.devicePixelRatio || 1,
-	restrictCameraAngle: true
+	restrictCameraAngle: true,
 };
 
 export const RendererMain: FunctionComponent = () => {
@@ -28,17 +28,16 @@ export const RendererMain: FunctionComponent = () => {
 	const { controller, onRef } = useRenderingController(
 		RENDERER_OPTIONS,
 		useCallback(
-			controller => {
+			(controller) => {
 				controller.addAxisHelper(new Coordinate(-1, -1, -1));
 				controller.attachToGame(game);
-				game.play();
 
 				return () => {
 					controller.detachFromGame();
 				};
 			},
-			[game]
-		)
+			[game],
+		),
 	);
 
 	return (

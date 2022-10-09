@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent, useContext, useMemo } from 'react';
 import Draggable from 'react-draggable';
-import { activeUiPalette } from '../../constants/palettes';
-import { BLURRY_BACKGROUND } from '../../style/mixins';
+import { activeUiPalette } from '../../constants/palettes.ts';
+import { BLURRY_BACKGROUND } from '../../style/mixins.ts';
 
 const ModalWrapper = styled.div`
 	position: absolute;
@@ -48,7 +48,7 @@ export const Modal: FunctionComponent<
 	const bounds = useContext(ModalBoundsContext);
 	const defaultPosition = useMemo(
 		() => (initialPosition ? { x: initialPosition[0], y: initialPosition[1] } : undefined),
-		[initialPosition]
+		[initialPosition],
 	);
 	return (
 		<Draggable

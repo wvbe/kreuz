@@ -2,14 +2,14 @@ import styled from '@emotion/styled';
 import { faCity, faPerson, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { ComponentType, FunctionComponent, useCallback, useMemo, useState } from 'react';
-import { activeUiPalette } from '../constants/palettes';
-import { PersonEntity } from '../entities/PersonEntity';
-import { SettlementEntity } from '../entities/SettlementEntity';
-import { useGame } from './hooks/game';
-import { PRETTY_SCROLLBAR } from '../style/mixins';
-import { EntityI } from '../types';
-import { EntityTextBadge } from './ActiveEntityOverlay';
-import { Button } from './components/Button';
+import { activeUiPalette } from '../constants/palettes.ts';
+import { PersonEntity } from '../entities/PersonEntity.ts';
+import { SettlementEntity } from '../entities/SettlementEntity.ts';
+import { useGame } from './hooks/game.ts';
+import { PRETTY_SCROLLBAR } from '../style/mixins.ts';
+import { EntityI } from '../types.ts';
+import { EntityTextBadge } from './ActiveEntityOverlay.tsx';
+import { Button } from './components/Button.tsx';
 
 const List = styled.ul`
 	display: block;
@@ -41,7 +41,7 @@ function createOverviewComponent(filter: (entity: EntityI) => boolean) {
 		const entities = useMemo(() => game.entities.filter(filter), [game.entities]);
 		return (
 			<List>
-				{entities.map(entity => (
+				{entities.map((entity) => (
 					<Item key={entity.id}>
 						<OverviewButton entity={entity} />
 					</Item>
@@ -62,13 +62,13 @@ const OVERVIEWS: EntityOverviewTabI[] = [
 	{
 		label: 'Places',
 		icon: faCity,
-		Component: createOverviewComponent(entity => entity instanceof SettlementEntity)
+		Component: createOverviewComponent((entity) => entity instanceof SettlementEntity),
 	},
 	{
 		label: 'People',
 		icon: faPerson,
-		Component: createOverviewComponent(entity => entity instanceof PersonEntity)
-	}
+		Component: createOverviewComponent((entity) => entity instanceof PersonEntity),
+	},
 ];
 
 const Wrapper = styled.section`
@@ -97,11 +97,7 @@ export const EntityOverview: FunctionComponent = () => {
 		<Wrapper>
 			<ButtonBar>
 				{OVERVIEWS.map((item, i) => (
-					<Button
-						key={i}
-						onClick={() => setActiveOverview(item)}
-						active={item === activeOverview}
-					>
+					<Button key={i} onClick={() => setActiveOverview(item)} active={item === activeOverview}>
 						<FontAwesomeIcon icon={item.icon} />
 					</Button>
 				))}

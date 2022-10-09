@@ -1,11 +1,11 @@
 import { DependencyList, useCallback, useEffect, useState } from 'react';
-import { Event } from '../../classes/Event';
-import { EventedValue } from '../../classes/EventedValue';
+import { Event } from '../../classes/Event.ts';
+import { EventedValue } from '../../classes/EventedValue.ts';
 
 export function useEventCallback<Args extends unknown[]>(
 	event: Event<Args>,
 	callback: (...args: Args) => void,
-	dependencies: DependencyList
+	dependencies: DependencyList,
 ): void {
 	useEffect(
 		// Register callback with the event, and return the destroy function so components stop
@@ -15,15 +15,15 @@ export function useEventCallback<Args extends unknown[]>(
 			event,
 			callback,
 			// eslint-disable-next-line react-hooks/exhaustive-deps
-			...dependencies
-		]
+			...dependencies,
+		],
 	);
 }
 
 export function useEventReducer<Data>(
 	event: Event<any>,
 	reducer: () => Data,
-	dependencies: DependencyList
+	dependencies: DependencyList,
 ): Data {
 	const [state, setState] = useState(reducer());
 	const callback = useCallback(() => {
@@ -32,7 +32,7 @@ export function useEventReducer<Data>(
 		setState,
 		reducer,
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		...dependencies
+		...dependencies,
 	]);
 	useEffect(() => {
 		callback();
@@ -40,7 +40,7 @@ export function useEventReducer<Data>(
 		event,
 		callback,
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		...dependencies
+		...dependencies,
 	]);
 	useEventCallback(event, callback, []);
 	return state;

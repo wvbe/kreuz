@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { EntityPersonI } from '../types';
-import { PersonEntity } from './PersonEntity';
+import { EntityPersonI } from '../types.ts';
+import { PersonEntity } from './PersonEntity.ts';
 
 export class GuardEntity extends PersonEntity implements EntityPersonI {
 	/**

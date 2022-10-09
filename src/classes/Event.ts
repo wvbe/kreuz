@@ -1,4 +1,4 @@
-import Logger from './Logger';
+import Logger from './Logger.ts';
 
 export class Event<Args extends unknown[] = []> {
 	private callbacks: ((...args: Args) => void)[] = [];
@@ -13,7 +13,7 @@ export class Event<Args extends unknown[] = []> {
 			throw new Error(
 				`Expected callback of Event(${
 					this.name ? `'${this.name}'` : ''
-				})#on to be a function, received ${callback}`
+				})#on to be a function, received ${callback}`,
 			);
 		}
 		const cancel = () => {
@@ -33,7 +33,7 @@ export class Event<Args extends unknown[] = []> {
 			throw new Error(
 				`Expected callback of Event(${
 					this.name ? `'${this.name}'` : ''
-				})#once to be a function, received ${callback}`
+				})#once to be a function, received ${callback}`,
 			);
 		}
 		const run = (...args: Args) => {
@@ -53,7 +53,7 @@ export class Event<Args extends unknown[] = []> {
 	}
 
 	emit(...args: Args): void {
-		if (this.name && process.env.NODE_ENV !== 'test') {
+		if (this.name) {
 			// For debugging purposes only
 			Logger.group(`🔔 ${this.name} (${this.callbacks.length})`);
 		}
@@ -63,7 +63,7 @@ export class Event<Args extends unknown[] = []> {
 		this.callbacks.slice().forEach((cb, i) => {
 			cb(...args);
 		});
-		if (this.name && process.env.NODE_ENV !== 'test') {
+		if (this.name) {
 			Logger.groupEnd();
 		}
 	}
@@ -72,10 +72,10 @@ export class Event<Args extends unknown[] = []> {
 	 * @deprecated Not in use yet
 	 */
 	static onAny(callback: () => void, events: Event[]) {
-		const destroyers = events.map(event => event.on(callback));
+		const destroyers = events.map((event) => event.on(callback));
 		const destroy = () => {
 			// console.log('Destroy Event.onAny');
-			destroyers.forEach(destroy => destroy());
+			destroyers.forEach((destroy) => destroy());
 		};
 		return destroy;
 	}
@@ -87,13 +87,13 @@ export class Event<Args extends unknown[] = []> {
 		const destroyers: (() => void)[] = [];
 		const destroy = () => {
 			// console.log('Destroy Event.onceFirst');
-			destroyers.forEach(destroy => destroy());
+			destroyers.forEach((destroy) => destroy());
 		};
 		const cb = () => {
 			callback();
-			destroyers.forEach(destroy => destroy());
+			destroyers.forEach((destroy) => destroy());
 		};
-		events.forEach(event => {
+		events.forEach((event) => {
 			destroyers.push(event.once(cb));
 		});
 		return destroy;

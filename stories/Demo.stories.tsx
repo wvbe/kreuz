@@ -1,12 +1,12 @@
 import { Meta, Story } from '@storybook/react';
 import React, { useMemo } from 'react';
-import { Generator, Ui } from '../src/index';
+import { Generator, Ui } from '../src/index.ts';
 
 const meta: Meta = {
 	title: 'Demo',
 	args: {
-		seed: 'test'
-	}
+		seed: 'test',
+	},
 };
 
 export default meta;
@@ -14,7 +14,7 @@ export default meta;
 type Props = {
 	seed: string;
 } & Parameters<typeof Generator.randomGame>[1];
-export const Demo: Story<Props> = args => {
+export const Demo: Story<Props> = (args) => {
 	const game = useMemo(() => {
 		const { seed, ...options } = args;
 		console.log(seed, options);

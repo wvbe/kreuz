@@ -1,5 +1,5 @@
-import { CoordinateI, TileI } from '../types';
-import { Tile } from './Tile';
+import { CoordinateI, TileI } from '../types.ts';
+import { Tile } from './Tile.ts';
 
 /**
  * A special type of coordinate that is equal to another terrain coordinate when the X and Y are equal, disregarding Z.

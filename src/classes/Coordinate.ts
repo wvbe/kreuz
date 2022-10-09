@@ -1,4 +1,4 @@
-import { CoordinateI, GameDistance } from '../types';
+import { CoordinateI, GameDistance } from '../types.ts';
 
 export type CoordinateArray = [GameDistance, GameDistance, GameDistance];
 
@@ -15,8 +15,7 @@ export class Coordinate implements CoordinateI {
 
 	equals(coord: CoordinateI): boolean {
 		return (
-			this === coord ||
-			(coord && this.x === coord.x && this.y === coord.y && this.z === coord.z)
+			this === coord || (coord && this.x === coord.x && this.y === coord.y && this.z === coord.z)
 		);
 	}
 

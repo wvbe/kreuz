@@ -1,11 +1,11 @@
 import { createElement, ReactElement } from 'react';
-import { Coordinate } from './classes/Coordinate';
-import { Event } from './classes/Event';
-import { EventedValue } from './classes/EventedValue';
-import { TimeLine } from './classes/TimeLine';
-import { CoordinateI, EntityI, SeedI, TerrainI, TileI } from './types';
-import { SavedGameJson } from './types-savedgame';
-import { ContextMenuForTile } from './react/ContextMenuForTile';
+import { Coordinate } from './classes/Coordinate.ts';
+import { Event } from './classes/Event.ts';
+import { EventedValue } from './classes/EventedValue.ts';
+import { TimeLine } from './classes/TimeLine.ts';
+import { CoordinateI, EntityI, SeedI, TerrainI, TileI } from './types.ts';
+import { SavedGameJson } from './types-savedgame.ts';
+import { ContextMenuForTile } from './react/ContextMenuForTile.tsx';
 
 type GameUiFocusable = TileI | EntityI | undefined;
 
@@ -31,6 +31,8 @@ export default class Game {
 	 */
 
 	public readonly $start = new Event('Game#$start');
+
+	public readonly $stop = new Event('Game#$stop');
 
 	public readonly $destroy = new Event('Game#$destroy');
 
@@ -63,18 +65,23 @@ export default class Game {
 		this.seed = seed;
 		this.terrain = terrain;
 		this.$$cameraFocus.set(terrain.getMedianCoordinate());
-		entities.forEach(entity => this.registerEntity(entity));
+		entities.forEach((entity) => this.registerEntity(entity));
 
 		(window as any).getSaveGame = () => {
 			console.log(JSON.stringify(this.serializeToSaveJson(), null, '\t'));
 		};
 	}
 
-	play() {
+	/**
+	 * Announces to all those who listen (but want to remain agnostic of the controller) that the
+	 * game has started. This usually coincides with a render loop etc. being handled by the
+	 * controller.
+	 */
+	start() {
 		this.$start.emit();
-		return () => {
-			this.destroy();
-		};
+	}
+	stop() {
+		this.$stop.emit();
 	}
 
 	/**
@@ -93,10 +100,7 @@ export default class Game {
 	}
 
 	public openContextMenuOnTile(tile: TileI) {
-		this.openContextMenuOnCoordinate(
-			tile,
-			createElement(ContextMenuForTile, { game: this, tile })
-		);
+		this.openContextMenuOnCoordinate(tile, createElement(ContextMenuForTile, { game: this, tile }));
 	}
 
 	private openContextMenuOnCoordinate(location: CoordinateI, contents: ReactElement) {
@@ -149,9 +153,9 @@ export default class Game {
 		return {
 			version: 'alpha', // todo version some time,
 			terrain: this.terrain.serializeToSaveJson(),
-			entities: this.entities.map(entity => entity.serializeToSaveJson()),
+			entities: this.entities.map((entity) => entity.serializeToSaveJson()),
 			time: this.time.serializeToSaveJson(),
-			seed: this.seed
+			seed: this.seed,
 		};
 	}
 }

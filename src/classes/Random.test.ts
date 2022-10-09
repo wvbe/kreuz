@@ -1,4 +1,4 @@
-import { Random } from './Random';
+import { Random } from './Random.ts';
 
 it('Random.float', () => {
 	expect(Random.float('x')).toBe(0.9080614664401105);

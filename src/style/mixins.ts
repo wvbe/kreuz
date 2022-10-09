@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { activeUiPalette } from '../constants/palettes';
+import { activeUiPalette } from '../constants/palettes.ts';
 
 // https://codepen.io/devstreak/pen/dMYgeO
 export const PRETTY_SCROLLBAR = css`

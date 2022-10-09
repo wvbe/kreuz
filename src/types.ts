@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import { Event } from './classes/Event';
-import { EventedValue } from './classes/EventedValue';
-import Game from './Game';
-import { SaveEntityJson, SaveTerrainJson, SaveTileJson } from './types-savedgame';
+import { Event } from './classes/Event.ts';
+import { EventedValue } from './classes/EventedValue.ts';
+import Game from './Game.ts';
+import { SaveEntityJson, SaveTerrainJson, SaveTileJson } from './types-savedgame.ts';
 
 export type GeometryI =
 	| THREE.BoxGeometry
@@ -91,7 +91,7 @@ export interface TerrainI {
 		/**
 		 * Wether or not the starting tile should be part of the group.
 		 */
-		inclusive: boolean
+		inclusive: boolean,
 	): TileI[];
 
 	/**
@@ -189,7 +189,7 @@ export interface EntityPersonI extends EntityI {
 			/**
 			 * The expected duration of time it takes to perform this step
 			 */
-			number
+			number,
 		]
 	>;
 
@@ -230,4 +230,12 @@ export interface ViewI {
 	 * The event that the ThreeJS canvas was clicked, but it was not on an entity or tile.
 	 */
 	$click: Event<[MouseEvent]>;
+}
+
+export interface ControllerI {
+	$$animating: EventedValue<boolean>;
+	attachToGame(game: Game): void;
+	detachFromGame(): void;
+	startAnimationLoop(): void;
+	stopAnimationLoop(): void;
 }

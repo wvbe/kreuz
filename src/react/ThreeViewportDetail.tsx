@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent } from 'react';
-import { ThreeController } from '../rendering/ThreeController';
-import { useRenderingController } from './hooks/three';
+import { ThreeController } from '../rendering/ThreeController.ts';
+import { useRenderingController } from './hooks/three.ts';
 
 const AsLargeAsPossibleContainer = styled.section`
 	width: 100%;
@@ -16,7 +16,7 @@ const RENDERER_OPTIONS = {
 	enableZoom: true,
 	fieldOfView: 45,
 	pixelRatio: window.devicePixelRatio || 1,
-	restrictCameraAngle: false
+	restrictCameraAngle: false,
 };
 export const RendererDetail: FunctionComponent<{
 	build: (controller: ThreeController) => () => void;

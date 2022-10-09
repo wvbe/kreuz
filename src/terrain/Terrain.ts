@@ -1,7 +1,7 @@
-import { Coordinate } from '../classes/Coordinate';
-import { CoordinateI, TerrainI, TileFilter, TileI } from '../types';
-import { SaveTerrainJson } from '../types-savedgame';
-import { Tile } from './Tile';
+import { Coordinate } from '../classes/Coordinate.ts';
+import { CoordinateI, TerrainI, TileFilter, TileI } from '../types.ts';
+import { SaveTerrainJson } from '../types-savedgame.ts';
+import { Tile } from './Tile.ts';
 
 export class Terrain implements TerrainI {
 	public readonly tiles: TileI[] = [];
@@ -18,8 +18,8 @@ export class Terrain implements TerrainI {
 
 	public selectContiguousTiles(
 		start: TileI,
-		selector: TileFilter<TileI> = c => c.isLand(),
-		inclusive: boolean
+		selector: TileFilter<TileI> = (c) => c.isLand(),
+		inclusive: boolean,
 	): TileI[] {
 		const island: TileI[] = [];
 		const seen: TileI[] = [];
@@ -31,7 +31,7 @@ export class Terrain implements TerrainI {
 				island.push(current);
 			}
 
-			const neighbours = this.getNeighborTiles(current).filter(n => !seen.includes(n));
+			const neighbours = this.getNeighborTiles(current).filter((n) => !seen.includes(n));
 			seen.splice(0, 0, current, ...neighbours);
 			queue.splice(0, 0, ...neighbours.filter(selector));
 		}
@@ -41,8 +41,8 @@ export class Terrain implements TerrainI {
 	public selectClosestTiles(start: CoordinateI, maxDistance: number): TileI[] {
 		return this.selectContiguousTiles(
 			this.getTileClosestToXy(start.x, start.y),
-			other => other.isLand() && start.euclideanDistanceTo(other) <= maxDistance,
-			false
+			(other) => other.isLand() && start.euclideanDistanceTo(other) <= maxDistance,
+			false,
 		);
 	}
 
@@ -50,7 +50,7 @@ export class Terrain implements TerrainI {
 	/**
 	 * Get a list of tiles that are geographically contiguous.
 	 */
-	public getIslands(selector: TileFilter<TileI> = t => t.isLand()): TileI[][] {
+	public getIslands(selector: TileFilter<TileI> = (t) => t.isLand()): TileI[][] {
 		const fromCache = this._islands.get(selector);
 		if (fromCache) {
 			return fromCache;
@@ -64,7 +64,7 @@ export class Terrain implements TerrainI {
 				continue;
 			}
 			const island = this.selectContiguousTiles(next, selector, true);
-			open = open.filter(n => !island.includes(n));
+			open = open.filter((n) => !island.includes(n));
 			islands.push(island);
 		}
 
@@ -99,14 +99,14 @@ export class Terrain implements TerrainI {
 				(totals, tile) => ({
 					x: totals.x + tile.x,
 					y: totals.y + tile.y,
-					z: totals.z + tile.z
+					z: totals.z + tile.z,
 				}),
-				{ x: 0, y: 0, z: 0 }
+				{ x: 0, y: 0, z: 0 },
 			);
 			this._medianCoordinate = new Coordinate(
 				x / this.tiles.length,
 				y / this.tiles.length,
-				z / this.tiles.length
+				z / this.tiles.length,
 			);
 		}
 		return this._medianCoordinate;
@@ -115,11 +115,11 @@ export class Terrain implements TerrainI {
 	static fromAscii(ascii: string) {
 		const cleanString = ascii.trim().replace(/\t/g, '');
 
-		const characters = cleanString.split('\n').map(line => line.split(''));
-		const tiles = characters.map(line => new Array(line.length));
+		const characters = cleanString.split('\n').map((line) => line.split(''));
+		const tiles = characters.map((line) => new Array(line.length));
 		const size = Math.max(
 			characters.length,
-			characters.reduce((max, line) => Math.max(max, line.length), 0)
+			characters.reduce((max, line) => Math.max(max, line.length), 0),
 		);
 
 		characters.forEach((line, y) => {
@@ -128,7 +128,7 @@ export class Terrain implements TerrainI {
 				tiles[y][x] = tile;
 				[tiles[y - 1]?.[x], tiles[y][x - 1], tiles[y + 1]?.[x], tiles[y][x + 1]]
 					.filter(Boolean)
-					.forEach(neighbor => {
+					.forEach((neighbor) => {
 						tile.neighbors.push(neighbor);
 						neighbor.neighbors.push(tile);
 					});
@@ -137,7 +137,7 @@ export class Terrain implements TerrainI {
 
 		return new Terrain(
 			size,
-			tiles.reduce((flat, line) => [...flat, ...line], [])
+			tiles.reduce((flat, line) => [...flat, ...line], []),
 		);
 	}
 
@@ -146,8 +146,8 @@ export class Terrain implements TerrainI {
 	 */
 	public serializeToSaveJson(): SaveTerrainJson {
 		return {
-			tiles: this.tiles.map(tile => tile.serializeToSaveJson()),
-			size: this.size
+			tiles: this.tiles.map((tile) => tile.serializeToSaveJson()),
+			size: this.size,
 		};
 	}
 }

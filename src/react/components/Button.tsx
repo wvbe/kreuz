@@ -5,8 +5,8 @@ import styled from '@emotion/styled';
 import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { ComponentType, FunctionComponent } from 'react';
-import { activeUiPalette } from '../../constants/palettes';
-import { BLURRY_BACKGROUND } from '../../style/mixins';
+import { activeUiPalette } from '../../constants/palettes.ts';
+import { BLURRY_BACKGROUND } from '../../style/mixins.ts';
 
 // @see src/react/GlobalStyles.tsx
 const InnerButton = styled.button<{ active?: boolean; disabled?: boolean }>`
@@ -19,8 +19,7 @@ const InnerButton = styled.button<{ active?: boolean; disabled?: boolean }>`
 	border: none;
 	border-top: 1px solid rgba(0, 0, 0, 0.2);
 
-	background-color: ${({ active }) =>
-		active ? activeUiPalette.darkest : activeUiPalette.medium};
+	background-color: ${({ active }) => (active ? activeUiPalette.darkest : activeUiPalette.medium)};
 	${BLURRY_BACKGROUND};
 	transition: background-color 0.5s;
 

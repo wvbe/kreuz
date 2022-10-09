@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import Color from 'color';
-import { activeUiPalette } from '../constants/palettes';
+import { activeUiPalette } from '../constants/palettes.ts';
 
 export default css`
 	html,

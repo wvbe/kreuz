@@ -1,4 +1,4 @@
-import { Terrain } from './Terrain';
+import { Terrain } from './Terrain.ts';
 
 describe('Terrain', () => {
 	describe('#getIslands', () => {
@@ -9,7 +9,7 @@ describe('Terrain', () => {
 					XX-X
 					--XX
 					XXXX
-				`
+				`,
 			).getIslands();
 			expect(islands).toHaveLength(2);
 			expect(islands[0]).toHaveLength(5);
@@ -21,7 +21,7 @@ describe('Terrain', () => {
 					---
 					---
 					---
-				`
+				`,
 			).getIslands();
 			expect(islands).toHaveLength(0);
 		});

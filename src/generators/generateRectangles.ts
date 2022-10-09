@@ -1,5 +1,5 @@
-import { Random } from '../classes/Random';
-import { SeedI } from '../types';
+import { Random } from '../classes/Random.ts';
+import { SeedI } from '../types.ts';
 
 type Options = {
 	minimumBuildingLength: number;
@@ -29,7 +29,7 @@ export class RectangleParty {
 		if ((splitWidth && this.w > options.minimumBuildingLength) || baseAspectRatio > 3) {
 			const boundary = this.w * splitWhere;
 			this.children.push(
-				new RectangleParty([...seed, 1], this.x, this.y, boundary, this.h, options)
+				new RectangleParty([...seed, 1], this.x, this.y, boundary, this.h, options),
 			);
 			this.children.push(
 				new RectangleParty(
@@ -38,13 +38,13 @@ export class RectangleParty {
 					this.y,
 					this.w * (1 - splitWhere),
 					this.h,
-					options
-				)
+					options,
+				),
 			);
 		} else if (this.h > options.minimumBuildingLength || baseAspectRatio < 0.3) {
 			const boundary = this.h * splitWhere;
 			this.children.push(
-				new RectangleParty([...seed, 1], this.x, this.y, this.w, boundary, options)
+				new RectangleParty([...seed, 1], this.x, this.y, this.w, boundary, options),
 			);
 			this.children.push(
 				new RectangleParty(
@@ -53,8 +53,8 @@ export class RectangleParty {
 					this.y + boundary,
 					this.w,
 					this.h * (1 - splitWhere),
-					options
-				)
+					options,
+				),
 			);
 		}
 	}
@@ -74,7 +74,7 @@ export class RectangleParty {
 			'  '.repeat(level) + this.label(),
 			...this.children
 				.reduce<string[]>((lines, c) => [...lines, ...c.debug().split('\n')], [])
-				.map(line => '  '.repeat(level) + '- ' + line)
+				.map((line) => '  '.repeat(level) + '- ' + line),
 		].join('\n');
 	}
 
@@ -84,7 +84,7 @@ export class RectangleParty {
 		} else {
 			return this.children.reduce<RectangleParty[]>(
 				(all, child) => [...all, ...child.flatten()],
-				[]
+				[],
 			);
 		}
 	}

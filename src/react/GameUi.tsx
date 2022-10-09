@@ -1,15 +1,15 @@
 import styled from '@emotion/styled';
 import React, { FunctionComponent } from 'react';
-import Game from '../Game';
-import { useEventedValue } from './hooks/events';
-import { GameContext } from './hooks/game';
-import { RendererMain } from './ThreeViewportMain';
-import GLOBAL_STYLE_RULES from '../style/global';
-import { EntityI } from '../types';
-import { AboutGameOverlay } from './AboutGameOverlay';
-import { ActiveEntityOverlay } from './ActiveEntityOverlay';
-import { ModalBoundsContext } from './components/Modal';
-import { EntityOverview } from './EntityOverview';
+import Game from '../Game.ts';
+import { useEventedValue } from './hooks/events.ts';
+import { GameContext } from './hooks/game.ts';
+import { RendererMain } from './ThreeViewportMain.tsx';
+import GLOBAL_STYLE_RULES from '../style/global.ts';
+import { EntityI } from '../types.ts';
+import { AboutGameOverlay } from './AboutGameOverlay.tsx';
+import { ActiveEntityOverlay } from './ActiveEntityOverlay.tsx';
+import { ModalBoundsContext } from './components/Modal.tsx';
+import { EntityOverview } from './EntityOverview.tsx';
 import { Global } from '@emotion/react';
 
 const UiHostBottomRight = styled.section`

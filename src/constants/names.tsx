@@ -1,8 +1,8 @@
-import { Random } from '../classes/Random';
-import { SeedI } from '../types';
+import { Random } from '../classes/Random.ts';
+import { SeedI } from '../types.ts';
 
-import namesFemale from './data/names-female.json';
-import namesMale from './data/names-male.json';
+import namesFemale from './data/names-female.ts';
+import namesMale from './data/names-male.ts';
 export const FIRST_NAMES_M = namesFemale;
 export const FIRST_NAMES_F = namesMale;
 
@@ -16,11 +16,11 @@ const SETTLEMENT_SUFFIXES = [
 	'view',
 	'wall',
 	'beach',
-	'acre'
+	'acre',
 ];
 export function getRandomSettlementName(seed: SeedI[]) {
 	return [
 		Random.fromArray(SETTLEMENT_PREFIXES, ...seed, 1),
-		Random.fromArray(SETTLEMENT_SUFFIXES, ...seed, 2)
+		Random.fromArray(SETTLEMENT_SUFFIXES, ...seed, 2),
 	].join('');
 }

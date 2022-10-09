@@ -1,4 +1,4 @@
-import { Event } from './Event';
+import { Event } from './Event.ts';
 
 export class EventedValue<T> extends Event<[T]> {
 	protected current: T;

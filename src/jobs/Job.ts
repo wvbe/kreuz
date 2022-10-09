@@ -1,9 +1,10 @@
-import Logger from '../classes/Logger';
-import Game from '../Game';
-import { EntityPersonI, JobI } from '../types';
+import Logger from '../classes/Logger.ts';
+import Game from '../Game.ts';
+import { EntityPersonI, JobI } from '../types.ts';
 
 export class Job implements JobI {
 	protected entity: EntityPersonI;
+
 	constructor(entity: EntityPersonI) {
 		this.entity = entity;
 	}
@@ -13,10 +14,10 @@ export class Job implements JobI {
 	}
 
 	start(_game: Game) {
-		Logger.log(`Start ${this.constructor.name}`);
+		// Logger.log(`Start ${this.constructor.name}`);
 	}
 
 	destroy() {
-		Logger.log(`Destroy ${this.constructor.name}`);
+		// Logger.log(`Destroy ${this.constructor.name}`);
 	}
 }

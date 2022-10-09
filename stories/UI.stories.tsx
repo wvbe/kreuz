@@ -1,20 +1,20 @@
 import { Meta, Story } from '@storybook/react';
 import React, { useCallback, useState } from 'react';
-import { CivilianEntity } from '../src/entities/CivilianPersonEntity';
-import { GuardEntity } from '../src/entities/GuardPersonEntity';
-import { Tile } from '../src/terrain/Tile';
-import { JobI } from '../src/types';
-import { ActiveEntityOverlay } from '../src/react/ActiveEntityOverlay';
-import { Button } from '../src/react/components/Button';
-import { ContextMenu, ContextMenuFooter } from '../src/react/components/ContextMenu';
-import { Modal } from '../src/react/components/Modal';
-import { Backdrop, GlobalStyles } from './util';
+import { CivilianEntity } from '../src/entities/CivilianPersonEntity.ts';
+import { GuardEntity } from '../src/entities/GuardPersonEntity.ts';
+import { Tile } from '../src/terrain/Tile.ts';
+import { JobI } from '../src/types.ts';
+import { ActiveEntityOverlay } from '../src/react/ActiveEntityOverlay.ts';
+import { Button } from '../src/react/components/Button.ts';
+import { ContextMenu, ContextMenuFooter } from '../src/react/components/ContextMenu.ts';
+import { Modal } from '../src/react/components/Modal.ts';
+import { Backdrop, GlobalStyles } from './util.ts';
 const meta: Meta = {
 	title: 'UI',
 	argTypes: {},
 	parameters: {
-		controls: { expanded: true }
-	}
+		controls: { expanded: true },
+	},
 };
 
 export default meta;
@@ -28,7 +28,7 @@ class DemoJob implements JobI {
 	destroy() {}
 }
 
-export const ui1: Story<{ seed: string }> = args => (
+export const ui1: Story<{ seed: string }> = (args) => (
 	<>
 		<GlobalStyles />
 		<Backdrop>
@@ -56,10 +56,10 @@ export const ui1: Story<{ seed: string }> = args => (
 );
 ui1.storyName = '<ActiveEntityOverlay>';
 ui1.args = {
-	seed: 'test'
+	seed: 'test',
 };
 
-export const ui2: Story = args => (
+export const ui2: Story = (args) => (
 	<Backdrop height={250}>
 		<GlobalStyles />
 		<div style={{ position: 'absolute', bottom: '1em', left: '50%' }}>
@@ -78,7 +78,7 @@ export const ui2: Story = args => (
 );
 ui2.storyName = '<ContextMenu>';
 
-export const Ui3: Story<{ buttonLabel: string }> = args => {
+export const Ui3: Story<{ buttonLabel: string }> = (args) => {
 	const [clicks, setClicks] = useState(0);
 	const click = useCallback(() => {
 		setClicks(clicks + 1);
@@ -115,10 +115,10 @@ export const Ui3: Story<{ buttonLabel: string }> = args => {
 };
 Ui3.storyName = '<Button>';
 Ui3.args = {
-	buttonLabel: ''
+	buttonLabel: '',
 };
 
-export const Ui4: Story = args => (
+export const Ui4: Story = (args) => (
 	<>
 		<GlobalStyles />
 		<Backdrop height={'100%'}>

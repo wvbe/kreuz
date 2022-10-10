@@ -1,6 +1,8 @@
-import { Generator } from './mod.ts';
-import { PersonEntity } from './src/entities/PersonEntity.ts';
-import { HeadlessController } from './src/rendering/HeadlessController.ts';
+/**
+ * The expected outcome is a game that keeps on running.
+ */
+
+import { Generator, HeadlessController, PersonEntity } from './mod.ts';
 
 const game = Generator.randomGame(1, { density: 1, size: 20 });
 
@@ -15,13 +17,13 @@ const persons = game.entities.filter(
 );
 console.log(`-- ${persons.length} persons`);
 persons.forEach((entity) => {
-	entity.$startedWalking.on(() => `@${entity.label} started walking.`);
-	entity.$stoppedWalking.on(() => `@${entity.label} stopped walking.`);
-	entity.$stoppedWalkStep.on(() => `@${entity.label} took a step.`);
+	entity.$stepStart.on(() => console.log(`@${entity.label} started walking.`));
+	entity.$pathEnd.on(() => console.log(`@${entity.label} stopped walking.`));
+	entity.$stepEnd.on(() => console.log(`@${entity.label} took a step.`));
 });
 
 persons.forEach((person) => console.log(`@${person.label} is on job: ${person.job?.label}`));
 
-const controller = new HeadlessController();
+const controller = new HeadlessController({ delayBetweenJumps: 0 });
 controller.attachToGame(game);
 controller.startAnimationLoop();

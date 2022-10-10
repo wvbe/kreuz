@@ -2,17 +2,19 @@ import Logger from './Logger.ts';
 
 export class Event<Args extends unknown[] = []> {
 	private callbacks: ((...args: Args) => void)[] = [];
-	private name?: string;
+	private label: string;
+	private debug: boolean;
 
-	constructor(debugName?: string) {
-		this.name = debugName;
+	constructor(label: string, debug?: boolean) {
+		this.label = label;
+		this.debug = !!debug;
 	}
 
 	on(callback: (...args: Args) => void): () => void {
 		if (typeof callback !== 'function') {
 			throw new Error(
 				`Expected callback of Event(${
-					this.name ? `'${this.name}'` : ''
+					this.label ? `'${this.label}'` : ''
 				})#on to be a function, received ${callback}`,
 			);
 		}
@@ -32,7 +34,7 @@ export class Event<Args extends unknown[] = []> {
 		if (typeof callback !== 'function') {
 			throw new Error(
 				`Expected callback of Event(${
-					this.name ? `'${this.name}'` : ''
+					this.label ? `'${this.label}'` : ''
 				})#once to be a function, received ${callback}`,
 			);
 		}
@@ -53,9 +55,8 @@ export class Event<Args extends unknown[] = []> {
 	}
 
 	emit(...args: Args): void {
-		if (this.name) {
-			// For debugging purposes only
-			Logger.group(`🔔 ${this.name} (${this.callbacks.length})`);
+		if (this.debug) {
+			Logger.group(`🔔 ${this.label} (${this.callbacks.length})`);
 		}
 
 		// Create a new array from callbacks so that the loop is not affected
@@ -63,7 +64,7 @@ export class Event<Args extends unknown[] = []> {
 		this.callbacks.slice().forEach((cb, i) => {
 			cb(...args);
 		});
-		if (this.name) {
+		if (this.debug) {
 			Logger.groupEnd();
 		}
 	}
@@ -74,7 +75,6 @@ export class Event<Args extends unknown[] = []> {
 	static onAny(callback: () => void, events: Event[]) {
 		const destroyers = events.map((event) => event.on(callback));
 		const destroy = () => {
-			// console.log('Destroy Event.onAny');
 			destroyers.forEach((destroy) => destroy());
 		};
 		return destroy;
@@ -86,7 +86,6 @@ export class Event<Args extends unknown[] = []> {
 	static onceFirst(callback: () => void, events: Event[]) {
 		const destroyers: (() => void)[] = [];
 		const destroy = () => {
-			// console.log('Destroy Event.onceFirst');
 			destroyers.forEach((destroy) => destroy());
 		};
 		const cb = () => {
@@ -100,7 +99,6 @@ export class Event<Args extends unknown[] = []> {
 	}
 
 	clear() {
-		// console.log('Event#clear on "' + this.name + '"');
 		this.callbacks = [];
 	}
 }

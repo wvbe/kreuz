@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { EntityPersonI } from '../types.ts';
 import { PersonEntity } from './PersonEntity.ts';
 
-export class CivilianEntity extends PersonEntity implements EntityPersonI {
+export class CivilianPersonEntity extends PersonEntity implements EntityPersonI {
 	public type = 'civilian';
 	protected createGeometries() {
 		const geo = new THREE.TetrahedronGeometry(0.2);

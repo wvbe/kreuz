@@ -5,7 +5,7 @@ import { EventedValue } from './classes/EventedValue.ts';
 import { TimeLine } from './classes/TimeLine.ts';
 import { CoordinateI, EntityI, SeedI, TerrainI, TileI } from './types.ts';
 import { SavedGameJson } from './types-savedgame.ts';
-import { ContextMenuForTile } from './react/ContextMenuForTile.tsx';
+// import { ContextMenuForTile } from './react/ContextMenuForTile.tsx';
 
 type GameUiFocusable = TileI | EntityI | undefined;
 
@@ -22,7 +22,7 @@ export default class Game {
 	// @TODO change to not readonly, and handle spontaneous changes
 	public readonly entities: EntityI[] = [];
 
-	public readonly time = new TimeLine(1);
+	public readonly time = new TimeLine();
 
 	public readonly seed: SeedI;
 
@@ -43,12 +43,15 @@ export default class Game {
 	/**
 	 * The game entity that is shown in the "active entity" overlay.
 	 */
-	public readonly $$focus = new EventedValue<GameUiFocusable>(undefined);
+	public readonly $$focus = new EventedValue<GameUiFocusable>(undefined, 'Game#$$focus');
 
 	/**
 	 * The coordinates at which the camera is pointed.
 	 */
-	public readonly $$cameraFocus = new EventedValue<CoordinateI>(new Coordinate(0, 0, 0));
+	public readonly $$cameraFocus = new EventedValue<CoordinateI>(
+		new Coordinate(0, 0, 0),
+		'Game#$$cameraFocus',
+	);
 
 	/**
 	 * The context menu information if it is opened, or false if it is not
@@ -59,7 +62,7 @@ export default class Game {
 				location: CoordinateI;
 				contents: ReactElement;
 		  }
-	>(false);
+	>(false, 'Game#$$contextMenu');
 
 	constructor(seed: SeedI, terrain: TerrainI, entities: EntityI[]) {
 		this.seed = seed;
@@ -76,6 +79,8 @@ export default class Game {
 	 * Announces to all those who listen (but want to remain agnostic of the controller) that the
 	 * game has started. This usually coincides with a render loop etc. being handled by the
 	 * controller.
+	 *
+	 * Normally called by the controller, or from a unit test.
 	 */
 	start() {
 		this.$start.emit();
@@ -100,7 +105,7 @@ export default class Game {
 	}
 
 	public openContextMenuOnTile(tile: TileI) {
-		this.openContextMenuOnCoordinate(tile, createElement(ContextMenuForTile, { game: this, tile }));
+		// this.openContextMenuOnCoordinate(tile, createElement(ContextMenuForTile, { game: this, tile }));
 	}
 
 	private openContextMenuOnCoordinate(location: CoordinateI, contents: ReactElement) {

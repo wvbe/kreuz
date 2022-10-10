@@ -33,6 +33,6 @@ export class Random {
 		const poisson = new Poisson({ shape: [width, height], minDistance }, () =>
 			Random.float(...seed, ++i),
 		);
-		return poisson.fill();
+		return poisson.fill() as [number, number][];
 	}
 }

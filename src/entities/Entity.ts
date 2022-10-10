@@ -15,6 +15,7 @@ export class Entity implements EntityI {
 	 * Used for generating a save
 	 */
 	public type = 'entity';
+
 	/**
 	 * The set of behaviour/tasks given to this entity.
 	 */
@@ -22,7 +23,7 @@ export class Entity implements EntityI {
 
 	constructor(id: string, location: CoordinateI) {
 		this.id = id;
-		this.$$location = new EventedValue(Coordinate.clone(location));
+		this.$$location = new EventedValue(Coordinate.clone(location), 'Entity#$$location');
 	}
 
 	public get label(): string {
@@ -36,6 +37,9 @@ export class Entity implements EntityI {
 		return this.label;
 	}
 
+	/**
+	 * Intends to be called by Game#start
+	 */
 	public play(game: Game) {
 		return this.job?.start(game) || noop;
 	}
@@ -45,6 +49,7 @@ export class Entity implements EntityI {
 
 		// @TODO maybe some events
 	}
+
 	public destroy() {
 		this.job?.destroy();
 	}

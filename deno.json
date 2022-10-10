@@ -1,3 +1,6 @@
 {
-	"importMap": "./imports.json"
+	"importMap": "./imports.json",
+	"tasks": {
+		"test": "deno test --unstable"
+	}
 }

@@ -61,12 +61,12 @@ export class ThreeController extends Controller implements ViewI, ControllerI {
 	 *
 	 * This event fires probably 60 times per second while the controller is started.
 	 */
-	public readonly $update = new Event();
+	public readonly $update = new Event('ThreeController#$update');
 
 	/**
 	 * The event that the viewport is resized
 	 */
-	public readonly $resize = new Event();
+	public readonly $resize = new Event('ThreeController#$resize');
 
 	/**
 	 * The event that an entity mesh is clicked
@@ -89,9 +89,11 @@ export class ThreeController extends Controller implements ViewI, ControllerI {
 	 * The event that the camera moves, or as ThreeJS puts it:
 	 *   "Fires when the camera has been transformed by the controls.""
 	 */
-	public readonly $camera = new Event();
+	public readonly $camera = new Event('ThreeController#$camera');
 
 	public constructor(root: HTMLElement, options: ThreeControllerOptions) {
+		super();
+
 		this.$destruct.once(() => {
 			if (this.$$animating.get()) {
 				this.stopAnimationLoop();
@@ -475,7 +477,7 @@ export class ThreeController extends Controller implements ViewI, ControllerI {
 		// @TODO maybe invent TweenedValue (as a specialization of EventedValue and the update loop)
 		// some time.
 		// @TODO destroy event listener when entity stops being part of the game
-		entity.$startedWalking.on((destination, duration) => {
+		entity.$stepStart.on((destination, duration) => {
 			const deltaGameCoordinatePerFrame = Coordinate.difference(
 				destination,
 				entity.$$location.get(),
@@ -497,14 +499,14 @@ export class ThreeController extends Controller implements ViewI, ControllerI {
 					Coordinate.transform(entity.$$location.get(), deltaGameCoordinatePerFrame),
 				);
 				if (--duration <= 0) {
-					entity.$stoppedWalkStep.emit(destination);
+					entity.$stepEnd.emit(destination);
 				}
 			});
 		});
 		const stop = () => {
 			destroy && destroy();
 		};
-		entity.$stoppedWalkStep.on(stop);
+		entity.$stepEnd.on(stop);
 		this.$detach.once(stop);
 	}
 

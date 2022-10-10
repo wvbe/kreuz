@@ -1,3 +1,4 @@
+import { expect, it, describe, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 import { Coordinate } from './Coordinate.ts';
 
 describe('Coordinate', () => {
@@ -51,3 +52,5 @@ describe('Coordinate', () => {
 		expect(coord.equals(clone)).toBeTruthy();
 	});
 });
+
+run();

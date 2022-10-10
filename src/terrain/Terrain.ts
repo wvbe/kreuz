@@ -112,35 +112,6 @@ export class Terrain implements TerrainI {
 		return this._medianCoordinate;
 	}
 
-	static fromAscii(ascii: string) {
-		const cleanString = ascii.trim().replace(/\t/g, '');
-
-		const characters = cleanString.split('\n').map((line) => line.split(''));
-		const tiles = characters.map((line) => new Array(line.length));
-		const size = Math.max(
-			characters.length,
-			characters.reduce((max, line) => Math.max(max, line.length), 0),
-		);
-
-		characters.forEach((line, y) => {
-			line.forEach((char, x) => {
-				const tile = new Tile(x, y, char === 'X' ? 1 : -1);
-				tiles[y][x] = tile;
-				[tiles[y - 1]?.[x], tiles[y][x - 1], tiles[y + 1]?.[x], tiles[y][x + 1]]
-					.filter(Boolean)
-					.forEach((neighbor) => {
-						tile.neighbors.push(neighbor);
-						neighbor.neighbors.push(tile);
-					});
-			});
-		});
-
-		return new Terrain(
-			size,
-			tiles.reduce((flat, line) => [...flat, ...line], []),
-		);
-	}
-
 	/**
 	 * Serialize for a save game JSON
 	 */

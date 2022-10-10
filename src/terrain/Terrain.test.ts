@@ -1,9 +1,11 @@
-import { Terrain } from './Terrain.ts';
+import { expect, it, describe, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+
+import { generateGridTerrainFromAscii } from '../generators/generateGridTerrainFromAscii.ts';
 
 describe('Terrain', () => {
 	describe('#getIslands', () => {
 		it('Finds the correct amount of islands', () => {
-			const islands = Terrain.fromAscii(
+			const islands = generateGridTerrainFromAscii(
 				`
 					XXX-
 					XX-X
@@ -16,7 +18,7 @@ describe('Terrain', () => {
 			expect(islands[1]).toHaveLength(7);
 		});
 		it('Returns empty array when nothing selects', () => {
-			const islands = Terrain.fromAscii(
+			const islands = generateGridTerrainFromAscii(
 				`
 					---
 					---
@@ -27,3 +29,5 @@ describe('Terrain', () => {
 		});
 	});
 });
+
+run();

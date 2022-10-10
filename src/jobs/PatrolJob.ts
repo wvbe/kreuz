@@ -24,7 +24,7 @@ export class PatrolJob extends Job implements JobI {
 		super.start(game);
 
 		this.destroyers.push(
-			this.entity.$stoppedWalking.on(() => {
+			this.entity.$pathEnd.on(() => {
 				// Guards move from one waypoint to another, pausing for a random amount of time in between
 				const destroy = game.time.setTimeout(() => {
 					this.waypointIndex += 1;

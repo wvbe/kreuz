@@ -6,8 +6,8 @@ export class EventedValue<T> extends Event<[T]> {
 	/**
 	 * Create a new value that emits an event when changed.
 	 */
-	public constructor(initial: T) {
-		super();
+	public constructor(initial: T, label: string, debug?: boolean) {
+		super(label, debug);
 		this.current = initial;
 	}
 

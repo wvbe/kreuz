@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { EntityPersonI } from '../types.ts';
 import { PersonEntity } from './PersonEntity.ts';
 
-export class GuardEntity extends PersonEntity implements EntityPersonI {
+export class GuardPersonEntity extends PersonEntity implements EntityPersonI {
 	/**
 	 * @deprecated not used yet.
 	 */

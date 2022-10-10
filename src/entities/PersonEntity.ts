@@ -11,13 +11,14 @@ export class PersonEntity extends Entity implements EntityPersonI {
 	private readonly walkSpeed = 1 / 1000;
 
 	// The event that the person finishes a path, according to react-spring's timing
-	public readonly $stoppedWalking = new Event<[]>();
+	// @TODO maybe invent a more generic "idle" event.
+	public readonly $pathEnd = new Event<[]>('PersonEntity#$pathEnd');
 
 	// The person started one step
-	public readonly $startedWalking = new Event<[CoordinateI, number]>();
+	public readonly $stepStart = new Event<[CoordinateI, number]>('PersonEntity#$stepStart');
 
 	// The person started finished one step, according to react-spring's timing
-	public readonly $stoppedWalkStep = new Event<[CoordinateI]>();
+	public readonly $stepEnd = new Event<[CoordinateI]>('PersonEntity#$stepEnd');
 
 	protected readonly userData: { gender: 'm' | 'f'; firstName: string };
 	/**
@@ -40,7 +41,7 @@ export class PersonEntity extends Entity implements EntityPersonI {
 		};
 
 		// Movement handling
-		this.$stoppedWalkStep.on((loc) => {
+		this.$stepEnd.on((loc) => {
 			this.$$location.set(loc);
 		});
 	}
@@ -64,14 +65,14 @@ export class PersonEntity extends Entity implements EntityPersonI {
 		if (!path.length) {
 			Logger.warn('Path was zero steps long, finishing early.');
 			// debugger;
-			this.$stoppedWalking.emit();
+			this.$pathEnd.emit();
 			return;
 		}
-		const unlisten = this.$stoppedWalkStep.on(() => {
+		const unlisten = this.$stepEnd.on(() => {
 			const nextStep = path.shift();
 
 			if (!nextStep) {
-				this.$stoppedWalking.emit();
+				this.$pathEnd.emit();
 				unlisten();
 			} else {
 				this.animateTo(nextStep);
@@ -93,6 +94,6 @@ export class PersonEntity extends Entity implements EntityPersonI {
 		}
 		const distance = this.$$location.get().euclideanDistanceTo(coordinate);
 
-		this.$startedWalking.emit(coordinate, distance / this.walkSpeed);
+		this.$stepStart.emit(coordinate, distance / this.walkSpeed);
 	}
 }

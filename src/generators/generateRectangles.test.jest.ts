@@ -1,6 +1,7 @@
+import { expect, it, describe, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 import { RectangleParty } from './generateRectangles.ts';
 
-it('RectangleParty', () => {
+it('generateRectangles', () => {
 	const root = RectangleParty.init(['test'], 50, 50, {
 		minimumBuildingLength: 20,
 	});
@@ -24,3 +25,4 @@ it('RectangleParty', () => {
 		]
 	`);
 });
+run();

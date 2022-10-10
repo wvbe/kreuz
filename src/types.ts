@@ -63,6 +63,9 @@ export interface CoordinateI {
 
 export interface TileI extends CoordinateI {
 	terrain?: TerrainI;
+	/**
+	 * @deprecated Use Terrain.getNeighborTiles instead if you can
+	 */
 	neighbors: TileI[];
 	equals(other: TileI): boolean;
 	getOutlineCoordinates(): CoordinateI[];
@@ -175,12 +178,12 @@ export interface EntityPersonI extends EntityI {
 	/**
 	 * Event: The event that the person finishes a path, according to react-spring's timing
 	 */
-	$stoppedWalking: Event<[]>;
+	$pathEnd: Event<[]>;
 
 	/**
 	 * Event: The person started one step
 	 */
-	$startedWalking: Event<
+	$stepStart: Event<
 		[
 			/**
 			 * The destination of this step
@@ -194,9 +197,10 @@ export interface EntityPersonI extends EntityI {
 	>;
 
 	/**
-	 * Event: The person started finished one step, according to react-spring's timing
+	 * Event: The person started finished one step, according to react-spring's timing. Emitting this
+	 * will automatically update the entity location.
 	 */
-	$stoppedWalkStep: Event<[CoordinateI]>;
+	$stepEnd: Event<[CoordinateI]>;
 
 	/**
 	 * Make the entity choose a path from its current location to the destination, and start an animation.

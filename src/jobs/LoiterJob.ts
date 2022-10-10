@@ -43,7 +43,7 @@ export class LoiterJob extends Job implements JobI {
 			}, this.walkMinWait + Random.float(this.entity.id, 'roam-delay', steps) * (this.walkMaxWait - this.walkMinWait));
 		};
 
-		this.destroyers.push(this.entity.$stoppedWalking.on(doTimeout));
+		this.destroyers.push(this.entity.$pathEnd.on(doTimeout));
 		this.destroyers.push(() => {
 			if (clearTimer) {
 				clearTimer();

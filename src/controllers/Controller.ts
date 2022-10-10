@@ -7,7 +7,7 @@ export class Controller implements ControllerI {
 	/**
 	 * Triggers whenever the controller animation loop is started or stopped.
 	 */
-	public $$animating = new EventedValue<boolean>(false);
+	public $$animating = new EventedValue<boolean>(false, 'Controller#$$animating');
 
 	/**
 	 * Triggers whenever the controller animation loop is started.
@@ -33,7 +33,6 @@ export class Controller implements ControllerI {
 		this.$detach.once(
 			// Whenever the controller starts/stops animating, start/stop the game too.
 			this.$$animating.on((animating) => {
-				console.log('Animating', animating);
 				if (animating) {
 					game.start();
 				} else {

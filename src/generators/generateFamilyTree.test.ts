@@ -1,25 +1,22 @@
+import { expect, it, describe, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 import { generateFamilyTree } from './generateFamilyTree.ts';
 
-xdescribe('generateFamilyTree', () => {
+describe('generateFamilyTree', () => {
 	let result: ReturnType<typeof generateFamilyTree>;
 	it('doesnt crash', () => {
 		expect(() => {
-			result = generateFamilyTree(420, 500, 1);
+			result = generateFamilyTree(420, 100);
 		}).not.toThrow();
 	});
-	it('Data matches', () =>
-		expect(result.makeData()).toMatchInlineSnapshot(`
-		Object {
-		  "couples": 2934,
-		  "percentageHasChildren": 0.42927416926011447,
-		  "population": 9961,
-		  "populationCumulative": 37944,
-		  "widowers": 836,
-		}
-	`));
-	it('Age group matches', () =>
-		expect(result.makeMermaidPiechartOfAgeDistribution()).toMatchSnapshot());
 
-	it('Event log matches snapshot', () =>
-		expect(generateFamilyTree(420, 200, 1).log).toMatchSnapshot());
+	it('Data matches', () =>
+		expect(result.makeData()).toEqual({
+			population: 254,
+			populationCumulative: 347,
+			couples: 57,
+			widowers: 23,
+			percentageHasChildren: 0.3543307086614173,
+		}));
 });
+
+run();

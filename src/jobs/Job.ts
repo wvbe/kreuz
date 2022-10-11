@@ -1,6 +1,6 @@
-import Logger from '../classes/Logger.ts';
+import { EntityPersonI } from '../entities/types.ts';
 import Game from '../Game.ts';
-import { EntityPersonI, JobI } from '../types.ts';
+import { type JobI } from './types.ts';
 
 export class Job implements JobI {
 	protected entity: EntityPersonI;

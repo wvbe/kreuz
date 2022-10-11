@@ -1,4 +1,4 @@
-import { EntityI } from '../types.ts';
+import { EntityI } from './types.ts';
 import { Entity } from './Entity.ts';
 
 export class ForestEntity extends Entity implements EntityI {

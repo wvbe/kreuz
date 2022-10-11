@@ -34,6 +34,7 @@ export class Coordinate implements CoordinateI {
 		}
 		return this;
 	}
+
 	scale(r: number) {
 		this.x *= r;
 		this.y *= r;

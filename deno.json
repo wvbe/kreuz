@@ -1,6 +1,7 @@
 {
 	"importMap": "./imports.json",
 	"tasks": {
+		"debug": "deno run --allow-all --unstable --inspect-brk",
 		"bundle": "deno bundle mod.ts bundle.js",
 		"test": "deno test --unstable"
 	}

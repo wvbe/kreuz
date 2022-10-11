@@ -1,17 +1,8 @@
-import {
-	describe,
-	expect,
-	it,
-	run,
-	mock,
-	beforeEach,
-} from 'https://deno.land/x/tincan@1.0.1/mod.ts';
-import { CivilianPersonEntity } from '../entities/CivilianPersonEntity.ts';
+import { describe, expect, it, mock, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { TestDriver } from '../drivers/TestDriver.ts';
 import { PersonEntity } from '../entities/PersonEntity.ts';
 import Game from '../Game.ts';
 import { generateGridTerrainFromAscii } from '../generators/generateGridTerrainFromAscii.ts';
-import { HeadlessController } from '../controllers/HeadlessController.ts';
-import { EntityI, TerrainI } from '../types.ts';
 import { PatrolJob } from './PatrolJob.ts';
 
 describe('PatrolJob', () => {
@@ -32,11 +23,10 @@ describe('PatrolJob', () => {
 	entity.$stepStart.on(onStepStart);
 	entity.$pathEnd.on(pathEnd);
 
-	const controller = new HeadlessController({
+	const driver = new TestDriver({
 		delayBetweenJumps: 0,
 	});
-	controller.attachToGame(game);
-	controller.startAnimationLoop();
+	driver.attach(game).start();
 
 	it('walked around at least a few times', () => {
 		expect(onStepStart).toHaveBeenCalledTimes(6);

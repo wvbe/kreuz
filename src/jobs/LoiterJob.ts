@@ -1,6 +1,6 @@
 import { Random } from '../classes/Random.ts';
 import Game from '../Game.ts';
-import { JobI } from '../types.ts';
+import { type JobI } from './types.ts';
 import { Job } from './Job.ts';
 
 export class LoiterJob extends Job implements JobI {

@@ -1,28 +1,28 @@
 import Logger from '../classes/Logger.ts';
 import { PersonEntity } from '../entities/PersonEntity.ts';
 import Game from '../Game.ts';
-import { ControllerI } from '../types.ts';
-import { Controller } from './Controller.ts';
+import { DriverI } from './types.ts';
+import { Driver } from './Driver.ts';
 
-type HeadlessControllerOptions = {
+type TestDriverOptions = {
 	delayBetweenJumps: number;
 };
 
 /**
- * A controller without a visible DOM or ThreeJS world. Probably only useful for testing.
+ * A driver without a visible DOM or ThreeJS world. Probably only useful for testing.
  *
  * Will progress time as fast as it can.
  */
-export class HeadlessController extends Controller implements ControllerI {
-	options: HeadlessControllerOptions;
+export class TestDriver extends Driver implements DriverI {
+	options: TestDriverOptions;
 
-	constructor(options: HeadlessControllerOptions) {
+	constructor(options: TestDriverOptions) {
 		super();
 		this.options = options;
 	}
 
-	public attachToGame(game: Game): void {
-		super.attachToGame(game);
+	public attach(game: Game): this {
+		super.attach(game);
 
 		this.$detach.once(
 			this.$start.on(async () => {
@@ -33,7 +33,7 @@ export class HeadlessController extends Controller implements ControllerI {
 					}
 				}
 				Logger.log('Amicable end of the animation loop');
-				this.stopAnimationLoop();
+				this.stop();
 			}),
 		);
 
@@ -49,5 +49,7 @@ export class HeadlessController extends Controller implements ControllerI {
 					}),
 				);
 			});
+
+		return this;
 	}
 }

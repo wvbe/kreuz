@@ -2,8 +2,9 @@ import { Coordinate } from '../classes/Coordinate.ts';
 import { Random } from '../classes/Random.ts';
 import { getRandomSettlementName } from '../constants/names.tsx';
 import { RectangleParty } from '../generators/generateRectangles.ts';
-import { CoordinateI, EntityI, SeedI } from '../types.ts';
+import { CoordinateI, SeedI } from '../types.ts';
 import { Entity } from './Entity.ts';
+import { EntityI } from './types.ts';
 
 export type SettlementParametersI = {
 	areaSize: number;

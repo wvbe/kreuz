@@ -2,7 +2,7 @@
  * The expected outcome is a short-running game that ends the timeloop amicably because there is
  * no further events planned.
  */
-import { Game, HeadlessController, PatrolJob, PersonEntity } from './mod.ts';
+import { Game, TestDriver, PatrolJob, PersonEntity } from './mod.ts';
 import { generateGridTerrainFromAscii } from './src/generators/generateGridTerrainFromAscii.ts';
 
 const terrain = generateGridTerrainFromAscii(`
@@ -21,6 +21,6 @@ game.time.setTimeout(() => {
 	entity.job?.destroy();
 }, 10000);
 
-const controller = new HeadlessController({ delayBetweenJumps: 0 });
-controller.attachToGame(game);
-controller.startAnimationLoop();
+new TestDriver({ delayBetweenJumps: 0 }).attach(game).start();
+
+console.dir(game);

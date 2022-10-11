@@ -2,7 +2,7 @@
  * The expected outcome is a game that keeps on running.
  */
 
-import { Generator, HeadlessController, PersonEntity } from './mod.ts';
+import { Generator, TestDriver, PersonEntity } from './mod.ts';
 
 const game = Generator.randomGame(1, { density: 1, size: 20 });
 
@@ -24,6 +24,4 @@ persons.forEach((entity) => {
 
 persons.forEach((person) => console.log(`@${person.label} is on job: ${person.job?.label}`));
 
-const controller = new HeadlessController({ delayBetweenJumps: 0 });
-controller.attachToGame(game);
-controller.startAnimationLoop();
+new TestDriver({ delayBetweenJumps: 0 }).attach(game).start();

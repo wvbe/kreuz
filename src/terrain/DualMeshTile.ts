@@ -21,25 +21,25 @@ export class DualMeshTile extends Tile implements TileI {
 	 */
 	private addOutlineFromCirculation(points: [number, number][], anyPointIsAdjacentToEdge: boolean) {
 		points.forEach(([x, y]) => {
-			this._outlinePoints.push(new Coordinate(x - this.x, y - this.y, 0));
+			this.#outlinePoints.push(new Coordinate(x - this.x, y - this.y, 0));
 		});
-		this._isGhost = anyPointIsAdjacentToEdge;
+		this.#isGhost = anyPointIsAdjacentToEdge;
 	}
 	/**
 	 * Contains the coordinates of each polygon node, relative to the XYZ of the tile itself.
 	 */
-	private readonly _outlinePoints: Coordinate[] = [];
+	readonly #outlinePoints: Coordinate[] = [];
 	public getOutlineCoordinates() {
-		return this._outlinePoints;
+		return this.#outlinePoints;
 	}
 
-	public _isGhost?: boolean;
-	private _isLand?: boolean = undefined;
+	#isGhost?: boolean;
+	#isLand?: boolean = undefined;
 
 	public isLand() {
-		if (this._isLand === undefined) {
+		if (this.#isLand === undefined) {
 			// Return a subset of tiles to reduce "ugly" shapes and the
-			this._isLand =
+			this.#isLand =
 				// Must be above the waterline:
 				this.z >= 0 &&
 				// And must be at least <4> neighbors away from an outermost tile
@@ -55,10 +55,10 @@ export class DualMeshTile extends Tile implements TileI {
 					return item.neighbors.some((n) => r(n, maxDepth)) || false;
 				})(this, 2);
 		}
-		return this._isLand;
+		return this.#isLand;
 	}
 
 	public isAdjacentToEdge() {
-		return !!this._isGhost;
+		return !!this.#isGhost;
 	}
 }

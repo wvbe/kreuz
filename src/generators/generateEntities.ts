@@ -2,9 +2,10 @@ import { Random } from '../classes/Random.ts';
 import { CivilianPersonEntity } from '../entities/CivilianPersonEntity.ts';
 import { GuardPersonEntity } from '../entities/GuardPersonEntity.ts';
 import { SettlementEntity } from '../entities/SettlementEntity.ts';
+import { EntityPersonI } from '../entities/types.ts';
 import { LoiterJob } from '../jobs/LoiterJob.ts';
 import { PatrolJob } from '../jobs/PatrolJob.ts';
-import { EntityPersonI, SeedI, TerrainI } from '../types.ts';
+import { SeedI, TerrainI } from '../types.ts';
 
 function repeat<P>(n: number, cb: (i: number) => P): P[] {
 	return Array.from(new Array(n)).map((_, i) => cb(i));

@@ -1,4 +1,4 @@
-import { EntityPersonI } from '../types.ts';
+import { EntityPersonI } from './types.ts';
 import { PersonEntity } from './PersonEntity.ts';
 
 export class CivilianPersonEntity extends PersonEntity implements EntityPersonI {

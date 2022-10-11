@@ -1,6 +1,8 @@
+import { EntityPersonI } from '../entities/types.ts';
 import Game from '../Game.ts';
-import { EntityPersonI, JobI, TileI } from '../types.ts';
+import { type JobI } from './types.ts';
 import { Job } from './Job.ts';
+import { TileI } from '../types.ts';
 
 export class PatrolJob extends Job implements JobI {
 	private readonly destroyers: (() => void)[] = [];

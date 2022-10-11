@@ -2,19 +2,13 @@ import { Coordinate } from './classes/Coordinate.ts';
 import { Event } from './classes/Event.ts';
 import { EventedValue } from './classes/EventedValue.ts';
 import { TimeLine } from './classes/TimeLine.ts';
+import { EntityI } from './entities/types.ts';
 import { SavedGameJson } from './types-savedgame.ts';
-import { CoordinateI, EntityI, SeedI, TerrainI, TileI } from './types.ts';
+import { CoordinateI, SeedI, TerrainI, TileI } from './types.ts';
 
 type GameUiFocusable = TileI | EntityI | undefined;
 
 export default class Game {
-	/**
-	 * The "randomizer" logic/state
-	 *
-	 * @deprecated not working yet.
-	 */
-	public readonly random: unknown;
-
 	public readonly terrain: TerrainI;
 
 	// @TODO change to not readonly, and handle spontaneous changes
@@ -63,11 +57,11 @@ export default class Game {
 	}
 
 	/**
-	 * Announces to all those who listen (but want to remain agnostic of the controller) that the
+	 * Announces to all those who listen (but want to remain agnostic of the driver) that the
 	 * game has started. This usually coincides with a render loop etc. being handled by the
-	 * controller.
+	 * driver.
 	 *
-	 * Normally called by the controller, or from a unit test.
+	 * Normally called by the driver, or from a unit test.
 	 */
 	start() {
 		this.$start.emit();
@@ -91,28 +85,28 @@ export default class Game {
 		});
 	}
 
-	private _destroyCameraFollowEntity: (() => void) | null = null;
+	#destroyCameraFollowEntity: (() => void) | null = null;
 	/**
 	 * Set the camera focus on an entity, and keep following it when the entity moves.
 	 */
 	public setCameraFollowEntity(entity: EntityI) {
-		if (this._destroyCameraFollowEntity) {
-			this._destroyCameraFollowEntity();
+		if (this.#destroyCameraFollowEntity) {
+			this.#destroyCameraFollowEntity();
 		}
 		this.$$cameraFocus.set(entity.$$location.get());
 		const destroy = entity.$$location.on(() => {
 			this.$$cameraFocus.set(entity.$$location.get());
 		});
 
-		this._destroyCameraFollowEntity = () => {
+		this.#destroyCameraFollowEntity = () => {
 			destroy();
 			destroyOnDestroy();
-			this._destroyCameraFollowEntity = null;
+			this.#destroyCameraFollowEntity = null;
 		};
 
-		const destroyOnDestroy = this.$destroy.on(this._destroyCameraFollowEntity);
+		const destroyOnDestroy = this.$destroy.on(this.#destroyCameraFollowEntity);
 
-		return this._destroyCameraFollowEntity;
+		return this.#destroyCameraFollowEntity;
 	}
 
 	destroy() {

@@ -46,12 +46,12 @@ export class Terrain implements TerrainI {
 		);
 	}
 
-	private _islands: Map<TileFilter<TileI>, TileI[][]> = new Map();
+	#islands: Map<TileFilter<TileI>, TileI[][]> = new Map();
 	/**
 	 * Get a list of tiles that are geographically contiguous.
 	 */
 	public getIslands(selector: TileFilter<TileI> = (t) => t.isLand()): TileI[][] {
-		const fromCache = this._islands.get(selector);
+		const fromCache = this.#islands.get(selector);
 		if (fromCache) {
 			return fromCache;
 		}
@@ -68,7 +68,7 @@ export class Terrain implements TerrainI {
 			islands.push(island);
 		}
 
-		this._islands.set(selector, islands);
+		this.#islands.set(selector, islands);
 		return islands;
 	}
 
@@ -92,9 +92,9 @@ export class Terrain implements TerrainI {
 		return center.neighbors;
 	}
 
-	private _medianCoordinate: Coordinate | null = null;
+	#medianCoordinate: Coordinate | null = null;
 	public getMedianCoordinate(forceRenew?: boolean) {
-		if (!this._medianCoordinate || forceRenew) {
+		if (!this.#medianCoordinate || forceRenew) {
 			const { x, y, z } = this.tiles.reduce(
 				(totals, tile) => ({
 					x: totals.x + tile.x,
@@ -103,13 +103,13 @@ export class Terrain implements TerrainI {
 				}),
 				{ x: 0, y: 0, z: 0 },
 			);
-			this._medianCoordinate = new Coordinate(
+			this.#medianCoordinate = new Coordinate(
 				x / this.tiles.length,
 				y / this.tiles.length,
 				z / this.tiles.length,
 			);
 		}
-		return this._medianCoordinate;
+		return this.#medianCoordinate;
 	}
 
 	/**

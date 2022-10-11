@@ -3,8 +3,9 @@ import Logger from '../classes/Logger.ts';
 import { Path } from '../classes/Path.ts';
 import { Random } from '../classes/Random.ts';
 import { FIRST_NAMES_F, FIRST_NAMES_M } from '../constants/names.tsx';
-import { EntityPersonI, CoordinateI, TileI } from '../types.ts';
+import { CoordinateI, TileI } from '../types.ts';
 import { Entity } from './Entity.ts';
+import { EntityPersonI } from './types.ts';
 
 export class PersonEntity extends Entity implements EntityPersonI {
 	// The amount of game coordinate per millisecond

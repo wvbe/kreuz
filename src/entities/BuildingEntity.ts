@@ -1,5 +1,6 @@
-import { CoordinateI, EntityI } from '../types.ts';
+import { CoordinateI } from '../types.ts';
 import { Entity } from './Entity.ts';
+import { EntityI } from './types.ts';
 
 export type BuildingParameters = {
 	baseWidth: number;

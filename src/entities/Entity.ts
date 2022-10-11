@@ -1,8 +1,10 @@
 import { Coordinate } from '../classes/Coordinate.ts';
 import { EventedValue } from '../classes/EventedValue.ts';
 import Game from '../Game.ts';
+import { JobI } from '../jobs/types.ts';
 import { SaveEntityJson } from '../types-savedgame.ts';
-import { CoordinateI, EntityI, JobI } from '../types.ts';
+import { CoordinateI } from '../types.ts';
+import { EntityI } from './types.ts';
 const noop = () => {};
 
 export class Entity implements EntityI {

@@ -1,7 +1,7 @@
 import Logger from './Logger.ts';
 
 export class Event<Args extends unknown[] = []> {
-	private callbacks: ((...args: Args) => void)[] = [];
+	#callbacks: ((...args: Args) => void)[] = [];
 	private label: string;
 	private debug: boolean;
 
@@ -19,14 +19,14 @@ export class Event<Args extends unknown[] = []> {
 			);
 		}
 		const cancel = () => {
-			const index = this.callbacks.indexOf(callback);
+			const index = this.#callbacks.indexOf(callback);
 			if (index === -1) {
 				// Already destroyed
 				return;
 			}
-			this.callbacks.splice(index, 1);
+			this.#callbacks.splice(index, 1);
 		};
-		this.callbacks.push(callback);
+		this.#callbacks.push(callback);
 		return cancel;
 	}
 
@@ -42,26 +42,26 @@ export class Event<Args extends unknown[] = []> {
 			callback(...args);
 			cancel();
 		};
-		this.callbacks.push(run);
+		this.#callbacks.push(run);
 		const cancel = () => {
-			const index = this.callbacks.indexOf(run);
+			const index = this.#callbacks.indexOf(run);
 			if (index === -1) {
 				// Already destroyed
 				return;
 			}
-			this.callbacks.splice(index, 1);
+			this.#callbacks.splice(index, 1);
 		};
 		return cancel;
 	}
 
 	emit(...args: Args): void {
 		if (this.debug) {
-			Logger.group(`🔔 ${this.label} (${this.callbacks.length})`);
+			Logger.group(`🔔 ${this.label} (${this.#callbacks.length})`);
 		}
 
 		// Create a new array from callbacks so that the loop is not affected
 		// while once-ers change the true callbacks list by reference.
-		this.callbacks.slice().forEach((cb, i) => {
+		this.#callbacks.slice().forEach((cb, i) => {
 			cb(...args);
 		});
 		if (this.debug) {
@@ -99,6 +99,6 @@ export class Event<Args extends unknown[] = []> {
 	}
 
 	clear() {
-		this.callbacks = [];
+		this.#callbacks = [];
 	}
 }

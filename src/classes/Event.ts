@@ -2,12 +2,12 @@ import Logger from './Logger.ts';
 
 export class Event<Args extends unknown[] = []> {
 	#callbacks: ((...args: Args) => void)[] = [];
-	private label: string;
-	private debug: boolean;
+	protected label: string;
+	protected debug: boolean;
 
 	constructor(label: string, debug?: boolean) {
 		this.label = label;
-		this.debug = !!debug;
+		this.debug = true || !!debug;
 	}
 
 	public on(callback: (...args: Args) => void): () => void {

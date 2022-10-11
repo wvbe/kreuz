@@ -61,7 +61,7 @@ export function generateFamilyTree(seed: number, dateMax: number) {
 			}
 		}
 		get label() {
-			return `[#${this.id} ${this.age}/${this.gender}]`.toUpperCase();
+			return `[ ${this.id} ${this.age}/${this.gender}]`.toUpperCase();
 		}
 		toString() {
 			return this.label;

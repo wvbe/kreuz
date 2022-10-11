@@ -27,13 +27,13 @@ export class PersonEntity extends Entity implements EntityPersonI {
 
 	// The event that the person finishes a path, according to react-spring's timing
 	// @TODO maybe invent a more generic "idle" event.
-	public readonly $pathEnd = new Event<[]>('PersonEntity#$pathEnd');
+	public readonly $pathEnd = new Event<[]>('PersonEntity $pathEnd');
 
 	// The person started one step
-	public readonly $stepStart = new Event<[CoordinateI, number]>('PersonEntity#$stepStart');
+	public readonly $stepStart = new Event<[CoordinateI, number]>('PersonEntity $stepStart');
 
 	// The person started finished one step, according to react-spring's timing
-	public readonly $stepEnd = new Event<[CoordinateI]>('PersonEntity#$stepEnd');
+	public readonly $stepEnd = new Event<[CoordinateI]>('PersonEntity $stepEnd');
 
 	protected readonly userData: { gender: 'm' | 'f'; firstName: string };
 
@@ -78,7 +78,10 @@ export class PersonEntity extends Entity implements EntityPersonI {
 	public attach(game: Game): void {
 		super.attach(game);
 
-		Object.keys(this.needs).forEach((key) => this.needs[key as keyof PersonNeeds].attach(game));
+		Object.keys(this.needs).forEach((key) => {
+			// @TODO execute the destroyers of .attach() at some point.
+			this.needs[key as keyof PersonNeeds].attach(game);
+		});
 	}
 
 	public get label(): string {

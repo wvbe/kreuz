@@ -1,0 +1,106 @@
+import { Event } from './Event.ts';
+import { EventedValue } from './EventedValue.ts';
+
+type BetweenRange = {
+	min: number;
+	max: number;
+	inclusive: boolean;
+	event: Event;
+};
+
+function valueInRange(value: number, range: BetweenRange) {
+	return range.inclusive
+		? value >= range.min && value <= range.max
+		: value > range.min && value < range.max;
+}
+
+export class EventedNumericValue extends EventedValue<number> {
+	readonly #boundaryInfo: BetweenRange[] = [];
+
+	protected get getWatchedRanges() {
+		return this.#boundaryInfo;
+	}
+
+	/**
+	 * DRY some of the code for onBetween and onceBetween
+	 */
+	#createRangeEvent(min: number, max: number, isNotInclusive?: boolean): BetweenRange {
+		const info = {
+			min,
+			max,
+			inclusive: !isNotInclusive,
+			event: new Event(`${this.label} between ${min}-${max}`),
+		};
+		this.#boundaryInfo.push(info);
+
+		return info;
+	}
+
+	/**
+	 * Trigger callback whenever the value enters the specified range.
+	 *
+	 * Will not trigger when the value changes _within_ the range, or out of the range.
+	 */
+	public onBetween(
+		min: number,
+		max: number,
+		cb: () => void,
+		boundariesAreInclusive?: boolean,
+	): () => void {
+		const info = this.#createRangeEvent(min, max, boundariesAreInclusive);
+		const forget = () => {
+			const index = this.#boundaryInfo.indexOf(info);
+			if (index >= 0) {
+				this.#boundaryInfo.splice(index, 1);
+			}
+		};
+		const destroy = info.event.on(cb);
+		return () => {
+			destroy();
+			forget();
+		};
+	}
+
+	/**
+	 * Trigger callback the first time the value enters the specified range.
+	 *
+	 * Will not trigger when the value changes _within_ the range, or out of the range.
+	 */
+	public onceBetween(
+		min: number,
+		max: number,
+		cb: () => void,
+		boundariesAreInclusive?: boolean,
+	): () => void {
+		const info = this.#createRangeEvent(min, max, boundariesAreInclusive);
+		const forget = () => {
+			const index = this.#boundaryInfo.indexOf(info);
+			if (index >= 0) {
+				this.#boundaryInfo.splice(index, 1);
+			}
+		};
+		const destroy = info.event.once(() => {
+			cb();
+			forget();
+		});
+		return () => {
+			destroy();
+			forget();
+		};
+	}
+
+	public getCurrentRanges() {
+		return this.#boundaryInfo.filter((range) => valueInRange(this.current, range));
+	}
+
+	public set(value: number, skipUpdate?: boolean) {
+		const last = this.current;
+		super.set(value, skipUpdate);
+		if (skipUpdate) {
+			return;
+		}
+		this.getCurrentRanges()
+			.filter((range) => !valueInRange(last, range))
+			.forEach((range) => range.event.emit());
+	}
+}

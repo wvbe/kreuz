@@ -5,6 +5,8 @@ import type Game from '../Game.ts';
 export interface DriverI {
 	/**
 	 * Triggers whenever the driver animation loop is started or stopped.
+	 *
+	 * @deprecated This value should probably be private to the driver.
 	 */
 	$$animating: EventedValue<boolean>;
 	/**

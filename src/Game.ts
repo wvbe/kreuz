@@ -22,33 +22,19 @@ export default class Game {
 	 * EVENTS
 	 */
 
-	public readonly $start = new Event('Game#$start');
+	public readonly $start = new Event('Game $start');
 
-	public readonly $stop = new Event('Game#$stop');
+	public readonly $stop = new Event('Game $stop');
 
-	public readonly $destroy = new Event('Game#$destroy');
+	public readonly $destroy = new Event('Game $destroy');
 
 	/*
 	 * EVENTED VALUES
 	 */
 
-	/**
-	 * The game entity that is shown in the "active entity" overlay.
-	 */
-	public readonly $$focus = new EventedValue<GameUiFocusable>(undefined, 'Game#$$focus');
-
-	/**
-	 * The coordinates at which the camera is pointed.
-	 */
-	public readonly $$cameraFocus = new EventedValue<CoordinateI>(
-		new Coordinate(0, 0, 0),
-		'Game#$$cameraFocus',
-	);
-
 	constructor(seed: SeedI, terrain: TerrainI, entities: EntityI[]) {
 		this.seed = seed;
 		this.terrain = terrain;
-		this.$$cameraFocus.set(terrain.getMedianCoordinate());
 		entities.forEach((entity) => this.registerEntity(entity));
 
 		(window as any).getSaveGame = () => {
@@ -63,16 +49,16 @@ export default class Game {
 	 *
 	 * Normally called by the driver, or from a unit test.
 	 */
-	start() {
+	public start() {
 		this.$start.emit();
 	}
 
-	stop() {
+	public stop() {
 		this.$stop.emit();
 	}
 
 	/**
-	 * Private because AFAIK no usecase for this method outside class
+	 * Private because AFAIK no usecase for this method outside class _yet_
 	 */
 	private registerEntity(entity: EntityI) {
 		this.entities.push(entity);
@@ -82,30 +68,6 @@ export default class Game {
 		this.$destroy.on(() => {
 			entity.destroy();
 		});
-	}
-
-	#destroyCameraFollowEntity: (() => void) | null = null;
-	/**
-	 * Set the camera focus on an entity, and keep following it when the entity moves.
-	 */
-	public setCameraFollowEntity(entity: EntityI) {
-		if (this.#destroyCameraFollowEntity) {
-			this.#destroyCameraFollowEntity();
-		}
-		this.$$cameraFocus.set(entity.$$location.get());
-		const destroy = entity.$$location.on(() => {
-			this.$$cameraFocus.set(entity.$$location.get());
-		});
-
-		this.#destroyCameraFollowEntity = () => {
-			destroy();
-			destroyOnDestroy();
-			this.#destroyCameraFollowEntity = null;
-		};
-
-		const destroyOnDestroy = this.$destroy.on(this.#destroyCameraFollowEntity);
-
-		return this.#destroyCameraFollowEntity;
 	}
 
 	destroy() {

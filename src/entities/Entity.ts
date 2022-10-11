@@ -24,7 +24,7 @@ export class Entity implements EntityI {
 
 	constructor(id: string, location: CoordinateI) {
 		this.id = id;
-		this.$$location = new EventedValue(Coordinate.clone(location), 'Entity#$$location');
+		this.$$location = new EventedValue(Coordinate.clone(location), 'Entity $$location');
 	}
 
 	public get label(): string {

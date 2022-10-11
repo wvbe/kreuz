@@ -4,7 +4,10 @@ import Game from '../Game.ts';
 import { DriverI } from './types.ts';
 
 export class Driver implements DriverI {
-	public $$animating = new EventedValue<boolean>(false, 'Driver#$$animating');
+	/**
+	 * @deprecated This value should probably be private to the driver, therefore needs to be moved.
+	 */
+	public $$animating = new EventedValue<boolean>(false, 'Driver $$animating');
 	public readonly $start = new Event('Driver $start');
 	public readonly $stop = new Event('Driver $stop');
 	public readonly $attach = new Event('Driver $attach');
@@ -15,14 +18,7 @@ export class Driver implements DriverI {
 
 		this.$detach.once(
 			// Whenever the driver starts/stops animating, start/stop the game too.
-			this.$$animating.on((animating) => {
-				if (animating) {
-					game.start();
-				} else {
-					// Stop game
-					// @TODO
-				}
-			}),
+			this.$start.on(() => game.start()),
 		);
 
 		// Whenever the driver detaches, destroy the game.

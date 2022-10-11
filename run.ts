@@ -6,8 +6,6 @@ import { Generator, TestDriver, PersonEntity } from './mod.ts';
 
 const game = Generator.randomGame(1, { density: 1, size: 20 });
 
-game.$$focus.on(() => console.log('Game focus changes'));
-
 game.entities.forEach((entity) => {
 	entity.$$location.on(() => console.log(`Entity "${entity.label}" changed location`));
 });
@@ -24,4 +22,4 @@ persons.forEach((entity) => {
 
 persons.forEach((person) => console.log(`@${person.label} is on job: ${person.job?.label}`));
 
-new TestDriver({ delayBetweenJumps: 0 }).attach(game).start();
+new TestDriver().attach(game).start();

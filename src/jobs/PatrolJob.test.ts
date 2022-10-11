@@ -22,11 +22,8 @@ describe('PatrolJob', () => {
 	entity.$stepStart.on(onStepStart);
 	entity.$pathEnd.on(pathEnd);
 
-	const driver = new TestDriver({
-		delayBetweenJumps: 0,
-	});
 	game.time.setTimeout(() => entity.job?.destroy(), 10000);
-	driver.attach(game).start();
+	new TestDriver().attach(game).start();
 
 	it('walked around at least a few times', () => {
 		expect(onStepStart).toHaveBeenCalledTimes(6);

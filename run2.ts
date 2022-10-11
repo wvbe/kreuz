@@ -17,10 +17,14 @@ entity.doJob(
 );
 const game = new Game('1', terrain, [entity]);
 
+entity.needs.food.onBetween(0, 0.1, () => {
+	console.log(`${entity.label} is getting very hungry, ${entity.needs.food.get()}`);
+});
+
 game.time.setTimeout(() => {
 	entity.job?.destroy();
 }, 10000);
 
-new TestDriver({ delayBetweenJumps: 0 }).attach(game).start();
+await new TestDriver().attach(game).start();
 
-console.dir(game);
+console.log('Game ended amicably');

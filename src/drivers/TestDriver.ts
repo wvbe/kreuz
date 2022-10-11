@@ -16,7 +16,7 @@ type TestDriverOptions = {
 export class TestDriver extends Driver implements DriverI {
 	options: TestDriverOptions;
 
-	constructor(options: TestDriverOptions) {
+	constructor(options: TestDriverOptions = { delayBetweenJumps: 0 }) {
 		super();
 		this.options = options;
 	}
@@ -32,7 +32,6 @@ export class TestDriver extends Driver implements DriverI {
 						await new Promise((res) => setTimeout(res, this.options.delayBetweenJumps));
 					}
 				}
-				Logger.log('Amicable end of the animation loop');
 				this.stop();
 			}),
 		);

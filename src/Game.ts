@@ -66,6 +66,7 @@ export default class Game {
 	start() {
 		this.$start.emit();
 	}
+
 	stop() {
 		this.$stop.emit();
 	}
@@ -76,9 +77,7 @@ export default class Game {
 	private registerEntity(entity: EntityI) {
 		this.entities.push(entity);
 
-		this.$start.on(() => {
-			entity.play(this);
-		});
+		entity.attach(this);
 
 		this.$destroy.on(() => {
 			entity.destroy();

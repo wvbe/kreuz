@@ -1,3 +1,4 @@
+import { type Game } from '../../mod.ts';
 import { Event } from '../classes/Event.ts';
 import Logger from '../classes/Logger.ts';
 import { Path } from '../classes/Path.ts';
@@ -5,7 +6,20 @@ import { Random } from '../classes/Random.ts';
 import { FIRST_NAMES_F, FIRST_NAMES_M } from '../constants/names.tsx';
 import { CoordinateI, TileI } from '../types.ts';
 import { Entity } from './Entity.ts';
+import { Need } from './Need.ts';
 import { EntityPersonI } from './types.ts';
+
+type PersonNeeds = {
+	food: Need;
+	water: Need;
+	clothing: Need;
+	shelter: Need;
+	sleep: Need;
+	spirituality: Need;
+	development: Need;
+	friendship: Need;
+	intimacy: Need;
+};
 
 export class PersonEntity extends Entity implements EntityPersonI {
 	// The amount of game coordinate per millisecond
@@ -22,10 +36,24 @@ export class PersonEntity extends Entity implements EntityPersonI {
 	public readonly $stepEnd = new Event<[CoordinateI]>('PersonEntity#$stepEnd');
 
 	protected readonly userData: { gender: 'm' | 'f'; firstName: string };
+
+	public readonly needs: PersonNeeds = {
+		food: new Need(1, 'Need: food', 1 / 50_000),
+		water: new Need(1, 'Need: water', 1 / 100_000),
+		clothing: new Need(1, 'Need: clothing', 1 / 250_000),
+		shelter: new Need(1, 'Need: shelter', 1 / 100_000),
+		sleep: new Need(1, 'Need: sleep', 1 / 100_000),
+		spirituality: new Need(1, 'Need: spirituality', 1 / 100_000),
+		development: new Need(1, 'Need: development', 1 / 1000_000),
+		friendship: new Need(1, 'Need: friendship', 1 / 500_000),
+		intimacy: new Need(1, 'Need: intimacy', 1 / 1000_000),
+	};
+
 	/**
 	 * @deprecated not used yet.
 	 */
 	public type = 'person';
+
 	constructor(id: string, location: CoordinateI) {
 		super(id, location);
 
@@ -47,9 +75,16 @@ export class PersonEntity extends Entity implements EntityPersonI {
 		});
 	}
 
+	public attach(game: Game): void {
+		super.attach(game);
+
+		Object.keys(this.needs).forEach((key) => this.needs[key as keyof PersonNeeds].attach(game));
+	}
+
 	public get label(): string {
 		return `${this.userData.gender === 'm' ? '♂' : '♀'} ${this.userData.firstName}`;
 	}
+
 	public get title() {
 		return this.job?.label || 'Sitting around…';
 	}
@@ -85,6 +120,7 @@ export class PersonEntity extends Entity implements EntityPersonI {
 			this.animateTo(next);
 		}
 	}
+
 	/**
 	 * Move entity directly to a coordinate. Does not consider accessibility or closeness.
 	 */

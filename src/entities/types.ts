@@ -37,7 +37,7 @@ export interface EntityI {
 	/**
 	 * Sets the entity in motion on any job or other type of event handling.
 	 */
-	play(game: Game): void;
+	attach(game: Game): void;
 
 	/**
 	 * Undoes any event handling that this entity does.

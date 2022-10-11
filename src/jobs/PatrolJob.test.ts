@@ -16,7 +16,6 @@ describe('PatrolJob', () => {
 		new PatrolJob(entity, [terrain.getTileClosestToXy(0, 2), terrain.getTileClosestToXy(2, 2)]),
 	);
 	const game = new Game('test', terrain, [entity]);
-	game.time.setTimeout(() => entity.job?.destroy(), 10000);
 
 	const onStepStart = mock.fn();
 	const pathEnd = mock.fn();
@@ -26,6 +25,7 @@ describe('PatrolJob', () => {
 	const driver = new TestDriver({
 		delayBetweenJumps: 0,
 	});
+	game.time.setTimeout(() => entity.job?.destroy(), 10000);
 	driver.attach(game).start();
 
 	it('walked around at least a few times', () => {

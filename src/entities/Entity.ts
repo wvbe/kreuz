@@ -1,16 +1,17 @@
 import { Coordinate } from '../classes/Coordinate.ts';
 import { EventedValue } from '../classes/EventedValue.ts';
-import Game from '../Game.ts';
-import { JobI } from '../jobs/types.ts';
-import { SaveEntityJson } from '../types-savedgame.ts';
-import { CoordinateI } from '../types.ts';
-import { EntityI } from './types.ts';
+import type Game from '../Game.ts';
+import { type JobI } from '../jobs/types.ts';
+import { type SaveEntityJson } from '../types-savedgame.ts';
+import { type CoordinateI } from '../types.ts';
+import { type EntityI } from './types.ts';
 const noop = () => {};
 
 export class Entity implements EntityI {
 	public readonly id: string;
 
 	public $$location: EventedValue<CoordinateI>;
+
 	/**
 	 * Used for generating a save
 	 */
@@ -37,11 +38,11 @@ export class Entity implements EntityI {
 		return this.label;
 	}
 
-	/**
-	 * Intends to be called by Game#start
-	 */
-	public play(game: Game) {
-		return this.job?.start(game) || noop;
+	public attach(game: Game): void {
+		// @TODO unregister/detach!
+		game.$start.on(() => {
+			this.job?.start(game) || noop;
+		});
 	}
 
 	public doJob(job: JobI) {

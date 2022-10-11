@@ -10,7 +10,7 @@ export class Event<Args extends unknown[] = []> {
 		this.debug = !!debug;
 	}
 
-	on(callback: (...args: Args) => void): () => void {
+	public on(callback: (...args: Args) => void): () => void {
 		if (typeof callback !== 'function') {
 			throw new Error(
 				`Expected callback of Event(${
@@ -30,7 +30,7 @@ export class Event<Args extends unknown[] = []> {
 		return cancel;
 	}
 
-	once(callback: (...args: Args) => void): () => void {
+	public once(callback: (...args: Args) => void): () => void {
 		if (typeof callback !== 'function') {
 			throw new Error(
 				`Expected callback of Event(${
@@ -54,7 +54,7 @@ export class Event<Args extends unknown[] = []> {
 		return cancel;
 	}
 
-	emit(...args: Args): void {
+	public emit(...args: Args): void {
 		if (this.debug) {
 			Logger.group(`🔔 ${this.label} (${this.#callbacks.length})`);
 		}

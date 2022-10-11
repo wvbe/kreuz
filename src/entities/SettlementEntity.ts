@@ -1,10 +1,8 @@
 import { Coordinate } from '../classes/Coordinate.ts';
 import { Random } from '../classes/Random.ts';
 import { getRandomSettlementName } from '../constants/names.tsx';
-import { convertCoordinate } from '../controllers/utils.ts';
 import { RectangleParty } from '../generators/generateRectangles.ts';
 import { CoordinateI, EntityI, SeedI } from '../types.ts';
-import { BuildingEntity } from './BuildingEntity.ts';
 import { Entity } from './Entity.ts';
 
 export type SettlementParametersI = {
@@ -92,21 +90,21 @@ export class SettlementEntity extends Entity implements EntityI {
 		return `Town of ${Math.round(this.parameters.areaSize * 1000)} souls.`;
 	}
 
-	protected createGeometries() {
-		return this.buildings.map(
-			({ baseWidth, baseDepth, baseHeight, roofHeight, rotateY, translate, scale }) => {
-				const geo = BuildingEntity.createGeometry({
-					baseWidth,
-					baseDepth,
-					baseHeight,
-					roofHeight,
-				});
-				geo.rotateY(rotateY);
-				const center = convertCoordinate(translate);
-				geo.translate(center.x, center.y, center.z);
-				geo.scale(scale, scale, scale);
-				return geo;
-			},
-		);
-	}
+	// protected createGeometries() {
+	// 	return this.buildings.map(
+	// 		({ baseWidth, baseDepth, baseHeight, roofHeight, rotateY, translate, scale }) => {
+	// 			const geo = BuildingEntity.createGeometry({
+	// 				baseWidth,
+	// 				baseDepth,
+	// 				baseHeight,
+	// 				roofHeight,
+	// 			});
+	// 			geo.rotateY(rotateY);
+	// 			const center = convertCoordinate(translate);
+	// 			geo.translate(center.x, center.y, center.z);
+	// 			geo.scale(scale, scale, scale);
+	// 			return geo;
+	// 		},
+	// 	);
+	// }
 }

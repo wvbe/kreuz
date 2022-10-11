@@ -1,6 +1,7 @@
 {
 	"importMap": "./imports.json",
 	"tasks": {
+		"bundle": "deno bundle mod.ts bundle.js",
 		"test": "deno test --unstable"
 	}
 }

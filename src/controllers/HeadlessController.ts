@@ -1,12 +1,18 @@
-import { Event } from '../classes/Event.ts';
-import { EventedValue } from '../classes/EventedValue.ts';
 import Logger from '../classes/Logger.ts';
 import { PersonEntity } from '../entities/PersonEntity.ts';
 import Game from '../Game.ts';
 import { ControllerI } from '../types.ts';
 import { Controller } from './Controller.ts';
 
-type HeadlessControllerOptions = { delayBetweenJumps: number };
+type HeadlessControllerOptions = {
+	delayBetweenJumps: number;
+};
+
+/**
+ * A controller without a visible DOM or ThreeJS world. Probably only useful for testing.
+ *
+ * Will progress time as fast as it can.
+ */
 export class HeadlessController extends Controller implements ControllerI {
 	options: HeadlessControllerOptions;
 

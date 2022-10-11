@@ -9,12 +9,15 @@ export class Random {
 	static float(...seed: SeedI[]): number {
 		return seedrandom(seed.join('/')).double();
 	}
+
 	static between(min: number, max: number, ...seed: SeedI[]): number {
 		return min + (max - min) * Random.float(...seed);
 	}
+
 	static boolean(seed: SeedI[], probabilityForTrue: number = 0.5): boolean {
 		return seedrandom(seed.join('/')).quick() <= probabilityForTrue;
 	}
+
 	static fromArray<X>(arr: X[], ...seed: SeedI[]): X {
 		if (!arr.length) {
 			throw new Error('Cannot pick a random value from an empty array');

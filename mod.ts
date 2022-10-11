@@ -18,9 +18,9 @@ export { LoiterJob } from './src/jobs/LoiterJob.ts';
 // Controllers:
 export { Controller } from './src/controllers/Controller.ts';
 export { HeadlessController } from './src/controllers/HeadlessController.ts';
-export { ThreeController } from './src/controllers/ThreeController.ts';
 
 // Miscellaneous utilities:
+export { Coordinate } from './src/classes/Coordinate.ts';
 export { Event } from './src/classes/Event.ts';
 export { EventedValue } from './src/classes/EventedValue.ts';
 export { Path } from './src/classes/Path.ts';

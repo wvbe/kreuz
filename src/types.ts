@@ -1,37 +1,9 @@
-import * as THREE from 'three';
 import { Event } from './classes/Event.ts';
 import { EventedValue } from './classes/EventedValue.ts';
 import Game from './Game.ts';
 import { SaveEntityJson, SaveTerrainJson, SaveTileJson } from './types-savedgame.ts';
 
-export type GeometryI =
-	| THREE.BoxGeometry
-	| THREE.CircleGeometry
-	| THREE.ConeGeometry
-	| THREE.CylinderGeometry
-	| THREE.DodecahedronGeometry
-	| THREE.EdgesGeometry
-	| THREE.ExtrudeGeometry
-	| THREE.IcosahedronGeometry
-	| THREE.LatheGeometry
-	| THREE.OctahedronGeometry
-	| THREE.PlaneGeometry
-	| THREE.PolyhedronGeometry
-	| THREE.RingGeometry
-	| THREE.ShapeGeometry
-	| THREE.SphereGeometry
-	| THREE.TetrahedronGeometry
-	| THREE.TorusGeometry
-	| THREE.TorusKnotGeometry
-	| THREE.TubeGeometry
-	| THREE.WireframeGeometry;
-
 export type GameDistance = number;
-
-export type SvgMouseInteractionProps = {
-	onClick?: (event: MouseEvent) => void;
-	onContextMenu?: (event: MouseEvent) => void;
-};
 
 /**
  * A function that filters tiles.
@@ -166,11 +138,6 @@ export interface EntityI {
 	 */
 	doJob(job: JobI): void;
 
-	/**
-	 * Should return any Three.js geometry
-	 */
-	createObject(): THREE.Group;
-
 	serializeToSaveJson(): SaveEntityJson;
 }
 
@@ -218,23 +185,6 @@ export interface JobI {
 }
 
 export type SeedI = string | number;
-
-export interface ViewI {
-	/**
-	 * The event that an entity mesh is clicked
-	 */
-	$clickEntity: Event<[MouseEvent, EntityPersonI]>;
-
-	/**
-	 * The event that a tile mesh is clicked
-	 */
-	$clickTile: Event<[MouseEvent, TileI]>;
-
-	/**
-	 * The event that the ThreeJS canvas was clicked, but it was not on an entity or tile.
-	 */
-	$click: Event<[MouseEvent]>;
-}
 
 export interface ControllerI {
 	$$animating: EventedValue<boolean>;

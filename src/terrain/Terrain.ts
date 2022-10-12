@@ -1,5 +1,5 @@
 import { Coordinate } from '../classes/Coordinate.ts';
-import { CoordinateI, TerrainI, TileFilter, TileI } from '../types.ts';
+import { CoordinateI, TerrainI, TileFilterFn, TileI } from '../types.ts';
 import { SaveTerrainJson } from '../types-savedgame.ts';
 import { Tile } from './Tile.ts';
 
@@ -18,7 +18,7 @@ export class Terrain implements TerrainI {
 
 	public selectContiguousTiles(
 		start: TileI,
-		selector: TileFilter<TileI> = (c) => c.isLand(),
+		selector: TileFilterFn<TileI> = (c) => c.isLand(),
 		inclusive: boolean,
 	): TileI[] {
 		const island: TileI[] = [];
@@ -46,11 +46,11 @@ export class Terrain implements TerrainI {
 		);
 	}
 
-	#islands: Map<TileFilter<TileI>, TileI[][]> = new Map();
+	#islands: Map<TileFilterFn<TileI>, TileI[][]> = new Map();
 	/**
 	 * Get a list of tiles that are geographically contiguous.
 	 */
-	public getIslands(selector: TileFilter<TileI> = (t) => t.isLand()): TileI[][] {
+	public getIslands(selector: TileFilterFn<TileI> = (t) => t.isLand()): TileI[][] {
 		const fromCache = this.#islands.get(selector);
 		if (fromCache) {
 			return fromCache;

@@ -2,9 +2,10 @@ import { Random } from '../classes/Random.ts';
 import Game from '../Game.ts';
 import { type JobI } from './types.ts';
 import { Job } from './Job.ts';
+import { type DestroyerFn } from '../types.ts';
 
 export class LoiterJob extends Job implements JobI {
-	private readonly destroyers: (() => void)[] = [];
+	private readonly destroyers: DestroyerFn[] = [];
 
 	// The minimum and maximum amounts of ms before considering to move again, after having walked
 	private walkMinWait = 4000;
@@ -23,7 +24,7 @@ export class LoiterJob extends Job implements JobI {
 	public start(game: Game) {
 		super.start(game);
 		let steps = 0;
-		let clearTimer: (() => void) | null = null;
+		let clearTimer: DestroyerFn | null = null;
 		const doTimeout = () => {
 			if (clearTimer) {
 				throw new Error('Timer for LoiterJob already exists');

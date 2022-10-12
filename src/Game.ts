@@ -1,12 +1,8 @@
-import { Coordinate } from './classes/Coordinate.ts';
 import { Event } from './classes/Event.ts';
-import { EventedValue } from './classes/EventedValue.ts';
 import { TimeLine } from './classes/TimeLine.ts';
 import { EntityI } from './entities/types.ts';
 import { SavedGameJson } from './types-savedgame.ts';
-import { CoordinateI, SeedI, TerrainI, TileI } from './types.ts';
-
-type GameUiFocusable = TileI | EntityI | undefined;
+import { SeedI, TerrainI } from './types.ts';
 
 export default class Game {
 	public readonly terrain: TerrainI;

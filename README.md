@@ -20,7 +20,7 @@ possible!
 - **Generator** creates a game from scratch, semi-randomly.
 - **Game** is the central game API that connects entities, terrain and so on to one another.
 	- **TimeLine** is the in-game concept of time. It can progress at any rate that you like, pause etc. The timeline is an instance of an `EventedValue`
-		- **EventedValue** is a value that sometimes updates, and emits an event when it does.
+		- **EventedValue** is a value that sometimes updates, and emits an event when it does. There are other types of evented values too.
 	- **Entities** are things that interact and can be interacted with, such as "people" or "places".
 	- **Jobs** are activities that some entities engage in. For example, a person might patrol an area or just loiter around.
 - **Drivers** attach the game to a rendering engine, like ThreeJS, a HTML page, Canvas, or your

@@ -6,7 +6,7 @@ export type GameDistance = number;
 /**
  * A function that filters tiles.
  */
-export type TileFilter<T extends TileI> = (tile: T) => boolean;
+export type TileFilterFn<T extends TileI> = (tile: T) => boolean;
 
 /**
  * A point in space
@@ -46,7 +46,7 @@ export interface TileI extends CoordinateI {
 }
 
 /**
- * A geographic collection of tiles
+ * A geographic arrangement of tiles
  */
 export interface TerrainI {
 	/**
@@ -60,7 +60,7 @@ export interface TerrainI {
 	 */
 	selectContiguousTiles(
 		start: TileI,
-		selector: TileFilter<TileI>,
+		selector: TileFilterFn<TileI>,
 		/**
 		 * Wether or not the starting tile should be part of the group.
 		 */
@@ -75,7 +75,7 @@ export interface TerrainI {
 	/**
 	 * Get a list of contigious groups of tiles, aka a list of islands.
 	 */
-	getIslands(selector: TileFilter<TileI>): TileI[][];
+	getIslands(selector: TileFilterFn<TileI>): TileI[][];
 
 	/**
 	 * Get the tile closest to an XY coordinate.
@@ -93,3 +93,25 @@ export interface TerrainI {
 }
 
 export type SeedI = string | number;
+
+/**
+ * A simple function that destroys whatever timeout/listener/async operation was set using
+ * the method that returned it.
+ *
+ * @remarks
+ * This type is a generic description of the _role_ of a function more so than the shape. Not every
+ * function with the same shape fulfills the same role!
+ */
+export type DestroyerFn = () => void;
+
+/**
+ * A simple function that is called whenever this timeout/listener/async operation triggers or
+ * finishes.
+ *
+ * Callbacks sometimes receive arguments, but never have a return value.
+ *
+ * @remarks
+ * This type is a generic description of the _role_ of a function more so than the shape. Not every
+ * function with the same shape fulfills the same role!
+ */
+export type CallbackFn<Args extends unknown[] = never[]> = (...args: Args) => void;

@@ -1,16 +1,20 @@
+import { type CallbackFn, type DestroyerFn } from '../types.ts';
 import Logger from './Logger.ts';
 
 export class Event<Args extends unknown[] = []> {
-	#callbacks: ((...args: Args) => void)[] = [];
+	#callbacks: CallbackFn<Args>[] = [];
 	protected label: string;
 	protected debug: boolean;
 
-	constructor(label: string, debug?: boolean) {
+	public constructor(label: string, debug?: boolean) {
 		this.label = label;
-		this.debug = true || !!debug;
+		this.debug = !!debug;
 	}
 
-	public on(callback: (...args: Args) => void): () => void {
+	/**
+	 * Wait for this event to trigger and run the callback every time it does.
+	 */
+	public on(callback: CallbackFn<Args>): DestroyerFn {
 		if (typeof callback !== 'function') {
 			throw new Error(
 				`Expected callback of Event(${
@@ -30,7 +34,10 @@ export class Event<Args extends unknown[] = []> {
 		return cancel;
 	}
 
-	public once(callback: (...args: Args) => void): () => void {
+	/**
+	 * Wait for this event to trigger and run the callback only the first time it does.
+	 */
+	public once(callback: CallbackFn<Args>): DestroyerFn {
 		if (typeof callback !== 'function') {
 			throw new Error(
 				`Expected callback of Event(${
@@ -54,6 +61,9 @@ export class Event<Args extends unknown[] = []> {
 		return cancel;
 	}
 
+	/**
+	 * Trigger all callbacks that were waiting for this event.
+	 */
 	public emit(...args: Args): void {
 		if (this.debug) {
 			Logger.group(`🔔 ${this.label} (${this.#callbacks.length})`);
@@ -70,9 +80,11 @@ export class Event<Args extends unknown[] = []> {
 	}
 
 	/**
+	 * Set a callback for multiple events.
+	 *
 	 * @deprecated Not in use yet
 	 */
-	static onAny(callback: () => void, events: Event[]) {
+	public static onAny(callback: CallbackFn, events: Event[]): DestroyerFn {
 		const destroyers = events.map((event) => event.on(callback));
 		const destroy = () => {
 			destroyers.forEach((destroy) => destroy());
@@ -83,8 +95,8 @@ export class Event<Args extends unknown[] = []> {
 	/**
 	 * @deprecated Not in use yet
 	 */
-	static onceFirst(callback: () => void, events: Event[]) {
-		const destroyers: (() => void)[] = [];
+	public static onceFirst(callback: CallbackFn, events: Event[]): DestroyerFn {
+		const destroyers: DestroyerFn[] = [];
 		const destroy = () => {
 			destroyers.forEach((destroy) => destroy());
 		};
@@ -98,7 +110,7 @@ export class Event<Args extends unknown[] = []> {
 		return destroy;
 	}
 
-	clear() {
+	public clear() {
 		this.#callbacks = [];
 	}
 }

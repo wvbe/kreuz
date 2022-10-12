@@ -5,7 +5,7 @@ describe('EventedNumericValue', () => {
 	it('.onBetween()', () => {
 		const value = new EventedNumericValue(0, 'test');
 		const cb = mock.fn();
-		value.onBetween(2, 5, cb, true);
+		value.onBetween(2, 5, cb, { min: false, max: false });
 
 		// Out of range
 		value.set(1);
@@ -39,7 +39,7 @@ describe('EventedNumericValue', () => {
 	it('.onceBetween()', () => {
 		const value = new EventedNumericValue(0, 'test');
 		const cb = mock.fn();
-		value.onceBetween(2, 5, cb, true);
+		value.onceBetween(2, 5, cb, { min: false, max: false });
 
 		// Out of range
 		value.set(1);

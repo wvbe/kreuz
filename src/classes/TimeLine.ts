@@ -1,8 +1,9 @@
+import { CallbackFn, DestroyerFn } from '../types.ts';
 import { SaveTimeJson } from '../types-savedgame.ts';
 import { EventedValue } from './EventedValue.ts';
 
 export class TimeLine extends EventedValue<number> {
-	#timers = new Map<number, (() => void)[]>();
+	#timers = new Map<number, CallbackFn[]>();
 
 	public constructor(initial: number = 0) {
 		super(initial, 'TimeLine');
@@ -72,12 +73,12 @@ export class TimeLine extends EventedValue<number> {
 	 *
 	 * Returns the function with which the timeout can be cancelled.
 	 */
-	public setTimeout(fn: () => void, time: number): () => void {
+	public setTimeout(callback: CallbackFn, time: number): DestroyerFn {
 		const frame = Math.ceil(this.now + time);
 		if (!this.#timers.has(frame)) {
-			this.#timers.set(frame, [fn]);
+			this.#timers.set(frame, [callback]);
 		} else {
-			this.#timers.get(frame)?.push(fn);
+			this.#timers.get(frame)?.push(callback);
 		}
 		return () => {
 			// Cancel this timeout
@@ -85,7 +86,7 @@ export class TimeLine extends EventedValue<number> {
 			if (!timers) {
 				return;
 			}
-			const filteredTimers = timers.filter((f) => f !== fn);
+			const filteredTimers = timers.filter((f) => f !== callback);
 			if (filteredTimers.length) {
 				this.#timers.set(frame, filteredTimers);
 			} else {

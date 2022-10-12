@@ -11,9 +11,9 @@ describe('Need', () => {
 		const game = new Game('test', new Terrain(0, []), []);
 		const need = new Need(1, 'test', 1 / 100);
 		const onBetween1 = mock.fn();
-		need.onceBetween(0, 0.3, onBetween1);
+		need.onceBetween(0, 0.3, onBetween1, { min: true, max: true });
 		const onBetween2 = mock.fn();
-		need.onceBetween(0, 0.5, onBetween2);
+		need.onceBetween(0, 0.5, onBetween2, { min: true, max: true });
 		need.attach(game);
 
 		const onNeedSet = mock.fn();
@@ -48,7 +48,7 @@ describe('Need', () => {
 
 		it('Registers a timer if new onBetween ranges are listened to after attaching', () => {
 			const onBetween3 = mock.fn();
-			need.onceBetween(0, 0.2, onBetween3);
+			need.onceBetween(0, 0.2, onBetween3, { min: true, max: true });
 			expect(onNeedSet).toHaveBeenCalledTimes(2);
 			game.time.jump();
 			expect(onNeedSet).toHaveBeenCalledTimes(3);

@@ -5,7 +5,6 @@ import { type JobI } from '../jobs/types.ts';
 import { type SaveEntityJson } from '../types-savedgame.ts';
 import { type CoordinateI } from '../types.ts';
 import { type EntityI } from './types.ts';
-const noop = () => {};
 
 export class Entity implements EntityI {
 	public readonly id: string;
@@ -24,7 +23,7 @@ export class Entity implements EntityI {
 
 	constructor(id: string, location: CoordinateI) {
 		this.id = id;
-		this.$$location = new EventedValue(Coordinate.clone(location), 'Entity $$location');
+		this.$$location = new EventedValue(Coordinate.clone(location), 'Entity#$$location');
 	}
 
 	public get label(): string {
@@ -41,7 +40,7 @@ export class Entity implements EntityI {
 	public attach(game: Game): void {
 		// @TODO unregister/detach!
 		game.$start.on(() => {
-			this.job?.start(game) || noop;
+			this.job?.start(game);
 		});
 	}
 

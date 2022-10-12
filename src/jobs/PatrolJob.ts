@@ -2,10 +2,10 @@ import { EntityPersonI } from '../entities/types.ts';
 import Game from '../Game.ts';
 import { type JobI } from './types.ts';
 import { Job } from './Job.ts';
-import { TileI } from '../types.ts';
+import { DestroyerFn, TileI } from '../types.ts';
 
 export class PatrolJob extends Job implements JobI {
-	private readonly destroyers: (() => void)[] = [];
+	private readonly destroyers: DestroyerFn[] = [];
 	waypoints: TileI[];
 	waypointIndex: number;
 

@@ -1,17 +1,20 @@
+import { type CallbackFn, type DestroyerFn } from '../types.ts';
 import { Event } from './Event.ts';
 import { EventedValue } from './EventedValue.ts';
 
 type BetweenRange = {
 	min: number;
 	max: number;
-	inclusive: boolean;
+	minInclusive: boolean;
+	maxInclusive: boolean;
 	event: Event;
 };
 
 function valueInRange(value: number, range: BetweenRange) {
-	return range.inclusive
-		? value >= range.min && value <= range.max
-		: value > range.min && value < range.max;
+	return (
+		(range.minInclusive ? value >= range.min : value > range.min) &&
+		(range.maxInclusive ? value <= range.max : value < range.max)
+	);
 }
 
 export class EventedNumericValue extends EventedValue<number> {
@@ -24,11 +27,16 @@ export class EventedNumericValue extends EventedValue<number> {
 	/**
 	 * DRY some of the code for onBetween and onceBetween
 	 */
-	#createRangeEvent(min: number, max: number, isNotInclusive?: boolean): BetweenRange {
+	#createRangeEvent(
+		min: number,
+		max: number,
+		inclusiveness: { min: boolean; max: boolean },
+	): BetweenRange {
 		const info = {
 			min,
 			max,
-			inclusive: !isNotInclusive,
+			minInclusive: inclusiveness.min,
+			maxInclusive: inclusiveness.max,
 			event: new Event(`${this.label} between ${min}-${max}`),
 		};
 		this.#boundaryInfo.push(info);
@@ -44,17 +52,17 @@ export class EventedNumericValue extends EventedValue<number> {
 	public onBetween(
 		min: number,
 		max: number,
-		cb: () => void,
-		boundariesAreInclusive?: boolean,
-	): () => void {
-		const info = this.#createRangeEvent(min, max, boundariesAreInclusive);
+		callback: CallbackFn,
+		inclusiveness = { min: true, max: false },
+	): DestroyerFn {
+		const info = this.#createRangeEvent(min, max, inclusiveness);
 		const forget = () => {
 			const index = this.#boundaryInfo.indexOf(info);
 			if (index >= 0) {
 				this.#boundaryInfo.splice(index, 1);
 			}
 		};
-		const destroy = info.event.on(cb);
+		const destroy = info.event.on(callback);
 		return () => {
 			destroy();
 			forget();
@@ -69,10 +77,10 @@ export class EventedNumericValue extends EventedValue<number> {
 	public onceBetween(
 		min: number,
 		max: number,
-		cb: () => void,
-		boundariesAreInclusive?: boolean,
-	): () => void {
-		const info = this.#createRangeEvent(min, max, boundariesAreInclusive);
+		callback: CallbackFn,
+		inclusiveness = { min: true, max: false },
+	): DestroyerFn {
+		const info = this.#createRangeEvent(min, max, inclusiveness);
 		const forget = () => {
 			const index = this.#boundaryInfo.indexOf(info);
 			if (index >= 0) {
@@ -80,7 +88,7 @@ export class EventedNumericValue extends EventedValue<number> {
 			}
 		};
 		const destroy = info.event.once(() => {
-			cb();
+			callback();
 			forget();
 		});
 		return () => {

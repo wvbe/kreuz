@@ -3,6 +3,7 @@
 	"tasks": {
 		"debug": "deno run --allow-all --unstable --inspect-brk",
 		"bundle": "deno bundle mod.ts bundle.js",
-		"test": "deno test --unstable"
+		"test": "deno test --allow-all --unstable",
+		"dnt": "deno run --allow-all --unstable dnt.ts"
 	}
 }

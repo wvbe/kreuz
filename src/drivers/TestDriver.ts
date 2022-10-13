@@ -41,9 +41,11 @@ export class TestDriver extends Driver implements DriverI {
 			.filter((entity): entity is PersonEntity => entity instanceof PersonEntity)
 			.forEach((entity) => {
 				this.$detach.once(
-					entity.$stepStart.on((destination, duration) => {
+					entity.$stepStart.on((_destination, duration, done) => {
 						game.time.setTimeout(() => {
-							entity.$stepEnd.emit(destination);
+							// @TODO This should be a method on the entity, so that foreign code doesn't
+							// need to emit an entity event.
+							done();
 						}, duration);
 					}),
 				);

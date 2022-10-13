@@ -28,14 +28,19 @@ export class Need extends EventedNumericValue {
 	 *
 	 * Will trigger an update event.
 	 */
-	public applyDecay(timePassed: number) {
+	public applyDecay(timePassed: number): void {
 		this.set(Math.max(0, this.current - this.#decay * timePassed));
+	}
+
+	public setDecay(decayPerTick: number): void {
+		this.#decay = decayPerTick;
+		this.$nextSignificantValueChange.emit();
 	}
 
 	/**
 	 * @deprecated
 	 */
-	private getDecayTimeToValue(value: number) {
+	private getDecayTimeToValue(value: number): number {
 		return (this.current - value) / this.#decay;
 	}
 
@@ -75,12 +80,13 @@ export class Need extends EventedNumericValue {
 	 * take a (performance) hit and simplify. Decay does not have to be computed every tick per se.
 	 */
 	#setUpdateTimeoutToNearest(game: Game): null | DestroyerFn {
+		if (this.#decay <= 0) {
+			// If this need does not decay, no need for a timer.
+			return null;
+		}
 		const nextSignificantRange = this.getWatchedRanges
 			.filter((range) => range.max < this.current)
 			.sort((a, b) => b.max - a.max)[0];
-		// if (!nextSignificantRange) {
-		// 	return null;
-		// }
 		const nextSignificantValue = nextSignificantRange?.max || 0;
 		const timeToNextSignificantValue = this.getDecayTimeToValue(nextSignificantValue);
 		if (timeToNextSignificantValue <= 0) {
@@ -94,7 +100,7 @@ export class Need extends EventedNumericValue {
 	/**
 	 * Make aware of game and time.
 	 */
-	public attach(game: Game) {
+	public attach(game: Game): DestroyerFn {
 		let removeUpdateTimeout = this.#setUpdateTimeoutToNearest(game);
 		const cancelNextSignificantValueChangeListener = this.$nextSignificantValueChange.on(() => {
 			removeUpdateTimeout?.();

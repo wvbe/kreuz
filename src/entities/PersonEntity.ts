@@ -4,7 +4,7 @@ import Logger from '../classes/Logger.ts';
 import { Path } from '../classes/Path.ts';
 import { Random } from '../classes/Random.ts';
 import { FIRST_NAMES_F, FIRST_NAMES_M } from '../constants/names.tsx';
-import { CoordinateI, TileI } from '../types.ts';
+import { CallbackFn, CoordinateI, TileI } from '../types.ts';
 import { Entity } from './Entity.ts';
 import { Need } from './Need.ts';
 import { EntityPersonI } from './types.ts';
@@ -30,7 +30,9 @@ export class PersonEntity extends Entity implements EntityPersonI {
 	public readonly $pathEnd = new Event<[]>('PersonEntity $pathEnd');
 
 	// The person started one step
-	public readonly $stepStart = new Event<[CoordinateI, number]>('PersonEntity $stepStart');
+	public readonly $stepStart = new Event<[CoordinateI, number, CallbackFn]>(
+		'PersonEntity $stepStart',
+	);
 
 	// The person started finished one step, according to react-spring's timing
 	public readonly $stepEnd = new Event<[CoordinateI]>('PersonEntity $stepEnd');
@@ -75,12 +77,16 @@ export class PersonEntity extends Entity implements EntityPersonI {
 		});
 	}
 
+	/**
+	 * Attach this entity to the game loop.
+	 *
+	 * Will register to undo all of that when the entity detaches.
+	 */
 	public attach(game: Game): void {
 		super.attach(game);
 
 		Object.keys(this.needs).forEach((key) => {
-			// @TODO execute the destroyers of .attach() at some point.
-			this.needs[key as keyof PersonNeeds].attach(game);
+			this.$destroy.once(this.needs[key as keyof PersonNeeds].attach(game));
 		});
 	}
 
@@ -134,6 +140,7 @@ export class PersonEntity extends Entity implements EntityPersonI {
 		}
 		const distance = this.$$location.get().euclideanDistanceTo(coordinate);
 
-		this.$stepStart.emit(coordinate, distance / this.walkSpeed);
+		const done = () => this.$stepEnd.emit(coordinate);
+		this.$stepStart.emit(coordinate, distance / this.walkSpeed, done);
 	}
 }

@@ -3,7 +3,7 @@ import { generateGridTerrainFromAscii } from '../generators/generateGridTerrainF
 import { Path } from './Path.ts';
 
 describe('Path', () => {
-	it('#find()', () => {
+	it('.find()', () => {
 		// Where "x" is walkable, top-left is start and top-right is end.
 		const terrain = generateGridTerrainFromAscii(`
 			X-X

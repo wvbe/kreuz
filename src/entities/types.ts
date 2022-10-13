@@ -3,7 +3,7 @@ import { type Event } from '../classes/Event.ts';
 import { type EventedValue } from '../classes/EventedValue.ts';
 import { type JobI } from '../jobs/types.ts';
 import { type SaveEntityJson } from '../types-savedgame.ts';
-import { type TileI, type CoordinateI } from '../types.ts';
+import { type TileI, type CoordinateI, CallbackFn } from '../types.ts';
 
 export interface EntityI {
 	type: string;
@@ -54,12 +54,12 @@ export interface EntityI {
 
 export interface EntityPersonI extends EntityI {
 	/**
-	 * Event: The event that the person finishes a path, according to react-spring's timing
+	 * Event: The event that the person finishes every step of a path.
 	 */
 	$pathEnd: Event<[]>;
 
 	/**
-	 * Event: The person started one step
+	 * Event: The person started one step.
 	 */
 	$stepStart: Event<
 		[
@@ -71,12 +71,25 @@ export interface EntityPersonI extends EntityI {
 			 * The expected duration of time it takes to perform this step
 			 */
 			number,
+
+			/**
+			 * The "done" callback. Call this when the driver animation/timeout ends, so that
+			 * the next event is safely emitted.
+			 */
+			CallbackFn,
 		]
 	>;
 
 	/**
-	 * Event: The person started finished one step, according to react-spring's timing. Emitting this
-	 * will automatically update the entity location.
+	 * Event: The person started finished one step. The entities location is updated upon this event.
+	 *
+	 * Do not emit this event. Instead, call the "done()" argument of the $stepStart event. For
+	 * example:
+	 *
+	 *   entity.$stepStart.on((destination, duration, done) => {
+	 *      console.log(`Entity starts stepping towards ${destination}`);
+	 *      game.time.setTimeout(done, duration);
+	 *   });
 	 */
 	$stepEnd: Event<[CoordinateI]>;
 

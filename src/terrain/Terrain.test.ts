@@ -3,7 +3,7 @@ import { expect, it, describe, run } from 'https://deno.land/x/tincan@1.0.1/mod.
 import { generateGridTerrainFromAscii } from '../generators/generateGridTerrainFromAscii.ts';
 
 describe('Terrain', () => {
-	describe('#getIslands', () => {
+	describe('.getIslands()', () => {
 		it('Finds the correct amount of islands', () => {
 			const islands = generateGridTerrainFromAscii(
 				`

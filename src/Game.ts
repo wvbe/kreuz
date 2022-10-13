@@ -61,7 +61,7 @@ export default class Game {
 
 		entity.attach(this);
 
-		this.$destroy.on(() => {
+		this.$destroy.once(() => {
 			entity.destroy();
 		});
 	}

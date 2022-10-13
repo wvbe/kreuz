@@ -1,7 +1,7 @@
 {
 	"imports": {
 		"seedrandom": "https://esm.sh/seedrandom",
-		"poisson-disk-sampling": "https://raw.githubusercontent.com/wvbe/poisson-disk-sampling/deno-rc.1/mod.ts",
+		"poisson-disk-sampling": "https://esm.sh/poisson-disk-sampling@2.3.1",
 		"@redblobgames/dual-mesh": "https://raw.githubusercontent.com/wvbe/dual-mesh/deno-rc.2/mod.ts",
 		"@redblobgames/dual-mesh/create": "https://raw.githubusercontent.com/wvbe/dual-mesh/deno-rc.2/src/MeshBuilder.ts"
 	}

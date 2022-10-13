@@ -31,14 +31,17 @@ describe('Need', () => {
 			expect(onBetween1).toHaveBeenCalledTimes(0);
 			expect(onBetween2).toHaveBeenCalledTimes(0);
 			expect(onNeedSet).toHaveBeenCalledTimes(0);
+
 			game.time.step();
 			expect(onNeedSet).toHaveBeenCalledTimes(0);
+
 			game.time.jump();
 			expect(onNeedSet).toHaveBeenCalledTimes(1);
 			expect(onBetween1).toHaveBeenCalledTimes(0);
 			expect(onBetween2).toHaveBeenCalledTimes(1);
 			expect(need.get()).toBe(0.5);
 			expect(game.time.now).toBe(50);
+
 			game.time.jump();
 			expect(onBetween1).toHaveBeenCalledTimes(1);
 			expect(onNeedSet).toHaveBeenCalledTimes(2);

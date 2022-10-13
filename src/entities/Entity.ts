@@ -1,4 +1,5 @@
 import { Coordinate } from '../classes/Coordinate.ts';
+import { Event } from '../classes/Event.ts';
 import { EventedValue } from '../classes/EventedValue.ts';
 import type Game from '../Game.ts';
 import { type JobI } from '../jobs/types.ts';
@@ -10,6 +11,8 @@ export class Entity implements EntityI {
 	public readonly id: string;
 
 	public $$location: EventedValue<CoordinateI>;
+
+	protected $destroy = new Event(`Entity $destroy`);
 
 	/**
 	 * Used for generating a save
@@ -38,20 +41,23 @@ export class Entity implements EntityI {
 	}
 
 	public attach(game: Game): void {
-		// @TODO unregister/detach!
-		game.$start.on(() => {
-			this.job?.start(game);
-		});
+		this.$destroy.once(
+			game.$start.on(() => {
+				this.job?.start(game);
+			}),
+		);
 	}
 
 	public doJob(job: JobI) {
 		this.job = job;
-
-		// @TODO maybe some events
+		this.$destroy.once(() => {
+			// @TODO handle the case where job changed in the mean time?
+			job.destroy();
+		});
 	}
 
 	public destroy() {
-		this.job?.destroy();
+		this.$destroy.emit();
 	}
 
 	// protected createGeometries(): GeometryI | GeometryI[] {

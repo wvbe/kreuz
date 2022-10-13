@@ -7,8 +7,6 @@ export { default as Game } from './src/Game.ts';
 export * from './src/entities/types.ts';
 export { Entity } from './src/entities/Entity.ts';
 export { PersonEntity } from './src/entities/PersonEntity.ts';
-export { GuardPersonEntity } from './src/entities/GuardPersonEntity.ts';
-export { CivilianPersonEntity } from './src/entities/CivilianPersonEntity.ts';
 export { SettlementEntity } from './src/entities/SettlementEntity.ts';
 
 // Jobs:

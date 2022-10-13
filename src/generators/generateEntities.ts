@@ -1,6 +1,5 @@
 import { Random } from '../classes/Random.ts';
-import { CivilianPersonEntity } from '../entities/CivilianPersonEntity.ts';
-import { GuardPersonEntity } from '../entities/GuardPersonEntity.ts';
+import { PersonEntity } from '../entities/PersonEntity.ts';
 import { SettlementEntity } from '../entities/SettlementEntity.ts';
 import { EntityPersonI } from '../entities/types.ts';
 import { LoiterJob } from '../jobs/LoiterJob.ts';
@@ -35,13 +34,13 @@ export function generateEntities(seed: SeedI, terrain: TerrainI) {
 	return [
 		...repeat(Math.round(Random.between(2, 6, seed, 'guardamount')), (i) => {
 			const id = `${seed}-guard-${i}`;
-			const entity = new GuardPersonEntity(id, Random.fromArray(walkableTiles, id, 'start'));
+			const entity = new PersonEntity(id, Random.fromArray(walkableTiles, id, 'start'));
 			entity.doJob(generatePatrolJob(terrain, seed, entity));
 			return entity;
 		}),
 		...repeat(Math.round(Random.between(5, 14, seed, 'civvyamount')), (i) => {
 			const id = `${seed}-civvy-${i}`;
-			const entity = new CivilianPersonEntity(id, Random.fromArray(walkableTiles, id, 'start'));
+			const entity = new PersonEntity(id, Random.fromArray(walkableTiles, id, 'start'));
 			entity.doJob(new LoiterJob(entity));
 			return entity;
 		}),

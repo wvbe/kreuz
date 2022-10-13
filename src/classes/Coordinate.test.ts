@@ -2,23 +2,23 @@ import { expect, it, describe, run } from 'https://deno.land/x/tincan@1.0.1/mod.
 import { Coordinate } from './Coordinate.ts';
 
 describe('Coordinate', () => {
-	it('#equals()', () => {
+	it('.equals()', () => {
 		expect(new Coordinate(1, 1, 1).equals(new Coordinate(1, 1, 1))).toBeTruthy();
 		expect(new Coordinate(1, 1, 9).equals(new Coordinate(1, 1, 1))).toBeFalsy();
 	});
-	it('#transform()', () => {
+	it('.transform()', () => {
 		expect(new Coordinate(0, 0, 0).transform(1, 1, 1)).toEqual(new Coordinate(1, 1, 1));
 	});
-	it('#manhattanDistanceTo()', () => {
+	it('.manhattanDistanceTo()', () => {
 		expect(new Coordinate(0, 0, 0).manhattanDistanceTo(new Coordinate(1, 1, 1))).toBe(3);
 	});
-	it('#euclideanDistanceTo()', () => {
+	it('.euclideanDistanceTo()', () => {
 		expect(new Coordinate(0, 0, 0).euclideanDistanceTo(new Coordinate(1, 1, 1))).toBe(
 			1.7320508075688774,
 		);
 		expect(new Coordinate(0, 0, 0).euclideanDistanceTo(new Coordinate(1, 1, 0))).toBe(Math.sqrt(2));
 	});
-	it('#angleTo()', () => {
+	it('.angleTo()', () => {
 		const from = new Coordinate(0, 0, 0);
 
 		expect(from.angleTo(new Coordinate(0.5 * Math.sqrt(3), 0.5, 0)).toFixed(8)).toBe(
@@ -43,7 +43,7 @@ describe('Coordinate', () => {
 		expect(from.angleTo(new Coordinate(-1, -1, 0))).toBe(1.25 * Math.PI);
 		expect(from.angleTo(new Coordinate(1, -1, 0))).toBe(1.75 * Math.PI);
 	});
-	it('.clone()', () => {
+	it('static .clone()', () => {
 		const coord = new Coordinate(0, 0, 0);
 		const clone = Coordinate.clone(coord);
 

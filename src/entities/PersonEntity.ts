@@ -35,6 +35,12 @@ export class PersonEntity extends Entity implements EntityPersonI {
 		spirituality: new Need(1, 'Need: spirituality', 1 / 1_000_000),
 	};
 
+	public get needsList() {
+		return ['food', 'water', 'sleep', 'hygiene', 'spirituality'].map(
+			(key) => this.needs[key as keyof PersonNeedsI],
+		);
+	}
+
 	/**
 	 * @deprecated not used yet.
 	 */
@@ -75,7 +81,7 @@ export class PersonEntity extends Entity implements EntityPersonI {
 	}
 
 	public get label(): string {
-		return `${this.userData.gender === 'm' ? '♂' : '♀'} ${this.userData.firstName}`;
+		return `${this.userData.gender === 'm' ? '👨' : '👩'} ${this.userData.firstName}`;
 	}
 
 	public get title() {

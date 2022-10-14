@@ -1,3 +1,4 @@
+import { Coordinate } from '../classes/Coordinate.ts';
 import { CoordinateI, TileI } from '../types.ts';
 import { Tile } from './Tile.ts';
 
@@ -10,6 +11,11 @@ export class SquareTile extends Tile implements TileI {
 	}
 
 	getOutlineCoordinates(): CoordinateI[] {
-		throw new Error('Not implemented');
+		return [
+			[-0.5, -0.5],
+			[0.5, -0.5],
+			[0.5, 0.5],
+			[0.5, -0.5],
+		].map(([x, y]) => Coordinate.clone(this).transform(x, y, 0));
 	}
 }

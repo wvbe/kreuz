@@ -1,3 +1,7 @@
+import { type Game } from '@lib';
+
+export type Demo = () => Game;
+
 export type GameDistance = number;
 
 /**

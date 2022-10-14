@@ -100,8 +100,11 @@ export type SeedI = string | number;
  * @remarks
  * This type is a generic description of the _role_ of a function more so than the shape. Not every
  * function with the same shape fulfills the same role!
+ *
+ * Sometimes a destroyer function returns some useful info -- such as the time left on a cancelled
+ * timeout.
  */
-export type DestroyerFn = () => void;
+export type DestroyerFn<P = void> = () => P;
 
 /**
  * A simple function that is called whenever this timeout/listener/async operation triggers or

@@ -29,12 +29,19 @@ export class Need extends EventedNumericValue {
 	 * Will trigger an update event.
 	 */
 	public applyDecay(timePassed: number): void {
-		this.set(Math.max(0, this.current - this.#decay * timePassed));
+		const value = Math.max(0, this.current - this.#decay * timePassed);
+		if (value < 1e-12) {
+			// Javascript and small numbers are no bueno. To stay sane we shall assume everything
+			// with more than 12 decimal zeroes is the same as zero.
+			this.set(0);
+		} else {
+			this.set(value);
+		}
 	}
 
 	public setDecay(decayPerTick: number): void {
 		this.#decay = decayPerTick;
-		this.$nextSignificantValueChange.emit();
+		this.#$nextSignificantValueChange.emit();
 	}
 
 	/**
@@ -47,8 +54,11 @@ export class Need extends EventedNumericValue {
 	/**
 	 * This event means that the next need value that is significant (because someone is waiting for
 	 * it) has changed -- probably because a new listener was added or removed.
+	 *
+	 * The value that is passed along signifies wether or not extra compensation is expected for
+	 * the
 	 */
-	private $nextSignificantValueChange = new Event('Need $nextSignificantValueChange');
+	#$nextSignificantValueChange = new Event('Need $nextSignificantValueChange');
 
 	/**
 	 * A specialization of EventedNumericValue#onBetween, because it emits an event that will
@@ -56,7 +66,7 @@ export class Need extends EventedNumericValue {
 	 */
 	public onBetween(...args: Parameters<EventedNumericValue['onBetween']>): DestroyerFn {
 		const destroy = super.onBetween(...args);
-		this.$nextSignificantValueChange.emit();
+		this.#$nextSignificantValueChange.emit();
 		return destroy;
 	}
 
@@ -66,8 +76,42 @@ export class Need extends EventedNumericValue {
 	 */
 	public onceBetween(...args: Parameters<EventedNumericValue['onceBetween']>): DestroyerFn {
 		const destroy = super.onceBetween(...args);
-		this.$nextSignificantValueChange.emit();
+		this.#$nextSignificantValueChange.emit();
 		return destroy;
+	}
+
+	#pollingInterval: number | null = null;
+
+	/**
+	 * Tell the system that we're interested in value updates at a regular
+	 * interval, for example because we're showing a live UI view of this value.
+	 *
+	 * @BUG When setPollingInterval is set, the next applyDecay does not take into account the time
+	 * that was already consumed by the forfeited timeout. This causes UI to show a more optimistic
+	 * need value than appropriate when setPollingInterval is used to subscribe to the value from React.
+	 */
+	public setPollingInterval(interval: number | null): DestroyerFn {
+		this.#pollingInterval = interval;
+		this.#$nextSignificantValueChange.emit();
+		return () => {
+			this.#pollingInterval = null;
+		};
+	}
+
+	#getTimeToNextSignificantValue(): number {
+		if (this.#pollingInterval !== null) {
+			return this.#pollingInterval;
+		}
+		if (this.#decay <= 0) {
+			// If this need does not decay, no need for a timer.
+			return Infinity;
+		}
+		const nextSignificantRange = this.getWatchedRanges
+			.filter((range) => range.max < this.current)
+			.sort((a, b) => b.max - a.max)[0];
+		const nextSignificantValue = nextSignificantRange?.max || 0;
+		const timeToNextSignificantValue = this.getDecayTimeToValue(nextSignificantValue);
+		return timeToNextSignificantValue;
 	}
 
 	/**
@@ -79,21 +123,13 @@ export class Need extends EventedNumericValue {
 	 * @deprecated Not maintainable in combination with .onBetween listeners etc. Should probably just
 	 * take a (performance) hit and simplify. Decay does not have to be computed every tick per se.
 	 */
-	#setUpdateTimeoutToNearest(game: Game): null | DestroyerFn {
-		if (this.#decay <= 0) {
-			// If this need does not decay, no need for a timer.
-			return null;
-		}
-		const nextSignificantRange = this.getWatchedRanges
-			.filter((range) => range.max < this.current)
-			.sort((a, b) => b.max - a.max)[0];
-		const nextSignificantValue = nextSignificantRange?.max || 0;
-		const timeToNextSignificantValue = this.getDecayTimeToValue(nextSignificantValue);
-		if (timeToNextSignificantValue <= 0) {
+	#setUpdateTimeoutToNearest(game: Game): null | DestroyerFn<number> {
+		const timeToNextSignificantValue = this.#getTimeToNextSignificantValue();
+		if (timeToNextSignificantValue <= 0 || timeToNextSignificantValue >= Infinity) {
 			return null;
 		}
 		return game.time.setTimeout(() => {
-			this.set(nextSignificantValue);
+			this.applyDecay(timeToNextSignificantValue);
 		}, timeToNextSignificantValue);
 	}
 
@@ -102,12 +138,14 @@ export class Need extends EventedNumericValue {
 	 */
 	public attach(game: Game): DestroyerFn {
 		let removeUpdateTimeout = this.#setUpdateTimeoutToNearest(game);
-		const cancelNextSignificantValueChangeListener = this.$nextSignificantValueChange.on(() => {
-			removeUpdateTimeout?.();
+		const cancelNextSignificantValueChangeListener = this.#$nextSignificantValueChange.on(() => {
+			const timeLeft = removeUpdateTimeout?.() || 0;
+			console.log('Timeout cancelled because watch boundaries change', timeLeft);
 			removeUpdateTimeout = this.#setUpdateTimeoutToNearest(game);
 		});
 		const cancelValueChangeListener = this.on(() => {
-			removeUpdateTimeout?.();
+			const timeLeft = removeUpdateTimeout?.() || 0;
+			console.log('Timeout cancelled because value changed', timeLeft);
 			removeUpdateTimeout = this.#setUpdateTimeoutToNearest(game);
 		});
 		return () => {

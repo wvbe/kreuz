@@ -7,6 +7,27 @@ import { Terrain } from '../terrain/Terrain.ts';
 import { Need } from './Need.ts';
 
 describe('Need', () => {
+	it('.setPollingInterval()', () => {
+		const game = new Game('test', new Terrain(0, []), []);
+		const need = new Need(1, 'test', 1 / 1000);
+		const onUpdate = mock.fn();
+		need.on(onUpdate);
+		need.attach(game);
+		game.time.steps(100);
+		expect(onUpdate).toHaveBeenCalledTimes(0);
+		expect(need.get()).toBe(1);
+		const destroy = need.setPollingInterval(10);
+		game.time.steps(100);
+		// @TODO Not sure why 11 calls instead of 10
+		expect(onUpdate).toHaveBeenCalledTimes(11);
+		expect(need.get()).toBe(0.9);
+
+		// game.time.steps();
+		destroy();
+		game.time.steps(100);
+		// @TODO Not sure why 12 calls instead of 10
+		expect(onUpdate).toHaveBeenCalledTimes(12);
+	});
 	it('will not keep listening if the need is already zero', () => {
 		const game = new Game('test', new Terrain(0, []), []);
 		const need = new Need(1, 'test', 1 / 4);
@@ -18,7 +39,6 @@ describe('Need', () => {
 		expect(game.time.now).toBe(2);
 		expect(need.get()).toBe(0.5);
 		game.time.jump();
-		console.log(game.time);
 		expect(game.time.getNextEventAbsoluteTime()).toBe(Infinity);
 	});
 	describe('In isolation', () => {
@@ -90,6 +110,7 @@ describe('Need', () => {
 		new TestDriver().attach(game).start();
 
 		it('Needs are actually depleted', () => {
+			console.log(entity.needs);
 			expect(
 				Object.keys(entity.needs)
 					.map((key) => entity.needs[key as keyof typeof entity.needs].get())

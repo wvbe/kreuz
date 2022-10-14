@@ -1,5 +1,4 @@
-import { Random } from '../classes/Random.ts';
-import { TimeLine } from '../classes/TimeLine.ts';
+import { Random, TimeLine } from '@lib';
 
 type Sexuality = 'hetero' | 'homo' | 'bi';
 // type TraditionalGender = 'm' | 'f';
@@ -11,8 +10,9 @@ function mermaidPieChart(label: string, data: { [key: string]: number }) {
 		) + '\n'
 	);
 }
+
 export function generateFamilyTree(seed: number, dateMax: number) {
-	let TIME = new TimeLine();
+	const TIME = new TimeLine();
 	let seedIncrement = seed;
 	const events: string[] = [];
 
@@ -169,7 +169,7 @@ export function generateFamilyTree(seed: number, dateMax: number) {
 	}
 
 	const PERSONS = Array.from(new Array(50)).map(() => new Person());
-	TIME.on((c) => {
+	TIME.on(() => {
 		const populationAlive = PERSONS.filter((p) => p.alive);
 		populationAlive
 			.filter((p) => p.age > 99 || Random.boolean([++seedIncrement], (p.age - 50) / 300))
@@ -185,7 +185,7 @@ export function generateFamilyTree(seed: number, dateMax: number) {
 				const r = Random.boolean([++seedIncrement], 0.2);
 				return r;
 			})
-			.forEach((person, i, all) => {
+			.forEach((person, _i, all) => {
 				if (all.length < 2) {
 					// Never mind, there's nobody to marry with
 					return;

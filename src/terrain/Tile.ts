@@ -7,7 +7,7 @@ import { SaveTileJson } from '../types-savedgame.ts';
  */
 export class Tile extends Coordinate implements TileI {
 	public terrain?: TerrainI;
-	public readonly neighbors: Tile[] = [];
+	public readonly neighbors: TileI[] = [];
 
 	public equals(coord: CoordinateI): boolean {
 		return this === coord || (coord && this.x === coord.x && this.y === coord.y);
@@ -42,6 +42,7 @@ export class Tile extends Coordinate implements TileI {
 	getOutlineCoordinates(): CoordinateI[] {
 		throw new Error('Not implemented');
 	}
+
 	/**
 	 * Serialize for a save game JSON
 	 */

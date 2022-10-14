@@ -29,28 +29,28 @@ export default enabled
 			}
 	  }
 	: class LoggerDisabled {
-			static log(...data: Parameters<typeof console.log>) {
+			static log(..._data: Parameters<typeof console.log>) {
 				/* no-op */
 			}
-			static warn(...data: Parameters<typeof console.warn>) {
+			static warn(..._data: Parameters<typeof console.warn>) {
 				/* no-op */
 			}
-			static error(...data: Parameters<typeof console.error>) {
+			static error(..._data: Parameters<typeof console.error>) {
 				/* no-op */
 			}
-			static time(...data: Parameters<typeof console.time>) {
+			static time(..._data: Parameters<typeof console.time>) {
 				/* no-op */
 			}
-			static timeEnd(...data: Parameters<typeof console.timeEnd>) {
+			static timeEnd(..._data: Parameters<typeof console.timeEnd>) {
 				/* no-op */
 			}
-			static group(...data: Parameters<typeof console.group>) {
+			static group(..._data: Parameters<typeof console.group>) {
 				/* no-op */
 			}
-			static groupCollapsed(...data: Parameters<typeof console.groupCollapsed>) {
+			static groupCollapsed(..._data: Parameters<typeof console.groupCollapsed>) {
 				/* no-op */
 			}
-			static groupEnd(...data: Parameters<typeof console.groupEnd>) {
+			static groupEnd(..._data: Parameters<typeof console.groupEnd>) {
 				/* no-op */
 			}
 	  };

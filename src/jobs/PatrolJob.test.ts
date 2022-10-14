@@ -2,7 +2,7 @@ import { describe, expect, it, mock, run } from 'https://deno.land/x/tincan@1.0.
 import { TestDriver } from '../drivers/TestDriver.ts';
 import { PersonEntity } from '../entities/PersonEntity.ts';
 import Game from '../Game.ts';
-import { generateGridTerrainFromAscii } from '../generators/generateGridTerrainFromAscii.ts';
+import { generateGridTerrainFromAscii } from '../terrain/utils.ts';
 import { PatrolJob } from './PatrolJob.ts';
 
 describe('PatrolJob', () => {

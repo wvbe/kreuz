@@ -1,6 +1,6 @@
 import { expect, it, describe, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
-import { generateGridTerrainFromAscii } from '../generators/generateGridTerrainFromAscii.ts';
+import { generateGridTerrainFromAscii } from '../terrain/utils.ts';
 
 describe('Terrain', () => {
 	describe('.getIslands()', () => {

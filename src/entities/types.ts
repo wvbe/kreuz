@@ -1,9 +1,10 @@
-import { type Game } from '../../mod.ts';
+import type Game from '../Game.ts';
 import { type Event } from '../classes/Event.ts';
 import { type EventedValue } from '../classes/EventedValue.ts';
 import { type JobI } from '../jobs/types.ts';
 import { type SaveEntityJson } from '../types-savedgame.ts';
 import { type TileI, type CoordinateI, CallbackFn } from '../types.ts';
+import { type Need } from './Need.ts';
 
 export interface EntityI {
 	type: string;
@@ -98,3 +99,11 @@ export interface EntityPersonI extends EntityI {
 	 */
 	walkToTile(destination: TileI): void;
 }
+
+export type PersonNeedsI = {
+	food: Need;
+	water: Need;
+	sleep: Need;
+	hygiene: Need;
+	spirituality: Need;
+};

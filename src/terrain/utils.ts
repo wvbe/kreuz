@@ -1,5 +1,4 @@
-import { SquareTile } from '../terrain/SquareTile.ts';
-import { Terrain } from '../terrain/Terrain.ts';
+import { SquareTile, Terrain } from '@lib';
 
 const adjacency = [
 	[-1, 0],
@@ -8,6 +7,9 @@ const adjacency = [
 	[0, -1],
 ];
 
+/**
+ * @deprecated Only here as a test convenience.
+ */
 export function generateGridTerrainFromAscii(ascii: string) {
 	const datas = ascii
 		.trim()

@@ -7,7 +7,7 @@ import { SeedI, TerrainI } from './types.ts';
 export default class Game {
 	public readonly terrain: TerrainI;
 
-	// @TODO change to not readonly, and handle spontaneous changes
+	// @TODO handle spontaneous changes
 	public readonly entities: EntityI[] = [];
 
 	public readonly time = new TimeLine();
@@ -32,10 +32,6 @@ export default class Game {
 		this.seed = seed;
 		this.terrain = terrain;
 		entities.forEach((entity) => this.registerEntity(entity));
-
-		(window as any).getSaveGame = () => {
-			console.log(JSON.stringify(this.serializeToSaveJson(), null, '\t'));
-		};
 	}
 
 	/**

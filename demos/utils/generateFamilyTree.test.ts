@@ -3,13 +3,12 @@ import { generateFamilyTree } from './generateFamilyTree.ts';
 
 describe('generateFamilyTree', () => {
 	let result: ReturnType<typeof generateFamilyTree>;
-	it('doesnt crash', () => {
-		expect(() => {
-			result = generateFamilyTree(420, 100);
-		}).not.toThrow();
-	});
 
-	it('Data matches', () =>
+	expect(() => {
+		result = generateFamilyTree(420, 100);
+	}).not.toThrow();
+
+	it('.makeData()', () =>
 		expect(result.makeData()).toEqual({
 			population: 254,
 			populationCumulative: 347,

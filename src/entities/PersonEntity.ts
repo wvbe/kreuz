@@ -1,4 +1,4 @@
-import { type Game } from '../../mod.ts';
+import type Game from '../Game.ts';
 import { Event } from '../classes/Event.ts';
 import Logger from '../classes/Logger.ts';
 import { Path } from '../classes/Path.ts';
@@ -7,19 +7,7 @@ import { FIRST_NAMES_F, FIRST_NAMES_M } from '../constants/names.tsx';
 import { CallbackFn, CoordinateI, TileI } from '../types.ts';
 import { Entity } from './Entity.ts';
 import { Need } from './Need.ts';
-import { EntityPersonI } from './types.ts';
-
-type PersonNeeds = {
-	food: Need;
-	water: Need;
-	clothing: Need;
-	shelter: Need;
-	sleep: Need;
-	spirituality: Need;
-	development: Need;
-	friendship: Need;
-	intimacy: Need;
-};
+import { type EntityPersonI, type PersonNeedsI } from './types.ts';
 
 export class PersonEntity extends Entity implements EntityPersonI {
 	// The amount of game coordinate per millisecond
@@ -39,16 +27,12 @@ export class PersonEntity extends Entity implements EntityPersonI {
 
 	protected readonly userData: { gender: 'm' | 'f'; firstName: string };
 
-	public readonly needs: PersonNeeds = {
-		food: new Need(1, 'Need: food', 1 / 50_000),
+	public readonly needs: PersonNeedsI = {
+		food: new Need(1, 'Need: food', 1 / 150_000),
 		water: new Need(1, 'Need: water', 1 / 100_000),
-		clothing: new Need(1, 'Need: clothing', 1 / 250_000),
-		shelter: new Need(1, 'Need: shelter', 1 / 100_000),
-		sleep: new Need(1, 'Need: sleep', 1 / 100_000),
-		spirituality: new Need(1, 'Need: spirituality', 1 / 100_000),
-		development: new Need(1, 'Need: development', 1 / 1000_000),
-		friendship: new Need(1, 'Need: friendship', 1 / 500_000),
-		intimacy: new Need(1, 'Need: intimacy', 1 / 1000_000),
+		sleep: new Need(1, 'Need: sleep', 1 / 130_000),
+		hygiene: new Need(1, 'Need: clothing', 1 / 250_000),
+		spirituality: new Need(1, 'Need: spirituality', 1 / 1_000_000),
 	};
 
 	/**
@@ -86,7 +70,7 @@ export class PersonEntity extends Entity implements EntityPersonI {
 		super.attach(game);
 
 		Object.keys(this.needs).forEach((key) => {
-			this.$destroy.once(this.needs[key as keyof PersonNeeds].attach(game));
+			this.$destroy.once(this.needs[key as keyof PersonNeedsI].attach(game));
 		});
 	}
 
@@ -135,8 +119,8 @@ export class PersonEntity extends Entity implements EntityPersonI {
 	 */
 	private animateTo(coordinate: CoordinateI) {
 		if (coordinate.hasNaN()) {
-			// @TODO remove or throw
-			debugger;
+			// @TODO remove at some point?
+			throw new Error('This should never happen I suppose');
 		}
 		const distance = this.$$location.get().euclideanDistanceTo(coordinate);
 

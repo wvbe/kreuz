@@ -23,16 +23,19 @@ type HeuristicReport = {
 	g: number;
 	f: number;
 	parent: HeuristicReport | null;
-	closed: Boolean;
+	closed: boolean;
 	visited: boolean;
 };
 
 type PathOptions = {
-	closest: Boolean;
+	closest: boolean;
 	heuristic?: HeuristicScorer;
 };
 
-function getVisitationCost(terrain: TerrainI, from: TileI, neighbor: TileI) {
+/**
+ * @TODO
+ */
+function getVisitationCost(_terrain: TerrainI, _from: TileI, _neighbor: TileI) {
 	return 1;
 }
 
@@ -159,7 +162,8 @@ export class Path {
 		}
 
 		// No result was found - empty array signifies failure to find path.
-		Logger.warn('-- No path --');
+		// @TODO this is a costly non-answer? investigate when you see this log message maybe:
+		Logger.warn('-- No path --', start, end);
 		return [];
 	}
 

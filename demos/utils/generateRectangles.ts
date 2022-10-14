@@ -1,5 +1,4 @@
-import { Random } from '../classes/Random.ts';
-import { SeedI } from '../types.ts';
+import { Random, SeedI } from '@lib';
 
 type Options = {
 	minimumBuildingLength: number;
@@ -22,8 +21,8 @@ export class RectangleParty {
 		this.h = h;
 
 		// then figure out if we need to draw another
-		var splitWidth = Random.boolean(seed);
-		var splitWhere = Random.between(0.3, 0.7, ...seed);
+		const splitWidth = Random.boolean(seed);
+		const splitWhere = Random.between(0.3, 0.7, ...seed);
 		const baseAspectRatio = w / h;
 
 		if ((splitWidth && this.w > options.minimumBuildingLength) || baseAspectRatio > 3) {

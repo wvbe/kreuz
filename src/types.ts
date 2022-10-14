@@ -1,4 +1,3 @@
-import type Game from './Game.ts';
 import { type SaveTerrainJson, type SaveTileJson } from './types-savedgame.ts';
 
 export type GameDistance = number;

@@ -71,7 +71,7 @@ export class Event<Args extends unknown[] = []> {
 
 		// Create a new array from callbacks so that the loop is not affected
 		// while once-ers change the true callbacks list by reference.
-		this.#callbacks.slice().forEach((cb, i) => {
+		this.#callbacks.slice().forEach((cb, _i) => {
 			cb(...args);
 		});
 		if (this.debug) {

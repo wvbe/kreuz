@@ -1,7 +1,6 @@
 import { Coordinate } from '../classes/Coordinate.ts';
-import { CoordinateI, TerrainI, TileFilterFn, TileI } from '../types.ts';
 import { SaveTerrainJson } from '../types-savedgame.ts';
-import { Tile } from './Tile.ts';
+import { CoordinateI, TerrainI, TileFilterFn, TileI } from '../types.ts';
 
 export class Terrain implements TerrainI {
 	public readonly tiles: TileI[] = [];

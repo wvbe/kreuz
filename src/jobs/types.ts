@@ -1,4 +1,4 @@
-import { type Game } from '../../mod.ts';
+import type Game from '../Game.ts';
 
 /**
  * An activity that entities do.

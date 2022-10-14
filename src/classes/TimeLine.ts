@@ -61,7 +61,7 @@ export class TimeLine extends EventedValue<number> {
 	 * By default it would skip to the next point in time with a registered timer, and trigger it.
 	 */
 	public jump(next = this.getNextEventAbsoluteTime()): void {
-		if (!next) {
+		if (!next || next === Infinity) {
 			return;
 		}
 		this.set(next - 1, true);
@@ -74,6 +74,9 @@ export class TimeLine extends EventedValue<number> {
 	 * Returns the function with which the timeout can be cancelled.
 	 */
 	public setTimeout(callback: CallbackFn, time: number): DestroyerFn {
+		if (time === Infinity) {
+			throw new Error('Cannot set a timeout for infinitely far in the future');
+		}
 		const frame = Math.ceil(this.now + time);
 		if (!this.#timers.has(frame)) {
 			this.#timers.set(frame, [callback]);

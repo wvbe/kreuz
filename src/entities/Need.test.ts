@@ -2,11 +2,25 @@ import { describe, expect, it, mock, run } from 'https://deno.land/x/tincan@1.0.
 import { TestDriver } from '../drivers/TestDriver.ts';
 import { PersonEntity } from './PersonEntity.ts';
 import Game from '../Game.ts';
-import { generateGridTerrainFromAscii } from '../generators/generateGridTerrainFromAscii.ts';
+import { generateGridTerrainFromAscii } from '../terrain/utils.ts';
 import { Terrain } from '../terrain/Terrain.ts';
 import { Need } from './Need.ts';
 
 describe('Need', () => {
+	it('will not keep listening if the need is already zero', () => {
+		const game = new Game('test', new Terrain(0, []), []);
+		const need = new Need(1, 'test', 1 / 4);
+		need.attach(game);
+		need.onBetween(0, 0.5, () => {});
+		expect(game.time.now).toBe(0);
+		expect(game.time.getNextEventAbsoluteTime()).toBe(2);
+		game.time.jump();
+		expect(game.time.now).toBe(2);
+		expect(need.get()).toBe(0.5);
+		game.time.jump();
+		console.log(game.time);
+		expect(game.time.getNextEventAbsoluteTime()).toBe(Infinity);
+	});
 	describe('In isolation', () => {
 		const game = new Game('test', new Terrain(0, []), []);
 		const need = new Need(1, 'test', 1 / 100);

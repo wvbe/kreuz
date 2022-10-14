@@ -34,6 +34,7 @@ export class DualMeshTile extends Tile implements TileI {
 	}
 
 	#isGhost?: boolean;
+
 	#isLand?: boolean = undefined;
 
 	public isLand() {

@@ -1,6 +1,6 @@
-import { type Game } from '../../mod.ts';
 import { Event } from '../classes/Event.ts';
 import { EventedNumericValue } from '../classes/EventedNumericValue.ts';
+import type Game from '../Game.ts';
 import { type DestroyerFn } from '../types.ts';
 
 /**

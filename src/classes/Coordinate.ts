@@ -1,7 +1,5 @@
 import { CoordinateI, GameDistance } from '../types.ts';
 
-export type CoordinateArray = [GameDistance, GameDistance, GameDistance];
-
 export class Coordinate implements CoordinateI {
 	x: GameDistance;
 	y: GameDistance;
@@ -72,7 +70,7 @@ export class Coordinate implements CoordinateI {
 		// https://meneerriksen.nl/onewebmedia/Wiskunde%20LJ2p4%20Goniometrie%20oefeningen.pages.pdf
 		const adjacent = to.x - this.x;
 		const opposite = to.y - this.y;
-		let angle = Math.atan(opposite / adjacent);
+		const angle = Math.atan(opposite / adjacent);
 		if (opposite < 0 && adjacent < 0) {
 			// The bottom left quadrant
 			return Math.PI + Math.abs(angle);

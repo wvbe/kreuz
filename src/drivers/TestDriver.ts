@@ -1,8 +1,7 @@
-import Logger from '../classes/Logger.ts';
 import { PersonEntity } from '../entities/PersonEntity.ts';
 import Game from '../Game.ts';
-import { DriverI } from './types.ts';
 import { Driver } from './Driver.ts';
+import { DriverI } from './types.ts';
 
 type TestDriverOptions = {
 	delayBetweenJumps: number;

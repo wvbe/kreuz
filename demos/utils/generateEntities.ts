@@ -1,10 +1,14 @@
-import { Random } from '../classes/Random.ts';
-import { PersonEntity } from '../entities/PersonEntity.ts';
-import { SettlementEntity } from '../entities/SettlementEntity.ts';
-import { EntityPersonI } from '../entities/types.ts';
-import { LoiterJob } from '../jobs/LoiterJob.ts';
-import { PatrolJob } from '../jobs/PatrolJob.ts';
-import { SeedI, TerrainI } from '../types.ts';
+import {
+	Random,
+	PersonEntity,
+	SettlementEntity,
+	type EntityPersonI,
+	// @TODO refactor job generator out of this function;
+	LoiterJob,
+	PatrolJob,
+	type SeedI,
+	type TerrainI,
+} from '@lib';
 
 function repeat<P>(n: number, cb: (i: number) => P): P[] {
 	return Array.from(new Array(n)).map((_, i) => cb(i));
@@ -26,7 +30,7 @@ function generatePatrolJob(terrain: TerrainI, seed: SeedI, entity: EntityPersonI
 	]);
 }
 
-export function generateEntities(seed: SeedI, terrain: TerrainI) {
+export function generateEntities(seed: SeedI, populationSize: number, terrain: TerrainI) {
 	const walkableTiles = terrain.tiles.filter((c) => c.isLand());
 	if (!walkableTiles.length) {
 		throw new Error('The terrain does not contain any walkable tiles!');

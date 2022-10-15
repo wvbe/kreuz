@@ -28,20 +28,21 @@ export class Need extends EventedNumericValue {
 	 *
 	 * Will trigger an update event.
 	 */
-	public applyDecay(timePassed: number): void {
+	public applyDecay(timePassed: number, skipUpdate?: boolean): void {
 		const value = Math.max(0, this.current - this.#decay * timePassed);
 		if (value < 1e-12) {
 			// Javascript and small numbers are no bueno. To stay sane we shall assume everything
 			// with more than 12 decimal zeroes is the same as zero.
-			this.set(0);
+			this.set(0, skipUpdate);
 		} else {
-			this.set(value);
+			this.set(value, skipUpdate);
 		}
 	}
 
 	public setDecay(decayPerTick: number): void {
+		const oldDecay = this.#decay;
 		this.#decay = decayPerTick;
-		this.#$nextSignificantValueChange.emit();
+		this.#$nextSignificantValueChange.emit(oldDecay);
 	}
 
 	/**
@@ -56,9 +57,9 @@ export class Need extends EventedNumericValue {
 	 * it) has changed -- probably because a new listener was added or removed.
 	 *
 	 * The value that is passed along signifies wether or not extra compensation is expected for
-	 * the
+	 * the time elapsed in the cancelled timeout -- or more precisely at which decay rate.
 	 */
-	#$nextSignificantValueChange = new Event('Need $nextSignificantValueChange');
+	#$nextSignificantValueChange = new Event<[number]>('Need $nextSignificantValueChange');
 
 	/**
 	 * A specialization of EventedNumericValue#onBetween, because it emits an event that will
@@ -66,7 +67,7 @@ export class Need extends EventedNumericValue {
 	 */
 	public onBetween(...args: Parameters<EventedNumericValue['onBetween']>): DestroyerFn {
 		const destroy = super.onBetween(...args);
-		this.#$nextSignificantValueChange.emit();
+		this.#$nextSignificantValueChange.emit(0);
 		return destroy;
 	}
 
@@ -76,10 +77,14 @@ export class Need extends EventedNumericValue {
 	 */
 	public onceBetween(...args: Parameters<EventedNumericValue['onceBetween']>): DestroyerFn {
 		const destroy = super.onceBetween(...args);
-		this.#$nextSignificantValueChange.emit();
+		this.#$nextSignificantValueChange.emit(0);
 		return destroy;
 	}
 
+	/**
+	 * The ticks of time between emitted decay to the value, if you choose to poll for it. Use
+	 * the destroyer function of .setPollingInterval to cancel, or set the interval to null.
+	 */
 	#pollingInterval: number | null = null;
 
 	/**
@@ -89,10 +94,13 @@ export class Need extends EventedNumericValue {
 	 * @BUG When setPollingInterval is set, the next applyDecay does not take into account the time
 	 * that was already consumed by the forfeited timeout. This causes UI to show a more optimistic
 	 * need value than appropriate when setPollingInterval is used to subscribe to the value from React.
+	 *                                           -- maybe fixed? <3
 	 */
 	public setPollingInterval(interval: number | null): DestroyerFn {
 		this.#pollingInterval = interval;
-		this.#$nextSignificantValueChange.emit();
+		// The  timeout is cancelled, not rolled back, so emit TRUE to let downstream know that
+		// the decay already accumulated on the timeout must be applied
+		this.#$nextSignificantValueChange.emit(this.#decay);
 		return () => {
 			this.#pollingInterval = null;
 		};
@@ -138,19 +146,25 @@ export class Need extends EventedNumericValue {
 	 */
 	public attach(game: Game): DestroyerFn {
 		let removeUpdateTimeout = this.#setUpdateTimeoutToNearest(game);
-		const cancelNextSignificantValueChangeListener = this.#$nextSignificantValueChange.on(() => {
-			const timeLeft = removeUpdateTimeout?.() || 0;
-			console.log('Timeout cancelled because watch boundaries change', timeLeft);
-			removeUpdateTimeout = this.#setUpdateTimeoutToNearest(game);
-		});
+		const cancelNextSignificantValueChangeListener = this.#$nextSignificantValueChange.on(
+			(timerDecayRate) => {
+				const timerTimePassed = removeUpdateTimeout?.() || 0;
+				if (timerDecayRate && timerTimePassed) {
+					console.log('Fast-forwarding decay', timerTimePassed);
+					const value = Math.max(0, this.current - timerDecayRate * timerTimePassed);
+					this.set(value);
+				}
+				removeUpdateTimeout = this.#setUpdateTimeoutToNearest(game);
+			},
+		);
 		const cancelValueChangeListener = this.on(() => {
-			const timeLeft = removeUpdateTimeout?.() || 0;
-			console.log('Timeout cancelled because value changed', timeLeft);
+			removeUpdateTimeout?.();
 			removeUpdateTimeout = this.#setUpdateTimeoutToNearest(game);
 		});
 		return () => {
 			cancelNextSignificantValueChangeListener();
 			cancelValueChangeListener();
+			removeUpdateTimeout?.();
 		};
 	}
 }

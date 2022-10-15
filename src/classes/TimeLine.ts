@@ -72,7 +72,7 @@ export class TimeLine extends EventedValue<number> {
 	 * Schedule a callback for a relative amount of time in the future.
 	 *
 	 * Returns the destroyer function with which the timeout can be cancelled. Calling the destroyer
-	 * will return to you the amount of time that was left on the timeout.
+	 * will return to you the amount of time that was already waited before cancelling.
 	 */
 	public setTimeout(callback: CallbackFn, time: number): DestroyerFn<number> {
 		if (time === Infinity) {
@@ -86,11 +86,10 @@ export class TimeLine extends EventedValue<number> {
 			this.#timers.get(frame)?.push(callback);
 		}
 		return () => {
-			const timeElapsed = now - this.now;
-			const timeLeft = time - timeElapsed;
+			const timeElapsed = this.now - now;
 			const timers = this.#timers.get(frame);
 			if (!timers) {
-				return timeLeft;
+				return timeElapsed;
 			}
 			const filteredTimers = timers.filter((f) => f !== callback);
 			if (filteredTimers.length) {
@@ -98,7 +97,7 @@ export class TimeLine extends EventedValue<number> {
 			} else {
 				this.#timers.delete(frame);
 			}
-			return timeLeft;
+			return timeElapsed;
 		};
 	}
 

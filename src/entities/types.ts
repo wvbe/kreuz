@@ -100,10 +100,3 @@ export interface EntityPersonI extends EntityI {
 	walkToTile(destination: TileI): void;
 }
 
-export type PersonNeedsI = {
-	food: Need;
-	water: Need;
-	sleep: Need;
-	hygiene: Need;
-	spirituality: Need;
-};

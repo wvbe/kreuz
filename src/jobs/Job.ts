@@ -13,6 +13,13 @@ export class Job implements JobI {
 		throw new Error(`Not implemented for ${this.constructor.name}`);
 	}
 
+	/**
+	 * Boolean on wether or not this entity can start this job right now.
+	 */
+	isAvailable(): boolean {
+		// @TODO
+		return true;
+	}
 	start(_game: Game) {
 		// Logger.log(`Start ${this.constructor.name}`);
 	}

@@ -7,4 +7,5 @@ export interface JobI {
 	label: string;
 	start(game: Game): void;
 	destroy(): void;
+	isAvailable(): boolean;
 }

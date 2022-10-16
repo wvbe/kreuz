@@ -1,5 +1,6 @@
 import { Event } from './classes/Event.ts';
 import { TimeLine } from './classes/TimeLine.ts';
+import { Collection } from './classes/Collection.ts';
 import { EntityI } from './entities/types.ts';
 import { SavedGameJson } from './types-savedgame.ts';
 import { SeedI, TerrainI } from './types.ts';
@@ -8,7 +9,7 @@ export default class Game {
 	public readonly terrain: TerrainI;
 
 	// @TODO handle spontaneous changes
-	public readonly entities: EntityI[] = [];
+	public readonly entities = new Collection<EntityI>();
 
 	public readonly time = new TimeLine();
 
@@ -31,7 +32,18 @@ export default class Game {
 	constructor(seed: SeedI, terrain: TerrainI, entities: EntityI[]) {
 		this.seed = seed;
 		this.terrain = terrain;
-		entities.forEach((entity) => this.registerEntity(entity));
+
+		this.entities.$add.on((added) =>
+			added.forEach((entity) => {
+				entity.attach(this);
+			}),
+		);
+		this.entities.$remove.on((removed) =>
+			removed.forEach((entity) => {
+				entity.destroy();
+			}),
+		);
+		this.entities.add(...entities);
 	}
 
 	/**
@@ -47,19 +59,6 @@ export default class Game {
 
 	public stop() {
 		this.$stop.emit();
-	}
-
-	/**
-	 * Private because AFAIK no usecase for this method outside class _yet_
-	 */
-	private registerEntity(entity: EntityI) {
-		this.entities.push(entity);
-
-		entity.attach(this);
-
-		this.$destroy.once(() => {
-			entity.destroy();
-		});
 	}
 
 	destroy() {

@@ -1,13 +1,14 @@
-import type Game from '../Game.ts';
 import { Event } from '../classes/Event.ts';
 import Logger from '../classes/Logger.ts';
 import { Path } from '../classes/Path.ts';
 import { Random } from '../classes/Random.ts';
 import { FIRST_NAMES_F, FIRST_NAMES_M } from '../constants/names.tsx';
+import { PersonNeedId, PersonNeedMap } from '../constants/needs.ts';
+import type Game from '../Game.ts';
 import { CallbackFn, CoordinateI, TileI } from '../types.ts';
 import { Entity } from './Entity.ts';
 import { Need } from './Need.ts';
-import { type EntityPersonI, type PersonNeedsI } from './types.ts';
+import { type EntityPersonI } from './types.ts';
 
 export class PersonEntity extends Entity implements EntityPersonI {
 	// The amount of game coordinate per millisecond
@@ -27,17 +28,17 @@ export class PersonEntity extends Entity implements EntityPersonI {
 
 	protected readonly userData: { gender: 'm' | 'f'; firstName: string };
 
-	public readonly needs: PersonNeedsI = {
-		food: new Need(1, 'Need: food', 1 / 150_000),
-		water: new Need(1, 'Need: water', 1 / 100_000),
-		sleep: new Need(1, 'Need: sleep', 1 / 130_000),
-		hygiene: new Need(1, 'Need: clothing', 1 / 250_000),
-		spirituality: new Need(1, 'Need: spirituality', 1 / 1_000_000),
+	public readonly needs: PersonNeedMap = {
+		food: new Need(1, 'Food', 1 / 150_000),
+		water: new Need(1, 'Water', 1 / 100_000),
+		sleep: new Need(1, 'Sleep', 1 / 130_000),
+		hygiene: new Need(1, 'Clothing', 1 / 250_000),
+		spirituality: new Need(1, 'Spirituality', 1 / 1_000_000),
 	};
 
 	public get needsList() {
 		return ['food', 'water', 'sleep', 'hygiene', 'spirituality'].map(
-			(key) => this.needs[key as keyof PersonNeedsI],
+			(key) => this.needs[key as PersonNeedId],
 		);
 	}
 
@@ -76,7 +77,7 @@ export class PersonEntity extends Entity implements EntityPersonI {
 		super.attach(game);
 
 		Object.keys(this.needs).forEach((key) => {
-			this.$destroy.once(this.needs[key as keyof PersonNeedsI].attach(game));
+			this.$destroy.once(this.needs[key as PersonNeedId].attach(game));
 		});
 	}
 

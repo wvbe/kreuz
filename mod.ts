@@ -26,7 +26,7 @@ export { DualMeshTile } from './src/terrain/DualMeshTile.ts';
 export { SquareTile } from './src/terrain/SquareTile.ts';
 export { Tile } from './src/terrain/Tile.ts';
 export { Path } from './src/classes/Path.ts';
-export { Coordinate } from './src/classes/Coordinate.ts';
+export { Coordinate } from './src/terrain/Coordinate.ts';
 
 // Miscellaneous utilities:
 export { Event } from './src/classes/Event.ts';

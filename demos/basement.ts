@@ -64,7 +64,7 @@ const demo: Demo = () => {
 	};
 
 	game.entities
-		.filter((entity): entity is PersonEntity => entity instanceof PersonEntity)
+		.filter<PersonEntity>((entity) => entity instanceof PersonEntity)
 		.forEach((entity) => {
 			Object.keys(NEEDS)
 				.filter((k): k is keyof PersonNeedsI => true)

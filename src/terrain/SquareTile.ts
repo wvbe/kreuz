@@ -1,4 +1,4 @@
-import { Coordinate } from '../classes/Coordinate.ts';
+import { Coordinate } from './Coordinate.ts';
 import { CoordinateI, TileI } from '../types.ts';
 import { Tile } from './Tile.ts';
 

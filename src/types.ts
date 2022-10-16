@@ -117,3 +117,7 @@ export type DestroyerFn<P = void> = () => P;
  * function with the same shape fulfills the same role!
  */
 export type CallbackFn<Args extends unknown[] = never[]> = (...args: Args) => void;
+
+export type SortFn<T> = (a: T, b: T) => number;
+
+export type FilterFn<T> = (a: T) => boolean;

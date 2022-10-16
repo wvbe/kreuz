@@ -17,8 +17,11 @@ import { type DestroyerFn } from '../types.ts';
 export class Need extends EventedNumericValue {
 	#decay: number;
 
+	public label: string;
+
 	public constructor(initial: number, label: string, decayPerTick: number, debug?: boolean) {
 		super(initial, label, debug);
+		this.label = label;
 		this.#decay = decayPerTick;
 	}
 
@@ -67,7 +70,7 @@ export class Need extends EventedNumericValue {
 	 */
 	public onBetween(...args: Parameters<EventedNumericValue['onBetween']>): DestroyerFn {
 		const destroy = super.onBetween(...args);
-		this.#$nextSignificantValueChange.emit(0);
+		this.#$nextSignificantValueChange.emit(this.#decay);
 		return destroy;
 	}
 
@@ -77,7 +80,7 @@ export class Need extends EventedNumericValue {
 	 */
 	public onceBetween(...args: Parameters<EventedNumericValue['onceBetween']>): DestroyerFn {
 		const destroy = super.onceBetween(...args);
-		this.#$nextSignificantValueChange.emit(0);
+		this.#$nextSignificantValueChange.emit(this.#decay);
 		return destroy;
 	}
 
@@ -90,11 +93,6 @@ export class Need extends EventedNumericValue {
 	/**
 	 * Tell the system that we're interested in value updates at a regular
 	 * interval, for example because we're showing a live UI view of this value.
-	 *
-	 * @BUG When setPollingInterval is set, the next applyDecay does not take into account the time
-	 * that was already consumed by the forfeited timeout. This causes UI to show a more optimistic
-	 * need value than appropriate when setPollingInterval is used to subscribe to the value from React.
-	 *                                           -- maybe fixed? <3
 	 */
 	public setPollingInterval(interval: number | null): DestroyerFn {
 		this.#pollingInterval = interval;
@@ -150,9 +148,7 @@ export class Need extends EventedNumericValue {
 			(timerDecayRate) => {
 				const timerTimePassed = removeUpdateTimeout?.() || 0;
 				if (timerDecayRate && timerTimePassed) {
-					console.log('Fast-forwarding decay', timerTimePassed);
-					const value = Math.max(0, this.current - timerDecayRate * timerTimePassed);
-					this.set(value);
+					this.set(Math.max(0, this.current - timerDecayRate * timerTimePassed));
 				}
 				removeUpdateTimeout = this.#setUpdateTimeoutToNearest(game);
 			},

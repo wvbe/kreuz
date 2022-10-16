@@ -1,4 +1,4 @@
-import { Coordinate } from '../classes/Coordinate.ts';
+import { Coordinate } from '../terrain/Coordinate.ts';
 import { Event } from '../classes/Event.ts';
 import { EventedValue } from '../classes/EventedValue.ts';
 import type Game from '../Game.ts';

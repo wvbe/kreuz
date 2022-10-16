@@ -16,12 +16,7 @@ const demo: Demo = () => {
 		return new Game(seed, terrain, entities);
 	})();
 
-	// game.entities.forEach((entity) => {
-	// 	entity.$$location.on(() => console.log(`Entity "${entity.label}" changed location`));
-	// });
-	const persons = game.entities.filter(
-		(entity): entity is PersonEntity => entity instanceof PersonEntity,
-	);
+	const persons = game.entities.filter<PersonEntity>((entity) => entity instanceof PersonEntity);
 
 	const NEEDS: Record<keyof PersonNeedsI, { upUntil: number; label: string | null }[]> = {
 		food: [

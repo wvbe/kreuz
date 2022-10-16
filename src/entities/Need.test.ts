@@ -140,7 +140,6 @@ describe('Need', () => {
 		new TestDriver().attach(game).start();
 
 		it('Needs are actually depleted', () => {
-			console.log(entity.needs);
 			expect(
 				Object.keys(entity.needs)
 					.map((key) => entity.needs[key as keyof typeof entity.needs].get())

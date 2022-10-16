@@ -1,4 +1,4 @@
-import { Coordinate } from '../classes/Coordinate.ts';
+import { Coordinate } from './Coordinate.ts';
 import { CoordinateI, TerrainI, TileI } from '../types.ts';
 import { SaveTileJson } from '../types-savedgame.ts';
 

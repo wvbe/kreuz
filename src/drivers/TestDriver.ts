@@ -37,7 +37,7 @@ export class TestDriver extends Driver implements DriverI {
 
 		// Whenever an entity starts to move, make sure that the "animation" ends at some point too.
 		game.entities
-			.filter((entity): entity is PersonEntity => entity instanceof PersonEntity)
+			.filter<PersonEntity>((entity) => entity instanceof PersonEntity)
 			.forEach((entity) => {
 				this.$detach.once(
 					entity.$stepStart.on((_destination, duration, done) => {

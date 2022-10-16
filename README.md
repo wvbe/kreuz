@@ -1,8 +1,7 @@
-# Kreuzzeug im Nagelhosen
+# THIS BRANCH IS NO LONGER MAINTAINED
 
 A pet project game, or at least a few parts of it. Big thanks go out the internet for making this
 possible!
-
 
 -   [Demo](https://wvbe.github.io/kreuzzeug-im-nagelhosen/)
 -   [Milestones](https://github.com/wvbe/kreuzzeug-im-nagelhosen/milestones)

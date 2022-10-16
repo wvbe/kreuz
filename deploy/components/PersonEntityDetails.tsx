@@ -6,7 +6,7 @@ import { FillBar } from './atoms/FillBar.tsx';
 import { Badge } from './atoms/Badge.tsx';
 
 const PersonEntityNeed: FunctionComponent<{ need: Need }> = ({ need }) => {
-	useEffect(() => need.setPollingInterval(100), [need]);
+	// useEffect(() => need.setPollingInterval(100), [need]);
 	const value = useEventedValue(need);
 	return <FillBar ratio={value} label={need.label} labelRight={`${Math.round(value * 100)}%`} />;
 };

@@ -8,6 +8,32 @@ describe('Random', () => {
 		expect(Random.float('z')).toBe(0.5205114627512043);
 		expect(Random.float('z')).toBe(0.5205114627512043);
 	});
+	it('.normal()', () => {
+		expect(Random.normal('x')).toBe(0.4509135135199306);
+		expect(Random.normal('y')).toBe(0.469344606863022);
+		expect(Random.normal('z')).toBe(0.4121183286769527);
+		expect(Random.normal('z')).toBe(0.4121183286769527);
+
+		let outOfRange = 0;
+		let lessThanHalf = 0;
+		let moreThanHalf = 0;
+		let tries = 10_000;
+		while (tries) {
+			const r = Random.normal(--tries, 'vfz');
+			if (r < 0.3 || r > 0.7) {
+				++outOfRange;
+			}
+			if (r < 0.5) {
+				++lessThanHalf;
+			}
+			if (r > 0.5) {
+				++moreThanHalf;
+			}
+		}
+		expect(outOfRange).toBeLessThan(500);
+		expect(lessThanHalf).toBeLessThan(5050);
+		expect(moreThanHalf).toBeGreaterThan(4950);
+	});
 
 	it('.fromArray()', () => {
 		const arr = ['apple', 'mango', 'banana', 'cucumber', 'avocado'];

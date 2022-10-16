@@ -6,7 +6,7 @@
  * The expected outcome is a short-running game that ends the timeloop amicably because there is
  * no further events planned.
  */
-import { Game, generateGridTerrainFromAscii, PersonEntity, PersonNeedsI } from '@lib';
+import { Game, generateGridTerrainFromAscii, PersonEntity, PersonNeedId } from '@lib';
 import { Demo } from './types.ts';
 
 const demo: Demo = () => {
@@ -34,7 +34,7 @@ const demo: Demo = () => {
 	// 	entity.job?.destroy();
 	// }, 10000);
 
-	const NEEDS: Record<keyof PersonNeedsI, { upUntil: number; label: string | null }[]> = {
+	const NEEDS: Record<PersonNeedId, { upUntil: number; label: string | null }[]> = {
 		food: [
 			{ upUntil: 5 / 100, label: 'literally starving' },
 			{ upUntil: 15 / 100, label: 'very hungry' },
@@ -63,23 +63,19 @@ const demo: Demo = () => {
 		spirituality: [],
 	};
 
-	game.entities
-		.filter<PersonEntity>((entity) => entity instanceof PersonEntity)
-		.forEach((entity) => {
-			Object.keys(NEEDS)
-				.filter((k): k is keyof PersonNeedsI => true)
-				.forEach((key) =>
-					NEEDS[key].reduce((min, { upUntil: max, label }) => {
-						if (!label) {
-							return max;
-						}
-						entity.needs[key].onBetween(min, max, () =>
-							console.log(`${entity.label} is ${label}.`),
-						);
-						return max;
-					}, 0),
+	Object.keys(NEEDS)
+		.filter((_k): _k is PersonNeedId => true)
+		.forEach((key) =>
+			NEEDS[key].reduce((min, { upUntil: max, label }) => {
+				if (!label) {
+					return max;
+				}
+				entity.needs[key as PersonNeedId].onBetween(min, max, () =>
+					console.log(`${entity.label} is ${label}.`),
 				);
-		});
+				return max;
+			}, 0),
+		);
 
 	return game;
 };

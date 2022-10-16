@@ -1,8 +1,18 @@
-import { FunctionComponent, useCallback, useEffect, useRef } from 'react';
+import {
+	DetailedHTMLProps,
+	FunctionComponent,
+	HTMLAttributes,
+	useCallback,
+	useEffect,
+	useRef,
+} from 'react';
 
-export const PopOnUpdateSpan: FunctionComponent<{ text: string }> = ({ text }) => {
+export const PopOnUpdateSpan: FunctionComponent<
+	{ text: string } & DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement>
+> = ({ text, ...rest }) => {
 	const clicks = useRef(0);
 	const element = useRef<HTMLSpanElement | null>(null);
+	const last = useRef<string | null>(null);
 	const setElementRef = useCallback((el: HTMLSpanElement) => (element.current = el), []);
 	useEffect(() => {
 		if (!element.current) {
@@ -17,6 +27,11 @@ export const PopOnUpdateSpan: FunctionComponent<{ text: string }> = ({ text }) =
 			return;
 		}
 
+		if (last.current === text) {
+			return;
+		}
+		last.current = text;
+
 		const ghost = element.current.ownerDocument.createElement('span');
 		ghost.setAttribute(
 			'style',
@@ -30,10 +45,10 @@ export const PopOnUpdateSpan: FunctionComponent<{ text: string }> = ({ text }) =
 
 		const remove = () => ghost.parentElement?.removeChild(ghost);
 		const timeout = setTimeout(remove, 2000);
-		return () => remove() && clearTimeout(timeout);
+		// return () => remove() && clearTimeout(timeout);
 	});
 	return (
-		<span style={{ position: 'relative', padding: '0 3px' }} ref={setElementRef}>
+		<span {...rest} style={{ position: 'relative', padding: '0 3px' }} ref={setElementRef}>
 			<span style={{ position: 'relative', zIndex: 1 }}>{text}</span>
 		</span>
 	);

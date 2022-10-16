@@ -47,19 +47,19 @@ const demo: Demo = () => {
 		spirituality: [],
 	};
 
-	persons.forEach((entity) => {
-		Object.keys(NEEDS)
-			.filter((k): k is keyof PersonNeedsI => true)
-			.forEach((key) =>
-				NEEDS[key].reduce((min, { upUntil: max, label }) => {
-					if (!label) {
-						return max;
-					}
-					entity.needs[key].onBetween(min, max, () => console.log(`${entity.label} is ${label}.`));
-					return max;
-				}, 0),
-			);
-	});
+	// persons.forEach((entity) => {
+	// 	Object.keys(NEEDS)
+	// 		.filter((k): k is keyof PersonNeedsI => true)
+	// 		.forEach((key) =>
+	// 			NEEDS[key].reduce((min, { upUntil: max, label }) => {
+	// 				if (!label) {
+	// 					return max;
+	// 				}
+	// 				entity.needs[key].onBetween(min, max, () => console.log(`${entity.label} is ${label}.`));
+	// 				return max;
+	// 			}, 0),
+	// 		);
+	// });
 
 	return game;
 };

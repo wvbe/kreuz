@@ -32,6 +32,11 @@ export class Entity implements EntityI {
 	public get label(): string {
 		return `${this.constructor.name} ${this.id}`;
 	}
+
+	public get icon(): string {
+		return '📦';
+	}
+
 	public get title(): string {
 		return 'Not doing anything';
 	}

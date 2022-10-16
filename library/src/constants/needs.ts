@@ -4,7 +4,7 @@ export type PersonNeedId = 'food' | 'water' | 'sleep' | 'hygiene' | 'spiritualit
 
 export type PersonNeedMap = Record<PersonNeedId, Need>;
 
-const personNeeds: Array<{
+export const PERSON_NEEDS: Array<{
 	id: PersonNeedId;
 	label: string;
 	decay: number;

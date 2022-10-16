@@ -20,6 +20,11 @@ export interface EntityI {
 	label: string;
 
 	/**
+	 * An emoji that makes the entity more recognizable at a glance.
+	 */
+	icon: string;
+
+	/**
 	 * A short description of what this entity is or does. For example, they are the bailiff or they're
 	 * guarding a place.
 	 */
@@ -54,6 +59,10 @@ export interface EntityI {
 }
 
 export interface EntityPersonI extends EntityI {
+	userData: {
+		gender: 'm' | 'f';
+		firstName: string;
+	};
 	/**
 	 * Event: The event that the person finishes every step of a path.
 	 */
@@ -99,4 +108,3 @@ export interface EntityPersonI extends EntityI {
 	 */
 	walkToTile(destination: TileI): void;
 }
-

@@ -1,4 +1,5 @@
 import { FunctionComponent } from 'react';
+import { PopOnUpdateSpan } from './PopOnUpdateSpan.tsx';
 
 export const FillBar: FunctionComponent<{ ratio: number; label?: string; labelRight?: string }> = ({
 	ratio,
@@ -8,13 +9,12 @@ export const FillBar: FunctionComponent<{ ratio: number; label?: string; labelRi
 	const safeRatio = Math.max(0, Math.min(1, ratio));
 	return (
 		<div className="fillbar">
-			{label ||
-				(labelRight && (
-					<div className="fillbar__labels">
-						{label && <div className="fillbar__label">Left</div>}
-						{labelRight && <div className="fillbar__label-right">Right</div>}
-					</div>
-				))}
+			{(label || labelRight) && (
+				<div className="fillbar__labels">
+					{label && <PopOnUpdateSpan text={label} className="fillbar__label" />}
+					{labelRight && <PopOnUpdateSpan text={labelRight} className="fillbar__label-right" />}
+				</div>
+			)}
 			<div className="fillbar__track">
 				<div className="fillbar__fill" style={{ width: `${safeRatio * 100}%` }}></div>
 			</div>

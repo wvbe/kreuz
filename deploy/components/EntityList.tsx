@@ -1,9 +1,16 @@
-import { FunctionComponent, useEffect, useMemo, useState } from 'react';
+import {
+	Collection,
+	CoordinateI,
+	EntityI,
+	EventedValue,
+	PersonEntity,
+	SettlementEntity,
+} from '@lib';
+import { FunctionComponent, useMemo, useState } from 'react';
 import { useEventedValue } from '../hooks/useEventedValue.ts';
-import { CoordinateI, EntityI, EventedValue, PersonEntity, SettlementEntity } from '@lib';
-import { FillBar } from './FillBar.tsx';
-import { Need } from '../library/src/entities/Need.ts';
-import { PopOnUpdateSpan } from './PopOnUpdateSpan.tsx';
+import { PersonEntityDetails } from './PersonEntityDetails.tsx';
+import { PopOnUpdateSpan } from './atoms/PopOnUpdateSpan.tsx';
+import { Badge } from './atoms/Badge.tsx';
 
 const EntityLocationPhrase: FunctionComponent<{ location: EventedValue<CoordinateI> }> = ({
 	location,
@@ -12,26 +19,9 @@ const EntityLocationPhrase: FunctionComponent<{ location: EventedValue<Coordinat
 	return <PopOnUpdateSpan text={`Lat:${y.toFixed(2)} Lng:${x.toFixed(2)}`} />;
 };
 
-const PersonEntityNeed: FunctionComponent<{ need: Need }> = ({ need }) => {
-	useEffect(() => need.setPollingInterval(100), [need]);
-	const value = useEventedValue(need);
-	return <FillBar ratio={value} label={need.label} />;
+const SettlementEntityDetails: FunctionComponent<{ entity: SettlementEntity }> = ({ entity }) => {
+	return <Badge icon={entity.icon} title={entity.parameters.name} subtitle={entity.title} />;
 };
-
-const PersonEntityDetails: FunctionComponent<{ entity: PersonEntity }> = ({ entity }) => {
-	const needs = useMemo(
-		() => entity.needsList.map((need, index) => <PersonEntityNeed key={index} need={need} />),
-		[entity],
-	);
-	return (
-		<div>
-			<h1>{entity?.label}</h1>
-			{needs}
-		</div>
-	);
-};
-
-const SettlementEntityDetails: FunctionComponent<{ entity: SettlementEntity }> = ({ entity }) => {};
 
 const EntityDetails: FunctionComponent<{ entity?: EntityI }> = ({ entity }) => {
 	if (!entity) {
@@ -44,7 +34,7 @@ const EntityDetails: FunctionComponent<{ entity?: EntityI }> = ({ entity }) => {
 	}
 };
 
-export const EntityList: FunctionComponent<{ entities: EntityI[] }> = ({ entities }) => {
+export const EntityList: FunctionComponent<{ entities: Collection<EntityI> }> = ({ entities }) => {
 	const [selected, setSelected] = useState<EntityI | undefined>(undefined);
 
 	const items = useMemo(

@@ -1,0 +1,20 @@
+.entity-details {
+	padding: 3px;
+}
+.entity-badge {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+.entity-badge__icon {
+	flex: 0 0 auto;
+	font-size: calc(2 * var(--line-height));
+	line-height: calc(2 * var(--line-height));
+	padding-right: 3px;
+}
+.entity-badge__labels {
+	flex: 1 1 auto;
+}
+.entity-badge__labels > * {
+	margin: 0;
+}

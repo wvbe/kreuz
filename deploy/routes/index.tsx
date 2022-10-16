@@ -18,7 +18,7 @@ export default function Index() {
 		return () => clearTimeout(t);
 	}, []);
 	if (!driver) {
-		return <p>Wait</p>;
+		return <p>Generating game, please give it a second</p>;
 	}
 	return <GameUI driver={driver} />;
 }

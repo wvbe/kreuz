@@ -29,8 +29,12 @@ export { Path } from './src/classes/Path.ts';
 export { Coordinate } from './src/terrain/Coordinate.ts';
 
 // Miscellaneous utilities:
+export { Collection } from './src/classes/Collection.ts';
 export { Event } from './src/classes/Event.ts';
 export { EventedValue } from './src/classes/EventedValue.ts';
 export { Random } from './src/classes/Random.ts';
 export { TimeLine } from './src/classes/TimeLine.ts';
 export { default as Logger } from './src/classes/Logger.ts';
+
+// Constants
+export * from './src/constants/needs.ts';

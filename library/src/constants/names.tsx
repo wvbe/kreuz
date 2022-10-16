@@ -3,8 +3,8 @@ import { SeedI } from '../types.ts';
 
 import namesFemale from './data/names-female.ts';
 import namesMale from './data/names-male.ts';
-export const FIRST_NAMES_M = namesFemale;
-export const FIRST_NAMES_F = namesMale;
+export const FIRST_NAMES_M = namesMale;
+export const FIRST_NAMES_F = namesFemale;
 
 const SETTLEMENT_PREFIXES = ['Tool', 'Rap', 'Murder', 'Thief', 'Apple', 'Banana', 'Copy', 'Cop'];
 const SETTLEMENT_SUFFIXES = [

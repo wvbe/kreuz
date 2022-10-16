@@ -1,7 +1,7 @@
 import { Game } from '@lib';
 import { FunctionComponent } from 'react';
 import { useEventedValue } from '../hooks/useEventedValue.ts';
-import { FillBar } from './FillBar.tsx';
+import { FillBar } from './atoms/FillBar.tsx';
 
 export const Clock: FunctionComponent<{ game: Game }> = ({ game }) => {
 	const time = useEventedValue(game.time);

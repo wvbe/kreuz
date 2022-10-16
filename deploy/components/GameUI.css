@@ -1,0 +1,16 @@
+.game-ui {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+.game-ui__column--left,
+.game-ui__column--right {
+	/* Nothing */
+}
+.game-ui__column--left {
+	flex: 1 0 480px;
+}
+.game-ui__column--right {
+	flex: 1 1 auto;
+	min-width: 320px;
+}

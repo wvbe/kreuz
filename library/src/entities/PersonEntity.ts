@@ -26,7 +26,7 @@ export class PersonEntity extends Entity implements EntityPersonI {
 	// The person started finished one step, according to react-spring's timing
 	public readonly $stepEnd = new Event<[CoordinateI]>('PersonEntity $stepEnd');
 
-	protected readonly userData: { gender: 'm' | 'f'; firstName: string };
+	public readonly userData: { gender: 'm' | 'f'; firstName: string };
 
 	public readonly needs: PersonNeedMap = {
 		food: new Need(1, 'Food', 1 / 150_000),
@@ -82,7 +82,10 @@ export class PersonEntity extends Entity implements EntityPersonI {
 	}
 
 	public get label(): string {
-		return `${this.userData.gender === 'm' ? '👨' : '👩'} ${this.userData.firstName}`;
+		return `${this.icon} ${this.userData.firstName}`;
+	}
+	public get icon(): string {
+		return this.userData.gender === 'm' ? '👨' : '👩';
 	}
 
 	public get title() {

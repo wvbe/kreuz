@@ -2,6 +2,7 @@ import { Driver, PersonEntity, type DriverI, type Game } from '@lib';
 
 export class AlephDriver extends Driver implements DriverI {
 	game: Game;
+	gameSpeed = 1;
 	lastUpdate: number;
 	constructor(game: Game) {
 		super();
@@ -15,7 +16,7 @@ export class AlephDriver extends Driver implements DriverI {
 
 		const now = Date.now();
 		const delta = now - this.lastUpdate;
-		this.game.time.steps(delta);
+		this.game.time.steps(delta * this.gameSpeed);
 		this.lastUpdate = now;
 		setTimeout(() => this.animate(), 10);
 	}

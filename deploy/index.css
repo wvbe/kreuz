@@ -1,0 +1,10 @@
+@import url('./components/GameUI.css');
+@import url('./components/FillBar.css');
+/* @import url('./components/EntityList.css'); */
+
+* {
+	font-family: sans-serif;
+	font-size: 10pt;
+	text-align: inherit;
+	/* font-weight:bold */
+}

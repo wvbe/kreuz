@@ -19,10 +19,19 @@ export class Need extends EventedNumericValue {
 
 	public $detach = new Event(`Need $detach`);
 
-	public label: string;
+	public readonly id: string;
 
-	public constructor(initial: number, label: string, decayPerTick: number, debug?: boolean) {
+	public readonly label: string;
+
+	public constructor(
+		id: string,
+		initial: number,
+		label: string,
+		decayPerTick: number,
+		debug?: boolean,
+	) {
 		super(initial, label, debug);
+		this.id = id;
 		this.label = label;
 		this.#decay = decayPerTick;
 	}

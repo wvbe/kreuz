@@ -53,12 +53,24 @@ export const PERSON_NEEDS: Array<{
 		id: 'hygiene',
 		label: 'Hygiene',
 		decay: 1 / 250_000,
-		moods: [],
+		moods: [
+			{ upUntil: 20 / 100, label: 'filthy' },
+			{ upUntil: 33 / 100, label: 'uncomfortable' },
+			{ upUntil: 60 / 100, label: null },
+			{ upUntil: 90 / 100, label: 'fortified' },
+			{ upUntil: Infinity, label: 'squeeky clean' },
+		],
 	},
 	{
 		id: 'spirituality',
 		label: 'Spirituality',
 		decay: 1 / 1_000_000,
-		moods: [],
+		moods: [
+			{ upUntil: 20 / 100, label: 'existential dread' },
+			{ upUntil: 33 / 100, label: 'depressed' },
+			{ upUntil: 60 / 100, label: 'plagued by guild' },
+			{ upUntil: 90 / 100, label: null },
+			{ upUntil: Infinity, label: 'reassured' },
+		],
 	},
 ];

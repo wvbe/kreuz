@@ -28,13 +28,13 @@ export class PersonEntity extends Entity implements EntityPersonI {
 
 	public readonly userData: { gender: 'm' | 'f'; firstName: string };
 
-	public readonly needs: PersonNeedMap = {
-		food: new Need(1, 'Food', 1 / 150_000),
-		water: new Need(1, 'Water', 1 / 100_000),
-		sleep: new Need(1, 'Sleep', 1 / 130_000),
-		hygiene: new Need(1, 'Clothing', 1 / 250_000),
-		spirituality: new Need(1, 'Spirituality', 1 / 1_000_000),
-	};
+	public readonly needs = PERSON_NEEDS.reduce<PersonNeedMap>(
+		(map, config) => ({
+			...map,
+			[config.id]: new Need(config.id, 1, config.label, config.decay),
+		}),
+		{} as PersonNeedMap,
+	);
 
 	public get needsList() {
 		return ['food', 'water', 'sleep', 'hygiene', 'spirituality'].map(

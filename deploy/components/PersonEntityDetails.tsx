@@ -1,14 +1,27 @@
-import { PersonEntity } from '@lib';
-import { FunctionComponent, useEffect, useMemo } from 'react';
+import { PersonEntity, PERSON_NEEDS } from '@lib';
+import { FunctionComponent, useMemo } from 'react';
 import { useEventedValue } from '../hooks/useEventedValue.ts';
 import { Need } from '../library/src/entities/Need.ts';
-import { FillBar } from './atoms/FillBar.tsx';
 import { Badge } from './atoms/Badge.tsx';
+import { FillBar } from './atoms/FillBar.tsx';
 
 const PersonEntityNeed: FunctionComponent<{ need: Need }> = ({ need }) => {
-	// useEffect(() => need.setPollingInterval(100), [need]);
 	const value = useEventedValue(need);
-	return <FillBar ratio={value} label={need.label} labelRight={`${Math.round(value * 100)}%`} />;
+	const config = useMemo(() => PERSON_NEEDS.find((config) => config.id === need.id), [need.id]);
+	const range = useMemo(
+		() =>
+			config?.moods.find(
+				(item, i, all) => value > (all[i - 1]?.upUntil || -Infinity) && value < item.upUntil,
+			),
+		[config, value],
+	);
+	return (
+		<FillBar
+			ratio={value}
+			label={need.label}
+			labelRight={`${range?.label || ''} ${Math.round(value * 100)}%`}
+		/>
+	);
 };
 
 export const PersonEntityDetails: FunctionComponent<{ entity: PersonEntity }> = ({ entity }) => {

@@ -42,8 +42,8 @@ function createTestGame(timeoutToEnd: number) {
 
 describe('PatrolJob', () => {
 	// @TODO @BUG
-	// This test never finishes if the timeout lands in between some timeouts -- eg. when
-	//    setting it to 10_000
+	//   This test never finishes if the timeout lands in between some timeouts -- eg. when
+	//   setting it to 10_000.
 	// const { game, onStepStart, pathEnd } = createTestGame(10000);
 
 	const { game, onStepStart, pathEnd } = createTestGame(12000);

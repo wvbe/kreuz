@@ -34,15 +34,20 @@ export class AlephDriver extends Driver implements DriverI {
 		);
 
 		// Whenever an entity starts to move, make sure that the "animation" ends at some point too.
-		game.entities
-			.filter((entity): entity is PersonEntity => entity instanceof PersonEntity)
-			.forEach((entity) => {
-				this.$detach.once(
-					entity.$stepStart.on((_destination, duration, done) => {
-						game.time.setTimeout(done, duration);
+		this.$detach.once(
+			game.entities.$add.on((added) =>
+				added
+					.filter((entity): entity is PersonEntity => entity instanceof PersonEntity)
+					.forEach((entity) => {
+						this.$detach.once(
+							entity.$stepStart.on((_destination, duration, done) => {
+								console.log('STEP START');
+								game.time.setTimeout(done, duration);
+							}),
+						);
 					}),
-				);
-			});
+			),
+		);
 
 		return this;
 	}

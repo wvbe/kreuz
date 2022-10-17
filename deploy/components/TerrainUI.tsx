@@ -1,5 +1,5 @@
 import { FunctionComponent, useMemo } from 'react';
-import { Entity, EntityI, PersonEntity, type TerrainI, type TileI } from '@lib';
+import { Collection, Entity, EntityI, PersonEntity, type TerrainI, type TileI } from '@lib';
 import { useWindowSize } from '~/hooks/useWindowSize.ts';
 import { PersonEntityUI } from './PersonEntityUI.tsx';
 
@@ -24,7 +24,7 @@ const Tile: FunctionComponent<{ tile: TileI }> = ({ tile }) => {
 	);
 };
 
-export const TerrainUI: FunctionComponent<{ terrain: TerrainI; entities: EntityI[] }> = ({
+export const TerrainUI: FunctionComponent<{ terrain: TerrainI; entities: Collection<EntityI> }> = ({
 	terrain,
 	entities,
 }) => {
@@ -35,7 +35,7 @@ export const TerrainUI: FunctionComponent<{ terrain: TerrainI; entities: EntityI
 	const entities2 = useMemo(
 		() =>
 			entities
-				.filter((e): e is PersonEntity => e instanceof PersonEntity)
+				.filter<PersonEntity>((e) => e instanceof PersonEntity)
 				.map((entity, i) => <PersonEntityUI key={i} person={entity} />),
 		[],
 	);

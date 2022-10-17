@@ -1,31 +1,31 @@
 import { Driver, PersonEntity, type DriverI, type Game } from '@lib';
 
 export class AlephDriver extends Driver implements DriverI {
-	game: Game;
 	gameSpeed = 1;
 	lastUpdate: number;
-	constructor(game: Game) {
+	constructor() {
 		super();
-		this.game = game;
 		this.lastUpdate = Date.now();
 	}
-	public animate() {
+
+	private animate(game: Game) {
 		if (!this.$$animating.get()) {
 			return;
 		}
 
 		const now = Date.now();
 		const delta = now - this.lastUpdate;
-		this.game.time.steps(delta * this.gameSpeed);
+		game.time.steps(delta * this.gameSpeed);
 		this.lastUpdate = now;
-		setTimeout(() => this.animate(), 10);
+		setTimeout(() => this.animate(game), 10);
 	}
+
 	public attach(game: Game): this {
 		super.attach(game);
 
 		this.$detach.once(
 			this.$start.on(() => {
-				this.animate();
+				this.animate(game);
 
 				return () => {
 					this.stop();

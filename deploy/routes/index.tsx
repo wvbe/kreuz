@@ -6,19 +6,19 @@ import { useEffect, useMemo, useState } from 'react';
 import { AlephDriver } from '../utils/AlephDriver.ts';
 
 export default function Index() {
-	const [driver, setDriver] = useState<null | AlephDriver>(null);
+	const [game, setGame] = useState<null | Game>(null);
 	useEffect(() => {
 		const t = setTimeout(() => {
-			const driver = new AlephDriver(createGeneratedGame());
-			driver.attach(driver.game).start();
+			const { driver, game } = createGeneratedGame(new AlephDriver());
+			driver.start();
 			self.driver = driver;
-			setDriver(driver);
+			setGame(game);
 		}, 10);
 
 		return () => clearTimeout(t);
 	}, []);
-	if (!driver) {
+	if (!game) {
 		return <p>Generating game, please give it a second</p>;
 	}
-	return <GameUI driver={driver} />;
+	return <GameUI game={game} />;
 }

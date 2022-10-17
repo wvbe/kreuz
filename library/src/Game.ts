@@ -29,7 +29,7 @@ export default class Game {
 	 * EVENTED VALUES
 	 */
 
-	constructor(seed: SeedI, terrain: TerrainI, entities: EntityI[]) {
+	constructor(seed: SeedI, terrain: TerrainI) {
 		this.seed = seed;
 		this.terrain = terrain;
 
@@ -43,7 +43,6 @@ export default class Game {
 				entity.destroy();
 			}),
 		);
-		this.entities.add(...entities);
 	}
 
 	/**

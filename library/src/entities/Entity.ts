@@ -8,6 +8,11 @@ import { type CoordinateI } from '../types.ts';
 import { type EntityI } from './types.ts';
 
 export class Entity implements EntityI {
+	/**
+	 * Unique identifier
+	 *
+	 * Probably more useful as a seed than anything else.
+	 */
 	public readonly id: string;
 
 	public $$location: EventedValue<CoordinateI>;
@@ -64,28 +69,6 @@ export class Entity implements EntityI {
 	public destroy() {
 		this.$destroy.emit();
 	}
-
-	// protected createGeometries(): GeometryI | GeometryI[] {
-	// 	throw new Error('Not implemented');
-	// }
-
-	// public createObject(material = MATERIAL_PERSONS) {
-	// 	const _geometries = this.createGeometries(),
-	// 		geometries = Array.isArray(_geometries) ? _geometries : [_geometries];
-
-	// 	const group = new THREE.Group();
-	// 	geometries.forEach((geo) => {
-	// 		const mesh = new THREE.Mesh(geo, material);
-	// 		mesh.userData.entity = this;
-	// 		group.add(mesh);
-	// 		const edges = new THREE.EdgesGeometry(geo);
-	// 		const line = new THREE.LineSegments(edges, MATERIAL_LINES);
-	// 		group.add(line);
-	// 	});
-
-	// 	return group;
-	// }
-
 	/**
 	 * Serialize for a save game JSON
 	 */

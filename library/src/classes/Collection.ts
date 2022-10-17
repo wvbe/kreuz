@@ -53,6 +53,9 @@ export class Collection<T> {
 	public find(filter: (item: T, index: number, array: T[]) => boolean): T | undefined {
 		return this.#collection.find(filter);
 	}
+	public slice(start?: number, end?: number): T[] {
+		return this.#collection.slice(start, end);
+	}
 
 	get length() {
 		return this.#collection.length;

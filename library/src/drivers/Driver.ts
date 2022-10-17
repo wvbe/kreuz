@@ -4,6 +4,8 @@ import Game from '../Game.ts';
 import { DriverI } from './types.ts';
 
 export class Driver implements DriverI {
+	public readonly game = null;
+
 	/**
 	 * @deprecated This value should probably be private to the driver, therefore needs to be moved.
 	 */
@@ -31,6 +33,10 @@ export class Driver implements DriverI {
 		this.$detach.emit();
 	}
 
+	/**
+	 * @TODO should not return a promise, more like return destroyer
+	 * @TODO invent .run() in case you want a promise-based async?
+	 */
 	start(): Promise<void> {
 		if (this.$$animating.get()) {
 			throw new Error('Animation already started');

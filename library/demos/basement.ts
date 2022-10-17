@@ -9,7 +9,7 @@
 import { Game, generateGridTerrainFromAscii, PersonEntity, PersonNeedId } from '@lib';
 import { Demo } from './types.ts';
 
-const demo: Demo = () => {
+const demo: Demo = (driver) => {
 	const terrain = generateGridTerrainFromAscii(`
 		XXXXXXXXXXXX
 		XXXXXXXXXXXX
@@ -20,12 +20,14 @@ const demo: Demo = () => {
 		XXXXXXXXXXXX
 	`);
 
-	const entity = new PersonEntity('1', terrain.getTileClosestToXy(0, 0));
 	// entity.doJob(
 	// 	new PatrolJob(entity, [terrain.getTileClosestToXy(0, 2), terrain.getTileClosestToXy(2, 2)]),
 	// );
-	const game = new Game('1', terrain, [entity]);
+	const game = new Game('1', terrain);
+	driver.attach(game);
 
+	const entity = new PersonEntity('1', terrain.getTileClosestToXy(0, 0));
+	game.entities.add(entity);
 	// entity.needs.food.onBetween(0, 0.1, () => {
 	// 	console.log(`${entity.label} is getting very hungry, ${entity.needs.food.get()}`);
 	// });
@@ -77,7 +79,7 @@ const demo: Demo = () => {
 			}, 0),
 		);
 
-	return game;
+	return { driver, game };
 };
 
 export default demo;

@@ -4,8 +4,9 @@ import createGeneratorDemo from './generator.ts';
 import { TestDriver } from '@lib';
 
 describe('Default generator', () => {
-	const game = createGeneratorDemo();
-	const driver = new TestDriver().attach(game).start();
+	const driver = new TestDriver();
+	const game = createGeneratorDemo(driver);
+	driver.steps(100000);
 	it('The game finishes by itself', async () => {
 		game.time.steps(1000);
 		expect(game.time.getNextEventAbsoluteTime()).toBeTruthy();

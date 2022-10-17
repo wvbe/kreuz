@@ -75,6 +75,7 @@ export class TimeLine extends EventedValue<number> {
 	 * will return to you the amount of time that was left on the timeout.
 	 */
 	public setTimeout(callback: CallbackFn, delay: number): DestroyerFn<number> {
+		// console.trace('TIMEOUT', delay);
 		if (delay === Infinity || delay <= 0) {
 			throw new Error('Timeout delay must be between 0 and Infinity.');
 		}

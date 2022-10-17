@@ -31,6 +31,7 @@ export class TestDriver extends Driver implements DriverI {
 						await new Promise((res) => setTimeout(res, this.options.delayBetweenJumps));
 					}
 				}
+				console.log('End of the time loop');
 				this.stop();
 			}),
 		);

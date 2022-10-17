@@ -3,7 +3,7 @@ import Logger from '../classes/Logger.ts';
 import { Path } from '../classes/Path.ts';
 import { Random } from '../classes/Random.ts';
 import { FIRST_NAMES_F, FIRST_NAMES_M } from '../constants/names.tsx';
-import { PersonNeedId, PersonNeedMap } from '../constants/needs.ts';
+import { PersonNeedId, PersonNeedMap, PERSON_NEEDS } from '../constants/needs.ts';
 import type Game from '../Game.ts';
 import { CallbackFn, CoordinateI, TileI } from '../types.ts';
 import { Entity } from './Entity.ts';
@@ -66,6 +66,8 @@ export class PersonEntity extends Entity implements EntityPersonI {
 		this.$stepEnd.on((loc) => {
 			this.$$location.set(loc);
 		});
+
+		this.$destroy.once(() => PERSON_NEEDS.forEach((n) => this.needs[n.id].clear()));
 	}
 
 	/**

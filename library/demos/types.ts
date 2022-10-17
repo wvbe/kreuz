@@ -1,6 +1,9 @@
-import { type Game } from '@lib';
+import { type Game, type DriverI } from '@lib';
 
-export type Demo = () => Game;
+export type Demo<D extends DriverI = DriverI> = (driver: D) => {
+	driver: D;
+	game: Game;
+};
 
 export type GameDistance = number;
 

@@ -5,7 +5,8 @@ import { TestDriver } from '@lib';
 
 describe('"The basement"', () => {
 	it('The game finishes by itself', async () => {
-		expect(await new TestDriver().attach(createBasementDemo()).start()).toBeUndefined();
+		const { driver } = createBasementDemo(new TestDriver());
+		expect(await driver.start()).toBeUndefined();
 	});
 });
 

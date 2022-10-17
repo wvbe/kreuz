@@ -14,10 +14,6 @@ export interface DriverI {
 	 */
 	$start: Event<[]>;
 	/**
-	 * Triggers whenever the driver animation loop is stopped.
-	 */
-	$stop: Event<[]>;
-	/**
 	 * Associate a game with this driver, meaning that you'll probably want to set a lot
 	 * of event handlers.
 	 */

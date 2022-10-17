@@ -40,7 +40,7 @@ export default class Game {
 		);
 		this.entities.$remove.on((removed) =>
 			removed.forEach((entity) => {
-				entity.destroy();
+				entity.detach();
 			}),
 		);
 	}

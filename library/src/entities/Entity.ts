@@ -17,7 +17,7 @@ export class Entity implements EntityI {
 
 	public $$location: EventedValue<CoordinateI>;
 
-	protected $destroy = new Event(`Entity $destroy`);
+	public $detach = new Event(`Entity $destroy`);
 
 	/**
 	 * Used for generating a save
@@ -51,7 +51,7 @@ export class Entity implements EntityI {
 	}
 
 	public attach(game: Game): void {
-		this.$destroy.once(
+		this.$detach.once(
 			game.$start.on(() => {
 				this.job?.start(game);
 			}),
@@ -60,14 +60,14 @@ export class Entity implements EntityI {
 
 	public doJob(job: JobI) {
 		this.job = job;
-		this.$destroy.once(() => {
+		this.$detach.once(() => {
 			// @TODO handle the case where job changed in the mean time?
 			job.destroy();
 		});
 	}
 
-	public destroy() {
-		this.$destroy.emit();
+	public detach() {
+		this.$detach.emit();
 	}
 	/**
 	 * Serialize for a save game JSON

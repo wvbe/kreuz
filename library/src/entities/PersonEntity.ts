@@ -67,7 +67,7 @@ export class PersonEntity extends Entity implements EntityPersonI {
 			this.$$location.set(loc);
 		});
 
-		this.$destroy.once(() => PERSON_NEEDS.forEach((n) => this.needs[n.id].clear()));
+		this.$detach.once(() => PERSON_NEEDS.forEach((n) => this.needs[n.id].clear()));
 	}
 
 	/**
@@ -79,7 +79,8 @@ export class PersonEntity extends Entity implements EntityPersonI {
 		super.attach(game);
 
 		Object.keys(this.needs).forEach((key) => {
-			this.$destroy.once(this.needs[key as PersonNeedId].attach(game));
+			this.needs[key as PersonNeedId].attach(game);
+			this.$detach.once(() => this.needs[key as PersonNeedId].detach());
 		});
 	}
 
@@ -109,6 +110,7 @@ export class PersonEntity extends Entity implements EntityPersonI {
 			this.$pathEnd.emit();
 			return;
 		}
+
 		const unlisten = this.$stepEnd.on(() => {
 			const nextStep = path.shift();
 

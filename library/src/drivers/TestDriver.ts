@@ -1,5 +1,6 @@
 import { PersonEntity } from '../entities/PersonEntity.ts';
 import Game from '../Game.ts';
+import { DestroyerFn } from '../types.ts';
 import { Driver } from './Driver.ts';
 import { DriverI } from './types.ts';
 
@@ -37,19 +38,26 @@ export class TestDriver extends Driver implements DriverI {
 		);
 
 		// Whenever an entity starts to move, make sure that the "animation" ends at some point too.
-		game.entities
-			.filter<PersonEntity>((entity) => entity instanceof PersonEntity)
-			.forEach((entity) => {
-				this.$detach.once(
-					entity.$stepStart.on((_destination, duration, done) => {
-						game.time.setTimeout(() => {
-							// @TODO This should be a method on the entity, so that foreign code doesn't
-							// need to emit an entity event.
-							done();
-						}, duration);
+		this.$detach.once(
+			game.entities.$add.on((added) =>
+				added
+					.filter((entity): entity is PersonEntity => entity instanceof PersonEntity)
+					.forEach((entity) => {
+						this.$detach.once(
+							entity.$stepStart.on((_destination, duration, done) => {
+								// The step timeout is cancelled when the entity is destroyed. When the step
+								// finishes, that timeout cancellor is cancelled too.
+								let cancelDestroy: DestroyerFn;
+								const cancelStep = game.time.setTimeout(() => {
+									cancelDestroy();
+									done();
+								}, duration);
+								cancelDestroy = entity.$detach.once(cancelStep);
+							}),
+						);
 					}),
-				);
-			});
+			),
+		);
 
 		return this;
 	}

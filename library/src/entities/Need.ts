@@ -17,6 +17,8 @@ import { type DestroyerFn } from '../types.ts';
 export class Need extends EventedNumericValue {
 	#decay: number;
 
+	public $detach = new Event(`Need $detach`);
+
 	public label: string;
 
 	public constructor(initial: number, label: string, decayPerTick: number, debug?: boolean) {
@@ -54,7 +56,7 @@ export class Need extends EventedNumericValue {
 	/**
 	 * Make aware of game and time.
 	 */
-	public attach(game: Game): DestroyerFn {
+	public attach(game: Game): void {
 		// We want an update every {{granularity}} of the 0-1 range that this need is on.
 		const granularity = 0.001;
 
@@ -80,7 +82,7 @@ export class Need extends EventedNumericValue {
 			};
 		};
 
-		this.on((value) => {
+		const stopListeningForValueChanges = this.on((value) => {
 			if (value <= 0 && cancelInterval) {
 				cancelInterval();
 			} else if (!cancelInterval && value > 0) {
@@ -95,9 +97,14 @@ export class Need extends EventedNumericValue {
 
 		setTimeout(granularity / this.#decay);
 
-		return () => {
+		this.$detach.once(() => {
+			stopListeningForValueChanges();
 			stopListeningForDecayChanges();
 			cancelInterval?.();
-		};
+		});
+	}
+
+	public detach() {
+		this.$detach.emit();
 	}
 }

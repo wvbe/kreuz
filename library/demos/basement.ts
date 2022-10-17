@@ -28,14 +28,6 @@ const demo: Demo = (driver) => {
 
 	const entity = new PersonEntity('1', terrain.getTileClosestToXy(0, 0));
 	game.entities.add(entity);
-	// entity.needs.food.onBetween(0, 0.1, () => {
-	// 	console.log(`${entity.label} is getting very hungry, ${entity.needs.food.get()}`);
-	// });
-
-	// game.time.setTimeout(() => {
-	// 	entity.job?.destroy();
-	// }, 10000);
-
 	const NEEDS: Record<PersonNeedId, { upUntil: number; label: string | null }[]> = {
 		food: [
 			{ upUntil: 5 / 100, label: 'literally starving' },

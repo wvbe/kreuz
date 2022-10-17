@@ -48,7 +48,7 @@ export interface EntityI {
 	/**
 	 * Undoes any event handling that this entity does.
 	 */
-	destroy(): void;
+	detach(): void;
 
 	/**
 	 * Set or change the job that this entity is currently on.

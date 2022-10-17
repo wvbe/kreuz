@@ -5,7 +5,7 @@ import Game from '../Game.ts';
 import { generateGridTerrainFromAscii } from '../terrain/utils.ts';
 import { PatrolJob } from './PatrolJob.ts';
 
-describe('PatrolJob', () => {
+function createTestGame(timeoutToEnd: number) {
 	const terrain = generateGridTerrainFromAscii(`
 		XXX
 		XXX
@@ -29,11 +29,27 @@ describe('PatrolJob', () => {
 
 	game.time.setTimeout(() => {
 		// Remove all future events, bringing the game loop to an end
-		game.time.clear();
-	}, 10000);
+		// game.time.clear();
+		console.log('-------------');
+		game.entities.forEach((entity) => entity.detach());
+		console.log(game.time.stringifyTimers());
+		console.log(game.time.getNextEventAbsoluteTime());
+	}, timeoutToEnd);
 
 	driver.start();
+	return { game, onStepStart, pathEnd };
+}
+
+describe('PatrolJob', () => {
+	// @TODO @BUG
+	// This test never finishes if the timeout lands in between some timeouts -- eg. when
+	//    setting it to 10_000
+	// const { game, onStepStart, pathEnd } = createTestGame(10000);
+
+	const { game, onStepStart, pathEnd } = createTestGame(12000);
+
 	it('walked around at least a few times', () => {
+		// expect(game.time.now).toBe(10000);
 		expect(onStepStart).toHaveBeenCalledTimes(6);
 		expect(pathEnd).toHaveBeenCalledTimes(3);
 	});
@@ -42,4 +58,4 @@ describe('PatrolJob', () => {
 	});
 });
 
-run();
+// run();

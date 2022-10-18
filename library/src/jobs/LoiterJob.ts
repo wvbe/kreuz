@@ -2,9 +2,10 @@ import { Random } from '../classes/Random.ts';
 import Game from '../Game.ts';
 import { type JobI } from './types.ts';
 import { Job } from './Job.ts';
+import { PersonEntity } from '../entities/PersonEntity.ts';
 import { type DestroyerFn } from '../types.ts';
 
-export class LoiterJob extends Job implements JobI {
+export class LoiterJob extends Job<PersonEntity> implements JobI {
 	private readonly destroyers: DestroyerFn[] = [];
 
 	// The minimum and maximum amounts of ms before considering to move again, after having walked

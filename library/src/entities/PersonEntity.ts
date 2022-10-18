@@ -7,6 +7,7 @@ import { PersonNeedId, PersonNeedMap, PERSON_NEEDS } from '../constants/needs.ts
 import type Game from '../Game.ts';
 import { CallbackFn, CoordinateI, TileI } from '../types.ts';
 import { Entity } from './Entity.ts';
+import { Inventory } from '../inventory/Inventory.ts';
 import { Need } from './Need.ts';
 import { type EntityPersonI } from './types.ts';
 
@@ -27,6 +28,8 @@ export class PersonEntity extends Entity implements EntityPersonI {
 	public readonly $stepEnd = new Event<[CoordinateI]>('PersonEntity $stepEnd');
 
 	public readonly userData: { gender: 'm' | 'f'; firstName: string };
+
+	public readonly inventory = new Inventory(6);
 
 	public readonly needs = PERSON_NEEDS.reduce<PersonNeedMap>(
 		(map, config) => ({

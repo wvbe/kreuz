@@ -3,8 +3,9 @@ import Game from '../Game.ts';
 import { type JobI } from './types.ts';
 import { Job } from './Job.ts';
 import { DestroyerFn, TileI } from '../types.ts';
+import { PersonEntity } from '../entities/PersonEntity.ts';
 
-export class PatrolJob extends Job implements JobI {
+export class PatrolJob extends Job<PersonEntity> implements JobI {
 	private readonly destroyers: DestroyerFn[] = [];
 	waypoints: TileI[];
 	waypointIndex: number;

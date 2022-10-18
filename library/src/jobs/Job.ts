@@ -1,11 +1,11 @@
-import { EntityPersonI } from '../entities/types.ts';
+import { EntityI, EntityPersonI } from '../entities/types.ts';
 import Game from '../Game.ts';
 import { type JobI } from './types.ts';
 
-export class Job implements JobI {
-	protected entity: EntityPersonI;
+export class Job<EntityGeneric extends EntityI> implements JobI {
+	protected entity: EntityGeneric;
 
-	constructor(entity: EntityPersonI) {
+	constructor(entity: EntityGeneric) {
 		this.entity = entity;
 	}
 
@@ -20,6 +20,7 @@ export class Job implements JobI {
 		// @TODO
 		return true;
 	}
+
 	start(_game: Game) {
 		// Logger.log(`Start ${this.constructor.name}`);
 	}

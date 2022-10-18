@@ -5,6 +5,7 @@ import { type Material } from './Material.ts';
  */
 export interface MaterialI {
 	label: string;
+	symbol: string;
 	/**
 	 * The amount of materials that fits in one stack. A voluminous material has a smaller stack size.
 	 */

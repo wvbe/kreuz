@@ -23,8 +23,6 @@ export default class Game {
 
 	public readonly $stop = new Event('Game $stop');
 
-	public readonly $destroy = new Event('Game $destroy');
-
 	/*
 	 * EVENTED VALUES
 	 */
@@ -58,10 +56,6 @@ export default class Game {
 
 	public stop() {
 		this.$stop.emit();
-	}
-
-	destroy() {
-		this.$destroy.emit();
 	}
 
 	/**

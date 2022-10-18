@@ -2,8 +2,8 @@ import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.
 import { Inventory } from './Inventory.ts';
 import { Material } from './Material.ts';
 
-const test1 = new Material('wheat', 25);
-const test2 = new Material('barley', 33);
+const test1 = new Material('wheat', { symbol: '🌾', stackSize: 25 });
+const test2 = new Material('barley', { symbol: '𐂏', stackSize: 33 });
 
 describe('Inventory', () => {
 	it('.availableOf()', () => {

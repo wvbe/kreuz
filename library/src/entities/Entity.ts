@@ -17,7 +17,7 @@ export class Entity implements EntityI {
 
 	public $$location: EventedValue<CoordinateI>;
 
-	public $detach = new Event(`Entity $destroy`);
+	public $detach = new Event(`Entity $detach`);
 
 	/**
 	 * Used for generating a save

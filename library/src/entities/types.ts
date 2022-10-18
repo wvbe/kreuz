@@ -97,7 +97,7 @@ export interface EntityPersonI extends EntityI {
 	 * example:
 	 *
 	 *   entity.$stepStart.on((destination, duration, done) => {
-	 *      console.log(`Entity starts stepping towards ${destination}`);
+	 *      // Entity starts stepping towards ${destination}
 	 *      game.time.setTimeout(done, duration);
 	 *   });
 	 */

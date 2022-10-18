@@ -28,9 +28,13 @@ cd library && deno task test
     etc. The timeline is an instance of an `EventedValue` - **EventedValue** is a value that
     sometimes updates, and emits an event when it does. Ther
     are other types of evented values too.
-  - **Entities** are things that interact and can be interacted with, such as "people" or "places".
+  - **Entities** are things that interact and can be interacted with, such as "people" or "buildings".
   - **Jobs** are activities that some entities engage in. For example, a person might patrol an
     area or just loiter around.
+  - **Material** is a type of substance that could be used in quantities during a blueprint, or if
+    you have a quantity of `Material` it can be consumed.
+  - **Blueprint** are the immutable instructions to create a quantity of `Material` out of other
+    `Material`s.
 - **Drivers** attach the game to a rendering engine, like ThreeJS, a HTML page, Canvas, or your
   terminal. In many cases the driver has some control over how time progresses (eg. by using
   `requestAnimationFrame` or waiting for user input).

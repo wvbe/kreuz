@@ -1,8 +1,9 @@
+import { Attachable } from '../classes/Attachable.ts';
 import { type Event } from '../classes/Event.ts';
 import { type EventedValue } from '../classes/EventedValue.ts';
 import type Game from '../Game.ts';
 
-export interface DriverI {
+export interface DriverI extends Attachable {
 	/**
 	 * Triggers whenever the driver animation loop is started or stopped.
 	 *
@@ -17,11 +18,11 @@ export interface DriverI {
 	 * Associate a game with this driver, meaning that you'll probably want to set a lot
 	 * of event handlers.
 	 */
-	attach(game: Game): this;
+	// attach(game: Game): this;
 	/**
 	 * Remove any association between the game and this driver.
 	 */
-	detach(): void;
+	// detach(): void;
 	/**
 	 * Start the concept of time, and any events or animation following it.
 	 *

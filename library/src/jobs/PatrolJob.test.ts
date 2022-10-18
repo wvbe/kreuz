@@ -28,12 +28,7 @@ function createTestGame(timeoutToEnd: number) {
 	);
 
 	game.time.setTimeout(() => {
-		// Remove all future events, bringing the game loop to an end
-		// game.time.clear();
-		console.log('-------------');
 		game.entities.forEach((entity) => entity.detach());
-		console.log(game.time.stringifyTimers());
-		console.log(game.time.getNextEventAbsoluteTime());
 	}, timeoutToEnd);
 
 	driver.start();

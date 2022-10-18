@@ -7,31 +7,7 @@ import { Terrain } from '../terrain/Terrain.ts';
 import { Need } from './Need.ts';
 
 describe('Need', () => {
-	// it('.setDecay()', () => {
-	// 	const game = new Game('test', new Terrain(0, []), []);
-	// 	const need = new Need(1, 'test', 1 / 1000);
-	// 	need.attach(game);
-	// 	const onBetween = mock.fn();
-	// 	need.onBetween(0, 0.1, onBetween);
-
-	// 	//    First timer wait to expire = (1000 * 0.9) = 900
-
-	// 	game.time.steps(750);
-	// 	expect(onBetween).toHaveBeenCalledTimes(0);
-
-	// 	//    Time left on timer = firstTimerWaitToExpire - 750   = 150
-
-	// 	need.setDecay(1 / 2000);
-
-	// 	// Decay at half the speed, so double the remaining timer
-	// 	//    New time left on timer = time left on timer * 2     = 300
-
-	// 	game.time.steps(299);
-	// 	expect(onBetween).toHaveBeenCalledTimes(0);
-	// 	game.time.steps(1);
-	// 	expect(onBetween).toHaveBeenCalledTimes(1);
-	// 	console.log('Derp');
-	// });
+	// @TODO test that setting the decay also resets timers
 	it('will not keep listening if the need is already zero', () => {
 		const game = new Game('test', new Terrain(0, []), []);
 		const need = new Need('test', 1, 'test', 1 / 4);

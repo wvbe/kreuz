@@ -1,3 +1,4 @@
+import Logger from '../classes/Logger.ts';
 import { PersonEntity } from '../entities/PersonEntity.ts';
 import Game from '../Game.ts';
 import { DestroyerFn } from '../types.ts';
@@ -32,7 +33,7 @@ export class TestDriver extends Driver implements DriverI {
 						await new Promise((res) => setTimeout(res, this.options.delayBetweenJumps));
 					}
 				}
-				console.log('End of the time loop');
+				Logger.log('End of the time loop');
 				this.stop();
 			}),
 		);
@@ -52,7 +53,7 @@ export class TestDriver extends Driver implements DriverI {
 									cancelDestroy();
 									done();
 								}, duration);
-								cancelDestroy = entity.$detach.once(cancelStep);
+								cancelDestroy = this.$detach.once(cancelStep);
 							}),
 						);
 					}),

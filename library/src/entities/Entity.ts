@@ -1,13 +1,13 @@
-import { Coordinate } from '../terrain/Coordinate.ts';
-import { Event } from '../classes/Event.ts';
+import { Attachable } from '../classes/Attachable.ts';
 import { EventedValue } from '../classes/EventedValue.ts';
 import type Game from '../Game.ts';
 import { type JobI } from '../jobs/types.ts';
+import { Coordinate } from '../terrain/Coordinate.ts';
 import { type SaveEntityJson } from '../types-savedgame.ts';
 import { type CoordinateI } from '../types.ts';
 import { type EntityI } from './types.ts';
 
-export class Entity implements EntityI {
+export class Entity extends Attachable<[Game]> implements EntityI {
 	/**
 	 * Unique identifier
 	 *
@@ -16,8 +16,6 @@ export class Entity implements EntityI {
 	public readonly id: string;
 
 	public $$location: EventedValue<CoordinateI>;
-
-	public $detach = new Event(`Entity $detach`);
 
 	/**
 	 * Used for generating a save
@@ -30,8 +28,18 @@ export class Entity implements EntityI {
 	public job?: JobI;
 
 	constructor(id: string, location: CoordinateI) {
+		super();
+
 		this.id = id;
 		this.$$location = new EventedValue(Coordinate.clone(location), 'Entity#$$location');
+
+		this.$attach.on((game) => {
+			this.$detach.once(
+				game.$start.on(() => {
+					this.job?.attach(game);
+				}),
+			);
+		});
 	}
 
 	public get label(): string {
@@ -50,25 +58,14 @@ export class Entity implements EntityI {
 		return this.label;
 	}
 
-	public attach(game: Game): void {
-		this.$detach.once(
-			game.$start.on(() => {
-				this.job?.start(game);
-			}),
-		);
-	}
-
 	public doJob(job: JobI) {
 		this.job = job;
 		this.$detach.once(() => {
 			// @TODO handle the case where job changed in the mean time?
-			job.destroy();
+			job.detach();
 		});
 	}
 
-	public detach() {
-		this.$detach.emit();
-	}
 	/**
 	 * Serialize for a save game JSON
 	 */

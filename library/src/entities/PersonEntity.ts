@@ -71,19 +71,17 @@ export class PersonEntity extends Entity implements EntityPersonI {
 		});
 
 		this.$detach.once(() => PERSON_NEEDS.forEach((n) => this.needs[n.id].clear()));
-	}
 
-	/**
-	 * Attach this entity to the game loop.
-	 *
-	 * Will register to undo all of that when the entity detaches.
-	 */
-	public attach(game: Game): void {
-		super.attach(game);
-
-		Object.keys(this.needs).forEach((key) => {
-			this.needs[key as PersonNeedId].attach(game);
-			this.$detach.once(() => this.needs[key as PersonNeedId].detach());
+		/**
+		 * Attach this entity to the game loop.
+		 *
+		 * Will register to undo all of that when the entity detaches.
+		 */
+		this.$attach.on((game) => {
+			Object.keys(this.needs).forEach((key) => {
+				this.needs[key as PersonNeedId].attach(game);
+				this.$detach.once(() => this.needs[key as PersonNeedId].detach());
+			});
 		});
 	}
 

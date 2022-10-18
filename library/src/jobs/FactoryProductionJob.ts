@@ -20,13 +20,4 @@ export class FactoryProductionJob extends Job<FactoryBuildingEntity> implements 
 	get label() {
 		return this.#blueprint.name;
 	}
-
-	public start(game: Game) {
-		super.start(game);
-	}
-
-	destroy() {
-		super.destroy();
-		this.destroyers.forEach((destroy) => destroy());
-	}
 }

@@ -12,14 +12,6 @@ enum FactoryState {
 export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 	public blueprint: Blueprint | null = null;
 
-	public attach(game: Game) {
-		this.$detach.once(
-			this.$$blueprint.on((blueprint) => {
-				// @TODO start evaluating if we can run the blueprint.
-			}),
-		);
-	}
-
 	protected readonly $$state = new EventedValue<FactoryState>(
 		FactoryState.IDLE,
 		'FactoryBuildingEntity $$state',
@@ -29,6 +21,18 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 		null,
 		'FactoryBuildingEntity $$blueprint',
 	);
+
+	public constructor(id: string, location: CoordinateI, parameters: BuildingParameters) {
+		super(id, location, parameters);
+
+		this.$attach.on((game) => {
+			this.$detach.once(
+				this.$$blueprint.on((blueprint) => {
+					// @TODO start evaluating if we can run the blueprint.
+				}),
+			);
+		});
+	}
 
 	private isBusy() {
 		return this.$$state.get() === FactoryState.BUSY;

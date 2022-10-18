@@ -19,21 +19,26 @@ export class LoiterJob extends Job<PersonEntity> implements JobI {
 	// If the entity chooses to walk, its no more than this amount of times
 	private walkMaxDistance = 3;
 
+	constructor(entity: PersonEntity) {
+		super(entity);
+		this.setEventListenersToGame();
+	}
+
 	get label() {
 		return `Wandering around aimlessly…`;
 	}
-	public start(game: Game) {
-		super.start(game);
-		let steps = 0;
+	private setEventListenersToGame() {
 		let clearTimer: DestroyerFn | null = null;
-		const doTimeout = () => {
+
+		const doTimeout = (game: Game) => {
 			if (clearTimer) {
 				throw new Error('Timer for LoiterJob already exists');
 			}
+			let steps = 0;
 			clearTimer = game.time.setTimeout(() => {
 				clearTimer = null;
 				if (Random.boolean([this.entity.id, 'strp', steps], this.walkChanceOnRoll)) {
-					doTimeout();
+					doTimeout(game);
 					return;
 				}
 				steps++;
@@ -45,18 +50,10 @@ export class LoiterJob extends Job<PersonEntity> implements JobI {
 			}, this.walkMinWait + Random.float(this.entity.id, 'roam-delay', steps) * (this.walkMaxWait - this.walkMinWait));
 		};
 
-		this.destroyers.push(this.entity.$pathEnd.on(doTimeout));
-		this.destroyers.push(() => {
-			if (clearTimer) {
-				clearTimer();
-			}
+		this.$attach.on((game) => {
+			doTimeout(game);
+			this.$detach.once(this.entity.$pathEnd.on(() => doTimeout(game)));
+			this.$detach.once(() => clearTimer?.());
 		});
-
-		doTimeout();
-	}
-
-	destroy() {
-		super.destroy();
-		this.destroyers.forEach((destroy) => destroy());
 	}
 }

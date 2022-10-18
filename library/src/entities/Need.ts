@@ -1,3 +1,4 @@
+import { Attachable } from '../classes/Attachable.ts';
 import { Event } from '../classes/Event.ts';
 import { EventedNumericValue } from '../classes/EventedNumericValue.ts';
 import type Game from '../Game.ts';
@@ -15,9 +16,25 @@ import { type DestroyerFn } from '../types.ts';
  * it reaches a range that is being watched with Need#onBetween/Need#onceBetween.
  */
 export class Need extends EventedNumericValue {
-	#decay: number;
+	/*
+	 * Informally implements the Attachable interface as well.
+	 */
 
-	public $detach = new Event(`Need $detach`);
+	protected $attach = new Event<[Game]>(`Entity $attach`);
+	public attach(game: Game) {
+		this.$attach.emit(game);
+	}
+
+	protected $detach = new Event(`Entity $detach`);
+	public detach() {
+		this.$detach.emit();
+	}
+
+	/*
+	 * NEED
+	 */
+
+	#decay: number;
 
 	public readonly id: string;
 
@@ -34,6 +51,57 @@ export class Need extends EventedNumericValue {
 		this.id = id;
 		this.label = label;
 		this.#decay = decayPerTick;
+
+		/**
+		 * Make aware of game and time.
+		 */
+		this.$attach.on((game) => {
+			// We want an update every {{granularity}} of the 0-1 range that this need is on.
+			const granularity = 0.001;
+
+			// If cancelInterval is null, the system is not updating at an interval.
+			// Calling cancelInterval returns the amount of time left on the last timeout.
+			let cancelInterval: DestroyerFn<number> | null = null;
+
+			const setTimeout = (delay: number) => {
+				const lastTime = game.time.now;
+
+				const cancelTimeout = game.time.setTimeout(() => {
+					const timePassed = game.time.now - lastTime;
+					setTimeout(granularity / this.#decay);
+					this.applyDecay(timePassed);
+					// Apply decay _after_ setting new timeout, so that an event listener can unset the
+					// timeout again if the value is zero
+				}, delay);
+
+				cancelInterval = () => {
+					const timeLeft = cancelTimeout();
+					cancelInterval = null;
+					return timeLeft;
+				};
+			};
+
+			const stopListeningForValueChanges = this.on((value) => {
+				if (value <= 0 && cancelInterval) {
+					cancelInterval();
+				} else if (!cancelInterval && value > 0) {
+					// If interval was disabled but a value is "started up" again, set the timeout too
+					setTimeout(granularity / this.#decay);
+				}
+			});
+
+			const stopListeningForDecayChanges = this.$recalibrate.on(() => {
+				setTimeout(cancelInterval?.() || granularity / this.#decay);
+			});
+
+			setTimeout(granularity / this.#decay);
+
+			this.$detach.once(() => {
+				stopListeningForValueChanges();
+				stopListeningForDecayChanges();
+				cancelInterval?.();
+			});
+		});
 	}
 
 	/**
@@ -61,59 +129,4 @@ export class Need extends EventedNumericValue {
 	 * the time elapsed in the cancelled timeout -- or more precisely at which decay rate.
 	 */
 	$recalibrate = new Event<[number]>('Need $recalibrate');
-
-	/**
-	 * Make aware of game and time.
-	 */
-	public attach(game: Game): void {
-		// We want an update every {{granularity}} of the 0-1 range that this need is on.
-		const granularity = 0.001;
-
-		// If cancelInterval is null, the system is not updating at an interval.
-		// Calling cancelInterval returns the amount of time left on the last timeout.
-		let cancelInterval: DestroyerFn<number> | null = null;
-
-		const setTimeout = (delay: number) => {
-			const lastTime = game.time.now;
-
-			const cancelTimeout = game.time.setTimeout(() => {
-				const timePassed = game.time.now - lastTime;
-				setTimeout(granularity / this.#decay);
-				this.applyDecay(timePassed);
-				// Apply decay _after_ setting new timeout, so that an event listener can unset the
-				// timeout again if the value is zero
-			}, delay);
-
-			cancelInterval = () => {
-				const timeLeft = cancelTimeout();
-				cancelInterval = null;
-				return timeLeft;
-			};
-		};
-
-		const stopListeningForValueChanges = this.on((value) => {
-			if (value <= 0 && cancelInterval) {
-				cancelInterval();
-			} else if (!cancelInterval && value > 0) {
-				// If interval was disabled but a value is "started up" again, set the timeout too
-				setTimeout(granularity / this.#decay);
-			}
-		});
-
-		const stopListeningForDecayChanges = this.$recalibrate.on(() => {
-			setTimeout(cancelInterval?.() || granularity / this.#decay);
-		});
-
-		setTimeout(granularity / this.#decay);
-
-		this.$detach.once(() => {
-			stopListeningForValueChanges();
-			stopListeningForDecayChanges();
-			cancelInterval?.();
-		});
-	}
-
-	public detach() {
-		this.$detach.emit();
-	}
 }

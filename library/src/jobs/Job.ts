@@ -1,11 +1,13 @@
+import { Attachable } from '../classes/Attachable.ts';
 import { EntityI, EntityPersonI } from '../entities/types.ts';
 import Game from '../Game.ts';
 import { type JobI } from './types.ts';
 
-export class Job<EntityGeneric extends EntityI> implements JobI {
+export class Job<EntityGeneric extends EntityI> extends Attachable<[Game]> implements JobI {
 	protected entity: EntityGeneric;
 
 	constructor(entity: EntityGeneric) {
+		super();
 		this.entity = entity;
 	}
 
@@ -19,13 +21,5 @@ export class Job<EntityGeneric extends EntityI> implements JobI {
 	isAvailable(): boolean {
 		// @TODO
 		return true;
-	}
-
-	start(_game: Game) {
-		// Logger.log(`Start ${this.constructor.name}`);
-	}
-
-	destroy() {
-		// Logger.log(`Destroy ${this.constructor.name}`);
 	}
 }

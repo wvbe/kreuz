@@ -1,9 +1,10 @@
+import { Attachable } from '../classes/Attachable.ts';
 import { Event } from '../classes/Event.ts';
 import { EventedValue } from '../classes/EventedValue.ts';
 import Game from '../Game.ts';
 import { DriverI } from './types.ts';
 
-export class Driver implements DriverI {
+export class Driver extends Attachable<[Game]> implements DriverI {
 	public readonly game = null;
 
 	/**
@@ -12,25 +13,21 @@ export class Driver implements DriverI {
 	public $$animating = new EventedValue<boolean>(false, 'Driver $$animating');
 	public readonly $start = new Event('Driver $start');
 	public readonly $stop = new Event('Driver $stop');
-	public readonly $attach = new Event('Driver $attach');
-	public readonly $detach = new Event('Driver $detach');
+	constructor() {
+		super();
 
-	public attach(game: Game): this {
-		this.$attach.emit();
+		this.$attach.on((game) => {
+			this.$detach.once(
+				// Whenever the driver starts/stops animating, start/stop the game too.
+				this.$start.on(() => game.start()),
+			);
 
-		this.$detach.once(
-			// Whenever the driver starts/stops animating, start/stop the game too.
-			this.$start.on(() => game.start()),
-		);
+			// Whenever the driver detaches, destroy the game.
+			// @TODO maybe not.
+			this.$detach.once(game.stop.bind(game));
 
-		// Whenever the driver detaches, destroy the game.
-		// @TODO maybe not.
-		this.$detach.once(game.destroy.bind(game));
-
-		return this;
-	}
-	public detach() {
-		this.$detach.emit();
+			return this;
+		});
 	}
 
 	/**

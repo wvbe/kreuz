@@ -6,11 +6,15 @@
  * The expected outcome is a short-running game that ends the timeloop amicably because there is
  * no further events planned.
  */
-import { Game, generateGridTerrainFromAscii, FactoryBuildingEntity } from '@lib';
-import { ProductionJob } from '../src/jobs/ProductionJob.ts';
+import {
+	FactoryBuildingEntity,
+	Game,
+	generateGridTerrainFromAscii,
+	ProductionJob,
+	blueprints,
+	materials,
+} from '@lib';
 import { Demo } from './types.ts';
-import { ironIngotProduction } from '../src/constants/blueprints.ts';
-import { ironIngot, rawIronOre } from '../src/constants/materials.ts';
 
 const demo: Demo = (driver) => {
 	const terrain = generateGridTerrainFromAscii(`
@@ -37,9 +41,9 @@ const demo: Demo = (driver) => {
 
 	const job = new ProductionJob(entity, null);
 	entity.doJob(job);
-	job.setBlueprint(ironIngotProduction);
+	job.setBlueprint(blueprints.ironIngotProduction);
 
-	entity.inventory.set(rawIronOre, 100);
+	entity.inventory.set(materials.rawIronOre, 100);
 
 	console.log('Ready!');
 	return { driver, game };

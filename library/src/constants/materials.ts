@@ -8,7 +8,7 @@ export const wheat = new Material('Wheat', {
 
 // Wheat, but punched into a powder
 export const flour = new Material('Flour', {
-	symbol: 'F',
+	symbol: '🌸',
 	stackSize: 100,
 });
 
@@ -19,17 +19,17 @@ export const bran = new Material('Bran', {
 });
 
 export const milk = new Material('Milk', {
-	symbol: 'M',
+	symbol: '🥛',
 	stackSize: 24,
 });
 
 export const butter = new Material('Butter', {
-	symbol: 'Bu',
+	symbol: '🧈',
 	stackSize: 50,
 });
 
 export const eggs = new Material('Egg', {
-	symbol: 'Egg',
+	symbol: '🥚',
 	stackSize: 144,
 });
 

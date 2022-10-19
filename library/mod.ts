@@ -40,3 +40,5 @@ export { default as Logger } from './src/classes/Logger.ts';
 
 // Constants
 export * from './src/constants/needs.ts';
+export * as blueprints from './src/constants/blueprints.ts';
+export * as materials from './src/constants/materials.ts';

@@ -100,7 +100,16 @@ export class Inventory {
 	}
 
 	public change(material: Material, delta: number, skipEvent?: boolean) {
-		return this.set(material, this.availableOf(material) + delta, skipEvent);
+		const value = this.availableOf(material) + delta;
+		if (value < 0) {
+			throw new Error(`Not possible to have less than 0 ${material.label} in inventory`);
+		}
+		return this.set(material, value, skipEvent);
+	}
+	public changeMultiple(states: MaterialState[], skipEvent?: boolean) {
+		states.forEach(({ material, quantity }, index) => {
+			this.change(material, quantity, index === states.length - 1 ? skipEvent : true);
+		});
 	}
 
 	public set(material: Material, quantity: number, skipEvent?: boolean) {

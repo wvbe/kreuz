@@ -12,10 +12,10 @@ export class SquareTile extends Tile implements TileI {
 
 	getOutlineCoordinates(): CoordinateI[] {
 		return [
-			[-0.5, -0.5],
-			[0.5, -0.5],
-			[0.5, 0.5],
-			[0.5, -0.5],
+			[-1, -1],
+			[1, -1],
+			[1, 1],
+			[-1, 1],
 		].map(([x, y]) => Coordinate.clone(this).transform(x, y, 0));
 	}
 }

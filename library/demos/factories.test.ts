@@ -13,11 +13,11 @@ describe('Factories', () => {
 	});
 
 	it('The factory consumed iron ore', () => {
-		expect(factoryInventory.availableOf(rawIronOre)).toBeLessThan(100);
+		expect(factoryInventory.availableOf(rawIronOre)).toBe(1);
 	});
 
 	it('The factory produced iron ingots', () => {
-		expect(factoryInventory.availableOf(ironIngot)).toBeGreaterThan(0);
+		expect(factoryInventory.availableOf(ironIngot)).toBe(33);
 	});
 });
 

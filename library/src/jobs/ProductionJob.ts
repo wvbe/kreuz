@@ -7,13 +7,13 @@ import { Job } from './Job.ts';
 import { type JobI } from './types.ts';
 
 export class ProductionJob extends Job<FactoryBuildingEntity> implements JobI {
-	protected readonly $$progress = new ProgressingNumericValue(
+	public readonly $$progress = new ProgressingNumericValue(
 		0,
 		{ delta: 0 },
 		`${this.constructor.name} $$progress`,
 	);
 
-	protected readonly $$blueprint = new EventedValue<Blueprint | null>(
+	public readonly $$blueprint = new EventedValue<Blueprint | null>(
 		null,
 		'FactoryBuildingEntity $$blueprint',
 	);
@@ -35,9 +35,19 @@ export class ProductionJob extends Job<FactoryBuildingEntity> implements JobI {
 
 			this.$detach.once(
 				this.$$progress.onBetween(1, Infinity, () => {
-					// When the progress on a blueprint finishes, start the next one
-					console.log('Blueprint complete, happy days');
-					this.attemptStartBlueprint(entity.inventory);
+					const blueprint = this.$$blueprint.get();
+					if (!blueprint) {
+						// Indicative of a bug somewhere!
+						throw new Error('Blueprint is somehow unset while the cycle is completing');
+					}
+					// When the progress on a blueprint finishes
+					// - Transfer product material
+					// - Start a new cycle, or stop all blueprint progression
+					entity.inventory.changeMultiple(blueprint.products);
+					this.$$progress.set(0);
+					if (!this.attemptStartBlueprint(entity.inventory)) {
+						this.$$progress.setDelta(0);
+					}
 				}),
 			);
 
@@ -60,9 +70,16 @@ export class ProductionJob extends Job<FactoryBuildingEntity> implements JobI {
 		return this.$$blueprint.get()?.name || 'Not working on any blueprint';
 	}
 
+	public get blueprint() {
+		return this.$$blueprint.get();
+	}
+
 	private isBusy() {
-		// To be busy, the factory must have a blueprint and the progression value must be "moving"
-		return this.$$blueprint.get() && this.$$progress.delta > 0;
+		// To be busy;
+		// - There must be a blueprint
+		// - And you must have made progress with whatever you're doing
+		// - And you must be continuing to make progress
+		return this.$$blueprint.get() && this.$$progress.delta > 0 && this.$$progress.get() > 0;
 	}
 
 	/**
@@ -85,8 +102,14 @@ export class ProductionJob extends Job<FactoryBuildingEntity> implements JobI {
 			// inventory changes in such a way that there are enough materials --> @TODO
 			return false;
 		}
-		// @TODO start evaluating if we can run the blueprint.
 
+		inventory.changeMultiple(
+			blueprint.ingredients.map(({ material, quantity }) => ({ material, quantity: -quantity })),
+			// @NOTE right now changing the inventory space will immediately trigger attemptStartBlueprint
+			// again. This is too soon. As a temporary workaround, don't emit the inventory change
+			// event.
+			true,
+		);
 		// Both setting the progress to something else, or changing the delta, will kick off some
 		// timers on ProgressingNumericValue -- meaning the factory is busy again.
 		const delta = 1 / blueprint.options.fullTimeEquivalent;

@@ -1,17 +1,27 @@
-import { EventedValue } from '../classes/EventedValue.ts';
-import { ProgressingNumericValue } from '../classes/ProgressingNumericValue.ts';
-import { Blueprint } from '../inventory/Blueprint.ts';
+import { ProductionJob } from '../jobs/ProductionJob.ts';
 import { CoordinateI } from '../types.ts';
 import { BuildingEntity, BuildingParameters } from './BuildingEntity.ts';
 import { EntityI } from './types.ts';
 
-enum FactoryState {
-	IDLE,
-	BUSY,
-}
-
 export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
-	public blueprint: Blueprint | null = null;
+	public readonly type = 'factory';
+
+	private getCurrentBlueprint() {
+		const job = this.$$job.get() as ProductionJob | null;
+		return job?.blueprint || null;
+	}
+
+	public get label() {
+		const blueprint = this.getCurrentBlueprint();
+		if (!blueprint) {
+			return `${this.icon} Empty factory`;
+		}
+		return `${this.icon} ${blueprint.products[0].material.label} factory`;
+	}
+
+	public get icon() {
+		return '🏭';
+	}
 
 	public constructor(id: string, location: CoordinateI, parameters: BuildingParameters) {
 		super(id, location, parameters);

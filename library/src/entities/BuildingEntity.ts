@@ -27,8 +27,4 @@ export class BuildingEntity extends Entity implements EntityI {
 		super(id, location);
 		this.parameters = parameters;
 	}
-
-	public get label(): string {
-		return this.id;
-	}
 }

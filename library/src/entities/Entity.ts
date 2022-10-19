@@ -49,7 +49,7 @@ export class Entity extends Attachable<[Game]> implements EntityI {
 	}
 
 	public get label(): string {
-		return `${this.constructor.name} ${this.id}`;
+		return `${this.icon} ${this.constructor.name} ${this.id}`;
 	}
 
 	public get icon(): string {
@@ -57,7 +57,7 @@ export class Entity extends Attachable<[Game]> implements EntityI {
 	}
 
 	public get title(): string {
-		return 'Not doing anything';
+		return this.$$job.get()?.label || 'Not doing anything';
 	}
 
 	toString() {

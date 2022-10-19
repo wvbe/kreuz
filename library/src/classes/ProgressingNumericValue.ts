@@ -89,12 +89,23 @@ export class ProgressingNumericValue extends EventedNumericValue {
 				delay = Math.abs(delay);
 				if (delay < 1) {
 					console.warn(`Warning! Setting a very short timer of ${delay} ticks`);
+				} else if (delay === Infinity) {
+					// @NOTE This timer could have been avoided altogether. Whenever this warning is
+					// shown, please fix the root cause of the timer.
+					//
+					// For the time being we will also return early, rather than throw an error later.
+					console.warn(
+						`Warning! The timer is set to "never" (Infinity), with delta ${this.#delta}`,
+					);
+					return;
 				}
 				const lastTime = game.time.now;
 
 				const cancelTimeout = game.time.setTimeout(() => {
 					const timePassed = game.time.now - lastTime;
-					setTimeout(granularity / this.#delta);
+					if (this.#delta !== 0) {
+						setTimeout(granularity / this.#delta);
+					}
 					this.applyDecay(timePassed);
 					// Apply decay _after_ setting new timeout, so that an event listener can unset the
 					// timeout again if the value is zero

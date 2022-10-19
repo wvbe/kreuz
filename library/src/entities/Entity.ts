@@ -25,20 +25,26 @@ export class Entity extends Attachable<[Game]> implements EntityI {
 	/**
 	 * The set of behaviour/tasks given to this entity.
 	 */
-	public job?: JobI;
+	public $$job = new EventedValue<JobI | null>(null, `${this.constructor.name} $$job`);
 
 	constructor(id: string, location: CoordinateI) {
 		super();
 
 		this.id = id;
-		this.$$location = new EventedValue(Coordinate.clone(location), 'Entity#$$location');
+
+		this.$$location = new EventedValue(
+			Coordinate.clone(location),
+			`${this.constructor.name} $$location`,
+		);
 
 		this.$attach.on((game) => {
-			this.$detach.once(
-				game.$start.on(() => {
-					this.job?.attach(game);
-				}),
-			);
+			// Attach any job in the future
+			this.$detach.once(this.$$job.on((job) => job?.attach(game)));
+
+			// Attach any job that the entity may already have
+			this.$$job.get()?.attach(game);
+
+			this.$detach.once(() => this.$$job.get()?.detach());
 		});
 	}
 
@@ -58,12 +64,8 @@ export class Entity extends Attachable<[Game]> implements EntityI {
 		return this.label;
 	}
 
-	public doJob(job: JobI) {
-		this.job = job;
-		this.$detach.once(() => {
-			// @TODO handle the case where job changed in the mean time?
-			job.detach();
-		});
+	public doJob(job: JobI | null) {
+		this.$$job.set(job);
 	}
 
 	/**

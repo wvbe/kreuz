@@ -1,5 +1,5 @@
 import { Attachable } from '../classes/Attachable.ts';
-import { EntityI, EntityPersonI } from '../entities/types.ts';
+import { EntityI } from '../entities/types.ts';
 import Game from '../Game.ts';
 import { type JobI } from './types.ts';
 

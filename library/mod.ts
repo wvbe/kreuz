@@ -6,6 +6,7 @@ export { default as Game } from './src/Game.ts';
 export * from './src/entities/types.ts';
 export { Entity } from './src/entities/Entity.ts';
 export { PersonEntity } from './src/entities/PersonEntity.ts';
+export { FactoryBuildingEntity } from './src/entities/FactoryBuildingEntity.ts';
 export { SettlementEntity } from './src/entities/SettlementEntity.ts';
 
 // Jobs:
@@ -13,6 +14,7 @@ export * from './src/jobs/types.ts';
 export { Job } from './src/jobs/Job.ts';
 export { PatrolJob } from './src/jobs/PatrolJob.ts';
 export { LoiterJob } from './src/jobs/LoiterJob.ts';
+export { ProductionJob } from './src/jobs/ProductionJob.ts';
 
 // Drivers:
 export * from './src/drivers/types.ts';

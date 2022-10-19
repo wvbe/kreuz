@@ -13,7 +13,7 @@ export const PERSON_NEEDS: Array<{
 	{
 		id: 'food',
 		label: 'Food',
-		decay: 1 / 150_000,
+		decay: -1 / 150_000,
 		moods: [
 			{ upUntil: 5 / 100, label: 'literally starving' },
 			{ upUntil: 15 / 100, label: 'very hungry' },
@@ -26,7 +26,7 @@ export const PERSON_NEEDS: Array<{
 	{
 		id: 'water',
 		label: 'Water',
-		decay: 1 / 100_000,
+		decay: -1 / 100_000,
 		moods: [
 			{ upUntil: 5 / 100, label: 'dying from dehydration' },
 			{ upUntil: 15 / 100, label: 'parched' },
@@ -39,7 +39,7 @@ export const PERSON_NEEDS: Array<{
 	{
 		id: 'sleep',
 		label: 'Sleep',
-		decay: 1 / 130_000,
+		decay: -1 / 130_000,
 		moods: [
 			{ upUntil: 5 / 100, label: 'passing out' },
 			{ upUntil: 15 / 100, label: 'very tired' },
@@ -52,7 +52,7 @@ export const PERSON_NEEDS: Array<{
 	{
 		id: 'hygiene',
 		label: 'Hygiene',
-		decay: 1 / 250_000,
+		decay: -1 / 250_000,
 		moods: [
 			{ upUntil: 20 / 100, label: 'filthy' },
 			{ upUntil: 33 / 100, label: 'uncomfortable' },
@@ -64,7 +64,7 @@ export const PERSON_NEEDS: Array<{
 	{
 		id: 'spirituality',
 		label: 'Spirituality',
-		decay: 1 / 1_000_000,
+		decay: -1 / 1_000_000,
 		moods: [
 			{ upUntil: 20 / 100, label: 'existential dread' },
 			{ upUntil: 33 / 100, label: 'depressed' },

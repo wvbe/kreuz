@@ -36,6 +36,7 @@ export default class Game {
 				entity.attach(this);
 			}),
 		);
+
 		this.entities.$remove.on((removed) =>
 			removed.forEach((entity) => {
 				entity.detach();

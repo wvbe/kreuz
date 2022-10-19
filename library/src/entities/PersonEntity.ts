@@ -4,30 +4,60 @@ import { Path } from '../classes/Path.ts';
 import { Random } from '../classes/Random.ts';
 import { FIRST_NAMES_F, FIRST_NAMES_M } from '../constants/names.tsx';
 import { PersonNeedId, PersonNeedMap, PERSON_NEEDS } from '../constants/needs.ts';
-import type Game from '../Game.ts';
+import { Inventory } from '../inventory/Inventory.ts';
 import { CallbackFn, CoordinateI, TileI } from '../types.ts';
 import { Entity } from './Entity.ts';
-import { Inventory } from '../inventory/Inventory.ts';
 import { Need } from './Need.ts';
-import { type EntityPersonI } from './types.ts';
 
-export class PersonEntity extends Entity implements EntityPersonI {
+export class PersonEntity extends Entity {
 	// The amount of game coordinate per millisecond
 	private readonly walkSpeed = 1 / 1000;
 
-	// The event that the person finishes a path, according to react-spring's timing
-	// @TODO maybe invent a more generic "idle" event.
+	/**
+	 * Event: The event that the person finishes every step of a path.
+	 *
+	 * @TODO maybe invent a more generic "idle" event.
+	 */
 	public readonly $pathEnd = new Event<[]>('PersonEntity $pathEnd');
 
-	// The person started one step
-	public readonly $stepStart = new Event<[CoordinateI, number, CallbackFn]>(
-		'PersonEntity $stepStart',
-	);
+	/**
+	 * Event: The person started one step.
+	 */
+	public readonly $stepStart = new Event<
+		[
+			/**
+			 * The destination of this step
+			 */
+			CoordinateI,
+			/**
+			 * The expected duration of time it takes to perform this step
+			 */
+			number,
+			/**
+			 * The "done" callback. Call this when the driver animation/timeout ends, so that
+			 * the next event is safely emitted.
+			 */
+			CallbackFn,
+		]
+	>('PersonEntity $stepStart');
 
-	// The person started finished one step, according to react-spring's timing
+	/**
+	 * Event: The person started finished one step. The entities location is updated upon this event.
+	 *
+	 * Do not emit this event. Instead, call the "done()" argument of the $stepStart event. For
+	 * example:
+	 *
+	 *   entity.$stepStart.on((destination, duration, done) => {
+	 *      // Entity starts stepping towards ${destination}
+	 *      game.time.setTimeout(done, duration);
+	 *   });
+	 */
 	public readonly $stepEnd = new Event<[CoordinateI]>('PersonEntity $stepEnd');
 
-	public readonly userData: { gender: 'm' | 'f'; firstName: string };
+	public readonly userData: {
+		gender: 'm' | 'f';
+		firstName: string;
+	};
 
 	public readonly inventory = new Inventory(6);
 
@@ -93,10 +123,13 @@ export class PersonEntity extends Entity implements EntityPersonI {
 	}
 
 	public get title() {
-		return this.job?.label || 'Sitting around…';
+		return this.$$job.get()?.label || 'Sitting around…';
 	}
 
-	// Calculate a path and emit animations to walk it the whole way. `this.$$location` is updated in between each step
+	/**
+	 * Make the entity choose a path from its current location to the destination, and start an
+	 * animation.
+	 */
 	public walkToTile(destination: TileI) {
 		const terrain = destination.terrain;
 		if (!terrain) {

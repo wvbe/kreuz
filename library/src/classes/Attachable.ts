@@ -2,7 +2,7 @@ import Game from '../Game.ts';
 import { Event } from './Event.ts';
 
 export class Attachable<Context extends unknown[] = Game[]> {
-	protected $attach = new Event<Context>(`${this.constructor.name} $attach`, true);
+	protected $attach = new Event<Context>(`${this.constructor.name} $attach`);
 	public attach(...context: Context) {
 		this.$attach.emit(...context);
 	}

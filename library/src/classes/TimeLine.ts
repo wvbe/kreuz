@@ -62,6 +62,7 @@ export class TimeLine extends EventedValue<number> {
 	 */
 	public jump(next = this.getNextEventAbsoluteTime()): void {
 		if (!next || next === Infinity) {
+			console.warn(`Not jumping to next time "${next}"`);
 			return;
 		}
 		this.set(next - 1, true);
@@ -79,7 +80,7 @@ export class TimeLine extends EventedValue<number> {
 	 */
 	public setTimeout(callback: CallbackFn, delay: number): DestroyerFn<number> {
 		if (delay === Infinity || delay <= 0) {
-			throw new Error('Timeout delay must be between 0 and Infinity.');
+			throw new Error(`Timeout delay must be between 0 and Infinity, but was set to ${delay}.`);
 		}
 		const now = this.now;
 		const frame = Math.ceil(now + delay);

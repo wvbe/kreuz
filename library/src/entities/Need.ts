@@ -1,6 +1,7 @@
 import { Attachable } from '../classes/Attachable.ts';
 import { Event } from '../classes/Event.ts';
 import { EventedNumericValue } from '../classes/EventedNumericValue.ts';
+import { ProgressingNumericValue } from '../classes/ProgressingNumericValue.ts';
 import type Game from '../Game.ts';
 import { type DestroyerFn } from '../types.ts';
 
@@ -15,110 +16,11 @@ import { type DestroyerFn } from '../types.ts';
  * for the first time that someone is expected to care -- for example when it reaches zero, or when
  * it reaches a range that is being watched with Need#onBetween/Need#onceBetween.
  */
-export class Need extends EventedNumericValue {
-	/*
-	 * Informally implements the Attachable interface as well.
-	 */
-
-	protected $attach = new Event<[Game]>(`Entity $attach`);
-	public attach(game: Game) {
-		this.$attach.emit(game);
-	}
-
-	protected $detach = new Event(`Entity $detach`);
-	public detach() {
-		this.$detach.emit();
-	}
-
-	/*
-	 * NEED
-	 */
-
-	#decay: number;
-
+export class Need extends ProgressingNumericValue {
 	public readonly id: string;
-
-	public readonly label: string;
-
-	public constructor(
-		id: string,
-		initial: number,
-		label: string,
-		decayPerTick: number,
-		debug?: boolean,
-	) {
-		super(initial, label, debug);
+	public constructor(id: string, initial: number, label: string, delta: number, debug?: boolean) {
+		super(initial, { delta }, label, debug);
 		this.id = id;
-		this.label = label;
-		this.#decay = decayPerTick;
-
-		/**
-		 * Make aware of game and time.
-		 */
-		this.$attach.on((game) => {
-			// We want an update every {{granularity}} of the 0-1 range that this need is on.
-			const granularity = 0.001;
-
-			// If cancelInterval is null, the system is not updating at an interval.
-			// Calling cancelInterval returns the amount of time left on the last timeout.
-			let cancelInterval: DestroyerFn<number> | null = null;
-
-			const setTimeout = (delay: number) => {
-				const lastTime = game.time.now;
-
-				const cancelTimeout = game.time.setTimeout(() => {
-					const timePassed = game.time.now - lastTime;
-					setTimeout(granularity / this.#decay);
-					this.applyDecay(timePassed);
-					// Apply decay _after_ setting new timeout, so that an event listener can unset the
-					// timeout again if the value is zero
-				}, delay);
-
-				cancelInterval = () => {
-					const timeLeft = cancelTimeout();
-					cancelInterval = null;
-					return timeLeft;
-				};
-			};
-
-			const stopListeningForValueChanges = this.on((value) => {
-				if (value <= 0 && cancelInterval) {
-					cancelInterval();
-				} else if (!cancelInterval && value > 0) {
-					// If interval was disabled but a value is "started up" again, set the timeout too
-					setTimeout(granularity / this.#decay);
-				}
-			});
-
-			const stopListeningForDecayChanges = this.$recalibrate.on(() => {
-				setTimeout(cancelInterval?.() || granularity / this.#decay);
-			});
-
-			setTimeout(granularity / this.#decay);
-
-			this.$detach.once(() => {
-				stopListeningForValueChanges();
-				stopListeningForDecayChanges();
-				cancelInterval?.();
-			});
-		});
-	}
-
-	/**
-	 * Set the new value to whatever it was minus the decay-over-time for a certain amount of
-	 * time passed.
-	 *
-	 * Will trigger an update event.
-	 */
-	private applyDecay(timePassed: number, skipUpdate?: boolean): void {
-		const value = Math.max(0, this.current - this.#decay * timePassed);
-		this.set(value, skipUpdate);
-	}
-
-	public setDecay(decayPerTick: number): void {
-		const oldDecay = this.#decay;
-		this.#decay = decayPerTick;
-		this.$recalibrate.emit(oldDecay);
 	}
 
 	/**

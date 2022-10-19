@@ -9,8 +9,8 @@ import { Need } from './Need.ts';
 describe('Need', () => {
 	// @TODO test that setting the decay also resets timers
 	it('will not keep listening if the need is already zero', () => {
-		const game = new Game('test', new Terrain(0, []), []);
-		const need = new Need('test', 1, 'test', 1 / 4);
+		const game = new Game('test', new Terrain(0, []));
+		const need = new Need('test', 1, 'test', -1 / 4);
 		need.attach(game);
 		need.onBetween(0, 0.5, () => {});
 		expect(game.time.now).toBe(0);
@@ -22,8 +22,8 @@ describe('Need', () => {
 		expect(game.time.getNextEventAbsoluteTime()).toBe(Infinity);
 	});
 	describe('In isolation', () => {
-		const game = new Game('test', new Terrain(0, []), []);
-		const need = new Need('test', 1, 'test', 1 / 100);
+		const game = new Game('test', new Terrain(0, []));
+		const need = new Need('test', 1, 'test', -1 / 100);
 		const onBetween1 = mock.fn();
 		need.onceBetween(0, 0.3, onBetween1, { min: true, max: true });
 		const onBetween2 = mock.fn();

@@ -1,10 +1,8 @@
-import type Game from '../Game.ts';
-import { type Event } from '../classes/Event.ts';
 import { type EventedValue } from '../classes/EventedValue.ts';
+import type Game from '../Game.ts';
 import { type JobI } from '../jobs/types.ts';
 import { type SaveEntityJson } from '../types-savedgame.ts';
-import { type TileI, type CoordinateI, CallbackFn } from '../types.ts';
-import { type Need } from './Need.ts';
+import { type CoordinateI } from '../types.ts';
 
 export interface EntityI {
 	type: string;
@@ -38,7 +36,7 @@ export interface EntityI {
 	/**
 	 * The job that this entity is currently on.
 	 */
-	job?: JobI;
+	$$job?: EventedValue<JobI | null>;
 
 	/**
 	 * Sets the entity in motion on any job or other type of event handling.
@@ -56,55 +54,4 @@ export interface EntityI {
 	doJob(job: JobI): void;
 
 	serializeToSaveJson(): SaveEntityJson;
-}
-
-export interface EntityPersonI extends EntityI {
-	userData: {
-		gender: 'm' | 'f';
-		firstName: string;
-	};
-	/**
-	 * Event: The event that the person finishes every step of a path.
-	 */
-	$pathEnd: Event<[]>;
-
-	/**
-	 * Event: The person started one step.
-	 */
-	$stepStart: Event<
-		[
-			/**
-			 * The destination of this step
-			 */
-			CoordinateI,
-			/**
-			 * The expected duration of time it takes to perform this step
-			 */
-			number,
-
-			/**
-			 * The "done" callback. Call this when the driver animation/timeout ends, so that
-			 * the next event is safely emitted.
-			 */
-			CallbackFn,
-		]
-	>;
-
-	/**
-	 * Event: The person started finished one step. The entities location is updated upon this event.
-	 *
-	 * Do not emit this event. Instead, call the "done()" argument of the $stepStart event. For
-	 * example:
-	 *
-	 *   entity.$stepStart.on((destination, duration, done) => {
-	 *      // Entity starts stepping towards ${destination}
-	 *      game.time.setTimeout(done, duration);
-	 *   });
-	 */
-	$stepEnd: Event<[CoordinateI]>;
-
-	/**
-	 * Make the entity choose a path from its current location to the destination, and start an animation.
-	 */
-	walkToTile(destination: TileI): void;
 }

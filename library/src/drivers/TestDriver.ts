@@ -12,7 +12,7 @@ type TestDriverOptions = {
 /**
  * A driver without a visible DOM or ThreeJS world. Probably only useful for testing.
  *
- * Will progress time as fast as it can.
+ * Will progress time as fast as it can. Synchronously, if you haven't set the `delayBetweenJumps` option.
  */
 export class TestDriver extends Driver implements DriverI {
 	options: TestDriverOptions;

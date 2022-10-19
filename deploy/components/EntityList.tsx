@@ -3,6 +3,7 @@ import {
 	CoordinateI,
 	EntityI,
 	EventedValue,
+	FactoryBuildingEntity,
 	PersonEntity,
 	SettlementEntity,
 } from '@lib';
@@ -11,6 +12,7 @@ import { useEventedValue } from '../hooks/useEventedValue.ts';
 import { PersonEntityDetails } from './PersonEntityDetails.tsx';
 import { PopOnUpdateSpan } from './atoms/PopOnUpdateSpan.tsx';
 import { Badge } from './atoms/Badge.tsx';
+import { FactoryBuildingEntityDetails } from './FactoryBuildingEntityDetails.tsx';
 
 const EntityLocationPhrase: FunctionComponent<{ location: EventedValue<CoordinateI> }> = ({
 	location,
@@ -29,8 +31,21 @@ const EntityDetails: FunctionComponent<{ entity?: EntityI }> = ({ entity }) => {
 	}
 	if (entity.type === 'settlement') {
 		return <SettlementEntityDetails entity={entity as SettlementEntity} />;
-	} else {
+	} else if (entity.type === 'person') {
 		return <PersonEntityDetails entity={entity as PersonEntity} />;
+	} else if (entity.type === 'factory') {
+		return <FactoryBuildingEntityDetails entity={entity as FactoryBuildingEntity} />;
+	} else {
+		return (
+			<Badge
+				icon={entity.icon}
+				title={
+					// Snip off the customary emoji
+					entity.label.substring(2)
+				}
+				subtitle={entity.title}
+			/>
+		);
 	}
 };
 
@@ -43,7 +58,7 @@ export const EntityList: FunctionComponent<{ entities: Collection<EntityI> }> = 
 				<tr key={i} onClick={() => setSelected(entity)}>
 					<td>{entity.type}</td>
 					<th>{entity.label}</th>
-					<td>{entity.job?.label}</td>
+					<td>{entity.$$job.get()?.label}</td>
 					<td>
 						<EntityLocationPhrase location={entity.$$location} />
 					</td>

@@ -1,6 +1,7 @@
 import { Driver, PersonEntity, type DriverI, type Game } from '@lib';
 
 export class AlephDriver extends Driver implements DriverI {
+	game: Game | null = null;
 	gameSpeed = 1;
 	lastUpdate: number;
 	constructor() {
@@ -21,6 +22,7 @@ export class AlephDriver extends Driver implements DriverI {
 	}
 
 	public attach(game: Game): this {
+		this.game = game;
 		super.attach(game);
 
 		this.$detach.once(
@@ -35,18 +37,17 @@ export class AlephDriver extends Driver implements DriverI {
 
 		// Whenever an entity starts to move, make sure that the "animation" ends at some point too.
 		this.$detach.once(
-			game.entities.$add.on((added) =>
+			game.entities.$add.on((added) => {
 				added
 					.filter((entity): entity is PersonEntity => entity instanceof PersonEntity)
 					.forEach((entity) => {
 						this.$detach.once(
 							entity.$stepStart.on((_destination, duration, done) => {
-								console.log('STEP START');
 								game.time.setTimeout(done, duration);
 							}),
 						);
-					}),
-			),
+					});
+			}),
 		);
 
 		return this;

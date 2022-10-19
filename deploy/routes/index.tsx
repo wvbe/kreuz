@@ -1,7 +1,7 @@
 import { GameUI } from '~/components/GameUI.tsx';
 
 import createBasementGame from '@demo/basement.ts';
-import createGeneratedGame from '@demo/generator.ts';
+import createGeneratedGame from '@demo/factories.ts';
 import { useEffect, useMemo, useState } from 'react';
 import { AlephDriver } from '../utils/AlephDriver.ts';
 

@@ -29,3 +29,4 @@ jobs:
 
       - name: Run tests
         run: deno task test
+        working-directory: ./library

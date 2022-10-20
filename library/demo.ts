@@ -14,4 +14,7 @@
 import { TestDriver } from './mod.ts';
 
 const demo = await import(Deno.args[0]);
-demo.default(new TestDriver()).driver.start();
+const { driver, game } = demo.default(new TestDriver());
+driver.start();
+
+console.dir(game, { depth: 10 });

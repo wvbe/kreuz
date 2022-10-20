@@ -83,7 +83,8 @@ export class Inventory {
 				...stacks,
 				...Array.from(new Array(Math.ceil(quantity / material.stack))).map((_, i, all) => ({
 					material,
-					quantity: i === all.length - 1 ? quantity % material.stack : material.stack,
+					quantity:
+						i === all.length - 1 ? quantity % material.stack || material.stack : material.stack,
 				})),
 			];
 		}, []);

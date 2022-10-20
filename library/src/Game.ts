@@ -1,12 +1,13 @@
+import { Collection } from './classes/Collection.ts';
 import { Event } from './classes/Event.ts';
 import { TimeLine } from './classes/TimeLine.ts';
-import { Collection } from './classes/Collection.ts';
 import { EntityI } from './entities/types.ts';
+import { Terrain } from './terrain/Terrain.ts';
 import { SavedGameJson } from './types-savedgame.ts';
-import { SeedI, TerrainI } from './types.ts';
+import { SeedI } from './types.ts';
 
 export default class Game {
-	public readonly terrain: TerrainI;
+	public readonly terrain: Terrain;
 
 	// @TODO handle spontaneous changes
 	public readonly entities = new Collection<EntityI>();
@@ -27,7 +28,7 @@ export default class Game {
 	 * EVENTED VALUES
 	 */
 
-	constructor(seed: SeedI, terrain: TerrainI) {
+	constructor(seed: SeedI, terrain: Terrain) {
 		this.seed = seed;
 		this.terrain = terrain;
 

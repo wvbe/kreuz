@@ -4,6 +4,7 @@ import { useEventedValue } from '../hooks/useEventedValue.ts';
 import { Need } from '../library/src/entities/Need.ts';
 import { Badge } from './atoms/Badge.tsx';
 import { FillBar } from './atoms/FillBar.tsx';
+import { InventoryUI } from './IntentoryUI.tsx';
 
 const FactoryBuildingEntityNeed: FunctionComponent<{ need: Need }> = ({ need }) => {
 	const value = useEventedValue(need);
@@ -49,9 +50,10 @@ export const FactoryBuildingEntityDetails: FunctionComponent<{ entity: FactoryBu
 					// Snip off the customary emoji
 					entity.label.substring(2)
 				}
-				subtitle={entity.$$job.get()?.label || 'Idle'}
+				subtitle={entity.title}
 			/>
 			{job && <ProductionJobDetails job={job as ProductionJob} />}
+			<InventoryUI inventory={entity.inventory} />
 		</article>
 	);
 };

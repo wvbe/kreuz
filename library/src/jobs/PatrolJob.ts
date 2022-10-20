@@ -1,4 +1,4 @@
-import { PersonEntity } from '../entities/PersonEntity.ts';
+import { PersonEntity } from '../entities/entity.person.ts';
 import { DestroyerFn, TileI } from '../types.ts';
 import { Job } from './Job.ts';
 import { type JobI } from './types.ts';

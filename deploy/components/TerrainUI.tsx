@@ -1,49 +1,66 @@
-import { FunctionComponent, useMemo } from 'react';
-import { Collection, Entity, EntityI, PersonEntity, type TerrainI, type TileI } from '@lib';
-import { useWindowSize } from '~/hooks/useWindowSize.ts';
-import { PersonEntityUI } from './PersonEntityUI.tsx';
+import { Collection, EntityI, type Terrain } from '@lib';
+import { DetailedHTMLProps, FunctionComponent, HTMLAttributes, useMemo } from 'react';
+import { useEventedValue } from '../hooks/useEventedValue.ts';
 
-const Tile: FunctionComponent<{ tile: TileI }> = ({ tile }) => {
-	const zoom = 10;
-	const points = useMemo(
-		() =>
-			tile
-				.getOutlineCoordinates()
-				.map((coord) => `${(tile.x + coord.x) * zoom},${(tile.y + coord.y) * zoom}`)
-				.join(' '),
-		[],
-	);
-	if (!tile.isLand()) {
-		return null;
-	}
+const width = 640,
+	height = 480;
+
+export const EntityMarker: FunctionComponent<
+	{ entity: EntityI; zoom: number } & DetailedHTMLProps<
+		HTMLAttributes<HTMLDivElement>,
+		HTMLDivElement
+	>
+> = ({ entity, zoom, ...rest }) => {
+	const { x, y } = useEventedValue(entity.$$location);
 	return (
-		<polygon
-			points={points}
-			style={{ fill: 'rgba(0,0,0,0.1)', stroke: 'black', strokeWidth: 0.5 }}
+		<div
+			className="person-entity-marker"
+			style={{ top: `${y * zoom}px`, left: `${x * zoom}px` }}
+			{...rest}
 		/>
 	);
 };
 
-export const TerrainUI: FunctionComponent<{ terrain: TerrainI; entities: Collection<EntityI> }> = ({
+export const TerrainUI: FunctionComponent<{ terrain: Terrain; entities: Collection<EntityI> }> = ({
 	terrain,
 	entities,
 }) => {
+	const zoom = 25;
+
 	const tiles = useMemo(
-		() => terrain.tiles.map((tile, i) => <Tile tile={tile} key={i} />),
+		() =>
+			terrain.tiles.map((tile, i) => {
+				if (!tile.isLand()) {
+					return null;
+				}
+				const points = tile
+					.getOutlineCoordinates()
+					.map((coord) => `${(tile.x + coord.x) * zoom},${(tile.y + coord.y) * zoom}`)
+					.join(' ');
+				return <polygon key={i} points={points} />;
+			}),
 		[terrain.tiles],
 	);
+
 	const entities2 = useMemo(
 		() =>
-			entities
-				.filter<PersonEntity>((e) => e instanceof PersonEntity)
-				.map((entity, i) => <PersonEntityUI key={i} person={entity} />),
+			entities.map((entity, i) => {
+				const className = `entity-marker--${entity.type}`;
+				return (
+					<EntityMarker key={entity.id} entity={entity} zoom={zoom} className={className}>
+						{entity.icon}
+					</EntityMarker>
+				);
+			}),
 		[],
 	);
-	// const [width, height] = useWindowSize();
+
 	return (
-		<svg height={480} width={640} viewBox="0 20 200 170">
-			{tiles}
+		<div className="terrain" style={{ width: `${width}px`, height: `${height}px` }}>
+			<svg height={480} width={640}>
+				{tiles}
+			</svg>
 			{entities2}
-		</svg>
+		</div>
 	);
 };

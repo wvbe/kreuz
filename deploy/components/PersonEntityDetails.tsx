@@ -4,6 +4,7 @@ import { useEventedValue } from '../hooks/useEventedValue.ts';
 import { Need } from '../library/src/entities/Need.ts';
 import { Badge } from './atoms/Badge.tsx';
 import { FillBar } from './atoms/FillBar.tsx';
+import { InventoryUI } from './IntentoryUI.tsx';
 
 const PersonEntityNeed: FunctionComponent<{ need: Need }> = ({ need }) => {
 	const value = useEventedValue(need);
@@ -31,12 +32,9 @@ export const PersonEntityDetails: FunctionComponent<{ entity: PersonEntity }> = 
 	);
 	return (
 		<article className="entity-details">
-			<Badge
-				icon={entity.icon}
-				title={entity.userData.firstName}
-				subtitle={entity.$$job.get()?.label || 'Idle'}
-			/>
+			<Badge icon={entity.icon} title={entity.userData.firstName} subtitle={entity.title} />
 			{needs}
+			<InventoryUI inventory={entity.inventory} />
 		</article>
 	);
 };

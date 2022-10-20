@@ -1,7 +1,6 @@
 import { GameUI } from '~/components/GameUI.tsx';
 
-import createBasementGame from '@demo/basement.ts';
-import createGeneratedGame from '@demo/factories.ts';
+import createGame from '@demo/generator.ts';
 import { useEffect, useMemo, useState } from 'react';
 import { AlephDriver } from '../utils/AlephDriver.ts';
 
@@ -9,7 +8,7 @@ export default function Index() {
 	const [game, setGame] = useState<null | Game>(null);
 	useEffect(() => {
 		const t = setTimeout(() => {
-			const { driver, game } = createGeneratedGame(new AlephDriver());
+			const { driver, game } = createGame(new AlephDriver());
 			driver.start();
 			self.driver = driver;
 			setGame(game);

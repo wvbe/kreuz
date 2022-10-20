@@ -1,6 +1,6 @@
 import { EventedValue } from '../classes/EventedValue.ts';
 import { ProgressingNumericValue } from '../classes/ProgressingNumericValue.ts';
-import { FactoryBuildingEntity } from '../entities/FactoryBuildingEntity.ts';
+import { FactoryBuildingEntity } from '../entities/entity.building.factory.ts';
 import { Blueprint } from '../inventory/Blueprint.ts';
 import { Inventory } from '../inventory/Inventory.ts';
 import { Job } from './Job.ts';
@@ -56,6 +56,9 @@ export class ProductionJob extends Job<FactoryBuildingEntity> implements JobI {
 
 			this.$detach.once(
 				entity.inventory.$change.on(() => {
+					if (this.#avoidRespondingToOwnInventoryChange) {
+						return;
+					}
 					// @TODO handle the case where the inventory is changed in sucha  way that the
 					// blueprint products cannot be placed.
 					this.attemptStartBlueprint(entity.inventory);
@@ -83,6 +86,15 @@ export class ProductionJob extends Job<FactoryBuildingEntity> implements JobI {
 	}
 
 	/**
+	 * An inventory change may trigger the job to see if it can start itself -- for example when it
+	 * is not busy. The job is not busy when it has just finished one cycle and is about the start
+	 * another, which is exactly when the inventory is being updated. However, if we respond to our
+	 * own inventory change we are rapid-firing until the inventory prohibits the job from running
+	 * (either full, or empty), so we want to avoid this with the following ✨clever solution✨:
+	 */
+	#avoidRespondingToOwnInventoryChange = false;
+
+	/**
 	 * Politely starts work on the blueprint if there is nothing stopping us from doing that.
 	 *
 	 * Returns a boolean on wether the blueprint if we now started or not.
@@ -103,15 +115,15 @@ export class ProductionJob extends Job<FactoryBuildingEntity> implements JobI {
 			return false;
 		}
 
+		this.#avoidRespondingToOwnInventoryChange = true;
 		inventory.changeMultiple(
 			blueprint.ingredients.map(({ material, quantity }) => ({ material, quantity: -quantity })),
-			// @NOTE right now changing the inventory space will immediately trigger attemptStartBlueprint
-			// again. This is too soon. As a temporary workaround, don't emit the inventory change
-			// event.
-			true,
 		);
+		this.#avoidRespondingToOwnInventoryChange = false;
+
 		// Both setting the progress to something else, or changing the delta, will kick off some
 		// timers on ProgressingNumericValue -- meaning the factory is busy again.
+		// @TODO dedupe with the other places where $$progress or its delta are set
 		const delta = 1 / blueprint.options.fullTimeEquivalent;
 		this.$$progress.set(0);
 		this.$$progress.setDelta(delta);

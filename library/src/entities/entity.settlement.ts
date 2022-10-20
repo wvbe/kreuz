@@ -1,6 +1,6 @@
 import { getRandomSettlementName } from '../constants/names.tsx';
 import { CoordinateI } from '../types.ts';
-import { Entity } from './Entity.ts';
+import { Entity } from './entity.ts';
 import { EntityI } from './types.ts';
 
 export type SettlementParametersI = {

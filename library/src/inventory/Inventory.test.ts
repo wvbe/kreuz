@@ -1,4 +1,5 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { pickaxe } from '../constants/materials.ts';
 import { Inventory } from './Inventory.ts';
 import { Material } from './Material.ts';
 
@@ -24,6 +25,12 @@ describe('Inventory', () => {
 			{ material: test2, quantity: 33 },
 			{ material: test2, quantity: 1 },
 		]);
+	});
+	it('.getStacks() with a single item stack size', () => {
+		const test3 = new Material('barley', { symbol: '𐂏', stackSize: 1 });
+		const inventory = new Inventory();
+		inventory.set(test3, 1);
+		expect(inventory.getStacks()).toEqual([{ material: test3, quantity: 1 }]);
 	});
 	it('.getUsedStackSpace()', () => {
 		const inventory = new Inventory();

@@ -1,12 +1,13 @@
 import { Coordinate } from './Coordinate.ts';
-import { CoordinateI, TerrainI, TileI } from '../types.ts';
+import { CoordinateI, TileI } from '../types.ts';
 import { SaveTileJson } from '../types-savedgame.ts';
+import { type Terrain } from './Terrain.ts';
 
 /**
  * A special type of coordinate that is equal to another terrain coordinate when the X and Y are equal, disregarding Z.
  */
 export class Tile extends Coordinate implements TileI {
-	public terrain?: TerrainI;
+	public terrain?: Terrain;
 	public readonly neighbors: TileI[] = [];
 
 	public equals(coord: CoordinateI): boolean {

@@ -6,7 +6,7 @@ import { FIRST_NAMES_F, FIRST_NAMES_M } from '../constants/names.tsx';
 import { PersonNeedId, PersonNeedMap, PERSON_NEEDS } from '../constants/needs.ts';
 import { Inventory } from '../inventory/Inventory.ts';
 import { CallbackFn, CoordinateI, TileI } from '../types.ts';
-import { Entity } from './Entity.ts';
+import { Entity } from './entity.ts';
 import { Need } from './Need.ts';
 
 export class PersonEntity extends Entity {
@@ -135,7 +135,21 @@ export class PersonEntity extends Entity {
 		if (!terrain) {
 			throw new Error(`Entity "${this.id}" is trying to path in a detached coordinate`);
 		}
-		const start = terrain.getTileClosestToXy(this.$$location.get().x, this.$$location.get().y);
+
+		// Its _possible_ that an entity lives on a tile that has so much elevation that
+		// .getTileClosestToXy actually finds the _wrong_ tile -- because its neighbor is closer than
+		// the proximity to z=0. In that case, there is a bug:
+		//
+		// const start = terrain.getTileClosestToXy(this.$$location.get().x, this.$$location.get().y);
+		//
+		// To work around the bug, and as a cheaper option, find the tile whose XY is equal to the current
+		// location. The only downsize is that entities that are mid-way a tile will not find one. Since
+		// this is not a feature yet, we can use it regardless:
+		const start = terrain.getTileEqualToXy(this.$$location.get().x, this.$$location.get().y);
+
+		if (!start) {
+			throw new Error(`Entity "${this.id}" is trying to path without living on a tile`);
+		}
 		const path = new Path(terrain, { closest: true }).find(start, destination);
 
 		if (!path.length) {

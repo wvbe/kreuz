@@ -1,5 +1,9 @@
 import { Material } from '../inventory/Material.ts';
 
+/*
+ * FOOD AND AGRICULTURE
+ */
+
 // A grassy plant whose seed is a worldwide staple food.
 export const wheat = new Material('Wheat', {
 	symbol: 'WH',
@@ -33,6 +37,9 @@ export const eggs = new Material('Egg', {
 	stackSize: 144,
 });
 
+/*
+ * CONSTRUCTION MATERIALS
+ */
 export const rawIronOre = new Material('Iron ore', {
 	symbol: 'Io',
 	stackSize: 50,
@@ -50,6 +57,9 @@ export const rawCoal = new Material('Coal', {
 	stackSize: 50,
 });
 
+/**
+ * A bar of pure iron, suitable for processing into other materials.
+ */
 export const ironIngot = new Material('Iron ingot', {
 	symbol: 'Ii',
 	stackSize: 30,
@@ -65,4 +75,25 @@ export const copperIngot = new Material('Copper ingot', {
 export const bronzeIngot = new Material('Bronze ingot', {
 	symbol: 'Bi',
 	stackSize: 30,
+});
+
+/*
+ * TOOLS
+ */
+
+export const hammer = new Material('Hammer', {
+	symbol: '🔨',
+	stackSize: 5,
+});
+export const pickaxe = new Material('Pickaxe', {
+	symbol: '⛏',
+	stackSize: 1,
+});
+export const woodsaw = new Material('Woodsaw', {
+	symbol: '🪚',
+	stackSize: 3,
+});
+export const axe = new Material('Woodaxe', {
+	symbol: '🪓',
+	stackSize: 1,
 });

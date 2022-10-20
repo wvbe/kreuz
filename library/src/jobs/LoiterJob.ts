@@ -2,7 +2,7 @@ import { Random } from '../classes/Random.ts';
 import Game from '../Game.ts';
 import { type JobI } from './types.ts';
 import { Job } from './Job.ts';
-import { PersonEntity } from '../entities/PersonEntity.ts';
+import { PersonEntity } from '../entities/entity.person.ts';
 import { type DestroyerFn } from '../types.ts';
 
 export class LoiterJob extends Job<PersonEntity> implements JobI {
@@ -42,8 +42,10 @@ export class LoiterJob extends Job<PersonEntity> implements JobI {
 					return;
 				}
 				steps++;
-				const destinations =
-					game.terrain.selectClosestTiles(this.entity.$$location.get(), this.walkMaxDistance) || [];
+				const currentLocation = this.entity.$$location.get();
+				const destinations = game.terrain
+					.selectClosestTiles(currentLocation, this.walkMaxDistance)
+					.filter((destination) => !currentLocation.equals(destination));
 				this.entity.walkToTile(
 					Random.fromArray(destinations, this.entity.id, 'roam-destination', steps),
 				);

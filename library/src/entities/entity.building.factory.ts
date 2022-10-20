@@ -1,10 +1,13 @@
+import { Inventory } from '../inventory/Inventory.ts';
 import { ProductionJob } from '../jobs/ProductionJob.ts';
 import { CoordinateI } from '../types.ts';
-import { BuildingEntity, BuildingParameters } from './BuildingEntity.ts';
+import { BuildingEntity, BuildingParameters } from './entity.building.ts';
 import { EntityI } from './types.ts';
 
 export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 	public readonly type = 'factory';
+
+	public readonly inventory = new Inventory(24);
 
 	private getCurrentBlueprint() {
 		const job = this.$$job.get() as ProductionJob | null;

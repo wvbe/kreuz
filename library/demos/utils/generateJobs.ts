@@ -4,15 +4,16 @@ import {
 	LoiterJob,
 	PatrolJob,
 	PersonEntity,
-	Random, type SeedI,
-	type TerrainI
+	Random,
+	type SeedI,
+	type Terrain,
 } from '@lib';
 
 function repeat<P>(n: number, cb: (i: number) => P): P[] {
 	return Array.from(new Array(n)).map((_, i) => cb(i));
 }
 
-function generatePatrolJob(terrain: TerrainI, seed: SeedI, entity: PersonEntity) {
+function generatePatrolJob(terrain: Terrain, seed: SeedI, entity: PersonEntity) {
 	const start = terrain.getTileClosestToXy(entity.$$location.get().x, entity.$$location.get().y);
 	const island = terrain.getIslands((t) => t.isLand()).find((island) => island.includes(start));
 	if (!start || !island) {

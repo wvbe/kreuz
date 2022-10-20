@@ -1,5 +1,5 @@
 import Logger from '../classes/Logger.ts';
-import { PersonEntity } from '../entities/PersonEntity.ts';
+import { PersonEntity } from '../entities/entity.person.ts';
 import Game from '../Game.ts';
 import { DestroyerFn } from '../types.ts';
 import { Driver } from './Driver.ts';

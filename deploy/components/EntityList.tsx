@@ -13,6 +13,7 @@ import { PersonEntityDetails } from './PersonEntityDetails.tsx';
 import { PopOnUpdateSpan } from './atoms/PopOnUpdateSpan.tsx';
 import { Badge } from './atoms/Badge.tsx';
 import { FactoryBuildingEntityDetails } from './FactoryBuildingEntityDetails.tsx';
+import { Cell, Row, Table } from './atoms/Table.tsx';
 
 const EntityLocationPhrase: FunctionComponent<{ location: EventedValue<CoordinateI> }> = ({
 	location,
@@ -55,14 +56,14 @@ export const EntityList: FunctionComponent<{ entities: Collection<EntityI> }> = 
 	const items = useMemo(
 		() =>
 			entities.map((entity, i) => (
-				<tr key={i} onClick={() => setSelected(entity)}>
-					<td>{entity.type}</td>
-					<th>{entity.label}</th>
-					<td>{entity.$$job.get()?.label}</td>
-					<td>
+				<Row key={i} onClick={() => setSelected(entity)}>
+					<Cell>{entity.type}</Cell>
+					<Cell>{entity.label}</Cell>
+					<Cell>{entity.title}</Cell>
+					<Cell>
 						<EntityLocationPhrase location={entity.$$location} />
-					</td>
-				</tr>
+					</Cell>
+				</Row>
 			)),
 		[],
 	);
@@ -70,9 +71,7 @@ export const EntityList: FunctionComponent<{ entities: Collection<EntityI> }> = 
 	return (
 		<>
 			<EntityDetails entity={selected} />
-			<table>
-				<tbody>{items}</tbody>
-			</table>
+			<Table>{items}</Table>
 		</>
 	);
 };

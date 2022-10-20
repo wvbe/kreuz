@@ -1,15 +1,21 @@
 @import url('./components/GameUI.css');
 @import url('./components/atoms/FillBar.css');
 @import url('./components/PersonEntityDetails.css');
+@import url('./components/InventoryUI.css');
 @import url('./components/atoms/Badge.css');
+@import url('./components/TerrainUI.css');
 /* @import url('./components/EntityList.css'); */
 
-* {
+body {
 	font-family: sans-serif;
 	font-size: 14px;
 	line-height: var(--line-height);
-	text-align: inherit;
 	/* font-weight:bold */
+}
+* {
+	font-size: inherit;
+
+	text-align: inherit;
 }
 
 :root {

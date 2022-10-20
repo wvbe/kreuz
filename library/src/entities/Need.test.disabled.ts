@@ -1,6 +1,6 @@
 import { describe, expect, it, mock, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 import { TestDriver } from '../drivers/TestDriver.ts';
-import { PersonEntity } from './PersonEntity.ts';
+import { PersonEntity } from './entity.person.ts';
 import Game from '../Game.ts';
 import { generateGridTerrainFromAscii } from '../terrain/utils.ts';
 import { Terrain } from '../terrain/Terrain.ts';

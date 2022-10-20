@@ -1,4 +1,5 @@
-import { type SaveTerrainJson, type SaveTileJson } from './types-savedgame.ts';
+import { type Terrain } from './terrain/Terrain.ts';
+import { type SaveTileJson } from './types-savedgame.ts';
 
 export type GameDistance = number;
 
@@ -31,7 +32,7 @@ export interface CoordinateI {
  * A tile
  */
 export interface TileI extends CoordinateI {
-	terrain?: TerrainI;
+	terrain?: Terrain;
 	/**
 	 * @deprecated Use Terrain.getNeighborTiles instead if you can
 	 */
@@ -42,53 +43,6 @@ export interface TileI extends CoordinateI {
 	isAdjacentToLand(): boolean;
 	isLand(): boolean;
 	serializeToSaveJson(): SaveTileJson;
-}
-
-/**
- * A geographic arrangement of tiles
- */
-export interface TerrainI {
-	/**
-	 * Array of all tiles that make up this terrain.
-	 */
-	tiles: TileI[];
-
-	/**
-	 * Select all the tiles that are adjacent to the starting tile, so long as they match the
-	 * selector.
-	 */
-	selectContiguousTiles(
-		start: TileI,
-		selector: TileFilterFn<TileI>,
-		/**
-		 * Wether or not the starting tile should be part of the group.
-		 */
-		inclusive: boolean,
-	): TileI[];
-
-	/**
-	 * Get the tiles closest to the starting tile (not counting the starting tile itself).
-	 */
-	selectClosestTiles(start: CoordinateI, maxDistance: number): TileI[];
-
-	/**
-	 * Get a list of contigious groups of tiles, aka a list of islands.
-	 */
-	getIslands(selector: TileFilterFn<TileI>): TileI[][];
-
-	/**
-	 * Get the tile closest to an XY coordinate.
-	 */
-	getTileClosestToXy(x: number, y: number): TileI;
-
-	/**
-	 * Get the tiles that are adjacent to another tile.
-	 */
-	getNeighborTiles(center: TileI): TileI[];
-
-	getMedianCoordinate(): CoordinateI;
-
-	serializeToSaveJson(): SaveTerrainJson;
 }
 
 export type SeedI = string | number;

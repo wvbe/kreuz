@@ -6,7 +6,8 @@
 //   Includes Binary Heap (with modifications) from Marijn Haverbeke.
 //   http://eloquentjavascript.net/appendix2.html
 
-import { TerrainI, TileI } from '../types.ts';
+import { type Terrain } from '../terrain/Terrain.ts';
+import { TileI } from '../types.ts';
 import { BinaryHeap } from './BinaryHeap.ts';
 import Logger from './Logger.ts';
 
@@ -35,18 +36,18 @@ type PathOptions = {
 /**
  * @TODO
  */
-function getVisitationCost(_terrain: TerrainI, _from: TileI, _neighbor: TileI) {
+function getVisitationCost(_terrain: Terrain, _from: TileI, _neighbor: TileI) {
 	return 1;
 }
 
 export class Path {
-	private readonly terrain: TerrainI;
+	private readonly terrain: Terrain;
 	private readonly options: PathOptions;
 	private readonly cache: Map<TileI, HeuristicReport>;
 	private readonly heap: BinaryHeap<TileI>;
 	private readonly heuristic: HeuristicScorer;
 
-	constructor(graph: TerrainI, options: PathOptions) {
+	constructor(graph: Terrain, options: PathOptions) {
 		this.terrain = graph;
 		this.options = options;
 

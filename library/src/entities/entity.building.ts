@@ -1,5 +1,5 @@
 import { CoordinateI } from '../types.ts';
-import { Entity } from './Entity.ts';
+import { Entity } from './entity.ts';
 import { EntityI } from './types.ts';
 import { Inventory } from '../inventory/Inventory.ts';
 
@@ -20,8 +20,6 @@ export class BuildingEntity extends Entity implements EntityI {
 	public type = 'buiding';
 
 	protected readonly parameters: BuildingParameters;
-
-	public readonly inventory = new Inventory(24);
 
 	constructor(id: string, location: CoordinateI, parameters: BuildingParameters) {
 		super(id, location);

@@ -4,10 +4,12 @@ export { default as Game } from './src/Game.ts';
 
 // Entities:
 export * from './src/entities/types.ts';
-export { Entity } from './src/entities/Entity.ts';
-export { PersonEntity } from './src/entities/PersonEntity.ts';
-export { FactoryBuildingEntity } from './src/entities/FactoryBuildingEntity.ts';
-export { SettlementEntity } from './src/entities/SettlementEntity.ts';
+export { Entity } from './src/entities/entity.ts';
+export { PersonEntity } from './src/entities/entity.person.ts';
+export { FactoryBuildingEntity } from './src/entities/entity.building.factory.ts';
+export { ChurchBuildingEntity } from './src/entities/entity.building.church.ts';
+export { MarketBuildingEntity } from './src/entities/entity.building.market.ts';
+export { SettlementEntity } from './src/entities/entity.settlement.ts';
 
 // Jobs:
 export * from './src/jobs/types.ts';
@@ -29,6 +31,11 @@ export { SquareTile } from './src/terrain/SquareTile.ts';
 export { Tile } from './src/terrain/Tile.ts';
 export { Path } from './src/classes/Path.ts';
 export { Coordinate } from './src/terrain/Coordinate.ts';
+
+// Inventory:
+export { Blueprint } from './src/inventory/Blueprint.ts';
+export { Inventory } from './src/inventory/Inventory.ts';
+export { Material } from './src/inventory/Material.ts';
 
 // Miscellaneous utilities:
 export { Collection } from './src/classes/Collection.ts';

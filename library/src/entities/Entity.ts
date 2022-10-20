@@ -57,7 +57,7 @@ export class Entity extends Attachable<[Game]> implements EntityI {
 	}
 
 	public get title(): string {
-		return this.$$job.get()?.label || 'Not doing anything';
+		return this.$$job.get()?.label || 'Idle';
 	}
 
 	toString() {

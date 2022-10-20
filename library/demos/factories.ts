@@ -18,13 +18,10 @@ import { Demo } from './types.ts';
 
 const demo: Demo = (driver) => {
 	const terrain = generateGridTerrainFromAscii(`
-		XXXXXXXXXXXX
-		XXXXXXXXXXXX
-		XXXXXXXXXXXX
-		XXXXXXXXXXXX
-		XXXXXXXXXXXX
-		XXXXXXXXXXXX
-		XXXXXXXXXXXX
+		XXXX
+		XXXX
+		XXXX
+		XXXX
 	`);
 
 	const game = new Game('1', terrain);
@@ -37,15 +34,15 @@ const demo: Demo = (driver) => {
 		roofHeight: 1,
 	});
 
-	game.entities.add(entity);
-
 	const job = new ProductionJob(entity, null);
 	entity.doJob(job);
 	job.setBlueprint(blueprints.ironIngotProduction);
+	game.entities.add(entity);
 
+	// Game doesnt work if this line is moved up a few
+	// @TODO find out why
 	entity.inventory.set(materials.rawIronOre, 100);
 
-	console.log('Ready!');
 	return { driver, game };
 };
 

@@ -10,6 +10,10 @@ describe('Factories', () => {
 
 	it('The game finishes by itself', async () => {
 		expect(await driver.start()).toBeUndefined();
+
+		// Actually, the production of 33 ingots should take 165000 time. Not sure where the
+		// additional 5 ticks come from 🤐
+		expect(game.time.now).toBe(165005);
 	});
 
 	it('The factory consumed iron ore', () => {

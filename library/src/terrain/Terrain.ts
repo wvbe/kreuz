@@ -1,20 +1,30 @@
 import { Coordinate } from './Coordinate.ts';
 import { SaveTerrainJson } from '../types-savedgame.ts';
-import { CoordinateI, TerrainI, TileFilterFn, TileI } from '../types.ts';
+import { CoordinateI, TileFilterFn, TileI } from '../types.ts';
 
-export class Terrain implements TerrainI {
-	public readonly tiles: TileI[] = [];
+export class Terrain {
+	readonly #tiles: TileI[] = [];
 	public readonly size: number;
 
 	constructor(size: number, tiles: TileI[]) {
-		this.tiles = tiles;
+		this.#tiles = tiles;
 		this.size = size;
 		// this.mesh = mesh;
-		this.tiles.forEach((coordinate, i) => {
+		this.#tiles.forEach((coordinate, i) => {
 			coordinate.terrain = this;
 		});
 	}
 
+	/**
+	 * Array of all tiles that make up this terrain.
+	 */
+	get tiles() {
+		return this.#tiles;
+	}
+
+	/**
+	 * Array of all tiles that make up this terrain.
+	 */
 	public selectContiguousTiles(
 		start: TileI,
 		selector: TileFilterFn<TileI> = (c) => c.isLand(),
@@ -37,6 +47,9 @@ export class Terrain implements TerrainI {
 		return island;
 	}
 
+	/**
+	 * Get the tiles closest to the starting tile (not counting the starting tile itself).
+	 */
 	public selectClosestTiles(start: CoordinateI, maxDistance: number): TileI[] {
 		return this.selectContiguousTiles(
 			this.getTileClosestToXy(start.x, start.y),
@@ -46,8 +59,9 @@ export class Terrain implements TerrainI {
 	}
 
 	#islands: Map<TileFilterFn<TileI>, TileI[][]> = new Map();
+
 	/**
-	 * Get a list of tiles that are geographically contiguous.
+	 * Get a list of contigious groups of tiles, aka a list of islands.
 	 */
 	public getIslands(selector: TileFilterFn<TileI> = (t) => t.isLand()): TileI[][] {
 		const fromCache = this.#islands.get(selector);
@@ -55,7 +69,7 @@ export class Terrain implements TerrainI {
 			return fromCache;
 		}
 
-		let open = this.tiles.slice();
+		let open = this.#tiles.slice();
 		const islands = [];
 		while (open.length) {
 			const next = open.shift() as TileI;
@@ -71,12 +85,24 @@ export class Terrain implements TerrainI {
 		return islands;
 	}
 
+	public getTileEqualToXy(x: number, y: number): TileI | null {
+		return this.#tiles.find((tile) => tile.x === x && tile.y === y) || null;
+	}
+
+	/**
+	 * Its _possible_ that an entity lives on a tile that has so much elevation that
+	 * .getTileClosestToXy actually finds the _wrong_ tile -- because its neighbor is closer than
+	 * the proximity to z=0. In that case, there is a bug:
+	 *
+	 * @deprecated Function has (correct but) unexpected behavior. Maybe use getTileEqualToXy, or
+	 *             invent getTyleClosestToXyz.
+	 */
 	public getTileClosestToXy(x: number, y: number): TileI {
-		if (!this.tiles.length) {
+		if (!this.#tiles.length) {
 			throw new Error('Terrain is empty');
 		}
 		let closestDistance = Infinity;
-		return this.tiles.reduce<TileI>((last, tile) => {
+		return this.#tiles.reduce<TileI>((last, tile) => {
 			const distance = tile.euclideanDistanceTo(x, y, 0);
 			if (distance < closestDistance) {
 				closestDistance = distance;
@@ -84,17 +110,24 @@ export class Terrain implements TerrainI {
 			} else {
 				return last;
 			}
-		}, this.tiles[0]);
+		}, this.#tiles[0]);
 	}
 
+	/**
+	 * Get the tiles that are adjacent to another tile.
+	 */
 	public getNeighborTiles(center: TileI): TileI[] {
 		return center.neighbors;
 	}
 
 	#medianCoordinate: Coordinate | null = null;
+
+	/**
+	 * Get the approximate middle coordinate of the map.
+	 */
 	public getMedianCoordinate(forceRenew?: boolean) {
 		if (!this.#medianCoordinate || forceRenew) {
-			const { x, y, z } = this.tiles.reduce(
+			const { x, y, z } = this.#tiles.reduce(
 				(totals, tile) => ({
 					x: totals.x + tile.x,
 					y: totals.y + tile.y,
@@ -103,9 +136,9 @@ export class Terrain implements TerrainI {
 				{ x: 0, y: 0, z: 0 },
 			);
 			this.#medianCoordinate = new Coordinate(
-				x / this.tiles.length,
-				y / this.tiles.length,
-				z / this.tiles.length,
+				x / this.#tiles.length,
+				y / this.#tiles.length,
+				z / this.#tiles.length,
 			);
 		}
 		return this.#medianCoordinate;
@@ -116,7 +149,7 @@ export class Terrain implements TerrainI {
 	 */
 	public serializeToSaveJson(): SaveTerrainJson {
 		return {
-			tiles: this.tiles.map((tile) => tile.serializeToSaveJson()),
+			tiles: this.#tiles.map((tile) => tile.serializeToSaveJson()),
 			size: this.size,
 		};
 	}

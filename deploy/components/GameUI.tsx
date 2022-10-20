@@ -5,6 +5,8 @@ import { EntityList } from './EntityList.tsx';
 import { Clock } from './Clock.tsx';
 import { EventLog } from './EventLog.tsx';
 import { Game } from '@lib';
+import { MaterialList } from './MaterialList.tsx';
+import { BlueprintList } from './BlueprintList.tsx';
 
 export const GameUI: FunctionComponent<{ game: Game }> = ({ game }) => {
 	return (
@@ -13,15 +15,17 @@ export const GameUI: FunctionComponent<{ game: Game }> = ({ game }) => {
 				<div>
 					<Clock game={game} />
 				</div>
-				<div className="gameui--layer">
+				<div>
 					<TerrainUI terrain={game.terrain} entities={game.entities} />
 				</div>
-				<div className="gameui--layer">
+				<div>
 					<EntityList entities={game.entities} />
 				</div>
 			</div>
 			<div className="game-ui__column--right">
 				<EventLog game={game} />
+				<MaterialList />
+				<BlueprintList />
 			</div>
 		</div>
 	);

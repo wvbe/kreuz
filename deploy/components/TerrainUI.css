@@ -1,5 +1,8 @@
 .terrain {
 	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
 .terrain > div {
@@ -11,7 +14,7 @@
 
 .terrain > svg > polygon {
 	fill: rgba(0, 0, 0, 0.1);
-	stroke: black;
+	stroke: #aaa;
 	stroke-width: 1;
 }
 

@@ -48,12 +48,16 @@ export class Entity extends Attachable<[Game]> implements EntityI {
 		});
 	}
 
-	public get label(): string {
-		return `${this.icon} ${this.constructor.name} ${this.id}`;
+	public get name(): string {
+		return `${this.constructor.name} ${this.id}`;
 	}
 
 	public get icon(): string {
 		return '📦';
+	}
+
+	public get label(): string {
+		return `${this.icon} ${this.name}`;
 	}
 
 	public get title(): string {

@@ -19,7 +19,7 @@ export class ProductionJob extends Job<FactoryBuildingEntity> implements JobI {
 	);
 
 	public constructor(entity: FactoryBuildingEntity, blueprint: Blueprint | null) {
-		super(entity);
+		super();
 
 		this.$attach.on((game) => {
 			this.$detach.once(

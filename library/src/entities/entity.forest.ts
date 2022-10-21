@@ -6,7 +6,7 @@ export class ForestEntity extends Entity implements EntityI {
 	 * @deprecated not used yet.
 	 */
 	public type = 'forest';
-	public get label(): string {
+	public get name(): string {
 		return 'Tree';
 	}
 	public get title(): string {

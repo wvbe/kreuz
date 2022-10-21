@@ -5,7 +5,6 @@ import type Game from '../Game.ts';
  */
 export interface JobI {
 	label: string;
-	isAvailable(): boolean;
 	attach(game: Game): void;
 	detach(): void;
 }

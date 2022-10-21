@@ -31,8 +31,8 @@ export class SettlementEntity extends Entity implements EntityI {
 		this.buildings = [];
 	}
 
-	public get label(): string {
-		return `${this.icon} ${this.parameters.name}`;
+	public get name(): string {
+		return this.parameters.name;
 	}
 	public get icon(): string {
 		return '🏠';

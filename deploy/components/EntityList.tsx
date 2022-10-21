@@ -42,7 +42,7 @@ const EntityDetails: FunctionComponent<{ entity?: EntityI }> = ({ entity }) => {
 				icon={entity.icon}
 				title={
 					// Snip off the customary emoji
-					entity.label.substring(2)
+					entity.name
 				}
 				subtitle={entity.title}
 			/>

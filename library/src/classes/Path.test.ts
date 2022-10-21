@@ -11,7 +11,9 @@ describe('Path', () => {
 			XXX
 		`);
 
-		expect(new Path(terrain, { closest: false }).find(terrain.tiles[0], terrain.tiles[2])).toEqual([
+		expect(
+			new Path(terrain, { closest: false }).findPathBetween(terrain.tiles[0], terrain.tiles[2]),
+		).toEqual([
 			terrain.tiles[3],
 			terrain.tiles[6],
 			terrain.tiles[7],

@@ -19,14 +19,14 @@ export class JobBoard extends Collection<JobPriorityI> {
 			return;
 		}
 
-		const firstAvailableJobIndex = this.find(({ job }) => job.isAvailable());
+		const firstAvailableJobIndex = this.find(({ job }) => true);
 		this.sort(({ priority: priorityA }, { priority: priorityB }) => priorityA - priorityB);
 		if (!firstAvailableJobIndex) {
 			// No available jobs, no need to act on reprioritization now.
 			return;
 		}
 
-		const newFirstAvailableJobIndex = this.find(({ job }) => job.isAvailable()) as JobPriorityI;
+		const newFirstAvailableJobIndex = this.find(({ job }) => true) as JobPriorityI;
 		const firstAvailableJobChanged = firstAvailableJobIndex !== newFirstAvailableJobIndex;
 		if (firstAvailableJobChanged) {
 			Logger.log(

@@ -8,9 +8,22 @@
 	/* Nothing */
 }
 .game-ui__column--left {
-	flex: 1 0 480px;
+	flex: 0 0 640px;
 }
 .game-ui__column--right {
 	flex: 1 1 auto;
 	min-width: 320px;
+}
+
+.game-ui__viewport {
+	overflow: hidden;
+	border: 1px solid #aaa;
+	width: 640px;
+	height: 640px;
+
+	user-select: none;
+}
+.game-ui__viewport > .viewport {
+	width: 100%;
+	height: 100%;
 }

@@ -5,6 +5,7 @@ import {
 	butter,
 	copperIngot,
 	flour,
+	honey,
 	ironIngot,
 	milk,
 	rawCopperOre,
@@ -27,6 +28,11 @@ export const wheatProcessing = new Blueprint(
 	],
 	{ fullTimeEquivalent: 5000 },
 );
+
+export const beeKeeping = new Blueprint('Bee-keeping', [], [{ material: honey, quantity: 2 }], {
+	fullTimeEquivalent: 8000,
+});
+
 export const butterMaking = new Blueprint(
 	'Making butter',
 	[{ material: milk, quantity: 2 }],

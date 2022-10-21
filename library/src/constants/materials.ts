@@ -22,6 +22,11 @@ export const bran = new Material('Bran', {
 	stackSize: 100,
 });
 
+export const honey = new Material('Honey', {
+	symbol: '🍯',
+	stackSize: 100,
+});
+
 export const milk = new Material('Milk', {
 	symbol: '🥛',
 	stackSize: 24,

@@ -14,12 +14,12 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 		return job?.blueprint || null;
 	}
 
-	public get label() {
+	public get name() {
 		const blueprint = this.getCurrentBlueprint();
 		if (!blueprint) {
-			return `${this.icon} Empty factory`;
+			return `Empty factory`;
 		}
-		return `${this.icon} ${blueprint.products[0].material.label} factory`;
+		return `${blueprint.products[0].material.label} factory`;
 	}
 
 	public get icon() {

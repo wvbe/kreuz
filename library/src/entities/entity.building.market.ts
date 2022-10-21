@@ -19,11 +19,11 @@ export class MarketBuildingEntity extends BuildingEntity implements EntityI {
 		this.material = material;
 	}
 
-	public get label() {
-		return `${this.icon} ${this.material.label} stall`;
+	public get name() {
+		return `${this.material.label} stall`;
 	}
 
 	public get icon() {
-		return '🛒';
+		return '🏪';
 	}
 }

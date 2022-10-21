@@ -7,6 +7,7 @@ import { EventLog } from './EventLog.tsx';
 import { Game } from '@lib';
 import { MaterialList } from './MaterialList.tsx';
 import { BlueprintList } from './BlueprintList.tsx';
+import { PanZoom } from './PanZoom.tsx';
 
 export const GameUI: FunctionComponent<{ game: Game }> = ({ game }) => {
 	return (
@@ -15,8 +16,10 @@ export const GameUI: FunctionComponent<{ game: Game }> = ({ game }) => {
 				<div>
 					<Clock game={game} />
 				</div>
-				<div>
-					<TerrainUI terrain={game.terrain} entities={game.entities} />
+				<div className="game-ui__viewport">
+					<PanZoom>
+						<TerrainUI terrain={game.terrain} entities={game.entities} />
+					</PanZoom>
 				</div>
 				<div>
 					<EntityList entities={game.entities} />

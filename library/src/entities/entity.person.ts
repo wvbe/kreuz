@@ -1,4 +1,5 @@
 import { Event } from '../classes/Event.ts';
+import { EventedPromise } from '../classes/EventedPromise.ts';
 import Logger from '../classes/Logger.ts';
 import { Path } from '../classes/Path.ts';
 import { Random } from '../classes/Random.ts';
@@ -13,12 +14,14 @@ export class PersonEntity extends Entity {
 	// The amount of game coordinate per millisecond
 	private readonly walkSpeed = 1 / 1000;
 
+	public readonly $pathStart = new Event<[]>(`${this.constructor.name} $pathStart`);
+
 	/**
 	 * Event: The event that the person finishes every step of a path.
 	 *
 	 * @TODO maybe invent a more generic "idle" event.
 	 */
-	public readonly $pathEnd = new Event<[]>('PersonEntity $pathEnd');
+	public readonly $pathEnd = new Event<[]>(`${this.constructor.name} $pathEnd`);
 
 	/**
 	 * Event: The person started one step.
@@ -39,7 +42,7 @@ export class PersonEntity extends Entity {
 			 */
 			CallbackFn,
 		]
-	>('PersonEntity $stepStart');
+	>(`${this.constructor.name} $stepStart`);
 
 	/**
 	 * Event: The person started finished one step. The entities location is updated upon this event.
@@ -52,7 +55,7 @@ export class PersonEntity extends Entity {
 	 *      game.time.setTimeout(done, duration);
 	 *   });
 	 */
-	public readonly $stepEnd = new Event<[CoordinateI]>('PersonEntity $stepEnd');
+	public readonly $stepEnd = new Event<[CoordinateI]>(`${this.constructor.name} $stepEnd`);
 
 	public readonly userData: {
 		gender: 'm' | 'f';
@@ -115,8 +118,8 @@ export class PersonEntity extends Entity {
 		});
 	}
 
-	public get label(): string {
-		return `${this.icon} ${this.userData.firstName}`;
+	public get name(): string {
+		return this.userData.firstName;
 	}
 	public get icon(): string {
 		return this.userData.gender === 'm' ? '👨' : '👩';
@@ -129,8 +132,11 @@ export class PersonEntity extends Entity {
 	/**
 	 * Make the entity choose a path from its current location to the destination, and start an
 	 * animation.
+	 *
+	 * Returns a promise that resolves when the path is completed, or rejects when another path
+	 * interrupts our current before the destination was reached.
 	 */
-	public walkToTile(destination: TileI) {
+	public walkToTile(destination: TileI): Promise<void> {
 		const terrain = destination.terrain;
 		if (!terrain) {
 			throw new Error(`Entity "${this.id}" is trying to path in a detached coordinate`);
@@ -146,17 +152,31 @@ export class PersonEntity extends Entity {
 		// location. The only downsize is that entities that are mid-way a tile will not find one. Since
 		// this is not a feature yet, we can use it regardless:
 		const start = terrain.getTileEqualToXy(this.$$location.get().x, this.$$location.get().y);
-
 		if (!start) {
 			throw new Error(`Entity "${this.id}" is trying to path without living on a tile`);
 		}
-		const path = new Path(terrain, { closest: true }).find(start, destination);
+		const path = new Path(terrain, { closest: true }).findPathBetween(start, destination);
+
+		return this.walkAlongPath(path);
+	}
+
+	/**
+	 * Start the animation of walking a path. Return a promise that resolves when finished, or rejects
+	 * when interrupted.
+	 *
+	 * Very similar to .walkToTile, but more appropriate if the path is already computed.
+	 */
+	public walkAlongPath(path: TileI[]): Promise<void> {
+		// @TODO add some safety checks on the path maybe.
+
+		// Emitting this event may prompt the promises of other walkOnTile tasks to reject.
+		this.$pathStart.emit();
 
 		if (!path.length) {
 			Logger.warn('Path was zero steps long, finishing early.');
 			// debugger;
 			this.$pathEnd.emit();
-			return;
+			return Promise.resolve();
 		}
 
 		const unlisten = this.$stepEnd.on(() => {
@@ -170,10 +190,12 @@ export class PersonEntity extends Entity {
 			}
 		});
 
+		const { promise } = new EventedPromise(this.$pathEnd, this.$pathStart);
 		const next = path.shift();
 		if (next) {
 			this.animateTo(next);
 		}
+		return promise;
 	}
 
 	/**

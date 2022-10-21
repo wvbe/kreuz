@@ -18,15 +18,11 @@ export function generateGridTerrainFromAscii(ascii: string) {
 	if (!datas.every((data, i, all) => data.length === all[0].length)) {
 		throw new Error('The ASCII input for generateGridTerrainFromAscii should be a rectangle');
 	}
+
 	const width = datas[0].length,
 		height = datas.length;
-
 	const tiles = datas.map((data, y) =>
-		data.map((character, x) => {
-			const z = character === '-' ? -1 : 1;
-			const tile = new SquareTile(x + width, y + height, z);
-			return tile;
-		}),
+		data.map((character, x) => new SquareTile(x, y, character === '-' ? -1 : 1)),
 	);
 
 	tiles.forEach((tilesInRow, y) =>

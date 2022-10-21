@@ -3,15 +3,14 @@
  */
 
 import {
-	EntityI,
+	ChurchBuildingEntity,
+	FactoryBuildingEntity,
 	Game,
+	MarketBuildingEntity,
 	materials,
 	PersonEntity,
-	SettlementEntity,
 	Random,
-	FactoryBuildingEntity,
-	ChurchBuildingEntity,
-	MarketBuildingEntity,
+	SettlementEntity,
 } from '@lib';
 import { Demo } from './types.ts';
 import { generateDualMeshTerrain } from './utils/generateDualMeshTerrain.ts';
@@ -33,7 +32,10 @@ function generateRandomInventories(game: Game) {
 			}
 			const randomFood = Random.fromArray(possibleRandomFoods, entity.id, 'free-food', i);
 			if (randomFood) {
-				entity.inventory.set(randomFood, Math.floor(Random.between(1, 5)));
+				entity.inventory.set(
+					randomFood,
+					Math.floor(Random.between(1, 5, entity.id, 'free-food-quantity', i)),
+				);
 			}
 		});
 }
@@ -92,7 +94,7 @@ export function generateEntities(game: Game) {
 }
 
 const demo: Demo = (driver) => {
-	const game = new Game(1, generateDualMeshTerrain(1, 20, 3));
+	const game = new Game(1, generateDualMeshTerrain(1, 40, 1));
 	driver.attach(game);
 
 	generateEntities(game);

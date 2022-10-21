@@ -2,9 +2,7 @@ import { Collection, EntityI, type Terrain } from '@lib';
 import { DetailedHTMLProps, FunctionComponent, HTMLAttributes, useMemo } from 'react';
 import { useEventedValue } from '../hooks/useEventedValue.ts';
 
-const width = 640,
-	height = 480;
-
+const MARGIN = 15;
 export const EntityMarker: FunctionComponent<
 	{ entity: EntityI; zoom: number } & DetailedHTMLProps<
 		HTMLAttributes<HTMLDivElement>,
@@ -15,7 +13,7 @@ export const EntityMarker: FunctionComponent<
 	return (
 		<div
 			className="person-entity-marker"
-			style={{ top: `${y * zoom}px`, left: `${x * zoom}px` }}
+			style={{ top: `${y * zoom + MARGIN}px`, left: `${x * zoom + MARGIN}px` }}
 			{...rest}
 		/>
 	);
@@ -42,6 +40,25 @@ export const TerrainUI: FunctionComponent<{ terrain: Terrain; entities: Collecti
 		[terrain.tiles],
 	);
 
+	const boundaries = useMemo(
+		() =>
+			terrain.tiles.reduce(
+				(b, tile) => ({
+					minX: Math.min(b.minX, tile.x),
+					maxX: Math.max(b.minX, tile.x),
+					minY: Math.min(b.minY, tile.y),
+					maxY: Math.max(b.minY, tile.y),
+				}),
+				{
+					minX: Infinity,
+					maxX: -Infinity,
+					minY: Infinity,
+					maxY: -Infinity,
+				},
+			),
+		[terrain.tiles],
+	);
+
 	const entities2 = useMemo(
 		() =>
 			entities.map((entity, i) => {
@@ -55,9 +72,18 @@ export const TerrainUI: FunctionComponent<{ terrain: Terrain; entities: Collecti
 		[],
 	);
 
+	const width = (boundaries.maxX - boundaries.minX) * zoom + 2 * MARGIN;
+	const height = (boundaries.maxY - boundaries.minY) * zoom + 2 * MARGIN;
+
 	return (
-		<div className="terrain" style={{ width: `${width}px`, height: `${height}px` }}>
-			<svg height={480} width={640}>
+		<div
+			className="terrain"
+			style={{
+				width: `${width}px`,
+				height: `${height}px`,
+			}}
+		>
+			<svg height={height} width={width} viewBox={`${-MARGIN} ${-MARGIN} ${width} ${height}`}>
 				{tiles}
 			</svg>
 			{entities2}

@@ -16,6 +16,7 @@ export * from './src/jobs/types.ts';
 export { Job } from './src/jobs/Job.ts';
 export { PatrolJob } from './src/jobs/PatrolJob.ts';
 export { LoiterJob } from './src/jobs/LoiterJob.ts';
+export { SelfcareJob } from './src/jobs/SelfcareJob.ts';
 export { ProductionJob } from './src/jobs/ProductionJob.ts';
 
 // Drivers:

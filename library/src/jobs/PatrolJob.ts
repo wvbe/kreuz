@@ -1,15 +1,19 @@
-import { PersonEntity } from '../entities/entity.person.ts';
-import { DestroyerFn, TileI } from '../types.ts';
+import { type PersonEntity } from '../entities/entity.person.ts';
+import { type TileI } from '../types.ts';
 import { Job } from './Job.ts';
 import { type JobI } from './types.ts';
 
+/**
+ * The patrol job makes the entity travel between the same set of tiles time and time again.
+ * When the entity reaches the last tile on its checklist, it starts at the top of that list again.
+ */
 export class PatrolJob extends Job<PersonEntity> implements JobI {
-	private readonly destroyers: DestroyerFn[] = [];
-	waypoints: TileI[];
-	waypointIndex: number;
+	private readonly waypoints: TileI[];
+
+	private waypointIndex: number;
 
 	constructor(entity: PersonEntity, waypoints: TileI[]) {
-		super(entity);
+		super();
 		if (waypoints.length < 2) {
 			throw new Error('A patrol must have at least 2 waypoints');
 		}
@@ -17,20 +21,19 @@ export class PatrolJob extends Job<PersonEntity> implements JobI {
 		this.waypointIndex = 0;
 
 		this.$attach.on((game) => {
-			const repeatPathDestroyer = this.entity.$pathEnd.on(() => {
+			const repeatPathDestroyer = entity.$pathEnd.on(() => {
 				// Guards move from one waypoint to another, pausing for a random amount of time in between
 				// @TODO randomize pause time
-				const destroy = game.time.setTimeout(() => {
+				// @TODO probably do something with _destroy
+				const _destroy = game.time.setTimeout(() => {
 					this.waypointIndex += 1;
 					// @TODO maybe reverse path, rather than starting again at step 1
 					const next = this.waypoints[this.waypointIndex % this.waypoints.length];
-					this.entity.walkToTile(next);
-					this.destroyers.splice(this.destroyers.indexOf(destroy), 1);
+					entity.walkToTile(next);
 				}, 3000);
-				this.destroyers.push(destroy);
 			});
 			this.$detach.once(repeatPathDestroyer);
-			this.entity.walkToTile(this.waypoints[0]);
+			entity.walkToTile(this.waypoints[0]);
 		});
 	}
 

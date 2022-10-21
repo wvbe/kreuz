@@ -64,7 +64,7 @@ export const PERSON_NEEDS: Array<{
 	{
 		id: 'spirituality',
 		label: 'Spirituality',
-		decay: -1 / 1_000_000,
+		decay: -1 / 9_000,
 		moods: [
 			{ upUntil: 20 / 100, label: 'existential dread' },
 			{ upUntil: 33 / 100, label: 'depressed' },

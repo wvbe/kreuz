@@ -41,36 +41,33 @@ function getVisitationCost(_terrain: Terrain, _from: TileI, _neighbor: TileI) {
 }
 
 export class Path {
-	private readonly terrain: Terrain;
-	private readonly options: PathOptions;
-	private readonly cache: Map<TileI, HeuristicReport>;
-	private readonly heap: BinaryHeap<TileI>;
-	private readonly heuristic: HeuristicScorer;
+	readonly #terrain: Terrain;
+	readonly #options: PathOptions;
+	readonly #cache: Map<TileI, HeuristicReport>;
+	readonly #heap: BinaryHeap<TileI>;
+	readonly #heuristic: HeuristicScorer;
 
 	constructor(graph: Terrain, options: PathOptions) {
-		this.terrain = graph;
-		this.options = options;
-
-		this.cache = new Map<TileI, HeuristicReport>();
-
-		this.heap = new BinaryHeap<TileI>((node) => {
-			const heuristic = this.cache.get(node);
+		this.#terrain = graph;
+		this.#options = options;
+		this.#cache = new Map<TileI, HeuristicReport>();
+		this.#heap = new BinaryHeap<TileI>((node) => {
+			const heuristic = this.#cache.get(node);
 			if (!heuristic) {
 				throw new Error('This is weird');
 			}
 			return heuristic.f;
 		});
-
-		this.heuristic = (pos0, pos1) => {
+		this.#heuristic = (pos0, pos1) => {
 			return pos0.euclideanDistanceTo(pos1);
 		};
 	}
 
-	public find(start: TileI, end: TileI) {
+	public findPathBetween(start: TileI, end: TileI) {
 		let closestNode = start; // set the start node to be the closest if required
 		let closestNodeHeuristics: HeuristicReport = {
 			coordinate: closestNode,
-			h: this.heuristic(start, end),
+			h: this.#heuristic(start, end),
 			g: 0,
 			f: 0,
 
@@ -82,14 +79,14 @@ export class Path {
 		};
 
 		// At this stage `start` is also `closestNode`, so lets associate those heuristics
-		this.cache.set(start, closestNodeHeuristics);
+		this.#cache.set(start, closestNodeHeuristics);
 
-		this.heap.push(start);
+		this.#heap.push(start);
 
-		while (this.heap.size() > 0) {
+		while (this.#heap.size() > 0) {
 			// Grab the lowest f(x) to process next.  Heap keeps this sorted for us.
-			const currentNode = this.heap.pop();
-			const currentNodeHeuristics = this.cache.get(currentNode);
+			const currentNode = this.#heap.pop();
+			const currentNodeHeuristics = this.#cache.get(currentNode);
 			if (!currentNodeHeuristics) {
 				throw new Error('Somehow opening a node that has no heuristic data');
 			}
@@ -103,11 +100,11 @@ export class Path {
 			currentNodeHeuristics.closed = true;
 
 			// Find all neighbors for the current node.
-			const neighbors = this.terrain.getNeighborTiles(currentNode);
+			const neighbors = this.#terrain.getNeighborTiles(currentNode);
 
 			for (let i = 0, il = neighbors.length; i < il; ++i) {
 				const neighbor = neighbors[i];
-				let neighborHeuristics = this.cache.get(neighbor);
+				let neighborHeuristics = this.#cache.get(neighbor);
 
 				if (neighborHeuristics?.closed || !neighbor.isLand()) {
 					// Not a valid node to process, skip to next neighbor.
@@ -117,11 +114,11 @@ export class Path {
 				// The g score is the shortest distance from start to current node.
 				// We need to check if the path we have arrived at this neighbor is the shortest one we have seen yet.
 				const gScore =
-					currentNodeHeuristics.g + getVisitationCost(this.terrain, currentNode, neighbor);
+					currentNodeHeuristics.g + getVisitationCost(this.#terrain, currentNode, neighbor);
 				const beenVisited = !!neighborHeuristics;
 
 				if (!beenVisited || (neighborHeuristics && gScore < neighborHeuristics.g)) {
-					const hScore = this.heuristic(neighbor, end);
+					const hScore = this.#heuristic(neighbor, end);
 					// Found an optimal (so far) path to this node.  Take score for node to see how good it is.
 					neighborHeuristics = {
 						coordinate: neighbor,
@@ -132,9 +129,9 @@ export class Path {
 						closed: true,
 						visited: true,
 					};
-					this.cache.set(neighbor, neighborHeuristics as HeuristicReport);
+					this.#cache.set(neighbor, neighborHeuristics as HeuristicReport);
 
-					if (this.options.closest) {
+					if (this.#options.closest) {
 						// If the neighbour is closer than the current closestNode or if it's equally close but has
 						// a cheaper path than the current closest node then it becomes the closest node
 						if (
@@ -149,16 +146,16 @@ export class Path {
 
 					if (!beenVisited) {
 						// Pushing to heap will put it in proper place based on the 'f' value.
-						this.heap.push(neighbor);
+						this.#heap.push(neighbor);
 					} else {
 						// Already seen the node, but since it has been rescored we need to reorder it in the heap
-						this.heap.rescoreElement(neighbor);
+						this.#heap.rescoreElement(neighbor);
 					}
 				}
 			}
 		}
 
-		if (this.options.closest) {
+		if (this.#options.closest) {
 			return this.tracePath(closestNodeHeuristics);
 		}
 
@@ -166,6 +163,48 @@ export class Path {
 		// @TODO this is a costly non-answer? investigate when you see this log message maybe:
 		Logger.warn('-- No path --', start, end);
 		return [];
+	}
+
+	/**
+	 * Out of a few different destinations, pick the one that is the easiest to get to, and return
+	 * the path to it.
+	 *
+	 * @NOTE
+	 * - Currently picks the destination _closest to the start_ but not necessarily with the shortest
+	 *   path to it.
+	 * - As an optimization, may weed out the tiles that are on a different island early.
+	 */
+	public findPathToClosest(start: TileI, options: TileI[]) {
+		const nearest: { tile: TileI; distance: number; path?: TileI[] }[] = options
+			.map((tile) => ({
+				tile,
+				distance: start.euclideanDistanceTo(tile),
+			}))
+			.sort((a, b) => a.distance - b.distance);
+
+		// @TODO possibly filter churches that are on the same island? Could make the pathing function a little
+		// less expensive.
+
+		const shortest = nearest.reduce((last, option) => {
+			if (last.path) {
+				return last;
+			}
+			const path = this.findPathBetween(start, option.tile);
+			if (!path.length) {
+				return last;
+			}
+			return {
+				...option,
+				path,
+			};
+		}, nearest[0]);
+		if (!shortest.path) {
+			return null;
+		}
+		return {
+			tile: shortest.tile,
+			path: shortest.path,
+		};
 	}
 
 	private tracePath(heuristicReport: HeuristicReport) {
@@ -176,5 +215,10 @@ export class Path {
 			curr = curr.parent;
 		}
 		return path.map((heuristicReport) => heuristicReport.coordinate);
+	}
+
+	static find(graph: Terrain, start: TileI, end: TileI, options: PathOptions) {
+		const p = new Path(graph, options);
+		return p.findPathBetween(start, end);
 	}
 }

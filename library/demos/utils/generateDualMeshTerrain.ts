@@ -15,7 +15,10 @@ export function generateDualMeshTerrain(seed: SeedI, size: number, density: numb
 			shape: [size, size],
 			minDistance: 1 / density,
 		},
-		() => Random.float(seed, ++i),
+		function generateRandomFloatForPoisson() {
+			// This is the most expensive function in generating terrain:
+			return Random.float(seed, ++i);
+		},
 	);
 	const meshBuilder = new MeshBuilder({ boundarySpacing: 1 });
 	meshBuilder.points.forEach((p) => poisson.addPoint(p));

@@ -137,7 +137,7 @@ export function generateFamilyTree(seed: number, dateMax: number) {
 			}
 			return true;
 		}
-		
+
 		canHaveBabyWith(partner: Person) {
 			if (this.gender === partner.gender) {
 				return false;
@@ -145,7 +145,6 @@ export function generateFamilyTree(seed: number, dateMax: number) {
 			if (!this.canHaveBabies() || !partner.canHaveBabies()) {
 				return false;
 			}
-
 			return true;
 		}
 

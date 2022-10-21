@@ -14,7 +14,7 @@ export const PopOnUpdateSpan: FunctionComponent<
 	const element = useRef<HTMLSpanElement | null>(null);
 	const last = useRef<string | null>(null);
 	const setElementRef = useCallback((el: HTMLSpanElement) => (element.current = el), []);
-	useEffect(() => {
+	useEffect(function performPopOnUpdateAnimation() {
 		if (!element.current) {
 			return;
 		}

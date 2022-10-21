@@ -13,14 +13,20 @@ export interface EntityI {
 	id: string;
 
 	/**
-	 * The human-readable name for this entity.
-	 */
-	label: string;
-
-	/**
 	 * An emoji that makes the entity more recognizable at a glance.
 	 */
 	icon: string;
+
+	/**
+	 * The human-readable name for this entity.
+	 */
+	name: string;
+
+	/**
+	 * A recognizable string that represents this entity, even if a lot of context is missing. By
+	 * default it is a combination of the icon and name.
+	 */
+	label: string;
 
 	/**
 	 * A short description of what this entity is or does. For example, they are the bailiff or they're

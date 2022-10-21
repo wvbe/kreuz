@@ -3,9 +3,8 @@ import { EventedValue } from '../classes/EventedValue.ts';
 import type Game from '../Game.ts';
 import { type JobI } from '../jobs/types.ts';
 import { Coordinate } from '../terrain/Coordinate.ts';
-import { type SaveEntityJson } from '../types-savedgame.ts';
 import { type CoordinateI } from '../types.ts';
-import { type EntityI } from './types.ts';
+import { type SavedEntityI, type EntityI } from './types.ts';
 
 export class Entity extends Attachable<[Game]> implements EntityI {
 	/**
@@ -75,11 +74,11 @@ export class Entity extends Attachable<[Game]> implements EntityI {
 	/**
 	 * Serialize for a save game JSON
 	 */
-	public serializeToSaveJson(): SaveEntityJson {
+	public serializeToSaveJson(): SavedEntityI {
 		return {
 			type: this.type,
 			id: this.id,
-			location: this.$$location.get().toArray(),
+			location: this.$$location.get().serializeToSaveJson(),
 		};
 	}
 }

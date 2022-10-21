@@ -1,8 +1,14 @@
-import { Attachable } from '../classes/Attachable.ts';
 import { Event } from '../classes/Event.ts';
 import { EventedNumericValue } from '../classes/EventedNumericValue.ts';
 import type Game from '../Game.ts';
+import { SaveableObject } from '../types-savedgame.ts';
 import { type DestroyerFn } from '../types.ts';
+
+export type SavedProgressingNumericValueI = {
+	delta: number;
+	min: number;
+	max: number;
+};
 
 type ProgressingNumericValueOptions = {
 	min?: number;
@@ -21,7 +27,10 @@ type ProgressingNumericValueOptions = {
  * for the first time that someone is expected to care -- for example when it reaches zero, or when
  * it reaches a range that is being watched with Need#onBetween/Need#onceBetween.
  */
-export class ProgressingNumericValue extends EventedNumericValue {
+export class ProgressingNumericValue
+	extends EventedNumericValue
+	implements SaveableObject<SavedProgressingNumericValueI>
+{
 	/*
 	 * Informally implements the Attachable interface as well.
 	 */
@@ -174,5 +183,13 @@ export class ProgressingNumericValue extends EventedNumericValue {
 		const oldDelta = this.#delta;
 		this.#delta = newDelta;
 		this.$recalibrate.emit(oldDelta);
+	}
+
+	public serializeToSaveJson(): SavedProgressingNumericValueI {
+		return {
+			delta: this.#delta,
+			min: this.#min,
+			max: this.#max,
+		};
 	}
 }

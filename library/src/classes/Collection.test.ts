@@ -1,8 +1,9 @@
 import { expect, it, describe, run, mock } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { AnyJson } from '../types-savedgame.ts';
 import { Collection } from './Collection.ts';
 
 function createMocks<T>() {
-	const collection = new Collection<T>();
+	const collection = new Collection<T, AnyJson>();
 	const onAdd = mock.fn();
 	const onRemove = mock.fn();
 	const onChange = mock.fn();

@@ -1,10 +1,15 @@
 import { type EventedValue } from '../classes/EventedValue.ts';
 import type Game from '../Game.ts';
 import { type JobI } from '../jobs/types.ts';
-import { type SaveEntityJson } from '../types-savedgame.ts';
-import { type CoordinateI } from '../types.ts';
+import { SaveableObject } from '../types-savedgame.ts';
+import { SavedCoordinateI, type CoordinateI } from '../types.ts';
 
-export interface EntityI {
+export type SavedEntityI = {
+	type: string;
+	id: string;
+	location: SavedCoordinateI;
+};
+export interface EntityI extends SaveableObject<SavedEntityI> {
 	type: string;
 
 	/**
@@ -59,5 +64,5 @@ export interface EntityI {
 	 */
 	doJob(job: JobI): void;
 
-	serializeToSaveJson(): SaveEntityJson;
+	// serializeToSaveJson(): SaveEntityJson;
 }

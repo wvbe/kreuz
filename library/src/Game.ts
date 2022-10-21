@@ -1,10 +1,17 @@
-import { Collection } from './classes/Collection.ts';
+import { Collection, SavedCollection } from './classes/Collection.ts';
 import { Event } from './classes/Event.ts';
-import { TimeLine } from './classes/TimeLine.ts';
+import { SavedTimeLineI, TimeLine } from './classes/TimeLine.ts';
 import { EntityI } from './entities/types.ts';
-import { Terrain } from './terrain/Terrain.ts';
-import { SavedGameJson } from './types-savedgame.ts';
+import { Terrain, type SavedTerrainI } from './terrain/Terrain.ts';
 import { SeedI } from './types.ts';
+
+export type SavedGame = {
+	version: 'alpha';
+	terrain: SavedTerrainI;
+	entities: SavedCollection<EntityI>;
+	time: SavedTimeLineI;
+	seed: string | number;
+};
 
 export default class Game {
 	public readonly terrain: Terrain;
@@ -63,13 +70,13 @@ export default class Game {
 	/**
 	 * Serialize for a save game JSON
 	 */
-	public serializeToSaveJson(): SavedGameJson {
+	public serializeToSaveJson(): SavedGame {
 		return {
 			version: 'alpha', // todo version some time,
-			terrain: this.terrain.serializeToSaveJson(),
-			entities: this.entities.map((entity) => entity.serializeToSaveJson()),
-			time: this.time.serializeToSaveJson(),
 			seed: this.seed,
+			terrain: this.terrain.serializeToSaveJson(),
+			entities: this.entities.serializeToSaveJson(),
+			time: this.time.serializeToSaveJson(),
 		};
 	}
 }

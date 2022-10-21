@@ -65,7 +65,7 @@ const demo: Demo = (driver) => {
 					return max;
 				}
 				entity.needs[key as PersonNeedId].onBetween(min, max, () =>
-					console.log(`${entity.label} is ${label}.`),
+					console.error(`${entity.label} is ${label}.`),
 				);
 				return max;
 			}, 0),

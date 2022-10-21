@@ -17,4 +17,4 @@ const demo = await import(Deno.args[0]);
 const { driver, game } = demo.default(new TestDriver());
 driver.start();
 
-console.dir(game, { depth: 10 });
+console.dir(game.serializeToSaveJson(), { depth: 50 });

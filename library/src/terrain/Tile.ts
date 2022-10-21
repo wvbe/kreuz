@@ -1,6 +1,5 @@
+import { CoordinateI, SavedTileI, TileI } from '../types.ts';
 import { Coordinate } from './Coordinate.ts';
-import { CoordinateI, TileI } from '../types.ts';
-import { SaveTileJson } from '../types-savedgame.ts';
 import { type Terrain } from './Terrain.ts';
 
 /**
@@ -47,10 +46,11 @@ export class Tile extends Coordinate implements TileI {
 	/**
 	 * Serialize for a save game JSON
 	 */
-	public serializeToSaveJson(): SaveTileJson {
+	public serializeToSaveJson(): SavedTileI {
 		return {
-			center: this.toArray(),
-			outline: this.getOutlineCoordinates().map((coord) => coord.toArray()),
+			...super.serializeToSaveJson(),
+			neighbors: this.neighbors.map((neighbor) => Coordinate.clone(neighbor).serializeToSaveJson()),
+			outline: this.getOutlineCoordinates().map((coord) => coord.serializeToSaveJson()),
 		};
 	}
 }

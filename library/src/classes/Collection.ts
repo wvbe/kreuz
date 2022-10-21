@@ -1,17 +1,28 @@
-import { CallbackFn, SortFn } from '../types.ts';
+import { AnyJson, type SaveableObject } from '../types-savedgame.ts';
+import { type CallbackFn, type SortFn } from '../types.ts';
 import { Event } from './Event.ts';
 
-export class Collection<T> {
-	#collection: Array<T> = [];
-	public readonly $add = new Event<[T[]]>('Collection $add');
-	public readonly $remove = new Event<[T[]]>('Collection $remove');
-	public readonly $change = new Event<[T[], T[]]>('Collection $change');
+export type SavedCollection<
+	Item extends SaveableObject<SavedItem>,
+	SavedItem extends AnyJson = Item extends SaveableObject<infer P> ? P : never,
+> = {
+	collection: Array<SavedItem>;
+};
 
-	public add(...items: T[]) {
+export class Collection<
+	Item extends SaveableObject<SavedItem>,
+	SavedItem extends AnyJson = Item extends SaveableObject<infer P> ? P : never,
+> {
+	#collection: Array<Item> = [];
+	public readonly $add = new Event<[Item[]]>('Collection $add');
+	public readonly $remove = new Event<[Item[]]>('Collection $remove');
+	public readonly $change = new Event<[Item[], Item[]]>('Collection $change');
+
+	public add(...items: Item[]) {
 		this.change(items, []);
 	}
 
-	public remove(...items: T[]) {
+	public remove(...items: Item[]) {
 		this.change([], items);
 	}
 
@@ -22,7 +33,7 @@ export class Collection<T> {
 	 * - If items that were removed from the collection, a list of them is emitted as $remove
 	 * - If either occurred, both lists (added and removed) are emitted as the $change event
 	 */
-	public change(addItems: T[], removeItems: T[]) {
+	public change(addItems: Item[], removeItems: Item[]) {
 		this.#collection.push(...addItems);
 		const wasActuallyRemoved = removeItems.filter((item) => {
 			const index = this.#collection.indexOf(item);
@@ -47,36 +58,42 @@ export class Collection<T> {
 		return this.#collection[index];
 	}
 
-	public findIndex(filter: (item: T, index: number, array: T[]) => boolean): number {
+	public findIndex(filter: (item: Item, index: number, array: Item[]) => boolean): number {
 		return this.#collection.findIndex(filter);
 	}
-	public find(filter: (item: T, index: number, array: T[]) => boolean): T | undefined {
+	public find(filter: (item: Item, index: number, array: Item[]) => boolean): Item | undefined {
 		return this.#collection.find(filter);
 	}
-	public slice(start?: number, end?: number): T[] {
+	public slice(start?: number, end?: number): Item[] {
 		return this.#collection.slice(start, end);
 	}
 
 	get length() {
 		return this.#collection.length;
 	}
-	public sort(sorter: SortFn<T>) {
+	public sort(sorter: SortFn<Item>) {
 		this.#collection.sort(sorter);
 		return this;
 	}
-	public forEach(callback: CallbackFn<[T, number, T[]]>): void {
+	public forEach(callback: CallbackFn<[Item, number, Item[]]>): void {
 		return this.#collection.forEach(callback);
 	}
-	public map<X>(mapper: (item: T, index: number, all: T[]) => X): X[] {
+	public map<X>(mapper: (item: Item, index: number, all: Item[]) => X): X[] {
 		return this.#collection.map(mapper);
 	}
-	public filter<X = T>(filter: (item: T, index: number, array: T[]) => boolean) {
+	public filter<X = Item>(filter: (item: Item, index: number, array: Item[]) => boolean) {
 		return this.#collection.filter(filter) as unknown[] as X[];
 	}
 	/**
 	 * @deprecated You probably meant to use add(), because it will trigger update events.
 	 */
-	public push(...items: T[]): number {
+	public push(...items: Item[]): number {
 		return this.#collection.push(...items);
+	}
+
+	public serializeToSaveJson(): SavedCollection<Item, SavedItem> {
+		return {
+			collection: this.#collection.map((item) => item.serializeToSaveJson()),
+		};
 	}
 }

@@ -65,17 +65,12 @@ export class SelfcareJob extends Job<PersonEntity> implements JobI {
 		entity: PersonEntity,
 		need: NeedInfo,
 	): null | CurrentFocus {
-		console.log('Satisfy need', need);
 		if (need.id === 'spirituality') {
 			this.startSatisfyingSpiritualityNeed(game, entity);
 		}
 		return null;
 	}
 
-	/**
-	 * Returns `null` if the job could not be started, or a promise otherwise. The promise will
-	 * resolve when the job is completed, or reject when it is interrupted.
-	 */
 	private async startSatisfyingSpiritualityNeed(game: Game, entity: PersonEntity): Promise<void> {
 		const { x, y } = entity.$$location.get();
 		const start = game.terrain.getTileEqualToXy(x, y);
@@ -104,12 +99,11 @@ export class SelfcareJob extends Job<PersonEntity> implements JobI {
 				}),
 		);
 		if (!shortest) {
-			return null;
+			return Promise.reject();
 		}
 
 		// Walk there
 		await entity.walkAlongPath(shortest.path);
-		console.log(`${entity.label} has arrived at a church`);
 
 		// Start worshipping, gain some spirituality
 		const { $finish, $interrupt, promise } = new EventedPromise();

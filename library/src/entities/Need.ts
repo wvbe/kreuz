@@ -1,9 +1,13 @@
-import { Attachable } from '../classes/Attachable.ts';
 import { Event } from '../classes/Event.ts';
-import { EventedNumericValue } from '../classes/EventedNumericValue.ts';
-import { ProgressingNumericValue } from '../classes/ProgressingNumericValue.ts';
-import type Game from '../Game.ts';
-import { type DestroyerFn } from '../types.ts';
+import {
+	ProgressingNumericValue,
+	type SavedProgressingNumericValueI,
+} from '../classes/ProgressingNumericValue.ts';
+import { SaveableObject } from '../types-savedgame.ts';
+
+export type SavedNeedI = SavedProgressingNumericValueI & {
+	id: string;
+};
 
 /**
  * A need represents the urgency with which a personnal requirement needs to be fulfilled. In most
@@ -16,7 +20,7 @@ import { type DestroyerFn } from '../types.ts';
  * for the first time that someone is expected to care -- for example when it reaches zero, or when
  * it reaches a range that is being watched with Need#onBetween/Need#onceBetween.
  */
-export class Need extends ProgressingNumericValue {
+export class Need extends ProgressingNumericValue implements SaveableObject<SavedNeedI> {
 	public readonly id: string;
 	public constructor(id: string, initial: number, label: string, delta: number, debug?: boolean) {
 		super(initial, { delta }, label, debug);
@@ -31,4 +35,11 @@ export class Need extends ProgressingNumericValue {
 	 * the time elapsed in the cancelled timeout -- or more precisely at which decay rate.
 	 */
 	$recalibrate = new Event<[number]>('Need $recalibrate');
+
+	public serializeToSaveJson(): SavedNeedI {
+		return {
+			...super.serializeToSaveJson(),
+			id: this.id,
+		};
+	}
 }

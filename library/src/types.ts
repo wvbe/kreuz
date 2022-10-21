@@ -1,5 +1,4 @@
 import { type Terrain } from './terrain/Terrain.ts';
-import { type SaveTileJson } from './types-savedgame.ts';
 
 export type GameDistance = number;
 
@@ -26,7 +25,14 @@ export interface CoordinateI {
 	transform(dx: GameDistance, dy: GameDistance, dz: GameDistance): this;
 	transform(delta: CoordinateI): this;
 	scale(multiplier: number): this;
+	serializeToSaveJson(): SavedCoordinateI;
 }
+
+export type SavedCoordinateI = {
+	x: GameDistance;
+	y: GameDistance;
+	z: GameDistance;
+};
 
 /**
  * A tile
@@ -42,7 +48,12 @@ export interface TileI extends CoordinateI {
 	isAdjacentToEdge(): boolean;
 	isAdjacentToLand(): boolean;
 	isLand(): boolean;
-	serializeToSaveJson(): SaveTileJson;
+	serializeToSaveJson(): SavedTileI;
+}
+
+export interface SavedTileI extends SavedCoordinateI {
+	neighbors: SavedCoordinateI[];
+	outline: SavedCoordinateI[];
 }
 
 export type SeedI = string | number;

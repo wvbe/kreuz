@@ -1,6 +1,10 @@
+import { CoordinateI, SavedTileI, TileFilterFn, TileI } from '../types.ts';
 import { Coordinate } from './Coordinate.ts';
-import { SaveTerrainJson } from '../types-savedgame.ts';
-import { CoordinateI, TileFilterFn, TileI } from '../types.ts';
+
+export interface SavedTerrainI {
+	size: number;
+	tiles: Array<SavedTileI>;
+}
 
 export class Terrain {
 	readonly #tiles: TileI[] = [];
@@ -147,10 +151,10 @@ export class Terrain {
 	/**
 	 * Serialize for a save game JSON
 	 */
-	public serializeToSaveJson(): SaveTerrainJson {
+	public serializeToSaveJson(): SavedTerrainI {
 		return {
-			tiles: this.#tiles.map((tile) => tile.serializeToSaveJson()),
 			size: this.size,
+			tiles: this.#tiles.map((tile) => tile.serializeToSaveJson()),
 		};
 	}
 }

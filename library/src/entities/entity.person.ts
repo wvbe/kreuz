@@ -6,11 +6,16 @@ import { Random } from '../classes/Random.ts';
 import { FIRST_NAMES_F, FIRST_NAMES_M } from '../constants/names.tsx';
 import { PersonNeedId, PersonNeedMap, PERSON_NEEDS } from '../constants/needs.ts';
 import { Inventory } from '../inventory/Inventory.ts';
+import { SaveableObject } from '../types-savedgame.ts';
 import { CallbackFn, CoordinateI, TileI } from '../types.ts';
 import { Entity } from './entity.ts';
-import { Need } from './Need.ts';
+import { Need, SavedNeedI } from './Need.ts';
+import { type SavedEntityI } from './types.ts';
 
-export class PersonEntity extends Entity {
+type SavedPersonEntityI = SavedEntityI & {
+	needs: Record<PersonNeedId, SavedNeedI>;
+};
+export class PersonEntity extends Entity implements SaveableObject<SavedPersonEntityI> {
 	// The amount of game coordinate per millisecond
 	private readonly walkSpeed = 1 / 1000;
 
@@ -210,5 +215,18 @@ export class PersonEntity extends Entity {
 
 		const done = () => this.$stepEnd.emit(coordinate);
 		this.$stepStart.emit(coordinate, distance / this.walkSpeed, done);
+	}
+
+	public serializeToSaveJson(): SavedPersonEntityI {
+		return {
+			...super.serializeToSaveJson(),
+			needs: Object.keys(this.needs).reduce(
+				(map, key) => ({
+					...map,
+					[key]: this.needs[key as PersonNeedId].serializeToSaveJson(),
+				}),
+				{} as Record<PersonNeedId, SavedNeedI>,
+			),
+		};
 	}
 }

@@ -51,12 +51,12 @@ export class AlephDriver extends Driver implements DriverI {
 
 		this.$detach.once(
 			this.$resume.on(() => {
-				self.document.title = '[PLAY]';
+				self.document.title = 'Kreuz';
 			}),
 		);
 		this.$detach.once(
 			this.$pause.on(() => {
-				self.document.title = '[PAUSE]';
+				self.document.title = '🛑 Kreuz';
 			}),
 		);
 

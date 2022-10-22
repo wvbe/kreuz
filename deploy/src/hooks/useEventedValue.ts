@@ -32,6 +32,8 @@ function noTransformMultiple<T extends unknown[], O = T>(...value: T): O {
 /**
  * Useful if you want to capture the values emitted by an Event. Because events can emit multiple
  * values (arguments) at a time, the value returned by `useEvent` is an array of those values/arguments.
+ *
+ * @deprecated clumsy naming/solving the wrong problem.
  */
 export function useEvent<T extends unknown[] = never[], O = T>(
 	eventedValue: Event<T>,

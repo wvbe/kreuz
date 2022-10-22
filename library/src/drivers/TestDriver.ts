@@ -26,7 +26,7 @@ export class TestDriver extends Driver implements DriverI {
 		super.attach(game);
 
 		this.$detach.once(
-			this.$start.on(async () => {
+			this.$resume.on(async () => {
 				while (this.$$animating.get() && game.time.hasNextEvent()) {
 					game.time.jump();
 					if (this.options.delayBetweenJumps) {

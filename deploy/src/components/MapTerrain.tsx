@@ -2,7 +2,7 @@ import { Collection, EntityI, type Terrain } from '@lib';
 import { FunctionComponent, useMemo } from 'react';
 import { MapEntity } from './MapEntity.tsx';
 
-const MARGIN = 15;
+const MARGIN = 25;
 
 export const MapTerrain: FunctionComponent<{ terrain: Terrain; entities: Collection<EntityI> }> = ({
 	terrain,

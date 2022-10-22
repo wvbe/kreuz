@@ -7,19 +7,16 @@ import { DriverI } from './types.ts';
 export class Driver extends Attachable<[Game]> implements DriverI {
 	public readonly game = null;
 
-	/**
-	 * @deprecated This value should probably be private to the driver, therefore needs to be moved.
-	 */
-	public $$animating = new EventedValue<boolean>(false, 'Driver $$animating');
-	public readonly $start = new Event('Driver $start');
-	public readonly $stop = new Event('Driver $stop');
+	public readonly $$animating = new EventedValue<boolean>(false, 'Driver $$animating');
+	public readonly $resume = new Event('Driver $resume');
+	public readonly $pause = new Event('Driver $pause');
 	constructor() {
 		super();
 
 		this.$attach.on((game) => {
 			this.$detach.once(
 				// Whenever the driver starts/stops animating, start/stop the game too.
-				this.$start.on(() => game.start()),
+				this.$resume.on(() => game.start()),
 			);
 
 			// Whenever the driver detaches, destroy the game.
@@ -40,8 +37,8 @@ export class Driver extends Attachable<[Game]> implements DriverI {
 		}
 		this.$$animating.set(true);
 		return new Promise((resolve) => {
-			this.$stop.once(() => resolve());
-			this.$start.emit();
+			this.$pause.once(() => resolve());
+			this.$resume.emit();
 		});
 	}
 
@@ -50,6 +47,6 @@ export class Driver extends Attachable<[Game]> implements DriverI {
 			throw new Error('Animation not started');
 		}
 		this.$$animating.set(false);
-		this.$stop.emit();
+		this.$pause.emit();
 	}
 }

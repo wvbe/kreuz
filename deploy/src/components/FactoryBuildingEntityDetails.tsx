@@ -1,28 +1,9 @@
-import { FactoryBuildingEntity, PERSON_NEEDS, ProductionJob, Need } from '@lib';
-import { FunctionComponent, useMemo } from 'react';
+import { FactoryBuildingEntity, ProductionJob } from '@lib';
+import { FunctionComponent } from 'react';
 import { useEventedValue } from '../hooks/useEventedValue.ts';
-import { Badge } from './atoms/Badge.tsx';
 import { FillBar } from './atoms/FillBar.tsx';
 import { InventoryUI } from './IntentoryUI.tsx';
 
-const FactoryBuildingEntityNeed: FunctionComponent<{ need: Need }> = ({ need }) => {
-	const value = useEventedValue(need);
-	const config = useMemo(() => PERSON_NEEDS.find((config) => config.id === need.id), [need.id]);
-	const range = useMemo(
-		() =>
-			config?.moods.find(
-				(item, i, all) => value > (all[i - 1]?.upUntil || -Infinity) && value < item.upUntil,
-			),
-		[config, value],
-	);
-	return (
-		<FillBar
-			ratio={value}
-			label={need.label}
-			labelRight={`${range?.label || ''} ${Math.round(value * 100)}%`}
-		/>
-	);
-};
 
 const ProductionJobDetails: FunctionComponent<{ job: ProductionJob }> = ({ job }) => {
 	const blueprint = useEventedValue(job.$$blueprint);

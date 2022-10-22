@@ -7,7 +7,7 @@ import { EntityI } from './types.ts';
 export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 	public readonly type = 'factory';
 
-	public readonly inventory = new Inventory(24);
+	public readonly inventory = new Inventory(8);
 
 	private getCurrentBlueprint() {
 		const job = this.$$job.get() as ProductionJob | null;

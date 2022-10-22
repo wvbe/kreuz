@@ -25,13 +25,14 @@ export const GameUI: FunctionComponent<{ game: Game; driver: AlephDriver }> = ({
 				</div>
 				<div className="game-ui__workspace">
 					<EntityList entities={game.entities} />
-					<EventLog game={game} />
+					<EventLog game={game} driver={driver} />
 					<MaterialList />
 					<BlueprintList />
 				</div>
 			</div>
 			<div className="game-viewport">
 				<MapViewport>
+					<div className="background" />
 					<MapTerrain terrain={game.terrain} entities={game.entities} />
 				</MapViewport>
 			</div>

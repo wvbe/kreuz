@@ -20,9 +20,9 @@ export default class Game {
 	 * EVENTS
 	 */
 
-	public readonly $start = new Event('Game $start');
+	public readonly $resume = new Event('Game $resume');
 
-	public readonly $stop = new Event('Game $stop');
+	public readonly $pause = new Event('Game $pause');
 
 	/*
 	 * EVENTED VALUES
@@ -53,11 +53,11 @@ export default class Game {
 	 * Normally called by the driver, or from a unit test.
 	 */
 	public start() {
-		this.$start.emit();
+		this.$resume.emit();
 	}
 
 	public stop() {
-		this.$stop.emit();
+		this.$pause.emit();
 	}
 
 	/**

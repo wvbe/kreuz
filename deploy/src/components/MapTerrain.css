@@ -5,7 +5,8 @@
 	transform: translate(-50%, -50%);
 }
 .map-terrain > svg > polygon {
-	fill: rgba(0, 0, 0, 0.1);
-	stroke: #aaa;
+	fill: #ddd;
+	stroke: #666;
 	stroke-width: 1;
+	box-shadow: 0 0 10px black;
 }

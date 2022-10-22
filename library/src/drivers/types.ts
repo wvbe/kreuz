@@ -13,7 +13,7 @@ export interface DriverI extends Attachable {
 	/**
 	 * Triggers whenever the driver animation loop is started.
 	 */
-	$start: Event<[]>;
+	$resume: Event<[]>;
 	/**
 	 * Associate a game with this driver, meaning that you'll probably want to set a lot
 	 * of event handlers.

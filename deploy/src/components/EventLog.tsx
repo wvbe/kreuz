@@ -1,16 +1,24 @@
-import { FunctionComponent, useEffect, useRef, useState } from 'react';
-import { DestroyerFn, PersonEntity, PERSON_NEEDS, type Game } from '@lib';
-import { Table, Row, Cell } from './atoms/Table.tsx';
+import { type DestroyerFn, type Game } from '@lib';
+import { type FunctionComponent, useEffect, useRef, useState } from 'react';
+import { type AlephDriver } from '../utils/AlephDriver.ts';
+import { Cell, Row, Table } from './atoms/Table.tsx';
+
 type Log = {
 	id: number;
 	time: number;
 	message: string;
 };
 
-function setLogListeners(game: Game, log: (msg: string) => void): DestroyerFn {
+function setLogListeners(game: Game, driver: AlephDriver, log: (msg: string) => void): DestroyerFn {
+	let wasStoppedOnce = false;
 	const destroyers: DestroyerFn[] = [
-		game.$start.on(() => log(`Game has started`)),
-		game.$stop.on(() => log(`Game has stopped`)),
+		driver.$resume.on(() => {
+			log(`Game has ${wasStoppedOnce ? 'resumed' : 'started'}`);
+		}),
+		driver.$pause.on(() => {
+			wasStoppedOnce = true;
+			log(`Game has paused`);
+		}),
 		game.entities.$add.on((added) => {
 			log(`${added.length} new entities were added to the game`);
 		}),
@@ -19,23 +27,23 @@ function setLogListeners(game: Game, log: (msg: string) => void): DestroyerFn {
 		),
 	];
 
-	setTimeout(() => {
-		log('Derp derp!');
-	}, 1000);
 	return () => {
 		destroyers.forEach((d) => d());
 	};
 }
 
-export const EventLog: FunctionComponent<{ game: Game }> = ({ game }) => {
+export const EventLog: FunctionComponent<{ game: Game; driver: AlephDriver }> = ({
+	game,
+	driver,
+}) => {
 	const [logs, setLogs] = useState<Log[]>([]);
 	const messageId = useRef(0);
 	useEffect(() => {
-		return setLogListeners(game, (message: string) => {
+		return setLogListeners(game, driver, (message: string) => {
 			logs.unshift({ id: messageId.current++, time: game.time.now, message });
 			setLogs(logs.slice());
 		});
-	}, []);
+	}, [game, driver]);
 	return (
 		<Table>
 			{logs.map(({ time, message, id }) => (

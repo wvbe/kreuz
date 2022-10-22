@@ -28,5 +28,5 @@ jobs:
       #   run: npm install && deno task lint
 
       - name: Run tests
-        run: deno task test
+        run: deno task test --no-check
         working-directory: ./library

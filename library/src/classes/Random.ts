@@ -23,7 +23,7 @@ export class Random {
 	/**
 	 * Returns a yes or no randomly
 	 */
-	static boolean(seed: SeedI[], probabilityForTrue: number = 0.5): boolean {
+	static boolean(seed: SeedI[], probabilityForTrue = 0.5): boolean {
 		return seedrandom(seed.join('/')).quick() <= probabilityForTrue;
 	}
 

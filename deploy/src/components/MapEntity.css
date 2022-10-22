@@ -1,7 +1,7 @@
 .map-entity {
 	position: absolute;
 	transform: translate(-50%, -50%);
-	transition: top 1s, left 1s;
+	transition: top 0.3s, left 0.3s;
 	text-shadow: 0 0 5px black;
 }
 

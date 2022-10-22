@@ -1,4 +1,4 @@
-import { Attachable } from '../classes/Attachable.ts';
+import { type AttachableI } from '../classes/Attachable.ts';
 import { Event } from '../classes/Event.ts';
 import { EventedNumericValue } from '../classes/EventedNumericValue.ts';
 import type Game from '../Game.ts';
@@ -21,17 +21,15 @@ type ProgressingNumericValueOptions = {
  * for the first time that someone is expected to care -- for example when it reaches zero, or when
  * it reaches a range that is being watched with Need#onBetween/Need#onceBetween.
  */
-export class ProgressingNumericValue extends EventedNumericValue {
+export class ProgressingNumericValue extends EventedNumericValue implements AttachableI {
 	/*
-	 * Informally implements the Attachable interface as well.
+	 * implement AttachableI:
 	 */
-
-	protected $attach = new Event<[Game]>(`Entity $attach`);
+	protected $attach = new Event<[Game]>(`${this.constructor.name} $attach`);
 	public attach(game: Game) {
 		this.$attach.emit(game);
 	}
-
-	protected $detach = new Event(`Entity $detach`);
+	protected $detach = new Event(`${this.constructor.name} $detach`);
 	public detach() {
 		this.$detach.emit();
 	}
@@ -52,7 +50,7 @@ export class ProgressingNumericValue extends EventedNumericValue {
 	 * The value that is passed along signifies wether or not extra compensation is expected for
 	 * the time elapsed in the cancelled timeout -- or more precisely at which decay rate.
 	 */
-	$recalibrate = new Event<[number]>(`${this.constructor.name} $recalibrate`);
+	private readonly $recalibrate = new Event<[number]>(`${this.constructor.name} $recalibrate`);
 
 	public readonly label: string;
 
@@ -106,7 +104,7 @@ export class ProgressingNumericValue extends EventedNumericValue {
 					if (this.#delta !== 0) {
 						setTimeout(granularity / this.#delta);
 					}
-					this.applyDecay(timePassed);
+					this.applyDeltaForTimePassed(timePassed);
 					// Apply decay _after_ setting new timeout, so that an event listener can unset the
 					// timeout again if the value is zero
 				}, delay);
@@ -162,10 +160,15 @@ export class ProgressingNumericValue extends EventedNumericValue {
 	 *
 	 * Will trigger an update event.
 	 */
-	private applyDecay(timePassed: number, skipUpdate?: boolean): void {
+	private applyDeltaForTimePassed(timePassed: number, skipUpdate?: boolean): void {
 		this.set(this.current + this.#delta * timePassed, skipUpdate);
 	}
 
+	/**
+	 * Same as any eventedvalue, sets to a specific value and maybe emit an update event.
+	 *
+	 * Will also restrict value to within the min/max bounds (this.#min, this.#max)
+	 */
 	public set(value: number, skipUpdate?: boolean) {
 		return super.set(Math.min(this.#max, Math.max(this.#min, value)), skipUpdate);
 	}

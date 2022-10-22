@@ -10,7 +10,11 @@ export const Table: FunctionComponent<
 
 export const Row: FunctionComponent<
 	DetailedHTMLProps<HTMLAttributes<HTMLTableRowElement>, HTMLTableRowElement>
-> = ({ children, ...rest }) => <tr {...rest}>{children}</tr>;
+> = ({ children, ...rest }) => (
+	<tr className={rest.onClick ? 'clickable' : undefined} {...rest}>
+		{children}
+	</tr>
+);
 
 export const Cell: FunctionComponent<
 	DetailedHTMLProps<HTMLAttributes<HTMLTableCellElement>, HTMLTableCellElement>

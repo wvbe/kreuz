@@ -35,7 +35,9 @@ export class SelfcareJob extends Job<PersonEntity> implements JobI {
 			PERSON_NEEDS.forEach((need) => {
 				this.$detach.once(
 					entity.needs[need.id].onBetween(-Infinity, 0.25, () => {
-						const mostUrgent = PERSON_NEEDS.sort(sortByNeedUrgency)[0];
+						// @TODO possible bug? Not always picking the best option
+						// @TODO collect this over all need events, once
+						const mostUrgent = PERSON_NEEDS.slice().sort(sortByNeedUrgency)[0];
 						if (!mostUrgent) {
 							// Great! No urgent needs. Entity can continue doing what they were doing.
 							return;
@@ -104,7 +106,7 @@ export class SelfcareJob extends Job<PersonEntity> implements JobI {
 				}),
 		);
 		if (!shortest) {
-			return null;
+			return Promise.reject();
 		}
 
 		// Walk there

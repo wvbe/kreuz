@@ -1,25 +1,10 @@
 import { Collection, EntityI, type Terrain } from '@lib';
-import { DetailedHTMLProps, FunctionComponent, HTMLAttributes, useMemo } from 'react';
-import { useEventedValue } from '../hooks/useEventedValue.ts';
+import { FunctionComponent, useMemo } from 'react';
+import { MapEntity } from './MapEntity.tsx';
 
 const MARGIN = 15;
-export const EntityMarker: FunctionComponent<
-	{ entity: EntityI; zoom: number } & DetailedHTMLProps<
-		HTMLAttributes<HTMLDivElement>,
-		HTMLDivElement
-	>
-> = ({ entity, zoom, ...rest }) => {
-	const { x, y } = useEventedValue(entity.$$location);
-	return (
-		<div
-			className="person-entity-marker"
-			style={{ top: `${y * zoom + MARGIN}px`, left: `${x * zoom + MARGIN}px` }}
-			{...rest}
-		/>
-	);
-};
 
-export const TerrainUI: FunctionComponent<{ terrain: Terrain; entities: Collection<EntityI> }> = ({
+export const MapTerrain: FunctionComponent<{ terrain: Terrain; entities: Collection<EntityI> }> = ({
 	terrain,
 	entities,
 }) => {
@@ -60,15 +45,7 @@ export const TerrainUI: FunctionComponent<{ terrain: Terrain; entities: Collecti
 	);
 
 	const entities2 = useMemo(
-		() =>
-			entities.map((entity, i) => {
-				const className = `entity-marker--${entity.type}`;
-				return (
-					<EntityMarker key={entity.id} entity={entity} zoom={zoom} className={className}>
-						{entity.icon}
-					</EntityMarker>
-				);
-			}),
+		() => entities.map((entity, i) => <MapEntity key={entity.id} entity={entity} zoom={zoom} />),
 		[],
 	);
 
@@ -77,7 +54,7 @@ export const TerrainUI: FunctionComponent<{ terrain: Terrain; entities: Collecti
 
 	return (
 		<div
-			className="terrain"
+			className="map-terrain"
 			style={{
 				width: `${width}px`,
 				height: `${height}px`,
@@ -86,7 +63,7 @@ export const TerrainUI: FunctionComponent<{ terrain: Terrain; entities: Collecti
 			<svg height={height} width={width} viewBox={`${-MARGIN} ${-MARGIN} ${width} ${height}`}>
 				{tiles}
 			</svg>
-			{entities2}
+			<div style={{ position: 'absolute', top: MARGIN, left: MARGIN }}>{entities2}</div>
 		</div>
 	);
 };

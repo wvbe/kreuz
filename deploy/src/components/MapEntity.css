@@ -1,24 +1,11 @@
-.terrain {
-	position: relative;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-}
-
-.terrain > div {
+.map-entity {
 	position: absolute;
 	transform: translate(-50%, -50%);
 	transition: top 1s, left 1s;
-	text-shadow: 0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black;
+	text-shadow: 0 0 5px black;
 }
 
-.terrain > svg > polygon {
-	fill: rgba(0, 0, 0, 0.1);
-	stroke: #aaa;
-	stroke-width: 1;
-}
-
-/* .entity-marker--person {
+/* .map-entity--person {
 	width: 5px;
 	height: 5px;
 	border-radius: 50%;
@@ -26,13 +13,13 @@
 	background-color: white;
 }
 
-.entity-marker--settlement {
+.map-entity--settlement {
 	width: 10px;
 	height: 3px;
 	border: 1px solid black;
 	background-color: palevioletred;
 }
-.entity-marker--factory {
+.map-entity--factory {
 	width: 4px;
 	height: 6px;
 	border: 1px solid black;

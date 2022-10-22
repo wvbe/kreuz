@@ -1,23 +1,29 @@
-import { GameUI } from '~/components/GameUI.tsx';
-
-import createGame from '@demo/churches.ts';
+import createGame from '@demo/generator.ts';
 import { useEffect, useMemo, useState } from 'react';
-import { AlephDriver } from '../utils/AlephDriver.ts';
+import { DestroyerFn, type Game } from '@lib';
+
+import { GameUI } from '~/src/components/GameUI.tsx';
+import { AlephDriver } from '~/src/utils/AlephDriver.ts';
 
 export default function Index() {
 	const [game, setGame] = useState<null | Game>(null);
+	const [driver, setDriver] = useState<null | AlephDriver>(null);
 	useEffect(() => {
 		const t = setTimeout(() => {
 			const { driver, game } = createGame(new AlephDriver());
 			driver.start();
 			self.driver = driver;
 			setGame(game);
+			setDriver(driver as AlephDriver);
 		}, 10);
 
-		return () => clearTimeout(t);
+		return () => {
+			// @TODO Run driver.detach() and stuff
+			clearTimeout(t);
+		};
 	}, []);
-	if (!game) {
+	if (!game || !driver) {
 		return <p>Generating game, please give it a second</p>;
 	}
-	return <GameUI game={game} />;
+	return <GameUI game={game} driver={driver} />;
 }

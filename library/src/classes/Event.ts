@@ -71,9 +71,13 @@ export class Event<Args extends unknown[] = []> {
 
 		// Create a new array from callbacks so that the loop is not affected
 		// while once-ers change the true callbacks list by reference.
-		this.#callbacks.slice().forEach(function callListenerCallbacks(cb, _i) {
-			cb(...args);
-		});
+		//
+		// Use a `for` loop to have one less useless line of stack tracing
+		const callbacks = this.#callbacks.slice();
+		for (let i = 0; i < callbacks.length; i++) {
+			callbacks[i](...args);
+		}
+
 		if (this.debug) {
 			Logger.groupEnd();
 		}
@@ -87,7 +91,9 @@ export class Event<Args extends unknown[] = []> {
 	public static onAny(callback: CallbackFn, events: Event[]): DestroyerFn {
 		const destroyers = events.map((event) => event.on(callback));
 		const destroy = () => {
-			destroyers.forEach((destroy) => destroy());
+			for (let i = 0; i < destroyers.length; i++) {
+				destroyers[i]();
+			}
 		};
 		return destroy;
 	}
@@ -98,11 +104,15 @@ export class Event<Args extends unknown[] = []> {
 	public static onceFirst(callback: CallbackFn, events: Event[]): DestroyerFn {
 		const destroyers: DestroyerFn[] = [];
 		const destroy = () => {
-			destroyers.forEach((destroy) => destroy());
+			for (let i = 0; i < destroyers.length; i++) {
+				destroyers[i]();
+			}
 		};
 		const cb = () => {
 			callback();
-			destroyers.forEach((destroy) => destroy());
+			for (let i = 0; i < destroyers.length; i++) {
+				destroyers[i]();
+			}
 		};
 		events.forEach((event) => {
 			destroyers.push(event.once(cb));

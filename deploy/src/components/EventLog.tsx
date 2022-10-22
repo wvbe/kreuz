@@ -1,6 +1,6 @@
 import { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { DestroyerFn, PersonEntity, PERSON_NEEDS, type Game } from '@lib';
-
+import { Table, Row, Cell } from './atoms/Table.tsx';
 type Log = {
 	id: number;
 	time: number;
@@ -37,14 +37,13 @@ export const EventLog: FunctionComponent<{ game: Game }> = ({ game }) => {
 		});
 	}, []);
 	return (
-		<div className="game-ui">
-			<ol>
-				{logs.map(({ time, message, id }) => (
-					<li key={id}>
-						{time}, {message}
-					</li>
-				))}
-			</ol>
-		</div>
+		<Table>
+			{logs.map(({ time, message, id }) => (
+				<Row key={id}>
+					<Cell>{time}</Cell>
+					<Cell>{message}</Cell>
+				</Row>
+			))}
+		</Table>
 	);
 };

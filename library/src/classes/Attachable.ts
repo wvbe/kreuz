@@ -1,6 +1,11 @@
 import type Game from '../Game.ts';
 import { Event } from './Event.ts';
 
+export interface AttachableI<Context extends unknown[] = Game[]> {
+	attach(...context: Context): void;
+	detach(): void;
+}
+
 /**
  * A reusable class that DRY's two events and two methods around attaching a thing (an entity, job,
  * other) to the Game world. The class does nothing else interesting.

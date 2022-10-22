@@ -4,6 +4,7 @@ export { default as Game } from './src/Game.ts';
 
 // Entities:
 export * from './src/entities/types.ts';
+export { Need } from './src/entities/Need.ts';
 export { Entity } from './src/entities/entity.ts';
 export { PersonEntity } from './src/entities/entity.person.ts';
 export { FactoryBuildingEntity } from './src/entities/entity.building.factory.ts';
@@ -34,6 +35,7 @@ export { Path } from './src/classes/Path.ts';
 export { Coordinate } from './src/terrain/Coordinate.ts';
 
 // Inventory:
+export * from './src/inventory/types.ts';
 export { Blueprint } from './src/inventory/Blueprint.ts';
 export { Inventory } from './src/inventory/Inventory.ts';
 export { Material } from './src/inventory/Material.ts';

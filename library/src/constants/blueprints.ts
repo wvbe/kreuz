@@ -16,7 +16,7 @@ import {
 } from './materials.ts';
 
 export const growWheat = new Blueprint('Growing wheat', [], [{ material: wheat, quantity: 1 }], {
-	fullTimeEquivalent: 1,
+	fullTimeEquivalent: 1000,
 });
 
 export const wheatProcessing = new Blueprint(

@@ -97,6 +97,13 @@ export class EventedNumericValue extends EventedValue<number> {
 		};
 	}
 
+	public onAbove(min: number, callback: CallbackFn, inclusive = true): DestroyerFn {
+		throw new Error('Not implemented');
+	}
+	public onBelow(max: number, callback: CallbackFn, inclusive = false): DestroyerFn {
+		throw new Error('Not implemented');
+	}
+
 	public getCurrentRanges() {
 		return this.#boundaryInfo.filter((range) => valueInRange(this.current, range));
 	}
@@ -107,8 +114,10 @@ export class EventedNumericValue extends EventedValue<number> {
 		if (skipUpdate) {
 			return;
 		}
-		this.getCurrentRanges()
-			.filter((range) => !valueInRange(last, range))
-			.forEach((range) => range.event.emit());
+		const ranges = this.getCurrentRanges().filter((range) => !valueInRange(last, range));
+
+		for (let i = 0; i < ranges.length; i++) {
+			ranges[i].event.emit();
+		}
 	}
 }

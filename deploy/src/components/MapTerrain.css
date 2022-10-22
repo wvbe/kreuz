@@ -1,0 +1,11 @@
+.map-terrain {
+	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+.map-terrain > svg > polygon {
+	fill: rgba(0, 0, 0, 0.1);
+	stroke: #aaa;
+	stroke-width: 1;
+}

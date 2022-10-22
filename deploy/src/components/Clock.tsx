@@ -1,9 +1,10 @@
 import { Game } from '@lib';
 import { FunctionComponent } from 'react';
 import { useEventedValue } from '../hooks/useEventedValue.ts';
+import { AlephDriver } from '../utils/AlephDriver.ts';
 import { FillBar } from './atoms/FillBar.tsx';
 
-export const Clock: FunctionComponent<{ game: Game }> = ({ game }) => {
+export const Clock: FunctionComponent<{ game: Game; driver: AlephDriver }> = ({ game, driver }) => {
 	const time = useEventedValue(game.time);
 	return (
 		<div>

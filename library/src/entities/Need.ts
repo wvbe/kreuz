@@ -1,9 +1,5 @@
-import { Attachable } from '../classes/Attachable.ts';
 import { Event } from '../classes/Event.ts';
-import { EventedNumericValue } from '../classes/EventedNumericValue.ts';
 import { ProgressingNumericValue } from '../classes/ProgressingNumericValue.ts';
-import type Game from '../Game.ts';
-import { type DestroyerFn } from '../types.ts';
 
 /**
  * A need represents the urgency with which a personnal requirement needs to be fulfilled. In most
@@ -22,13 +18,4 @@ export class Need extends ProgressingNumericValue {
 		super(initial, { delta }, label, debug);
 		this.id = id;
 	}
-
-	/**
-	 * This event means that the next need value that is significant (because someone is waiting for
-	 * it) has changed -- probably because a new listener was added or removed.
-	 *
-	 * The value that is passed along signifies wether or not extra compensation is expected for
-	 * the time elapsed in the cancelled timeout -- or more precisely at which decay rate.
-	 */
-	$recalibrate = new Event<[number]>('Need $recalibrate');
 }

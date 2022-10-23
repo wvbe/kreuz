@@ -48,7 +48,13 @@ export function generateEntities(game: Game) {
 
 	for (let i = 0; i < Random.between(12, 20, game.seed, 'guardamount'); i++) {
 		const id = `${game.seed}-person-${i}`;
-		game.entities.add(new PersonEntity(id, Random.fromArray(walkableTiles, id)));
+		const person = new PersonEntity(id, Random.fromArray(walkableTiles, id));
+		person.needs.food.set(Random.normal(id, 'food'), true);
+		person.needs.hygiene.set(Random.normal(id, 'hygiene'), true);
+		person.needs.ideology.set(Random.normal(id, 'ideology'), true);
+		person.needs.sleep.set(Random.normal(id, 'sleep'), true);
+		person.needs.water.set(Random.normal(id, 'water'), true);
+		game.entities.add(person);
 	}
 
 	for (let i = 0; i < Random.between(3, 6, game.seed, 'settlements'); i++) {
@@ -67,18 +73,11 @@ export function generateEntities(game: Game) {
 	for (let i = 0; i < Random.between(6, 9, game.seed, 'factories'); i++) {
 		const id = `${game.seed}-factory-${i}`;
 		const tile = Random.fromArray(walkableTiles, id);
-		game.entities.add(
-			new FactoryBuildingEntity(id, tile, {
-				baseDepth: 1,
-				baseHeight: 1,
-				baseWidth: 1,
-				roofHeight: 1,
-			}),
-		);
+		game.entities.add(new FactoryBuildingEntity(id, tile));
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 	}
 
-	for (let i = 0; i < Random.between(3, 5, game.seed, 'churches'); i++) {
+	for (let i = 0; i < Random.between(3, 5, game.seed, 'market-stalls'); i++) {
 		const id = `${game.seed}-market-stall-${i}`;
 		const tile = Random.fromArray(walkableTiles, id);
 		game.entities.add(new MarketBuildingEntity(id, tile, Random.fromArray(FOODS, id)));

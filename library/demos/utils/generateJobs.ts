@@ -5,6 +5,7 @@ import {
 	PatrolJob,
 	PersonEntity,
 	Random,
+	SelfcareJob,
 	type SeedI,
 	type Terrain,
 } from '@lib';
@@ -39,7 +40,7 @@ export function generateJobs(game: Game) {
 		.forEach((entity, i) => {
 			const job = Random.boolean([game.seed, 'job-distribution', i], 0.2)
 				? generatePatrolJob(game.terrain, game.seed, entity)
-				: generateLoiterJob(entity);
+				: new SelfcareJob(entity);
 			entity.doJob(job);
 		});
 }

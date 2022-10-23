@@ -54,7 +54,7 @@ const demo: Demo = (driver) => {
 			{ upUntil: Infinity, label: 'rejuvenated' },
 		],
 		hygiene: [],
-		spirituality: [],
+		ideology: [],
 	};
 
 	Object.keys(NEEDS)

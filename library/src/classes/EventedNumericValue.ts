@@ -98,10 +98,16 @@ export class EventedNumericValue extends EventedValue<number> {
 	}
 
 	public onAbove(min: number, callback: CallbackFn, inclusive = true): DestroyerFn {
-		throw new Error('Not implemented');
+		return this.onBetween(min, Infinity, callback, { min: inclusive, max: true });
 	}
 	public onBelow(max: number, callback: CallbackFn, inclusive = false): DestroyerFn {
-		throw new Error('Not implemented');
+		return this.onBetween(-Infinity, max, callback, { min: true, max: inclusive });
+	}
+	public onceAbove(min: number, callback: CallbackFn, inclusive = true): DestroyerFn {
+		return this.onceBetween(min, Infinity, callback, { min: inclusive, max: true });
+	}
+	public onceBelow(max: number, callback: CallbackFn, inclusive = false): DestroyerFn {
+		return this.onceBetween(-Infinity, max, callback, { min: true, max: inclusive });
 	}
 
 	public getCurrentRanges() {

@@ -27,12 +27,7 @@ const demo: Demo = (driver) => {
 	const game = new Game('1', terrain);
 	driver.attach(game);
 
-	const entity = new FactoryBuildingEntity('1', terrain.getTileClosestToXy(0, 0), {
-		baseDepth: 1,
-		baseHeight: 1,
-		baseWidth: 1,
-		roofHeight: 1,
-	});
+	const entity = new FactoryBuildingEntity('1', terrain.getTileClosestToXy(0, 0));
 
 	const job = new ProductionJob(entity, null);
 	entity.doJob(job);

@@ -1,6 +1,6 @@
 import { Need } from '../entities/Need.ts';
 
-export type PersonNeedId = 'food' | 'water' | 'sleep' | 'hygiene' | 'spirituality';
+export type PersonNeedId = 'food' | 'water' | 'sleep' | 'hygiene' | 'ideology';
 
 export type PersonNeedMap = Record<PersonNeedId, Need>;
 
@@ -26,7 +26,7 @@ export const PERSON_NEEDS: Array<{
 	{
 		id: 'water',
 		label: '💦',
-		decay: -1 / 100_000,
+		decay: -1 / 10_000,
 		moods: [
 			{ upUntil: 5 / 100, label: 'dying from dehydration' },
 			{ upUntil: 15 / 100, label: 'parched' },
@@ -62,9 +62,9 @@ export const PERSON_NEEDS: Array<{
 		],
 	},
 	{
-		id: 'spirituality',
+		id: 'ideology',
 		label: '🙏',
-		decay: -1 / 9_000,
+		decay: -1 / 50_000,
 		moods: [
 			{ upUntil: 20 / 100, label: 'existential dread' },
 			{ upUntil: 33 / 100, label: 'depressed' },

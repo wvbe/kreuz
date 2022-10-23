@@ -64,6 +64,7 @@ export class ProductionJob extends Job<FactoryBuildingEntity> implements JobI {
 					this.attemptStartBlueprint(entity.inventory);
 				}),
 			);
+			this.attemptStartBlueprint(entity.inventory);
 		});
 
 		this.setBlueprint(blueprint);

@@ -1,12 +1,17 @@
 import { EventedPromise } from '../classes/EventedPromise.ts';
 import { Path } from '../classes/Path.ts';
 import { PERSON_NEEDS } from '../constants/needs.ts';
+import { BuildingEntity } from '../entities/entity.building.ts';
 import { ChurchBuildingEntity } from '../entities/entity.building.church.ts';
 import { type PersonEntity } from '../entities/entity.person.ts';
+import { Need } from '../entities/Need.ts';
+import { EntityI } from '../entities/types.ts';
 import Game from '../Game.ts';
-import { TileI } from '../types.ts';
+import { DestroyerFn, TileI } from '../types.ts';
 import { Job } from './Job.ts';
 import { type JobI } from './types.ts';
+import { FactoryBuildingEntity } from '../entities/entity.building.factory.ts';
+import { honey } from '../constants/materials.ts';
 
 type NeedInfo = typeof PERSON_NEEDS extends Array<infer P> ? P : never;
 
@@ -15,6 +20,10 @@ type CurrentFocus = {
 	stop: () => void;
 };
 
+enum Cancel {
+	NO_SUPPLIER,
+	INTERRUPTED,
+}
 /**
  * The self-care job lets an entity tend to their needs -- if they're hungry, they eat; if they're
  * thirsy, they drink.
@@ -25,32 +34,27 @@ export class SelfcareJob extends Job<PersonEntity> implements JobI {
 	constructor(entity: PersonEntity) {
 		super();
 
-		function sortByNeedUrgency(a: NeedInfo, b: NeedInfo) {
-			return entity.needs[a.id].get() - entity.needs[b.id].get();
-		}
-
-		let currentNeed: null | CurrentFocus = null;
-
 		this.$attach.on((game) => {
-			PERSON_NEEDS.forEach((need) => {
-				this.$detach.once(
-					entity.needs[need.id].onBetween(-Infinity, 0.25, () => {
-						// @TODO possible bug? Not always picking the best option
-						// @TODO collect this over all need events, once
-						const mostUrgent = PERSON_NEEDS.slice().sort(sortByNeedUrgency)[0];
-						if (!mostUrgent) {
-							// Great! No urgent needs. Entity can continue doing what they were doing.
-							return;
-						}
-						if (mostUrgent === currentNeed?.need) {
-							return;
-						}
-						if (currentNeed) {
-							currentNeed.stop();
-						}
-						currentNeed = this.startSatisfyingNeed(game, entity, mostUrgent);
-					}),
-				);
+			let running = true;
+			let unsetTimeout: DestroyerFn | null = null;
+
+			const loop = async (): Promise<void> => {
+				const fulfilledAnything = await this.startSatisfyingNeed(game, entity);
+				if (!fulfilledAnything) {
+					await new Promise((resolve) => {
+						unsetTimeout = game.time.setTimeout(resolve, 10_000);
+					});
+				}
+				if (running) {
+					return loop();
+				}
+			};
+
+			void loop();
+
+			this.$detach.once(() => {
+				running = false;
+				unsetTimeout?.();
 			});
 		});
 	}
@@ -62,74 +66,145 @@ export class SelfcareJob extends Job<PersonEntity> implements JobI {
 		return PERSON_NEEDS.filter((need) => entity.needs[need.id].get() < 0.8);
 	}
 
-	private startSatisfyingNeed(
-		game: Game,
-		entity: PersonEntity,
-		need: NeedInfo,
-	): null | CurrentFocus {
-		console.log('Satisfy need', need);
-		if (need.id === 'spirituality') {
-			this.startSatisfyingSpiritualityNeed(game, entity);
-		}
-		return null;
+	/**
+	 * Returns a boolean
+	 * TRUE if any need was serviced succesfully
+	 * FALSE if no need was fulfilled, or the attempt aborted
+	 */
+	private startSatisfyingNeed(game: Game, entity: PersonEntity): Promise<boolean> {
+		return PERSON_NEEDS.filter((need) => entity.needs[need.id].get() < 0.25)
+			.sort((a: NeedInfo, b: NeedInfo) => entity.needs[a.id].get() - entity.needs[b.id].get())
+			.reduce<Promise<boolean>>(async (last, need) => {
+				if (await last) {
+					return last;
+				}
+				try {
+					if (need.id === 'ideology') {
+						await this.startSatisfyingIdeologyNeed(game, entity);
+						return true;
+					} else if (need.id === 'water') {
+						await this.startSatisfyingWaterNeed(game, entity);
+						return true;
+					} else if (need.id === 'food') {
+						await this.startSatisfyingFoodNeed(game, entity);
+						return true;
+					} else if (need.id === 'sleep') {
+						await this.startSatisfyingSleepNeed(game, entity);
+						return true;
+					} else if (need.id === 'hygiene') {
+						await this.startSatisfyingHygieneNeed(game, entity);
+						return true;
+					}
+				} catch (error: unknown) {
+					if ((error as Cancel) in Cancel) {
+						return false;
+					}
+					throw error;
+				}
+				return false;
+			}, Promise.resolve(false));
 	}
 
 	/**
 	 * Returns `null` if the job could not be started, or a promise otherwise. The promise will
 	 * resolve when the job is completed, or reject when it is interrupted.
 	 */
-	private async startSatisfyingSpiritualityNeed(game: Game, entity: PersonEntity): Promise<void> {
+	private async startSatisfyingIdeologyNeed(game: Game, entity: PersonEntity): Promise<void> {
+		await this.#walkAvatarToNearestEntity(game, entity, (e) => e.type === 'church');
+		await this.#waitWhileReceivingNeed(entity, entity.needs.ideology);
+	}
+	/**
+	 * Returns `null` if the job could not be started, or a promise otherwise. The promise will
+	 * resolve when the job is completed, or reject when it is interrupted.
+	 */
+	private async startSatisfyingWaterNeed(game: Game, entity: PersonEntity): Promise<void> {
+		await this.#walkAvatarToNearestEntity(game, entity, (e) => e instanceof BuildingEntity);
+		await this.#waitWhileReceivingNeed(entity, entity.needs.water);
+	}
+	private async startSatisfyingSleepNeed(game: Game, entity: PersonEntity): Promise<void> {
+		await this.#walkAvatarToNearestEntity(game, entity, (e) => e.type === 'settlement');
+		await this.#waitWhileReceivingNeed(entity, entity.needs.sleep);
+	}
+	private async startSatisfyingHygieneNeed(game: Game, entity: PersonEntity): Promise<void> {
+		await this.#walkAvatarToNearestEntity(game, entity, (e) => e.type === 'settlement');
+		await this.#waitWhileReceivingNeed(entity, entity.needs.hygiene);
+	}
+
+	private async startSatisfyingFoodNeed(game: Game, entity: PersonEntity): Promise<void> {
+		await this.#walkAvatarToNearestEntity(game, entity, (e) => {
+			if (!(e instanceof FactoryBuildingEntity)) {
+				return false;
+			}
+			const building = e as FactoryBuildingEntity;
+			const hasEdible = building.inventory.some(
+				({ material, quantity }) => quantity > 0 && material === honey,
+			);
+			return hasEdible;
+		});
+		await this.#waitWhileReceivingNeed(entity, entity.needs.food);
+	}
+
+	async #walkAvatarToNearestEntity<P extends EntityI>(
+		game: Game,
+		entity: PersonEntity,
+		filter: (tile: EntityI) => boolean,
+	): Promise<void> {
 		const { x, y } = entity.$$location.get();
 		const start = game.terrain.getTileEqualToXy(x, y);
 		if (!start) {
 			// Programmer error somewhere
 			throw new Error('Bzzt');
 		}
+		const candidates = game.entities
+			.filter<P>(filter)
+			.map((entity) => {
+				const { x, y } = entity.$$location.get();
+				return game.terrain.getTileEqualToXy(x, y);
+			})
+			.filter((tile): tile is TileI => {
+				if (!tile) {
+					// Programmer error somewhere
+					throw new Error('Bzzt');
+				}
+				return true;
+			});
+		if (candidates.includes(start)) {
+			return Promise.resolve();
+		}
 
+		if (!candidates.length) {
+			return Promise.reject(Cancel.NO_SUPPLIER);
+		}
 		// Find the nearest reachable church
-		const shortest = new Path(game.terrain, {
-			closest: false,
-		}).findPathToClosest(
+		const shortest = new Path(game.terrain, { closest: false }).findPathToClosest(
 			start,
-			game.entities
-				.filter<ChurchBuildingEntity>((entity) => entity instanceof ChurchBuildingEntity)
-				.map((entity) => {
-					const { x, y } = entity.$$location.get();
-					return game.terrain.getTileEqualToXy(x, y);
-				})
-				.filter((tile): tile is TileI => {
-					if (!tile) {
-						// Programmer error somewhere
-						throw new Error('Bzzt');
-					}
-					return true;
-				}),
+			candidates,
 		);
 		if (!shortest) {
-			return Promise.reject();
+			return Promise.reject(Cancel.NO_SUPPLIER);
 		}
 
 		// Walk there
 		await entity.walkAlongPath(shortest.path);
-		console.log(`${entity.label} has arrived at a church`);
+	}
 
-		// Start worshipping, gain some spirituality
+	async #waitWhileReceivingNeed(entity: PersonEntity, need: Need): Promise<void> {
 		const { $finish, $interrupt, promise } = new EventedPromise();
 		const stopListeningForJobChange = entity.$$job.once(() => {
-			$interrupt.emit();
+			$interrupt.emit(Cancel.INTERRUPTED);
 		});
 		$finish.once(stopListeningForJobChange);
 		$interrupt.once(stopListeningForJobChange);
-		const oldDelta = entity.needs.spirituality.delta;
+		const oldDelta = need.delta;
 		$interrupt.once(
-			entity.needs.spirituality.onceBetween(1, Infinity, () => {
-				entity.needs.spirituality.setDelta(oldDelta);
+			need.onceBetween(1, Infinity, () => {
+				need.setDelta(oldDelta);
 				$finish.emit();
 			}),
 		);
-		entity.needs.spirituality.setDelta(1 / 5000);
+		need.setDelta(1 / 5000);
 
-		return promise;
+		await promise;
 	}
 
 	get label() {

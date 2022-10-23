@@ -43,6 +43,14 @@ export class Inventory {
 	public availableOf(material: Material): number {
 		return this.items.find((item) => item.material === material)?.quantity || 0;
 	}
+	/**
+	 * The amount of this material in stock, ready for somebody else to do something with.
+	 */
+	public some(
+		filter: (state: MaterialState, index: number, all: MaterialState[]) => boolean,
+	): boolean {
+		return this.items.some(filter);
+	}
 
 	/**
 	 * The amount of additional material of this type that could be stored in this inventory,

@@ -26,8 +26,13 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 		return '🏭';
 	}
 
-	public constructor(id: string, location: CoordinateI, parameters: BuildingParameters) {
-		super(id, location, parameters);
+	public constructor(id: string, location: CoordinateI) {
+		super(id, location, {
+			baseDepth: 1,
+			baseHeight: 1,
+			baseWidth: 1,
+			roofHeight: 1,
+		});
 		this.$attach.on((game) => {});
 	}
 }

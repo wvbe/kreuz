@@ -73,7 +73,7 @@ export class PersonEntity extends Entity {
 	);
 
 	public get needsList() {
-		return ['food', 'water', 'sleep', 'hygiene', 'spirituality'].map(
+		return ['food', 'water', 'sleep', 'hygiene', 'ideology'].map(
 			(key) => this.needs[key as PersonNeedId],
 		);
 	}

@@ -57,4 +57,9 @@ export class EventedPromise {
 			});
 		});
 	}
+
+	start() {
+
+
+	}
 }

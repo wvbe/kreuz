@@ -1,7 +1,8 @@
 import { FunctionComponent, useMemo } from 'react';
 import { blueprints } from '@lib';
 import { Cell, Row, Table } from './atoms/Table.tsx';
-import { InventoryBag } from './IntentoryUI.tsx';
+import { InventoryBag } from './InventoryUI.tsx';
+import { CollapsibleWindow } from './atoms/CollapsibleWindow.tsx';
 
 const blueprintsList = Object.keys(blueprints).map(
 	(key) => blueprints[key as keyof typeof blueprints],
@@ -25,5 +26,9 @@ export const BlueprintList: FunctionComponent = () => {
 			)),
 		[],
 	);
-	return <Table>{items}</Table>;
+	return (
+		<CollapsibleWindow label={`Blueprints`}>
+			<Table>{items}</Table>
+		</CollapsibleWindow>
+	);
 };

@@ -3,7 +3,7 @@ import { FunctionComponent, useMemo } from 'react';
 import { useEventedValue } from '../hooks/useEventedValue.ts';
 import { Badge } from './atoms/Badge.tsx';
 import { FillBar } from './atoms/FillBar.tsx';
-import { InventoryUI } from './IntentoryUI.tsx';
+import { InventoryUI } from './InventoryUI.tsx';
 
 const PersonEntityNeed: FunctionComponent<{ need: Need }> = ({ need }) => {
 	const value = useEventedValue(need);

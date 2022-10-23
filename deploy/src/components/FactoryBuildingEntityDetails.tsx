@@ -2,8 +2,7 @@ import { FactoryBuildingEntity, ProductionJob } from '@lib';
 import { FunctionComponent } from 'react';
 import { useEventedValue } from '../hooks/useEventedValue.ts';
 import { FillBar } from './atoms/FillBar.tsx';
-import { InventoryUI } from './IntentoryUI.tsx';
-
+import { InventoryUI } from './InventoryUI.tsx';
 
 const ProductionJobDetails: FunctionComponent<{ job: ProductionJob }> = ({ job }) => {
 	const blueprint = useEventedValue(job.$$blueprint);

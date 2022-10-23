@@ -4,6 +4,7 @@
 @import url('./components/InventoryUI.css');
 @import url('./components/InventoryStack.css');
 @import url('./components/atoms/Badge.css');
+@import url('./components/atoms/CollapsibleWindow.css');
 @import url('./components/MapTerrain.css');
 @import url('./components/atoms/Table.css');
 @import url('./components/MapEntity.css');

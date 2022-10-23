@@ -15,24 +15,25 @@
 .game-ui__workspace {
 	position: absolute;
 	z-index: 100;
-	background-color: white;
-	border: 1px solid #999;
+}
+.game-ui__workspace > *:not(:first-child) {
+	margin-top: var(--line-height);
+}
+.game-ui__workspace > .collapsible-window > header {
+	flex-direction: row-reverse;
 }
 .game-ui__clock {
 	top: var(--line-height);
-	padding: var(--line-height);
 	left: var(--line-height);
 }
 
 .game-ui__info {
 	bottom: var(--line-height);
 	left: var(--line-height);
-	padding: var(--line-height);
 	max-width: calc(24 * var(--line-height));
 }
 .game-ui__workspace {
 	/* font-size: 10px; */
-	padding: 3px;
 	top: var(--line-height);
 	bottom: var(--line-height);
 	right: var(--line-height);

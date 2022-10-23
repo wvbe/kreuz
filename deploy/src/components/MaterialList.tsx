@@ -2,6 +2,7 @@ import { FunctionComponent, useMemo } from 'react';
 import { materials } from '@lib';
 import { Cell, Row, Table } from './atoms/Table.tsx';
 import { InventoryStack } from './InventoryStack.tsx';
+import { CollapsibleWindow } from './atoms/CollapsibleWindow.tsx';
 
 const materialsList = Object.keys(materials).map((key) => materials[key as keyof typeof materials]);
 
@@ -20,5 +21,9 @@ export const MaterialList: FunctionComponent = () => {
 			)),
 		[],
 	);
-	return <Table>{items}</Table>;
+	return (
+		<CollapsibleWindow label={`Materials panel`}>
+			<Table>{items}</Table>
+		</CollapsibleWindow>
+	);
 };

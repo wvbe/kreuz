@@ -1,0 +1,36 @@
+.collapsible-window {
+	border: 1px solid var(--legacy-color-medium-grey);
+	border-radius: var(--border-radius-medium);
+	/* & + & {
+		border-top: none;
+	} */
+	background-color: white;
+	border: 1px solid #999;
+}
+.collapsible-window > header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	min-height: var(--line-height);
+
+	padding: 0 3px;
+	font-size: 0.7em;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-weight: bold;
+}
+
+.collapsible-window > header > * + * {
+	margin-left: var(--spacing-medium-small);
+}
+.collapsible-window > header :hover {
+	cursor: pointer;
+	background-color: #eee;
+}
+
+.collapsible-window > div {
+	margin: var(--spacing-medium-small);
+}
+.collapsible-window > div > :not(section) + * {
+	margin-top: var(--spacing-medium-small);
+}

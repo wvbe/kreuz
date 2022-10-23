@@ -2,6 +2,7 @@ import { Collection, CoordinateI, EntityI, EventedValue } from '@lib';
 import { FunctionComponent, useMemo } from 'react';
 import { useEventedValue } from '../hooks/useEventedValue.ts';
 import { setSelectedEntity } from '../hooks/useSelectedEntity.ts';
+import { CollapsibleWindow } from './atoms/CollapsibleWindow.tsx';
 import { PopOnUpdateSpan } from './atoms/PopOnUpdateSpan.tsx';
 import { Cell, Row, Table } from './atoms/Table.tsx';
 import { EntityBadge } from './EntityBadge.tsx';
@@ -28,5 +29,9 @@ export const EntityList: FunctionComponent<{ entities: Collection<EntityI> }> = 
 		[],
 	);
 
-	return <Table>{items}</Table>;
+	return (
+		<CollapsibleWindow label={`Entities panel`} initiallyOpened>
+			<Table>{items}</Table>
+		</CollapsibleWindow>
+	);
 };

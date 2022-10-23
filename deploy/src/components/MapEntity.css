@@ -5,15 +5,11 @@
 	text-shadow: 0 0 5px black;
 }
 
-/* .map-entity--person {
-	width: 5px;
-	height: 5px;
-	border-radius: 50%;
-	border: 1px solid black;
-	background-color: white;
+.map-entity--person {
+	z-index: 1;
 }
 
-.map-entity--settlement {
+/* .map-entity--settlement {
 	width: 10px;
 	height: 3px;
 	border: 1px solid black;

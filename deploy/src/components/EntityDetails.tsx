@@ -10,6 +10,7 @@ import { EntityBadge } from './EntityBadge.tsx';
 import { FactoryBuildingEntityDetails } from './FactoryBuildingEntityDetails.tsx';
 import { MarketBuildingEntityDetails } from './MarketBuildingEntityDetails.tsx';
 import { PersonEntityDetails } from './PersonEntityDetails.tsx';
+import { CollapsibleWindow } from './atoms/CollapsibleWindow.tsx';
 
 export const EntityDetails: FunctionComponent<{ entity?: EntityI }> = ({ entity }) => {
 	if (!entity) {
@@ -26,10 +27,10 @@ export const EntityDetails: FunctionComponent<{ entity?: EntityI }> = ({ entity 
 	}, [entity]);
 
 	return (
-		<>
+		<CollapsibleWindow label={`Details panel`} initiallyOpened>
 			<EntityBadge entity={entity} />
 			{extra}
-		</>
+		</CollapsibleWindow>
 	);
 };
 

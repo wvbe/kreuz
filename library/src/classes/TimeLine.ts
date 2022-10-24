@@ -105,6 +105,10 @@ export class TimeLine extends EventedValue<number> {
 		};
 	}
 
+	public async wait(time: number): Promise<void> {
+		return new Promise((resolve) => this.setTimeout(resolve, time));
+	}
+
 	/**
 	 * Serialize for a save game JSON
 	 */

@@ -53,13 +53,11 @@ export class EventedPromise {
 				}
 				this.#done = true;
 				stopListeningForFinish();
-				reject();
+				// REJECT?
+				resolve();
 			});
 		});
 	}
 
-	start() {
-
-
-	}
+	start() {}
 }

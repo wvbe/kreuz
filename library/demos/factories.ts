@@ -10,10 +10,10 @@ import {
 	FactoryBuildingEntity,
 	Game,
 	generateGridTerrainFromAscii,
-	ProductionJob,
 	blueprints,
 	materials,
 } from '@lib';
+import { ProductionTask } from '../src/tasks/task.production.ts';
 import { Demo } from './types.ts';
 
 const demo: Demo = (driver) => {
@@ -29,7 +29,7 @@ const demo: Demo = (driver) => {
 
 	const entity = new FactoryBuildingEntity('1', terrain.getTileClosestToXy(0, 0));
 
-	const job = new ProductionJob(entity, null);
+	const job = new ProductionTask(null);
 	entity.doJob(job);
 	job.setBlueprint(blueprints.ironIngotProduction);
 	game.entities.add(entity);

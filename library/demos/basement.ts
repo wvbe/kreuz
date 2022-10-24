@@ -7,6 +7,7 @@
  * no further events planned.
  */
 import { Game, generateGridTerrainFromAscii, PersonEntity, PersonNeedId } from '@lib';
+import { PatrolTask } from '../src/tasks/task.patrol.ts';
 import { Demo } from './types.ts';
 
 const demo: Demo = (driver) => {
@@ -28,48 +29,11 @@ const demo: Demo = (driver) => {
 
 	const entity = new PersonEntity('1', terrain.getTileClosestToXy(0, 0));
 	game.entities.add(entity);
-	const NEEDS: Record<PersonNeedId, { upUntil: number; label: string | null }[]> = {
-		food: [
-			{ upUntil: 5 / 100, label: 'literally starving' },
-			{ upUntil: 15 / 100, label: 'very hungry' },
-			{ upUntil: 30 / 100, label: 'needs a snack' },
-			{ upUntil: 75 / 100, label: null },
-			{ upUntil: 90 / 100, label: 'feeling fortified' },
-			{ upUntil: Infinity, label: 'stuffed' },
-		],
-		water: [
-			{ upUntil: 5 / 100, label: 'dying from dehydration' },
-			{ upUntil: 15 / 100, label: 'parched' },
-			{ upUntil: 30 / 100, label: 'thirsty' },
-			{ upUntil: 75 / 100, label: null },
-			{ upUntil: 90 / 100, label: 'feeling refreshed' },
-			{ upUntil: Infinity, label: 'had too much' },
-		],
-		sleep: [
-			{ upUntil: 5 / 100, label: 'passing out' },
-			{ upUntil: 15 / 100, label: 'very tired' },
-			{ upUntil: 30 / 100, label: "lil' sleepy" },
-			{ upUntil: 75 / 100, label: null },
-			{ upUntil: 90 / 100, label: 'rested' },
-			{ upUntil: Infinity, label: 'rejuvenated' },
-		],
-		hygiene: [],
-		ideology: [],
-	};
 
-	Object.keys(NEEDS)
-		.filter((_k): _k is PersonNeedId => true)
-		.forEach((key) =>
-			NEEDS[key].reduce((min, { upUntil: max, label }) => {
-				if (!label) {
-					return max;
-				}
-				entity.needs[key as PersonNeedId].onBetween(min, max, () =>
-					console.log(`${entity.label} is ${label}.`),
-				);
-				return max;
-			}, 0),
-		);
+	entity.doJob(new PatrolTask({ repeating: true }));
+	const entity2 = new PersonEntity('2', terrain.getTileClosestToXy(0, 0));
+	game.entities.add(entity2);
+	entity2.doJob(new PatrolTask({ repeating: false }));
 
 	return { driver, game };
 };

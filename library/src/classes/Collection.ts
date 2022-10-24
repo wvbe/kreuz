@@ -56,6 +56,9 @@ export class Collection<T> {
 	public slice(start?: number, end?: number): T[] {
 		return this.#collection.slice(start, end);
 	}
+	public shift(): T | undefined {
+		return this.#collection.shift();
+	}
 
 	get length() {
 		return this.#collection.length;

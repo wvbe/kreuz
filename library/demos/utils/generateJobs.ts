@@ -2,7 +2,7 @@ import {
 	Game,
 	// @TODO refactor job generator out of this function;
 	LoiterJob,
-	PatrolJob,
+	PatrolTask,
 	PersonEntity,
 	Random,
 	SelfcareJob,
@@ -22,12 +22,7 @@ function generatePatrolJob(terrain: Terrain, seed: SeedI, entity: PersonEntity) 
 		throw new Error('Got falsy start from none of the islands');
 	}
 
-	return new PatrolJob(entity, [
-		...repeat(2 + Math.floor(Random.float(entity.id, 'job', 'waypoint_amount') * 4), (i) =>
-			Random.fromArray(island, entity.id, 'job', 'waypoint', i),
-		).filter((tile, i, all) => all.indexOf(tile) === i),
-		start,
-	]);
+	return new PatrolTask({ repeating: true });
 }
 
 function generateLoiterJob(entity: PersonEntity) {
@@ -38,9 +33,7 @@ export function generateJobs(game: Game) {
 	game.entities
 		.filter<PersonEntity>((e) => e instanceof PersonEntity)
 		.forEach((entity, i) => {
-			const job = Random.boolean([game.seed, 'job-distribution', i], 0.2)
-				? generatePatrolJob(game.terrain, game.seed, entity)
-				: new SelfcareJob(entity);
+			const job = generatePatrolJob(game.terrain, game.seed, entity);
 			entity.doJob(job);
 		});
 }

@@ -15,10 +15,13 @@ export { SettlementEntity } from './src/entities/entity.settlement.ts';
 // Jobs:
 export * from './src/jobs/types.ts';
 export { Job } from './src/jobs/Job.ts';
-export { PatrolJob } from './src/jobs/PatrolJob.ts';
 export { LoiterJob } from './src/jobs/LoiterJob.ts';
 export { SelfcareJob } from './src/jobs/SelfcareJob.ts';
-export { ProductionJob } from './src/jobs/ProductionJob.ts';
+
+export { Task } from './src/tasks/task.ts';
+export { PatrolTask } from './src/tasks/task.patrol.ts';
+export { ProductionTask } from './src/tasks/task.production.ts';
+export { SelfcareTask } from './src/tasks/task.self-care.ts';
 
 // Drivers:
 export * from './src/drivers/types.ts';

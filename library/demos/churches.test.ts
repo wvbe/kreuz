@@ -26,7 +26,7 @@ describe('Churches', () => {
 		expect(await driver.start()).toBeUndefined();
 		// Around 250_000 is expected if "hygiene" is the slowest need decay
 		// @TODO keep updated for changes to src/constants/needs.ts
-		expect(game.time.now).toBe(900800);
+		expect(game.time.now).toBe(250247);
 	});
 });
 

@@ -1,12 +1,12 @@
 import { EventedValue } from '../classes/EventedValue.ts';
 import { ProgressingNumericValue } from '../classes/ProgressingNumericValue.ts';
-import { FactoryBuildingEntity } from '../entities/entity.building.factory.ts';
-import { Blueprint } from '../inventory/Blueprint.ts';
-import { Inventory } from '../inventory/Inventory.ts';
-import { Job } from './Job.ts';
-import { type JobI } from './types.ts';
+import { type FactoryBuildingEntity } from '../entities/entity.building.factory.ts';
+import type Game from '../Game.ts';
+import { type Blueprint } from '../inventory/Blueprint.ts';
+import { type Inventory } from '../inventory/Inventory.ts';
+import { Task } from './task.ts';
 
-export class ProductionJob extends Job<FactoryBuildingEntity> implements JobI {
+export class ProductionTask extends Task<[Game, FactoryBuildingEntity]> {
 	public readonly $$progress = new ProgressingNumericValue(
 		0,
 		{ delta: 0 },
@@ -18,11 +18,9 @@ export class ProductionJob extends Job<FactoryBuildingEntity> implements JobI {
 		'FactoryBuildingEntity $$blueprint',
 	);
 
-	public constructor(entity: FactoryBuildingEntity, blueprint: Blueprint | null) {
-		super();
-
-		this.$attach.on((game) => {
-			this.$detach.once(
+	public constructor(blueprint: Blueprint | null) {
+		super((game, entity) => {
+			this.$interrupt.once(
 				this.$$blueprint.on((blueprint) => {
 					if (!blueprint) {
 						// Cancel a production cycle mid-way
@@ -33,7 +31,7 @@ export class ProductionJob extends Job<FactoryBuildingEntity> implements JobI {
 				}),
 			);
 
-			this.$detach.once(
+			this.$interrupt.once(
 				this.$$progress.onBetween(1, Infinity, () => {
 					const blueprint = this.$$blueprint.get();
 					if (!blueprint) {
@@ -52,9 +50,9 @@ export class ProductionJob extends Job<FactoryBuildingEntity> implements JobI {
 			);
 
 			this.$$progress.attach(game);
-			this.$detach.once(() => this.$$progress.detach());
+			this.$interrupt.once(() => this.$$progress.detach());
 
-			this.$detach.once(
+			this.$interrupt.once(
 				entity.inventory.$change.on(() => {
 					if (this.#avoidRespondingToOwnInventoryChange) {
 						return;
@@ -76,6 +74,14 @@ export class ProductionJob extends Job<FactoryBuildingEntity> implements JobI {
 
 	public get blueprint() {
 		return this.$$blueprint.get();
+	}
+
+	public setBlueprint(blueprint: Blueprint | null) {
+		if (this.isBusy()) {
+			throw new Error('Cannot change blueprint while buiding is busy');
+		}
+		// @TODO chagne blueprint to something else, without unsetting it first?
+		this.$$blueprint.set(blueprint);
 	}
 
 	private isBusy() {
@@ -130,13 +136,5 @@ export class ProductionJob extends Job<FactoryBuildingEntity> implements JobI {
 		this.$$progress.setDelta(delta);
 
 		return true;
-	}
-
-	public setBlueprint(blueprint: Blueprint | null) {
-		if (this.isBusy()) {
-			throw new Error('Cannot change blueprint while buiding is busy');
-		}
-		// @TODO chagne blueprint to something else, without unsetting it first?
-		this.$$blueprint.set(blueprint);
 	}
 }

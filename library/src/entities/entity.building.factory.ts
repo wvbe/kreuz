@@ -1,5 +1,5 @@
 import { Inventory } from '../inventory/Inventory.ts';
-import { ProductionJob } from '../jobs/ProductionJob.ts';
+import { ProductionTask } from '../tasks/task.production.ts';
 import { CoordinateI } from '../types.ts';
 import { BuildingEntity, BuildingParameters } from './entity.building.ts';
 import { EntityI } from './types.ts';
@@ -10,7 +10,7 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 	public readonly inventory = new Inventory(8);
 
 	private getCurrentBlueprint() {
-		const job = this.$$job.get() as ProductionJob | null;
+		const job = this.$$job.get() as ProductionTask | null;
 		return job?.blueprint || null;
 	}
 

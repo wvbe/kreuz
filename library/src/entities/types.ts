@@ -2,7 +2,6 @@ import { type AttachableI } from '../classes/Attachable.ts';
 import { type EventedValue } from '../classes/EventedValue.ts';
 import type Game from '../Game.ts';
 import { Task } from '../tasks/task.ts';
-import { type JobI } from '../jobs/types.ts';
 import { type SaveEntityJson } from '../types-savedgame.ts';
 import { type CoordinateI } from '../types.ts';
 

@@ -8,20 +8,17 @@
  */
 import {
 	Blueprint,
-	blueprints,
 	ChurchBuildingEntity,
 	FactoryBuildingEntity,
 	Game,
 	generateGridTerrainFromAscii,
+	LiveLawfully,
 	PersonEntity,
-	Random,
-	type TileI,
 	ProductionTask,
-	SelfcareTask,
+	Random,
 	SettlementEntity,
+	type TileI,
 } from '@lib';
-import { LiveLawfully } from '../src/tasks/task.lawful-life.ts';
-import { RepeatingTask } from '../src/tasks/task.repeat.ts';
 import { Demo } from './types.ts';
 
 function createFactoryForBlueprint(tile: TileI, blueprint: Blueprint) {
@@ -31,6 +28,7 @@ function createFactoryForBlueprint(tile: TileI, blueprint: Blueprint) {
 	job.setBlueprint(blueprint);
 	return entity;
 }
+
 const demo: Demo = (driver) => {
 	const terrain = generateGridTerrainFromAscii(`
 		XXXXXXXXXXXXXXX
@@ -50,7 +48,7 @@ const demo: Demo = (driver) => {
 	const game = new Game('1', terrain);
 	driver.attach(game);
 
-	for (let i = 0; i < 1; i++) {
+	for (let i = 0; i < 10; i++) {
 		const entity = new PersonEntity(
 			'person-' + i,
 			terrain.getTileClosestToXy(

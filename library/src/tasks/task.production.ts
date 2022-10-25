@@ -62,6 +62,7 @@ export class ProductionTask extends Task<[Game, FactoryBuildingEntity]> {
 					this.attemptStartBlueprint(entity.inventory);
 				}),
 			);
+
 			this.attemptStartBlueprint(entity.inventory);
 		});
 

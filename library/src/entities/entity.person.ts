@@ -14,14 +14,14 @@ export class PersonEntity extends Entity {
 	// The amount of game coordinate per millisecond
 	private readonly walkSpeed = 1 / 1000;
 
-	public readonly $pathStart = new Event<[]>(`${this.constructor.name} $pathStart`);
+	public readonly $pathStart = new Event<[]>(`${this.constructor.name} $pathStart`, true);
 
 	/**
 	 * Event: The event that the person finishes every step of a path.
 	 *
 	 * @TODO maybe invent a more generic "idle" event.
 	 */
-	public readonly $pathEnd = new Event<[]>(`${this.constructor.name} $pathEnd`);
+	public readonly $pathEnd = new Event<[]>(`${this.constructor.name} $pathEnd`, true);
 
 	/**
 	 * Event: The person started one step.
@@ -42,7 +42,7 @@ export class PersonEntity extends Entity {
 			 */
 			CallbackFn,
 		]
-	>(`${this.constructor.name} $stepStart`);
+	>(`${this.constructor.name} $stepStart`, true);
 
 	/**
 	 * Event: The person started finished one step. The entities location is updated upon this event.
@@ -55,7 +55,7 @@ export class PersonEntity extends Entity {
 	 *      game.time.setTimeout(done, duration);
 	 *   });
 	 */
-	public readonly $stepEnd = new Event<[CoordinateI]>(`${this.constructor.name} $stepEnd`);
+	public readonly $stepEnd = new Event<[CoordinateI]>(`${this.constructor.name} $stepEnd`, true);
 
 	public readonly userData: {
 		gender: 'm' | 'f';
@@ -104,6 +104,10 @@ export class PersonEntity extends Entity {
 		});
 
 		this.$detach.once(() => PERSON_NEEDS.forEach((n) => this.needs[n.id].clear()));
+
+		Object.keys(this.needs).forEach((key) => {
+			this.needs[key as PersonNeedId].set(Random.normal(this.id, 'need', key), true);
+		});
 
 		/**
 		 * Attach this entity to the game loop.
@@ -174,7 +178,6 @@ export class PersonEntity extends Entity {
 
 		if (!path.length) {
 			Logger.warn('Path was zero steps long, finishing early.');
-			// debugger;
 			this.$pathEnd.emit();
 			return Promise.resolve();
 		}
@@ -183,9 +186,11 @@ export class PersonEntity extends Entity {
 			const nextStep = path.shift();
 
 			if (!nextStep) {
-				this.$pathEnd.emit();
+				console.log('END');
 				unlisten();
+				this.$pathEnd.emit();
 			} else {
+				console.log('NEXTSTEP');
 				this.animateTo(nextStep);
 			}
 		});

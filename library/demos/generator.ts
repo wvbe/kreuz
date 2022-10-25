@@ -6,6 +6,7 @@ import {
 	ChurchBuildingEntity,
 	FactoryBuildingEntity,
 	Game,
+	LiveLawfully,
 	MarketBuildingEntity,
 	materials,
 	PersonEntity,
@@ -14,8 +15,6 @@ import {
 } from '@lib';
 import { Demo } from './types.ts';
 import { generateDualMeshTerrain } from './utils/generateDualMeshTerrain.ts';
-import { generateJobs } from './utils/generateJobs.ts';
-
 const TOOLS = [materials.axe, materials.hammer, materials.pickaxe, materials.woodsaw];
 
 const FOODS = [materials.milk, materials.eggs, materials.butter];
@@ -90,6 +89,12 @@ export function generateEntities(game: Game) {
 		game.entities.add(new ChurchBuildingEntity(id, tile));
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 	}
+
+	game.entities
+		.filter<PersonEntity>((e) => e instanceof PersonEntity)
+		.forEach((entity, i) => {
+			entity.doJob(new LiveLawfully());
+		});
 }
 
 const demo: Demo = (driver) => {
@@ -98,7 +103,6 @@ const demo: Demo = (driver) => {
 
 	generateEntities(game);
 	generateRandomInventories(game);
-	generateJobs(game);
 
 	return { driver, game };
 };

@@ -2,10 +2,6 @@ import { describe, expect, it, mock, run } from 'https://deno.land/x/tincan@1.0.
 import { CallbackFn } from '../types.ts';
 import { Task, TaskWithBacklog } from './task.ts';
 
-async function timeout(milliseconds: number) {
-	await new Promise((res) => setTimeout(res, milliseconds));
-}
-
 describe('Task', () => {
 	describe('Task with callback', () => {
 		it('Resolves when callback is finished', async () => {

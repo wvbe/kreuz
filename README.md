@@ -30,8 +30,9 @@ cd library && deno task test
       sometimes updates, and emits an event when it does. Ther
       are other types of evented values too.
   - **Entities** are things that interact and can be interacted with, such as "people" or "buildings".
-  - **Jobs** are activities that some entities engage in. For example, a person might patrol an
-    area or just loiter around.
+  - ~~**Jobs** are activities that some entities engage in. For example, a person might patrol an
+    area or just loiter around.~~ Being superseded by _Tasks_.
+  - **Tasks** are activities that some entities are assigned to. Tasks can have subtasks, and may interrupt subtasks in favor of another one.
   - **Materials** is a type of substance that could be used in quantities during a blueprint, or if
     you have a quantity of `Material` it can be consumed. A `number` of `Material` is usually called
     a `MaterialState`.

@@ -106,7 +106,13 @@ export class TimeLine extends EventedValue<number> {
 	}
 
 	public async wait(time: number): Promise<void> {
-		return new Promise((resolve) => this.setTimeout(resolve, time));
+		console.log(`Wait ${time}`);
+		return new Promise((resolve) =>
+			this.setTimeout(() => {
+				console.log('Wait over');
+				resolve();
+			}, time),
+		);
 	}
 
 	/**

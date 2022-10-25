@@ -8,7 +8,6 @@ import { waitWhileReceivingNeed, walkAvatarToNearestEntity } from './util/functi
 export class SelfcareNeedTask extends Task<[Game, PersonEntity]> {
 	public constructor(options: { needId: PersonNeedId; entityFilter: (e: EntityI) => boolean }) {
 		super(async (game, entity) => {
-			console.log('Go do it');
 			await walkAvatarToNearestEntity(game, entity, options.entityFilter);
 			await waitWhileReceivingNeed(entity, entity.needs[options.needId]);
 		});

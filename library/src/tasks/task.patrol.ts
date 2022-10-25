@@ -13,17 +13,18 @@ export class PatrolTask extends Task<[Game, PersonEntity]> {
 		super(async (game, entity) => {
 			const waypoints = options.waypoints || this.#pickRandomRoute(game, entity);
 			this.waypoints = waypoints;
-			console.log('PATROL ' + waypoints.length);
 
+			console.log('Perform patrol task please');
 			for (let i = 0; i <= waypoints.length; i++) {
-				console.log(`>>`);
-				await game.time.wait(3000);
-				console.log(`Step ${i} of ${waypoints.length}`);
+				console.log(`WAYPOINT ${i}/${waypoints.length} @ ${game.time.now}`);
 				const next = waypoints[i % waypoints.length];
+
+				await game.time.wait(3000);
+				console.log('Time is now ' + game.time.now);
 				await entity.walkToTile(next);
 				if (i === waypoints.length) {
 					if (options.repeating) {
-						i = 0;
+						i = -1;
 					} else {
 						break;
 					}

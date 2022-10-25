@@ -21,11 +21,11 @@ export class Task<Context extends unknown[]>
 	/*
 	 * implement AttachableI, but with additional EntityI context
 	 */
-	protected $attach = new Event<Context>(`${this.constructor.name} $attach`);
+	protected $attach = new Event<Context>(`${this.constructor.name} $attach`, true);
 	public attach(...args: Context) {
 		this.$attach.emit(...args);
 	}
-	protected $detach = new Event(`${this.constructor.name} $detach`);
+	protected $detach = new Event(`${this.constructor.name} $detach`, true);
 	public detach() {
 		this.$detach.emit();
 	}
@@ -37,6 +37,7 @@ export class Task<Context extends unknown[]>
 
 	// $finish is a top-down event -- meaning a subtask may emit it, and parent tasks may then also
 	// emit it.
+
 	constructor(callback: TaskFn<Context> | null) {
 		super();
 		this.#callback = callback;
@@ -77,6 +78,7 @@ export class Task<Context extends unknown[]>
 				}
 				// Otherwise _swallow reason_
 			});
+			nextTask.detach();
 		}
 
 		this.$finish.emit();

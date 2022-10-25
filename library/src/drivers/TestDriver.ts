@@ -29,11 +29,8 @@ export class TestDriver extends Driver implements DriverI {
 			this.$resume.on(async () => {
 				while (this.$$animating.get() && game.time.hasNextEvent()) {
 					game.time.jump();
-					if (this.options.delayBetweenJumps) {
-						await new Promise((res) => setTimeout(res, this.options.delayBetweenJumps));
-					}
 				}
-				Logger.log('End of the time loop');
+				Logger.log('End of the time loop, next timeout at:', game.time.getNextEventAbsoluteTime());
 				this.stop();
 			}),
 		);
@@ -50,6 +47,7 @@ export class TestDriver extends Driver implements DriverI {
 								// finishes, that timeout cancellor is cancelled too.
 								let cancelDestroy: DestroyerFn;
 								const cancelStep = game.time.setTimeout(() => {
+									console.log('(DRIVER) step start timeout done');
 									cancelDestroy();
 									done();
 								}, duration);

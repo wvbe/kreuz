@@ -12,15 +12,12 @@ export { ChurchBuildingEntity } from './src/entities/entity.building.church.ts';
 export { MarketBuildingEntity } from './src/entities/entity.building.market.ts';
 export { SettlementEntity } from './src/entities/entity.settlement.ts';
 
-// Jobs:
-export * from './src/jobs/types.ts';
-export { Job } from './src/jobs/Job.ts';
-export { LoiterJob } from './src/jobs/LoiterJob.ts';
-export { SelfcareJob } from './src/jobs/SelfcareJob.ts';
-
+// Tasks:
 export { Task } from './src/tasks/task.ts';
 export { PatrolTask } from './src/tasks/task.patrol.ts';
 export { ProductionTask } from './src/tasks/task.production.ts';
+export { LiveLawfully } from './src/tasks/task.lawful-life.ts';
+export { RepeatingTask } from './src/tasks/task.repeat.ts';
 export { SelfcareTask } from './src/tasks/task.self-care.ts';
 
 // Drivers:

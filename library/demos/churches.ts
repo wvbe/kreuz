@@ -16,6 +16,7 @@ import {
 	PersonEntity,
 	ProductionTask,
 	Random,
+	SelfcareTask,
 	SettlementEntity,
 	type TileI,
 } from '@lib';
@@ -48,18 +49,22 @@ const demo: Demo = (driver) => {
 	const game = new Game('1', terrain);
 	driver.attach(game);
 
-	for (let i = 0; i < 10; i++) {
-		const entity = new PersonEntity(
-			'person-' + i,
-			terrain.getTileClosestToXy(
-				Math.floor(Random.between(0, 10, 'zfs', i)),
-				Math.floor(Random.between(0, 10, 'zfs', i + 'f')),
-			),
-		);
-		game.entities.add(entity);
-		const job = new LiveLawfully();
-		entity.doJob(job);
-	}
+	const entity = new PersonEntity(
+		'person-0',
+		terrain.getTileClosestToXy(
+			Math.floor(Random.between(0, 10, 'zfs', 0)),
+			Math.floor(Random.between(0, 10, 'zfs', 0 + 'f')),
+		),
+	);
+	entity.needs.food.set(0, false);
+	entity.needs.water.set(0, false);
+	entity.needs.hygiene.set(0, false);
+	entity.needs.sleep.set(0, false);
+	entity.needs.ideology.set(0, false);
+
+	game.entities.add(entity);
+	const job = new SelfcareTask();
+	entity.doJob(job);
 
 	game.entities.add(
 		new ChurchBuildingEntity('1', terrain.getTileClosestToXy(3, 3)),

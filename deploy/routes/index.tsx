@@ -1,4 +1,4 @@
-import createGame from '@demo/generator.ts';
+import createGame from '@demo/churches.ts';
 import { useEffect, useMemo, useState } from 'react';
 import { DestroyerFn, type Game } from '@lib';
 

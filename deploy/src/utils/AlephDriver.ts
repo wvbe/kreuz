@@ -28,11 +28,19 @@ export class AlephDriver extends Driver implements DriverI {
 		this.game = game;
 		super.attach(game);
 
-		const onFocus = () => this.start();
+		const onFocus = () => {
+			if (this.$$animating.get()) {
+				return;
+			}
+			this.start();
+		};
 		self.addEventListener('focus', onFocus);
 		this.$detach.once(() => self.removeEventListener('focus', onFocus));
 
 		const onBlur = () => {
+			if (!this.$$animating.get()) {
+				return;
+			}
 			self.document.title = '[Pause]';
 			this.stop();
 		};

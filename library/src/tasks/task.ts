@@ -21,11 +21,11 @@ export class Task<Context extends unknown[]>
 	/*
 	 * implement AttachableI, but with additional EntityI context
 	 */
-	protected $attach = new Event<Context>(`${this.constructor.name} $attach`, true);
+	protected $attach = new Event<Context>(`${this.constructor.name} $attach`);
 	public attach(...args: Context) {
 		this.$attach.emit(...args);
 	}
-	protected $detach = new Event(`${this.constructor.name} $detach`, true);
+	protected $detach = new Event(`${this.constructor.name} $detach`);
 	public detach() {
 		this.$detach.emit();
 	}

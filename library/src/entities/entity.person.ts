@@ -14,14 +14,14 @@ export class PersonEntity extends Entity {
 	// The amount of game coordinate per millisecond
 	private readonly walkSpeed = 1 / 1000;
 
-	public readonly $pathStart = new Event<[]>(`${this.constructor.name} $pathStart`, true);
+	public readonly $pathStart = new Event<[]>(`${this.constructor.name} $pathStart`);
 
 	/**
 	 * Event: The event that the person finishes every step of a path.
 	 *
 	 * @TODO maybe invent a more generic "idle" event.
 	 */
-	public readonly $pathEnd = new Event<[]>(`${this.constructor.name} $pathEnd`, true);
+	public readonly $pathEnd = new Event<[]>(`${this.constructor.name} $pathEnd`);
 
 	/**
 	 * Event: The person started one step.
@@ -42,7 +42,7 @@ export class PersonEntity extends Entity {
 			 */
 			CallbackFn,
 		]
-	>(`${this.constructor.name} $stepStart`, true);
+	>(`${this.constructor.name} $stepStart`);
 
 	/**
 	 * Event: The person started finished one step. The entities location is updated upon this event.
@@ -55,7 +55,7 @@ export class PersonEntity extends Entity {
 	 *      game.time.setTimeout(done, duration);
 	 *   });
 	 */
-	public readonly $stepEnd = new Event<[CoordinateI]>(`${this.constructor.name} $stepEnd`, true);
+	public readonly $stepEnd = new Event<[CoordinateI]>(`${this.constructor.name} $stepEnd`);
 
 	public readonly userData: {
 		gender: 'm' | 'f';
@@ -186,11 +186,9 @@ export class PersonEntity extends Entity {
 			const nextStep = path.shift();
 
 			if (!nextStep) {
-				console.log('END');
 				unlisten();
 				this.$pathEnd.emit();
 			} else {
-				console.log('NEXTSTEP');
 				this.animateTo(nextStep);
 			}
 		});

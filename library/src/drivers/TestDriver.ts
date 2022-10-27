@@ -47,7 +47,6 @@ export class TestDriver extends Driver implements DriverI {
 								// finishes, that timeout cancellor is cancelled too.
 								let cancelDestroy: DestroyerFn;
 								const cancelStep = game.time.setTimeout(() => {
-									console.log('(DRIVER) step start timeout done');
 									cancelDestroy();
 									done();
 								}, duration);

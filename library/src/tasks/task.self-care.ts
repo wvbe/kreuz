@@ -15,15 +15,12 @@ export class SelfcareTask extends Task<[Game, PersonEntity]> {
 	}
 
 	protected getNextSubtask(_game: Game, entity: PersonEntity): Task<[Game, PersonEntity]> | null {
-		console.trace('SELFCARE NEXT TASK');
 		const need = PERSON_NEEDS.filter((need) => entity.needs[need.id].get() < 0.25)
 			.sort((a: NeedInfo, b: NeedInfo) => entity.needs[a.id].get() - entity.needs[b.id].get())
 			.shift();
 		if (!need) {
-			console.log('  - cancel');
 			return null;
 		}
-		console.log('  - proceed for need ' + need.id);
 
 		if (need.id === 'ideology') {
 			return new SelfcareNeedTask({

@@ -14,12 +14,12 @@ export interface AttachableI<Context extends unknown[] = Game[]> {
  * constructor, and destroy those listeners on $detach.once.
  */
 export class Attachable<Context extends unknown[] = Game[]> {
-	protected $attach = new Event<Context>(`${this.constructor.name} $attach`, true);
+	protected $attach = new Event<Context>(`${this.constructor.name} $attach`);
 	public attach(...context: Context) {
 		this.$attach.emit(...context);
 	}
 
-	protected $detach = new Event(`${this.constructor.name} $detach`, true);
+	protected $detach = new Event(`${this.constructor.name} $detach`);
 	public detach() {
 		this.$detach.emit();
 	}

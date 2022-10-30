@@ -1,7 +1,6 @@
 import { type AttachableI } from '../classes/Attachable.ts';
 import { type EventedValue } from '../classes/EventedValue.ts';
 import type Game from '../Game.ts';
-import { Task } from '../tasks/task.ts';
 import { type SaveEntityJson } from '../types-savedgame.ts';
 import { type CoordinateI } from '../types.ts';
 
@@ -60,16 +59,6 @@ export interface EntityI extends AttachableI {
 	 * The location of this entity, if it is standing on any particular tile.
 	 */
 	$$location: EventedValue<CoordinateI>;
-
-	/**
-	 * The job that this entity is currently on.
-	 */
-	$$job?: EventedValue<Task<[Game, any]> | null>;
-
-	/**
-	 * Set or change the job that this entity is currently on.
-	 */
-	doJob(job: Task<[Game, any]>): void;
 
 	serializeToSaveJson(): SaveEntityJson;
 }

@@ -64,19 +64,9 @@ export class PersonEntity extends Entity {
 
 	public readonly inventory = new Inventory(6);
 
-	public readonly needs = PERSON_NEEDS.reduce<PersonNeedMap>(
-		(map, config) => ({
-			...map,
-			[config.id]: new Need(config.id, 1, config.label, config.decay),
-		}),
-		{} as PersonNeedMap,
+	public readonly needs = PERSON_NEEDS.map(
+		(config) => new Need(config.id, 1, config.label, config.decay),
 	);
-
-	public get needsList() {
-		return ['food', 'water', 'sleep', 'hygiene', 'ideology'].map(
-			(key) => this.needs[key as PersonNeedId],
-		);
-	}
 
 	/**
 	 * @deprecated not used yet.
@@ -103,22 +93,18 @@ export class PersonEntity extends Entity {
 			this.$$location.set(loc);
 		});
 
-		this.$detach.once(() => PERSON_NEEDS.forEach((n) => this.needs[n.id].clear()));
+		// Set randomized initial need values
+		this.needs.forEach((need) => need.set(Random.normal(this.id, 'need', need.id), true));
 
-		Object.keys(this.needs).forEach((key) => {
-			this.needs[key as PersonNeedId].set(Random.normal(this.id, 'need', key), true);
-		});
-
-		/**
-		 * Attach this entity to the game loop.
-		 *
-		 * Will register to undo all of that when the entity detaches.
-		 */
+		// Register need into game event loop
 		this.$attach.on((game) => {
-			Object.keys(this.needs).forEach((key) => {
-				this.needs[key as PersonNeedId].attach(game);
-				this.$detach.once(() => this.needs[key as PersonNeedId].detach());
+			this.needs.forEach((need) => {
+				need.attach(game);
+				this.$detach.once(() => need.detach());
 			});
+
+			// @TODO necessary?
+			// this.$detach.once(() => this.needs.forEach((need) => need.clear()));
 		});
 	}
 
@@ -130,7 +116,7 @@ export class PersonEntity extends Entity {
 	}
 
 	public get title() {
-		return this.$$job.get()?.label || 'Sitting around…';
+		return 'Sitting around…';
 	}
 
 	/**

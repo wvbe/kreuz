@@ -25,6 +25,10 @@ export const Clock: FunctionComponent<{ game: Game; driver: AlephDriver }> = ({ 
 				ratio={(time % 1000) / 1000}
 				label={`${Math.ceil(time / 1000)} hours since start of the game`}
 			/>
+
+			{game.time.getNextEventAbsoluteTime() === Infinity ? (
+				<p>No events scheduled for the future</p>
+			) : null}
 		</div>
 	);
 };

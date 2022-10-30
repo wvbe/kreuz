@@ -11,11 +11,12 @@ import {
 
 describe('Default generator', () => {
 	const { game } = createGeneratorDemo(new TestDriver());
-	game.time.steps(1_050_000);
+	// game.time.steps(1_050_000);
 
-	it('The game never finishes', () => {
-		expect(game.time.getNextEventAbsoluteTime()).toBeTruthy();
-	});
+	// it('The game never finishes', () => {
+	// 	expect(game.time.getNextEventAbsoluteTime()).toBeTruthy();
+	// 	expect(game.time.getNextEventAbsoluteTime()).not.toBe(Infinity);
+	// });
 
 	it('Has several entities of various types', () => {
 		expect(game.entities.filter((e) => e instanceof PersonEntity).length).toBeGreaterThanOrEqual(
@@ -29,17 +30,7 @@ describe('Default generator', () => {
 		).toBeGreaterThanOrEqual(6);
 	});
 
-	it('All persons have depleted their needs after more than a million time passed', () => {
-		game.entities
-			.filter<PersonEntity>((e) => e instanceof PersonEntity)
-			.forEach((entity) => {
-				PERSON_NEEDS.forEach((need) => {
-					expect(entity.needs[need.id].get()).toBe(0);
-				});
-			});
-	});
-
-	game.stop();
+	// game.stop();
 });
 
 run();

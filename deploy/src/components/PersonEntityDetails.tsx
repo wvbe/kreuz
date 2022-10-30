@@ -26,7 +26,7 @@ const PersonEntityNeed: FunctionComponent<{ need: Need }> = ({ need }) => {
 
 export const PersonEntityDetails: FunctionComponent<{ entity: PersonEntity }> = ({ entity }) => {
 	const needs = useMemo(
-		() => entity.needsList.map((need, index) => <PersonEntityNeed key={index} need={need} />),
+		() => entity.needs.map((need, index) => <PersonEntityNeed key={index} need={need} />),
 		[entity],
 	);
 	return (

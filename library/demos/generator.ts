@@ -6,7 +6,6 @@ import {
 	ChurchBuildingEntity,
 	FactoryBuildingEntity,
 	Game,
-	LiveLawfully,
 	MarketBuildingEntity,
 	materials,
 	PersonEntity,
@@ -48,11 +47,6 @@ export function generateEntities(game: Game) {
 	for (let i = 0; i < Random.between(12, 20, game.seed, 'guardamount'); i++) {
 		const id = `${game.seed}-person-${i}`;
 		const person = new PersonEntity(id, Random.fromArray(walkableTiles, id));
-		person.needs.food.set(Random.normal(id, 'food'), true);
-		person.needs.hygiene.set(Random.normal(id, 'hygiene'), true);
-		person.needs.ideology.set(Random.normal(id, 'ideology'), true);
-		person.needs.sleep.set(Random.normal(id, 'sleep'), true);
-		person.needs.water.set(Random.normal(id, 'water'), true);
 		game.entities.add(person);
 	}
 
@@ -89,12 +83,6 @@ export function generateEntities(game: Game) {
 		game.entities.add(new ChurchBuildingEntity(id, tile));
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 	}
-
-	game.entities
-		.filter<PersonEntity>((e) => e instanceof PersonEntity)
-		.forEach((entity, i) => {
-			entity.doJob(new LiveLawfully());
-		});
 }
 
 const demo: Demo = (driver) => {

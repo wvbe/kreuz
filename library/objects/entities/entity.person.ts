@@ -1,12 +1,13 @@
 import { Event } from '../classes/Event.ts';
 import { EventedPromise } from '../classes/EventedPromise.ts';
+import { EventedValue } from '../classes/EventedValue.ts';
 import Logger from '../classes/Logger.ts';
 import { Path } from '../classes/Path.ts';
 import { Random } from '../classes/Random.ts';
 import { FIRST_NAMES_F, FIRST_NAMES_M } from '../constants/names.tsx';
-import { PersonNeedId, PersonNeedMap, PERSON_NEEDS } from '../constants/needs.ts';
+import { PERSON_NEEDS } from '../constants/needs.ts';
 import { Inventory } from '../inventory/Inventory.ts';
-import { CallbackFn, CoordinateI, TileI } from '../types.ts';
+import { type CallbackFn, type CoordinateI, type TileI } from '../types.ts';
 import { Entity } from './entity.ts';
 import { Need } from './Need.ts';
 
@@ -62,7 +63,16 @@ export class PersonEntity extends Entity {
 		firstName: string;
 	};
 
+	/**
+	 * The stuff this person carries around. As it happens that also makes them the (temporary)
+	 * owner of it.
+	 */
 	public readonly inventory = new Inventory(6);
+
+	/**
+	 * The amount of money this person posesses.
+	 */
+	public readonly wallet = new EventedValue<number>(0, `${this.constructor.name} wallet`);
 
 	public readonly needs = PERSON_NEEDS.map(
 		(config) => new Need(config.id, 1, config.label, config.decay),
@@ -126,7 +136,7 @@ export class PersonEntity extends Entity {
 	 * Returns a promise that resolves when the path is completed, or rejects when another path
 	 * interrupts our current before the destination was reached.
 	 */
-	public walkToTile(destination: TileI): Promise<void> {
+	public walkToTile(destination: TileI): EventedPromise {
 		const terrain = destination.terrain;
 		if (!terrain) {
 			throw new Error(`Entity "${this.id}" is trying to path in a detached coordinate`);
@@ -141,10 +151,7 @@ export class PersonEntity extends Entity {
 		// To work around the bug, and as a cheaper option, find the tile whose XY is equal to the current
 		// location. The only downsize is that entities that are mid-way a tile will not find one. Since
 		// this is not a feature yet, we can use it regardless:
-		const start = terrain.getTileEqualToXy(this.$$location.get().x, this.$$location.get().y);
-		if (!start) {
-			throw new Error(`Entity "${this.id}" is trying to path without living on a tile`);
-		}
+		const start = terrain.getTileEqualToLocation(this.$$location.get());
 		const path = new Path(terrain, { closest: true }).findPathBetween(start, destination);
 
 		return this.walkAlongPath(path);
@@ -156,21 +163,19 @@ export class PersonEntity extends Entity {
 	 *
 	 * Very similar to .walkToTile, but more appropriate if the path is already computed.
 	 */
-	public walkAlongPath(path: TileI[]): Promise<void> {
+	public walkAlongPath(path: TileI[]): EventedPromise {
 		// @TODO add some safety checks on the path maybe.
 
 		// Emitting this event may prompt the promises of other walkOnTile tasks to reject.
 		this.$pathStart.emit();
 
 		if (!path.length) {
-			Logger.warn('Path was zero steps long, finishing early.');
 			this.$pathEnd.emit();
-			return Promise.resolve();
+			return EventedPromise.resolve();
 		}
 
 		const unlisten = this.$stepEnd.on(() => {
 			const nextStep = path.shift();
-
 			if (!nextStep) {
 				unlisten();
 				this.$pathEnd.emit();
@@ -179,7 +184,7 @@ export class PersonEntity extends Entity {
 			}
 		});
 
-		const { promise } = new EventedPromise(this.$pathEnd, this.$pathStart);
+		const promise = new EventedPromise(this.$pathEnd, this.$pathStart);
 		const next = path.shift();
 		if (next) {
 			this.animateTo(next);

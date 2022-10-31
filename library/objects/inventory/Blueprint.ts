@@ -5,11 +5,13 @@ import { type MaterialState } from './types.ts';
 
 type BlueprintOptions = {
 	fullTimeEquivalent: number;
+	buildingName: string;
 	// buildingCompatibility: string[];
 };
 
 const defaultBlueprintOptions: BlueprintOptions = {
 	fullTimeEquivalent: 1,
+	buildingName: 'Factory',
 	// buildingCompatibility: [],
 };
 

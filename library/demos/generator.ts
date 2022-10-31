@@ -11,6 +11,7 @@ import {
 	PersonEntity,
 	Random,
 	SettlementEntity,
+	blueprints,
 } from '@lib';
 import { Demo } from './types.ts';
 import { generateDualMeshTerrain } from './utils/generateDualMeshTerrain.ts';
@@ -66,7 +67,13 @@ export function generateEntities(game: Game) {
 	for (let i = 0; i < Random.between(6, 9, game.seed, 'factories'); i++) {
 		const id = `${game.seed}-factory-${i}`;
 		const tile = Random.fromArray(walkableTiles, id);
-		game.entities.add(new FactoryBuildingEntity(id, tile));
+		game.entities.add(
+			new FactoryBuildingEntity(id, tile, {
+				// compatibleBlueprints: [blueprints.wheatProcessing, blueprints.beeKeeping],
+				maxWorkers: 3,
+				// productionSpeedMultiplier: 1,
+			}),
+		);
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 	}
 

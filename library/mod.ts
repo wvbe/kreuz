@@ -35,6 +35,7 @@ export { Material } from './objects/inventory/Material.ts';
 export { Collection } from './objects/classes/Collection.ts';
 export { Event } from './objects/classes/Event.ts';
 export { EventedValue } from './objects/classes/EventedValue.ts';
+export { EventedPromise } from './objects/classes/EventedPromise.ts';
 export { Random } from './objects/classes/Random.ts';
 export { TimeLine } from './objects/classes/TimeLine.ts';
 export { default as Logger } from './objects/classes/Logger.ts';

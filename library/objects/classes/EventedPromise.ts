@@ -1,11 +1,10 @@
-import { type DestroyerFn } from '../../mod.ts';
 import { Event } from './Event.ts';
 
 /**
- * A utility wrapper around a new promise that binds the resolution or rejection of that promises to
- * events.
+ * A custom awaiter, meaning an object that behaves like a promise (it can be awaited) but is driven
+ * by events, that are in turn probably powered by the game loop.
  *
- * Call eventedPromise.$finish to resolve, or eventedPromise.$interrupt to cancel.
+ * Call eventedPromise.$finish.emit() to resolve, or eventedPromise.$interrupt.emit() to cancel.
  *
  * Finishing or interrupting the promise will clean up listeners and resolve/reject the promise.
  *
@@ -21,43 +20,74 @@ import { Event } from './Event.ts';
  *   $someOtherEvent.on(() => $interrupt.emit());
  *   setTimeout(() => $finish.emit(), 1000);
  */
+
+let i = 0;
 export class EventedPromise {
 	public readonly $finish: Event<unknown[]>;
+	public isResolved = false;
 
 	public readonly $interrupt: Event<unknown[]>;
+	public isRejected = false;
 
-	public readonly promise: Promise<void>;
-
-	#done = false;
+	id: number;
 
 	constructor($finish?: Event<unknown[]>, $interrupt?: Event<unknown[]>) {
+		this.id = ++i;
 		this.$finish = $finish || new Event(`${this.constructor.name} $finish`);
 		this.$interrupt = $interrupt || new Event(`${this.constructor.name} $interrupt`);
-		this.promise = new Promise<void>((resolve, reject) => {
-			// deno-lint-ignore prefer-const
-			let stopListeningForInterrupt: DestroyerFn;
-			const stopListeningForFinish = this.$finish.once(() => {
-				if (this.#done) {
-					// Programmer error:
-					throw new Error('EventedPromise can only close once, unexpected finish');
-				}
-				this.#done = true;
-				resolve();
-				stopListeningForInterrupt();
-			});
-			// @TODO maybe send information on the reason to reject
-			stopListeningForInterrupt = this.$interrupt.once(() => {
-				if (this.#done) {
-					// Programmer error:
-					throw new Error('EventedPromise can only close once, unexpected interrupt');
-				}
-				this.#done = true;
-				stopListeningForFinish();
-				// REJECT?
-				resolve();
-			});
-		});
 	}
 
-	start() {}
+	public isBusy() {
+		return !this.isRejected && !this.isResolved;
+	}
+	resolve() {
+		if (this.isResolved || this.isRejected) {
+			// Programmer error:
+			throw new Error('EventedPromise can only close once, unexpected finish');
+		}
+
+		this.isResolved = true;
+		this.$finish.emit();
+
+		// Untested
+		// return this;
+	}
+
+	reject() {
+		if (this.isResolved || this.isRejected) {
+			// Programmer error:
+			throw new Error('EventedPromise can only close once, unexpected interrupt');
+		}
+		this.isRejected = true;
+		this.$interrupt.emit();
+	}
+
+	then(onFulfilled: () => void, onRejected?: () => void): EventedPromise {
+		if (this.isResolved) {
+			onFulfilled();
+			return this;
+		} else if (this.isRejected) {
+			onRejected?.();
+			return this;
+		}
+		this.$finish.once(() => {
+			onFulfilled();
+		});
+		this.$interrupt.once(async () => {
+			onRejected?.();
+		});
+		return this;
+	}
+
+	static resolve(): EventedPromise {
+		const promise = new EventedPromise();
+		promise.resolve();
+		return promise;
+	}
+
+	static reject(): EventedPromise {
+		const promise = new EventedPromise();
+		promise.reject();
+		return promise;
+	}
 }

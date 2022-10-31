@@ -30,7 +30,7 @@ export class TestDriver extends Driver implements DriverI {
 				while (this.$$animating.get() && game.time.hasNextEvent()) {
 					game.time.jump();
 				}
-				Logger.log('End of the time loop, next timeout at:', game.time.getNextEventAbsoluteTime());
+				// Logger.log('End of the time loop, next timeout at:', game.time.getNextEventAbsoluteTime());
 				this.stop();
 			}),
 		);

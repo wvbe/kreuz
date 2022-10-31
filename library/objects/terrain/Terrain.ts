@@ -22,13 +22,23 @@ export class Terrain {
 		return this.#tiles;
 	}
 
+	public getTileEqualToLocation(location: CoordinateI, lax?: false): TileI;
+	public getTileEqualToLocation(location: CoordinateI, lax?: true): TileI | null;
+	public getTileEqualToLocation(location: CoordinateI, lax?: boolean) {
+		const tile = this.#tiles.find((tile) => location.equals(tile)) || null;
+		if (!tile && !lax) {
+			throw new Error();
+		}
+		return tile;
+	}
+
 	/**
 	 * Array of all tiles that make up this terrain.
 	 */
 	public selectContiguousTiles(
 		start: TileI,
 		selector: TileFilterFn<TileI> = (c) => c.isLand(),
-		inclusive: boolean,
+		inclusive: boolean = true,
 	): TileI[] {
 		const island: TileI[] = [];
 		const seen: TileI[] = [];
@@ -92,10 +102,7 @@ export class Terrain {
 	/**
 	 * Its _possible_ that an entity lives on a tile that has so much elevation that
 	 * .getTileClosestToXy actually finds the _wrong_ tile -- because its neighbor is closer than
-	 * the proximity to z=0. In that case, there is a bug:
-	 *
-	 * @deprecated Function has (correct but) unexpected behavior. Maybe use getTileEqualToXy, or
-	 *             invent getTyleClosestToXyz.
+	 * the proximity to z=0.
 	 */
 	public getTileClosestToXy(x: number, y: number): TileI {
 		if (!this.#tiles.length) {

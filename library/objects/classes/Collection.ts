@@ -43,8 +43,12 @@ export class Collection<T> {
 		}
 	}
 
-	public get(index: number) {
-		return this.#collection[index];
+	public get<S extends T = T>(index: number): S {
+		const result = this.#collection[index];
+		if (!result) {
+			throw new Error(`Could not get item ${index} from ${this.constructor.name}`);
+		}
+		return result as S;
 	}
 
 	public findIndex(filter: (item: T, index: number, array: T[]) => boolean): number {

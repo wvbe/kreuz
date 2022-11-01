@@ -11,6 +11,7 @@ import { FactoryBuildingEntityDetails } from './FactoryBuildingEntityDetails.tsx
 import { MarketBuildingEntityDetails } from './MarketBuildingEntityDetails.tsx';
 import { PersonEntityDetails } from './PersonEntityDetails.tsx';
 import { CollapsibleWindow } from './atoms/CollapsibleWindow.tsx';
+import { BehaviorTree } from './BehaviorTree.tsx';
 
 export const EntityDetails: FunctionComponent<{ entity?: EntityI }> = ({ entity }) => {
 	if (!entity) {

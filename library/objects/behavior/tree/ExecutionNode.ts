@@ -1,5 +1,5 @@
 import { EventedPromise } from '../../classes/EventedPromise.ts';
-import { type ExecutionNodeFn, type BehaviorTreeNode } from '../types.ts';
+import { type ExecutionNodeFn, type BehaviorTreeNodeI } from '../types.ts';
 
 /**
  * Will execute a bit of code and return an {@link EventedPromise} that is either running (`.isBusy`),
@@ -9,8 +9,9 @@ import { type ExecutionNodeFn, type BehaviorTreeNode } from '../types.ts';
  * results in different ways to make the behavior tree complete.
  */
 export class ExecutionNode<B extends Record<string, unknown> = Record<string, never>>
-	implements BehaviorTreeNode<B>
+	implements BehaviorTreeNodeI<B>
 {
+	public readonly type = 'execution';
 	public readonly label?: string;
 	#callback: ExecutionNodeFn<B>;
 

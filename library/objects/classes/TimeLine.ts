@@ -63,8 +63,7 @@ export class TimeLine extends EventedValue<number> {
 	 */
 	public jump(next = this.getNextEventAbsoluteTime()): void {
 		if (!next || next === Infinity) {
-			console.warn(`Not jumping to next time "${next}"`);
-			return;
+			throw new Error(`There is no next event to jump to`);
 		}
 		this.set(next - 1, true);
 		this.step();

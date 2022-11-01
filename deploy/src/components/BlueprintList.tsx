@@ -15,7 +15,7 @@ export const BlueprintList: FunctionComponent = () => {
 				<Row key={i}>
 					<Cell>{blueprint.name}</Cell>
 					<Cell>{(1000 / blueprint.options.fullTimeEquivalent).toFixed(1)}/hour</Cell>
-					<Cell>{(blueprint.options.fullTimeEquivalent / 1000).toFixed(1)}/hour</Cell>
+					<Cell>{(blueprint.options.fullTimeEquivalent / 1000).toFixed(1)} h/c</Cell>
 					<Cell>
 						<InventoryBag stacks={blueprint.ingredients} />
 					</Cell>

@@ -17,6 +17,9 @@ export class ChurchBuildingEntity extends BuildingEntity implements EntityI {
 	public get name() {
 		return 'Church';
 	}
+	public get title() {
+		return 'Saving souls';
+	}
 
 	public get icon() {
 		return '💒';

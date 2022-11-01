@@ -8,6 +8,9 @@
 	border: 1px solid #999;
 }
 .collapsible-window > header {
+	margin: 3px;
+	background-color: lightgray;
+	cursor: pointer;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -20,8 +23,11 @@
 	font-weight: bold;
 }
 
+.collapsible-window > header:hover {
+	background-color: darkgray;
+}
 .collapsible-window > header > * + * {
-	margin-left: var(--spacing-medium-small);
+	margin-left: 3px;
 }
 .collapsible-window > header :hover {
 	cursor: pointer;
@@ -29,8 +35,8 @@
 }
 
 .collapsible-window > div {
-	margin: var(--spacing-medium-small);
+	margin: 3px;
 }
 .collapsible-window > div > :not(section) + * {
-	margin-top: var(--spacing-medium-small);
+	margin-top: 3px;
 }

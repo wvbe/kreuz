@@ -1,30 +1,33 @@
 import { EventedPromise } from '../../classes/EventedPromise.ts';
-import { type BehaviorTreeNode } from '../types.ts';
+import { type BehaviorTreeNodeI } from '../types.ts';
 
 /**
  * Will return RUNNING or SUCCESS as soon as any of its children runs or succeeds.
  * Needs all children to FAIL for itself to fail.
  */
 export class SelectorNode<B extends Record<string, unknown> = Record<string, never>>
-	implements BehaviorTreeNode<B>
+	implements BehaviorTreeNodeI<B>
 {
-	public readonly children: BehaviorTreeNode<B>[];
-	public constructor(...children: BehaviorTreeNode<B>[]) {
+	public readonly type = 'selector';
+
+	public readonly children: BehaviorTreeNodeI<B>[];
+
+	public constructor(...children: BehaviorTreeNodeI<B>[]) {
 		this.children = children;
 	}
+
 	public evaluate(blackboard: B, provenance?: number[]): EventedPromise {
+		const prom = new EventedPromise();
 		let index = 0;
-		for (const child of this.children) {
-			console.log(`${this.constructor.name} child ${index + 1}/${this.children.length}`, child);
-			const signal = child.evaluate(blackboard, provenance);
-			if (!signal.isRejected) {
-				if (provenance) {
-					provenance.unshift(index);
-				}
-				return signal;
+		const next = () => {
+			const child = this.children[index++];
+			if (!child) {
+				return prom.reject();
 			}
-			++index;
-		}
-		return EventedPromise.reject();
+			const p = child.evaluate(blackboard, provenance);
+			p.then(prom.resolve.bind(prom), next);
+		};
+		next();
+		return prom;
 	}
 }

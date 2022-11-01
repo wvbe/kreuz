@@ -3,6 +3,7 @@ import { FunctionComponent, useMemo } from 'react';
 import { useEventedValue } from '../hooks/useEventedValue.ts';
 import { Badge } from './atoms/Badge.tsx';
 import { FillBar } from './atoms/FillBar.tsx';
+import { BehaviorTree } from './BehaviorTree.tsx';
 import { InventoryUI } from './InventoryUI.tsx';
 
 const PersonEntityNeed: FunctionComponent<{ need: Need }> = ({ need }) => {
@@ -29,10 +30,12 @@ export const PersonEntityDetails: FunctionComponent<{ entity: PersonEntity }> = 
 		() => entity.needs.map((need, index) => <PersonEntityNeed key={index} need={need} />),
 		[entity],
 	);
+	const behavior = useEventedValue(entity.$behavior);
 	return (
 		<article className="entity-details">
 			{needs}
 			<InventoryUI inventory={entity.inventory} />
+			<BehaviorTree root={behavior} />
 		</article>
 	);
 };

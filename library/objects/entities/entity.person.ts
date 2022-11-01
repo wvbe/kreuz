@@ -1,4 +1,4 @@
-import { BehaviorTreeNode } from '../behavior/types.ts';
+import { type BehaviorTreeNodeI } from '../behavior/types.ts';
 import { Event } from '../classes/Event.ts';
 import { EventedPromise } from '../classes/EventedPromise.ts';
 import { EventedValue } from '../classes/EventedValue.ts';
@@ -12,7 +12,7 @@ import { type CallbackFn, type CoordinateI, type TileI } from '../types.ts';
 import { Entity } from './entity.ts';
 import { Need } from './Need.ts';
 
-type PersonEntityBehavior = BehaviorTreeNode<{ game: Game; entity: PersonEntity }> | null;
+type PersonEntityBehavior = BehaviorTreeNodeI<{ game: Game; entity: PersonEntity }> | null;
 
 export class PersonEntity extends Entity {
 	// The amount of game coordinate per millisecond

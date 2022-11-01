@@ -45,7 +45,6 @@ const demo: Demo = (driver) => {
 	);
 
 	game.entities.add(entity);
-
 	entity.$behavior.set(loiterNode);
 	game.entities.add(
 		new ChurchBuildingEntity('1', terrain.getTileClosestToXy(3, 3)),

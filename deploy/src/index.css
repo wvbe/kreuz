@@ -7,6 +7,7 @@
 @import url('./components/atoms/CollapsibleWindow.css');
 @import url('./components/MapTerrain.css');
 @import url('./components/atoms/Table.css');
+@import url('./components/BehaviorTree.css');
 @import url('./components/MapEntity.css');
 /* @import url('./components/EntityList.css'); */
 

@@ -16,7 +16,7 @@ let ticker = 0;
 
 export const loiterNode = new SelectorNode<EntityBlackboard>(
 	new SequenceNode(
-		new ExecutionNode('walk to somewhere random', ({ game, entity }) => {
+		new ExecutionNode('Wander', ({ game, entity }) => {
 			if ((entity.needs.find((need) => need.id === 'energy')?.get() || 0) < 0.2) {
 				return EventedPromise.reject();
 			}
@@ -29,13 +29,11 @@ export const loiterNode = new SelectorNode<EntityBlackboard>(
 			);
 			return entity.walkToTile(destination);
 		}),
-		new ExecutionNode('wait', ({ game, entity }) => {
-			console.log('Wait!');
+		new ExecutionNode('Pause', ({ game, entity }) => {
 			return game.time.wait(Random.between(1000, 10000, entity.id, 'loiter wait', ++ticker));
 		}),
 	),
-	new ExecutionNode('wait', ({ game, entity }) => {
-		console.log('Wait!');
+	new ExecutionNode('Wait', ({ game, entity }) => {
 		return game.time.wait(Random.between(1000, 10000, entity.id, 'loiter wait', ++ticker));
 	}),
 );

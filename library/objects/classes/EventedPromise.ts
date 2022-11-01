@@ -67,6 +67,9 @@ export class EventedPromise {
 		this.#$interrupt.emit();
 	}
 
+	// As a convenience `onRejected` could default to whatever `onFulfilled` is. However, this would
+	// be cumbersome to detect usages for in case I want to refactor that again later -- so prefer
+	// letting the consumer be more verbose for now.
 	public then(onFulfilled: () => void, onRejected?: () => void): EventedPromise {
 		if (this.isResolved) {
 			onFulfilled();

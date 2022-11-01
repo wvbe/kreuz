@@ -2,6 +2,12 @@ export * from './objects/types.ts';
 
 export { default as Game } from './objects/Game.ts';
 
+// Behavior tree:
+export * from './objects/behavior/types.ts';
+export { SequenceNode } from './objects/behavior/tree/SequenceNode.ts';
+export { SelectorNode } from './objects/behavior/tree/SelectorNode.ts';
+export { ExecutionNode } from './objects/behavior/tree/ExecutionNode.ts';
+
 // Entities:
 export * from './objects/entities/types.ts';
 export { Entity } from './objects/entities/entity.ts';

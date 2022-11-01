@@ -1,7 +1,7 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 import { Demo } from '../../demos/types.ts';
-import { blueprints, materials } from '../../mod.ts';
 import { wheatProcessing } from '../constants/blueprints.ts';
+import { bran, flour, wheat } from '../constants/materials.ts';
 import { TestDriver } from '../drivers/TestDriver.ts';
 import Game from '../Game.ts';
 import { generateGridTerrainFromAscii } from '../terrain/utils.ts';
@@ -15,7 +15,7 @@ const demo: Demo = (driver) => {
 	const factory = new FactoryBuildingEntity('factory', game.terrain.getTileClosestToXy(0, 0), {
 		maxWorkers: 3,
 	});
-	factory.setBlueprint(blueprints.wheatProcessing);
+	factory.setBlueprint(wheatProcessing);
 	game.entities.add(factory);
 
 	return { driver, game };
@@ -34,7 +34,7 @@ describe('FactoryBuildingEntity', () => {
 		expect(game.time.now).toBe(0);
 		expect(game.time.getNextEventAbsoluteTime()).toBe(Infinity);
 
-		factory.inventory.change(materials.wheat, 30);
+		factory.inventory.change(wheat, 30);
 		await driver.start();
 
 		// Game ends because there is nothing to do
@@ -42,9 +42,9 @@ describe('FactoryBuildingEntity', () => {
 		expect(game.time.getNextEventAbsoluteTime()).toBe(Infinity);
 
 		// Factory inventory was unchanged
-		expect(factory.inventory.availableOf(materials.wheat)).toBe(30);
-		expect(factory.inventory.availableOf(materials.flour)).toBe(0);
-		expect(factory.inventory.availableOf(materials.bran)).toBe(0);
+		expect(factory.inventory.availableOf(wheat)).toBe(30);
+		expect(factory.inventory.availableOf(flour)).toBe(0);
+		expect(factory.inventory.availableOf(bran)).toBe(0);
 	});
 
 	it(`Goes to work when it has a worker`, async () => {
@@ -66,23 +66,23 @@ describe('FactoryBuildingEntity', () => {
 		expect(game.time.getNextEventAbsoluteTime()).toBe(Infinity);
 
 		// Factory inventory was changed
-		expect(factory.inventory.availableOf(materials.wheat)).toBe(0);
-		expect(factory.inventory.availableOf(materials.flour)).toBe(0);
-		expect(factory.inventory.availableOf(materials.bran)).toBe(0);
+		expect(factory.inventory.availableOf(wheat)).toBe(0);
+		expect(factory.inventory.availableOf(flour)).toBe(0);
+		expect(factory.inventory.availableOf(bran)).toBe(0);
 
 		// A production cycle is immediately started when adding the correct ingredients
-		factory.inventory.change(materials.wheat, 30);
-		expect(factory.inventory.availableOf(materials.wheat)).toBe(28);
-		expect(factory.inventory.availableOf(materials.flour)).toBe(0);
-		expect(factory.inventory.availableOf(materials.bran)).toBe(0);
+		factory.inventory.change(wheat, 30);
+		expect(factory.inventory.availableOf(wheat)).toBe(28);
+		expect(factory.inventory.availableOf(flour)).toBe(0);
+		expect(factory.inventory.availableOf(bran)).toBe(0);
 		expect(game.time.getNextEventAbsoluteTime()).not.toBe(Infinity);
 
 		await driver.start();
 
 		// Now production has started, and finished 15 times
-		expect(factory.inventory.availableOf(materials.wheat)).toBe(0);
-		expect(factory.inventory.availableOf(materials.flour)).toBe(15);
-		expect(factory.inventory.availableOf(materials.bran)).toBe(15);
+		expect(factory.inventory.availableOf(wheat)).toBe(0);
+		expect(factory.inventory.availableOf(flour)).toBe(15);
+		expect(factory.inventory.availableOf(bran)).toBe(15);
 
 		// Game ends after production cycles are forced to stop
 		expect(game.time.now).toBeGreaterThan(0);
@@ -118,13 +118,13 @@ describe('FactoryBuildingEntity', () => {
 
 		// It took 15 cycles times the normal production length, and three times as long (because
 		//   1/3rd of workers), and 135 other ticks (probably) for rounding off reasons.
-		factory1.inventory.change(materials.wheat, 30);
+		factory1.inventory.change(wheat, 30);
 		await driver1.start();
 		expect(game1.time.now - time1).toBe(wheatProcessing.options.fullTimeEquivalent * 15 * 3 + 135);
 
 		// It took 15 cycles times the normal production length, and three times as long (because
 		//   2/3rd of workers), and 68 other ticks (probably) for rounding off reasons.
-		factory2.inventory.change(materials.wheat, 30);
+		factory2.inventory.change(wheat, 30);
 		await driver2.start();
 		expect(game2.time.now - time2).toBe(
 			wheatProcessing.options.fullTimeEquivalent * 15 * (3 / 2) + 68,

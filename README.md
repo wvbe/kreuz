@@ -7,6 +7,8 @@ not free. Please don't use this code without [submitting an issue first](https:/
 - [Board](https://github.com/users/wvbe/projects/4/)
 - [Milestones](https://github.com/wvbe/kreuzzeug-im-nagelhosen/milestones)
 
+Keywords: Poisson distribution, dual-mesh tile-based terrain, behavior tree.
+
 ### Setup
 
 This is a [Deno](https://deno.land) project. The `library/` folder is everything you need to run

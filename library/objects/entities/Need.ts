@@ -1,5 +1,6 @@
 import { Event } from '../classes/Event.ts';
 import { ProgressingNumericValue } from '../classes/ProgressingNumericValue.ts';
+import { PersonNeedId } from '../constants/needs.ts';
 
 /**
  * A need represents the urgency with which a personnal requirement needs to be fulfilled. In most
@@ -13,8 +14,14 @@ import { ProgressingNumericValue } from '../classes/ProgressingNumericValue.ts';
  * it reaches a range that is being watched with Need#onBetween/Need#onceBetween.
  */
 export class Need extends ProgressingNumericValue {
-	public readonly id: string;
-	public constructor(id: string, initial: number, label: string, delta: number, debug?: boolean) {
+	public readonly id: PersonNeedId;
+	public constructor(
+		id: PersonNeedId,
+		initial: number,
+		label: string,
+		delta: number,
+		debug?: boolean,
+	) {
 		super(initial, { delta }, label, debug);
 		this.id = id;
 	}

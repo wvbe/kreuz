@@ -7,6 +7,9 @@ import { type Terrain } from './Terrain.ts';
  * A special type of coordinate that is equal to another terrain coordinate when the X and Y are equal, disregarding Z.
  */
 export class Tile extends Coordinate implements TileI {
+	/**
+	 * @deprecated This reference is an anti-pattern
+	 */
 	public terrain?: Terrain;
 	public readonly neighbors: TileI[] = [];
 

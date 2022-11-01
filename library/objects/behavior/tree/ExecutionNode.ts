@@ -1,5 +1,5 @@
 import { EventedPromise } from '../../classes/EventedPromise.ts';
-import { type ExecutionNodeFn, type BehaviorTreeNode } from './types.ts';
+import { type ExecutionNodeFn, type BehaviorTreeNode } from '../types.ts';
 
 /**
  * Will execute a bit of code and return an {@link EventedPromise} that is either running (`.isBusy`),

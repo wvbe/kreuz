@@ -14,6 +14,7 @@ import {
 	Random,
 	SettlementEntity,
 } from '@lib';
+import { loiterNode } from '../objects/behavior/loiterNode.ts';
 import { Demo } from './types.ts';
 
 const demo: Demo = (driver) => {
@@ -45,6 +46,7 @@ const demo: Demo = (driver) => {
 
 	game.entities.add(entity);
 
+	entity.$behavior.set(loiterNode);
 	game.entities.add(
 		new ChurchBuildingEntity('1', terrain.getTileClosestToXy(3, 3)),
 		new SettlementEntity('2', terrain.getTileClosestToXy(13, 8), {

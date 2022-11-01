@@ -1,20 +1,26 @@
+import { BehaviorTreeNode } from '../behavior/types.ts';
 import { Event } from '../classes/Event.ts';
 import { EventedPromise } from '../classes/EventedPromise.ts';
 import { EventedValue } from '../classes/EventedValue.ts';
-import Logger from '../classes/Logger.ts';
 import { Path } from '../classes/Path.ts';
 import { Random } from '../classes/Random.ts';
 import { FIRST_NAMES_F, FIRST_NAMES_M } from '../constants/names.tsx';
 import { PERSON_NEEDS } from '../constants/needs.ts';
+import type Game from '../Game.ts';
 import { Inventory } from '../inventory/Inventory.ts';
 import { type CallbackFn, type CoordinateI, type TileI } from '../types.ts';
 import { Entity } from './entity.ts';
 import { Need } from './Need.ts';
 
+type PersonEntityBehavior = BehaviorTreeNode<{ game: Game; entity: PersonEntity }> | null;
+
 export class PersonEntity extends Entity {
 	// The amount of game coordinate per millisecond
 	private readonly walkSpeed = 1 / 1000;
 
+	/**
+	 * Event: The user started a new path towards another destination.
+	 */
 	public readonly $pathStart = new Event<[]>(`${this.constructor.name} $pathStart`);
 
 	/**
@@ -58,6 +64,19 @@ export class PersonEntity extends Entity {
 	 */
 	public readonly $stepEnd = new Event<[CoordinateI]>(`${this.constructor.name} $stepEnd`);
 
+	/**
+	 * The behavior tree root node for this entity. Calling `.evaluate()` on it will return an
+	 * {@link EventedPromise} of whatever it is that this entity should be doing.
+	 */
+	public readonly $behavior = new EventedValue<PersonEntityBehavior>(
+		null,
+		`${this.constructor.name} $behavior`,
+	);
+
+	/**
+	 * The kind of information that would show up in a passport -- but since this is a perfect world,
+	 * there is no discrimination based on this to speak of :)
+	 */
 	public readonly userData: {
 		gender: 'm' | 'f';
 		firstName: string;
@@ -97,14 +116,15 @@ export class PersonEntity extends Entity {
 			gender: gender ? 'm' : 'f',
 			firstName,
 		};
+		this.needs.forEach((need) =>
+			// Set randomized initial need values
+			need.set(Random.normal(this.id, 'need', need.id), true),
+		);
 
 		// Movement handling
 		this.$stepEnd.on((loc) => {
 			this.$$location.set(loc);
 		});
-
-		// Set randomized initial need values
-		this.needs.forEach((need) => need.set(Random.normal(this.id, 'need', need.id), true));
 
 		// Register need into game event loop
 		this.$attach.on((game) => {
@@ -112,6 +132,36 @@ export class PersonEntity extends Entity {
 				need.attach(game);
 				this.$detach.once(() => need.detach());
 			});
+
+			let behaviorLoopEnabled = false;
+			const $behaviorEnded = new Event('behavior ended');
+			const $behaviorEndedEmit = $behaviorEnded.emit.bind($behaviorEnded);
+			$behaviorEnded.on(() => {
+				behaviorLoopEnabled = false;
+				doBehaviourLoop();
+			});
+			const doBehaviourLoop = () => {
+				if (behaviorLoopEnabled) {
+					throw new Error('You should not start two behavior loops at once');
+				}
+				const behavior = this.$behavior.get();
+				if (!behavior) {
+					return;
+				}
+				behaviorLoopEnabled = true;
+				const b = behavior.evaluate({ game, entity: this });
+				b.then($behaviorEndedEmit, $behaviorEndedEmit);
+			};
+			doBehaviourLoop();
+			this.$detach.once(
+				this.$behavior.on(() => {
+					if (behaviorLoopEnabled) {
+						// @TODO Cancel the previous behavior if there was one
+						return;
+					}
+					doBehaviourLoop();
+				}),
+			);
 
 			// @TODO necessary?
 			// this.$detach.once(() => this.needs.forEach((need) => need.clear()));
@@ -165,7 +215,6 @@ export class PersonEntity extends Entity {
 	 */
 	public walkAlongPath(path: TileI[]): EventedPromise {
 		// @TODO add some safety checks on the path maybe.
-
 		// Emitting this event may prompt the promises of other walkOnTile tasks to reject.
 		this.$pathStart.emit();
 
@@ -178,16 +227,23 @@ export class PersonEntity extends Entity {
 			const nextStep = path.shift();
 			if (!nextStep) {
 				unlisten();
+				unlistenNewPath();
 				this.$pathEnd.emit();
 			} else {
-				this.animateTo(nextStep);
+				this.#animateTo(nextStep);
 			}
+		});
+
+		// If another .walkAlongPath call interrupts us, stop listening for our own $stepEnd events.
+		// @TODO this is untested
+		const unlistenNewPath = this.$pathStart.once(() => {
+			unlisten();
 		});
 
 		const promise = new EventedPromise(this.$pathEnd, this.$pathStart);
 		const next = path.shift();
 		if (next) {
-			this.animateTo(next);
+			this.#animateTo(next);
 		}
 		return promise;
 	}
@@ -195,7 +251,7 @@ export class PersonEntity extends Entity {
 	/**
 	 * Move entity directly to a coordinate. Does not consider accessibility or closeness.
 	 */
-	private animateTo(coordinate: CoordinateI) {
+	#animateTo(coordinate: CoordinateI) {
 		if (coordinate.hasNaN()) {
 			// @TODO remove at some point?
 			throw new Error('This should never happen I suppose');

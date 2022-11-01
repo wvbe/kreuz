@@ -69,9 +69,7 @@ export function generateEntities(game: Game) {
 		const tile = Random.fromArray(walkableTiles, id);
 		game.entities.add(
 			new FactoryBuildingEntity(id, tile, {
-				// compatibleBlueprints: [blueprints.wheatProcessing, blueprints.beeKeeping],
 				maxWorkers: 3,
-				// productionSpeedMultiplier: 1,
 			}),
 		);
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);

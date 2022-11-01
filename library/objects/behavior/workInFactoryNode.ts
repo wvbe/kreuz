@@ -1,8 +1,8 @@
 import { EventedPromise } from '../classes/EventedPromise.ts';
-import { EntityI } from '../entities/types.ts';
-import { PersonEntity } from '../entities/entity.person.ts';
-import { FactoryBuildingEntity } from '../entities/entity.building.factory.ts';
+import { type FactoryBuildingEntity } from '../entities/entity.building.factory.ts';
+import { type PersonEntity } from '../entities/entity.person.ts';
 import type Game from '../Game.ts';
+import { getEntitiesReachableByEntity, walkEntityToEntity } from './reusable/travel.ts';
 import { ExecutionNode } from './tree/ExecutionNode.ts';
 import { SequenceNode } from './tree/SequenceNode.ts';
 
@@ -11,19 +11,12 @@ type EntityBlackboard = {
 	game: Game;
 };
 
-function walkToEntity(game: Game, entity: PersonEntity, destination: EntityI) {
-	const tile = game.terrain.getTileEqualToLocation(destination.$$location.get());
-	return entity.walkToTile(tile);
-}
-
-const workInFactory = new SequenceNode<EntityBlackboard>(
+export const workInFactory = new SequenceNode<EntityBlackboard>(
 	new ExecutionNode('is factory available?', (blackboard) => {
 		// @TODO Make function cheap in case entity is already on the same location as a factory.
 		const { game, entity } = blackboard;
-		const location = game.terrain.getTileEqualToLocation(entity.$$location.get());
-		const island = game.terrain.selectContiguousTiles(location);
-		const factories = game.entities.filter<FactoryBuildingEntity>(
-			(e) => e.type === 'factory' && island.some((tile) => e.$$location.get().equals(tile)),
+		const factories = getEntitiesReachableByEntity(game, entity).filter(
+			(e): e is FactoryBuildingEntity => e.type === 'factory',
 		);
 		if (!factories.length) {
 			return EventedPromise.reject();
@@ -45,7 +38,7 @@ const workInFactory = new SequenceNode<EntityBlackboard>(
 			if (!factory) {
 				return EventedPromise.reject();
 			}
-			return walkToEntity(game, entity, factory);
+			return walkEntityToEntity(game, entity, factory);
 		},
 	),
 	new ExecutionNode<EntityBlackboard & { factory: FactoryBuildingEntity }>(

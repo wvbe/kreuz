@@ -25,21 +25,48 @@ export const bran = new Material('Bran', {
 export const honey = new Material('Honey', {
 	symbol: '🍯',
 	stackSize: 100,
+	value: 3,
 });
 
 export const milk = new Material('Milk', {
 	symbol: '🥛',
 	stackSize: 24,
+
+	value: 1.6,
+	fluid: 0.3,
 });
 
 export const butter = new Material('Butter', {
 	symbol: '🧈',
 	stackSize: 50,
+
+	value: 2.2,
+	nutrition: 0.2,
 });
 
 export const eggs = new Material('Egg', {
 	symbol: '🥚',
 	stackSize: 144,
+
+	value: 2,
+	nutrition: 0.1,
+});
+
+export const freshWater = new Material('Fresh water', {
+	symbol: '💧',
+	stackSize: 100,
+
+	value: 0.3,
+	fluid: 0.5,
+});
+
+export const saltWater = new Material('Salt water', {
+	symbol: '💧',
+	stackSize: 100,
+
+	value: 0.1,
+	fluid: 0.5,
+	toxicity: 0.25,
 });
 
 /*
@@ -89,16 +116,24 @@ export const bronzeIngot = new Material('Bronze ingot', {
 export const hammer = new Material('Hammer', {
 	symbol: '🔨',
 	stackSize: 5,
+
+	value: 50,
 });
 export const pickaxe = new Material('Pickaxe', {
 	symbol: '⛏',
 	stackSize: 1,
+
+	value: 120,
 });
 export const woodsaw = new Material('Woodsaw', {
 	symbol: '🪚',
 	stackSize: 3,
+
+	value: 70,
 });
 export const axe = new Material('Woodaxe', {
 	symbol: '🪓',
 	stackSize: 1,
+
+	value: 80,
 });

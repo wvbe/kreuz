@@ -1,5 +1,5 @@
 import { EventedPromise } from '../../classes/EventedPromise.ts';
-import { type BehaviorTreeNode } from './types.ts';
+import { type BehaviorTreeNode } from '../types.ts';
 
 /**
  * Will return RUNNING or SUCCESS as soon as any of its children runs or succeeds.
@@ -15,6 +15,7 @@ export class SelectorNode<B extends Record<string, unknown> = Record<string, nev
 	public evaluate(blackboard: B, provenance?: number[]): EventedPromise {
 		let index = 0;
 		for (const child of this.children) {
+			console.log(`${this.constructor.name} child ${index + 1}/${this.children.length}`, child);
 			const signal = child.evaluate(blackboard, provenance);
 			if (!signal.isRejected) {
 				if (provenance) {

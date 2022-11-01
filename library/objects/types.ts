@@ -32,6 +32,9 @@ export interface CoordinateI {
  * A tile
  */
 export interface TileI extends CoordinateI {
+	/**
+	 * @deprecated This reference is an anti-pattern
+	 */
 	terrain?: Terrain;
 	/**
 	 * @deprecated Use Terrain.getNeighborTiles instead if you can

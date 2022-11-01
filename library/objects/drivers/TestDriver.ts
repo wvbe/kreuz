@@ -1,4 +1,3 @@
-import Logger from '../classes/Logger.ts';
 import { PersonEntity } from '../entities/entity.person.ts';
 import Game from '../Game.ts';
 import { DestroyerFn } from '../types.ts';
@@ -26,11 +25,10 @@ export class TestDriver extends Driver implements DriverI {
 		super.attach(game);
 
 		this.$detach.once(
-			this.$resume.on(async () => {
+			this.$resume.on(() => {
 				while (this.$$animating.get() && game.time.hasNextEvent()) {
 					game.time.jump();
 				}
-				// Logger.log('End of the time loop, next timeout at:', game.time.getNextEventAbsoluteTime());
 				this.stop();
 			}),
 		);

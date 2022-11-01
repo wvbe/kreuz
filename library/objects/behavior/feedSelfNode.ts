@@ -1,18 +1,12 @@
 import { EventedPromise } from '../classes/EventedPromise.ts';
 import { type MarketBuildingEntity } from '../entities/entity.building.market.ts';
-import { type PersonEntity } from '../entities/entity.person.ts';
-import type Game from '../Game.ts';
 import { type Inventory } from '../inventory/Inventory.ts';
 import { type MaterialState } from '../inventory/types.ts';
 import { getEntitiesReachableByEntity, walkEntityToEntity } from './reusable/travel.ts';
 import { ExecutionNode } from './tree/ExecutionNode.ts';
 import { SelectorNode } from './tree/SelectorNode.ts';
 import { SequenceNode } from './tree/SequenceNode.ts';
-
-type EntityBlackboard = {
-	entity: PersonEntity;
-	game: Game;
-};
+import { type EntityBlackboard } from './types.ts';
 
 const filterEdibleMaterial = ({ material }: MaterialState) =>
 	material.nutrition && !material.toxicity;
@@ -28,7 +22,7 @@ const getMostEdibleStateFromInventory = (inventory: Inventory) =>
  * A behavior tree for eating any food available from inventory, or to go buy food.
  */
 export const feedSelf = new SequenceNode<EntityBlackboard>(
-	new ExecutionNode('is hungry?', ({ entity }) => {
+	new ExecutionNode('Hungry?', ({ entity }) => {
 		const food = entity.needs.find((need) => need.id === 'food');
 		if (!food || food.get() > 0.2) {
 			return EventedPromise.reject();
@@ -85,6 +79,7 @@ export const feedSelf = new SequenceNode<EntityBlackboard>(
 
 					// Spend money in exchange for one of the material
 					entity.wallet.set(entity.wallet.get() - state.material.value);
+					market.inventory.change(state.material, -1);
 					entity.inventory.change(state.material, 1);
 					return EventedPromise.resolve();
 				},

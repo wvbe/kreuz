@@ -44,7 +44,6 @@ export { EventedValue } from './objects/classes/EventedValue.ts';
 export { EventedPromise } from './objects/classes/EventedPromise.ts';
 export { Random } from './objects/classes/Random.ts';
 export { TimeLine } from './objects/classes/TimeLine.ts';
-export { default as Logger } from './objects/classes/Logger.ts';
 
 // Constants
 export * from './objects/constants/needs.ts';

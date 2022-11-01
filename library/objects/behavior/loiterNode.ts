@@ -5,11 +5,7 @@ import type Game from '../Game.ts';
 import { ExecutionNode } from './tree/ExecutionNode.ts';
 import { SequenceNode } from './tree/SequenceNode.ts';
 import { SelectorNode } from './tree/SelectorNode.ts';
-
-type EntityBlackboard = {
-	entity: PersonEntity;
-	game: Game;
-};
+import { type EntityBlackboard } from './types.ts';
 
 // Some "entropy" lolz0r
 let ticker = 0;

@@ -1,29 +1,34 @@
-import { FactoryBuildingEntity, ProductionJob } from '@lib';
+import { FactoryBuildingEntity, PersonEntity, ProductionJob } from '@lib';
 import { FunctionComponent } from 'react';
-import { useEventedValue } from '../hooks/useEventedValue.ts';
+import { useEvent, useEventedValue } from '../hooks/useEventedValue.ts';
 import { FillBar } from './atoms/FillBar.tsx';
 import { InventoryUI } from './InventoryUI.tsx';
-
-const ProductionJobDetails: FunctionComponent<{ job: ProductionJob }> = ({ job }) => {
-	const blueprint = useEventedValue(job.$$blueprint);
-	const progress = useEventedValue(job.$$progress);
-
-	if (!blueprint) {
-		return <p>No blueprint</p>;
-	}
-	return (
-		<FillBar ratio={progress} label={'Production'} labelRight={`${Math.round(progress * 100)}%`} />
-	);
-};
 
 export const FactoryBuildingEntityDetails: FunctionComponent<{ entity: FactoryBuildingEntity }> = ({
 	entity,
 }) => {
-	const job = useEventedValue(entity.$$job);
+	const workers = useEvent<[PersonEntity[], PersonEntity[]], number>(
+		entity.$workers.$change,
+		entity.$workers.length,
+		() => entity.$workers.length,
+	);
+	const blueprint = useEventedValue(entity.$blueprint);
+	const progress = useEventedValue(entity.$$progress);
 
 	return (
 		<article className="entity-details">
-			{job && <ProductionJobDetails job={job as ProductionJob} />}
+			<p>
+				Workers: {workers} out of {entity.options.maxWorkers}
+			</p>
+			{blueprint ? (
+				<FillBar
+					ratio={progress}
+					label={'Production'}
+					labelRight={`${Math.round(progress * 100)}%`}
+				/>
+			) : (
+				<p>No blueprint</p>
+			)}
 			<InventoryUI inventory={entity.inventory} />
 		</article>
 	);

@@ -11,7 +11,6 @@ import {
 	PersonEntity,
 	Random,
 	SettlementEntity,
-	blueprints,
 } from '@lib';
 import { Demo } from './types.ts';
 import { generateDualMeshTerrain } from './utils/generateDualMeshTerrain.ts';

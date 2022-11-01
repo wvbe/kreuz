@@ -1,5 +1,4 @@
 import { type CallbackFn, type DestroyerFn } from '../types.ts';
-import Logger from './Logger.ts';
 
 export class Event<Args extends unknown[] = []> {
 	#callbacks: CallbackFn<Args>[] = [];
@@ -66,7 +65,7 @@ export class Event<Args extends unknown[] = []> {
 	 */
 	public emit(...args: Args): void {
 		if (this.debug) {
-			Logger.group(`🔔 ${this.label} (${this.#callbacks.length})`);
+			console.group(`🔔 ${this.label} (${this.#callbacks.length})`);
 		}
 
 		// Create a new array from callbacks so that the loop is not affected
@@ -79,7 +78,7 @@ export class Event<Args extends unknown[] = []> {
 		}
 
 		if (this.debug) {
-			Logger.groupEnd();
+			console.groupEnd();
 		}
 	}
 

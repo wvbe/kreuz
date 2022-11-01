@@ -34,7 +34,7 @@ export const PersonEntityDetails: FunctionComponent<{ entity: PersonEntity }> = 
 	return (
 		<article className="entity-details">
 			{needs}
-			<InventoryUI inventory={entity.inventory} />
+			<InventoryUI inventory={entity.inventory} wallet={entity.wallet} />
 			<BehaviorTree root={behavior} />
 		</article>
 	);

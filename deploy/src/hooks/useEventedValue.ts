@@ -18,7 +18,7 @@ export function useEventedValue<T = void, O = T>(
 ): O {
 	const values = useEvent<[T], [O]>(
 		eventedValue,
-		[eventedValue.get()],
+		[transform(eventedValue.get())],
 		useCallback((value: T): [O] => [transform(value)], [transform]),
 	);
 	return values[0];
@@ -37,13 +37,13 @@ function noTransformMultiple<T extends unknown[], O = T>(...value: T): O {
  */
 export function useEvent<T extends unknown[] = never[], O = T>(
 	eventedValue: Event<T>,
-	initial: T,
+	initial: O,
 	transform: (...value: T) => O = noTransformMultiple,
 ): O {
-	const [value, setValue] = useState<O>(transform(...initial));
+	const [value, setValue] = useState<O>(initial);
 
 	useEffect(() => {
-		setValue(transform(...initial));
+		setValue(initial);
 		return eventedValue.on((...value) => setValue(transform(...value)));
 	}, [transform, eventedValue]);
 

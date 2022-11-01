@@ -1,4 +1,4 @@
-import createGame from '@demo/churches.ts';
+import createGame from '@demo/sandbox.behavior.ts';
 import { useEffect, useMemo, useState } from 'react';
 import { DestroyerFn, type Game } from '@lib';
 

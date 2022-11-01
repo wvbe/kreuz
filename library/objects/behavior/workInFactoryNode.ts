@@ -1,23 +1,17 @@
 import { EventedPromise } from '../classes/EventedPromise.ts';
 import { type FactoryBuildingEntity } from '../entities/entity.building.factory.ts';
-import { type PersonEntity } from '../entities/entity.person.ts';
-import type Game from '../Game.ts';
 import { getEntitiesReachableByEntity, walkEntityToEntity } from './reusable/travel.ts';
 import { ExecutionNode } from './tree/ExecutionNode.ts';
 import { SequenceNode } from './tree/SequenceNode.ts';
-
-type EntityBlackboard = {
-	entity: PersonEntity;
-	game: Game;
-};
+import { type EntityBlackboard } from './types.ts';
 
 export const workInFactory = new SequenceNode<EntityBlackboard>(
-	new ExecutionNode('is factory available?', (blackboard) => {
+	new ExecutionNode('Find', (blackboard) => {
 		// @TODO Make function cheap in case entity is already on the same location as a factory.
 		const { game, entity } = blackboard;
-		const factories = getEntitiesReachableByEntity(game, entity).filter(
-			(e): e is FactoryBuildingEntity => e.type === 'factory',
-		);
+		const factories = getEntitiesReachableByEntity(game, entity)
+			.filter((e): e is FactoryBuildingEntity => e.type === 'factory')
+			.filter((e) => e.$blueprint.get());
 		if (!factories.length) {
 			return EventedPromise.reject();
 		}
@@ -33,7 +27,7 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 		return EventedPromise.resolve();
 	}),
 	new ExecutionNode<EntityBlackboard & { factory: FactoryBuildingEntity }>(
-		'walk to factory with job opening',
+		'Walk',
 		({ game, entity, factory }) => {
 			if (!factory) {
 				return EventedPromise.reject();
@@ -42,7 +36,7 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 		},
 	),
 	new ExecutionNode<EntityBlackboard & { factory: FactoryBuildingEntity }>(
-		'work a production cycle',
+		'Work',
 		({ entity, factory }) => {
 			const promise = new EventedPromise();
 

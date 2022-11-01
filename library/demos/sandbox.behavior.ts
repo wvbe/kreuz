@@ -13,8 +13,12 @@ import {
 	PersonEntity,
 	Random,
 	SettlementEntity,
+	materials,
+	FactoryBuildingEntity,
 } from '@lib';
+import { civvyBehavior } from '../objects/behavior/civvyBehavior.ts';
 import { loiterNode } from '../objects/behavior/loiterNode.ts';
+import { MarketBuildingEntity } from '../objects/entities/entity.building.market.ts';
 import { Demo } from './types.ts';
 
 const demo: Demo = (driver) => {
@@ -43,18 +47,30 @@ const demo: Demo = (driver) => {
 			Math.floor(Random.between(0, 10, 'zfs', 0 + 'f')),
 		),
 	);
+	entity.wallet.set(500);
 
-	game.entities.add(entity);
-	entity.$behavior.set(loiterNode);
-	game.entities.add(
-		new ChurchBuildingEntity('1', terrain.getTileClosestToXy(3, 3)),
-		new SettlementEntity('2', terrain.getTileClosestToXy(13, 8), {
-			areaSize: 1,
-			minimumBuildingLength: 1,
-			scale: 1,
-		}),
-		// createFactoryForBlueprint(terrain.getTileClosestToXy(0, 0), blueprints.beeKeeping),
+	const church = new ChurchBuildingEntity('church', terrain.getTileClosestToXy(3, 3));
+
+	const settlement = new SettlementEntity('settlement', terrain.getTileClosestToXy(13, 8), {
+		areaSize: 1,
+		minimumBuildingLength: 1,
+		scale: 1,
+	});
+
+	const marketStall = new MarketBuildingEntity(
+		'market',
+		terrain.getTileClosestToXy(5, 5),
+		materials.eggs,
 	);
+	marketStall.inventory.change(materials.eggs, 30);
+
+	const factory = new FactoryBuildingEntity('factory', terrain.getTileClosestToXy(13, 8), {
+		maxWorkers: 4,
+	});
+
+	game.entities.add(entity, church, settlement, marketStall, factory);
+
+	entity.$behavior.set(civvyBehavior);
 
 	return { driver, game };
 };

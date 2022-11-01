@@ -9,7 +9,6 @@
 import { type Terrain } from '../terrain/Terrain.ts';
 import { TileI } from '../types.ts';
 import { BinaryHeap } from './BinaryHeap.ts';
-import Logger from './Logger.ts';
 
 // See list of heuristics: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
 type HeuristicScorer = (a: TileI, b: TileI) => number;
@@ -161,7 +160,6 @@ export class Path {
 
 		// No result was found - empty array signifies failure to find path.
 		// @TODO this is a costly non-answer? investigate when you see this log message maybe:
-		Logger.warn('-- No path --', start, end);
 		return [];
 	}
 

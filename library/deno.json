@@ -3,7 +3,8 @@
 	"tasks": {
 		"debug": "deno run --allow-all --inspect-brk",
 		"bundle": "deno bundle mod.ts bundle.js",
-		"test": "deno test --allow-all",
-		"dnt": "deno run --allow-all dnt.ts"
+		"test": "deno test",
+		"dnt": "deno run --allow-all dnt.ts",
+		"coverage": "TMP=$(mktemp -d) && deno task test --coverage=$TMP && deno coverage $TMP --lcov > $TMP/lcov.lcov && genhtml -o coverage $TMP/lcov.lcov"
 	}
 }

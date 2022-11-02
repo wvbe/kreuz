@@ -86,4 +86,7 @@ export class Collection<T> {
 	public push(...items: T[]): number {
 		return this.#collection.push(...items);
 	}
+	public includes(item: T): boolean {
+		return this.#collection.includes(item);
+	}
 }

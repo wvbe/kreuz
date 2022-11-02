@@ -41,11 +41,12 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 			const promise = new EventedPromise();
 
 			// Add worker, and remove it again when worker moves away
-			factory.$workers.add(entity);
-			entity.$$location.once(() => {
-				factory.$workers.remove(entity);
-			});
-
+			if (!factory.$workers.includes(entity)) {
+				factory.$workers.add(entity);
+				entity.$$location.once(() => {
+					factory.$workers.remove(entity);
+				});
+			}
 			// Finish job when one work cycle completes
 			factory.$$progress.onceAbove(1, () => promise.resolve(), true);
 

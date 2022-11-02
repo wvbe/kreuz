@@ -150,7 +150,17 @@ export class PersonEntity extends Entity {
 				}
 				behaviorLoopEnabled = true;
 				const b = behavior.evaluate({ game, entity: this });
+
+				// The following means that the entity will retry the behavior tree again in the same
+				// frame if it fails entirely. This is probably not what you want, since it can lead
+				// to max call stack size exceeeded errors -- but simply waiting to retry again
+				// is not a great fix either. Instead the behavior tree should be fixed.
 				b.then($behaviorEndedEmit, $behaviorEndedEmit);
+
+				// However, should you need it, here is a 1000 time retry timeout:
+				// b.then($behaviorEndedEmit, () => {
+				// 	game.time.setTimeout($behaviorEndedEmit, 1000);
+				// });
 			};
 			doBehaviourLoop();
 			this.$detach.once(
@@ -216,12 +226,12 @@ export class PersonEntity extends Entity {
 	public walkAlongPath(path: TileI[]): EventedPromise {
 		// @TODO add some safety checks on the path maybe.
 		// Emitting this event may prompt the promises of other walkOnTile tasks to reject.
-		this.$pathStart.emit();
 
 		if (!path.length) {
-			this.$pathEnd.emit();
 			return EventedPromise.resolve();
 		}
+
+		this.$pathStart.emit();
 
 		const unlisten = this.$stepEnd.on(() => {
 			const nextStep = path.shift();

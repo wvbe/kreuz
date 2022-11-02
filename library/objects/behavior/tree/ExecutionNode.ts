@@ -31,7 +31,7 @@ export class ExecutionNode<B extends Record<string, unknown> = Record<string, ne
 
 	public evaluate(blackboard: B, _provenance?: number[]): EventedPromise {
 		const result = this.#callback(blackboard);
-		const label = result.isBusy ? 'busy' : result.isRejected ? 'rejected' : 'resolved';
+		// const label = result.isBusy ? 'busy' : result.isRejected ? 'rejected' : 'resolved';
 		return result;
 	}
 }

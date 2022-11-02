@@ -18,7 +18,9 @@ import {
 	blueprints,
 } from '@lib';
 import { civvyBehavior } from '../objects/behavior/civvyBehavior.ts';
+import { feedSelf } from '../objects/behavior/feedSelfNode.ts';
 import { loiterNode } from '../objects/behavior/loiterNode.ts';
+import { workInFactory } from '../objects/behavior/workInFactoryNode.ts';
 import { MarketBuildingEntity } from '../objects/entities/entity.building.market.ts';
 import { Demo } from './types.ts';
 

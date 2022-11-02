@@ -24,8 +24,7 @@ export class SequenceNode<B extends Record<string, unknown> = Record<string, nev
 			if (!child) {
 				return prom.resolve();
 			}
-			const p = child.evaluate(blackboard, provenance);
-			p.then(next, prom.reject.bind(prom));
+			child.evaluate(blackboard, provenance).then(next, prom.reject.bind(prom));
 		};
 		next();
 		return prom;

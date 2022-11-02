@@ -24,8 +24,7 @@ export class SelectorNode<B extends Record<string, unknown> = Record<string, nev
 			if (!child) {
 				return prom.reject();
 			}
-			const p = child.evaluate(blackboard, provenance);
-			p.then(prom.resolve.bind(prom), next);
+			child.evaluate(blackboard, provenance).then(prom.resolve.bind(prom), next);
 		};
 		next();
 		return prom;

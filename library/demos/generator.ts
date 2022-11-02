@@ -13,6 +13,7 @@ import {
 	SettlementEntity,
 } from '@lib';
 import { Demo } from './types.ts';
+import { civvyBehavior } from '../objects/behavior/civvyBehavior.ts';
 import { generateDualMeshTerrain } from './utils/generateDualMeshTerrain.ts';
 const TOOLS = [materials.axe, materials.hammer, materials.pickaxe, materials.woodsaw];
 
@@ -87,6 +88,12 @@ export function generateEntities(game: Game) {
 		game.entities.add(new ChurchBuildingEntity(id, tile));
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 	}
+
+	game.entities
+		.filter<PersonEntity>((e) => e.type === 'person')
+		.forEach((p) => {
+			p.$behavior.set(civvyBehavior);
+		});
 }
 
 const demo: Demo = (driver) => {

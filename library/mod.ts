@@ -4,17 +4,18 @@ export { default as Game } from './objects/Game.ts';
 
 // Behavior tree:
 export * from './objects/behavior/types.ts';
-export { SequenceNode } from './objects/behavior/tree/SequenceNode.ts';
-export { SelectorNode } from './objects/behavior/tree/SelectorNode.ts';
 export { ExecutionNode } from './objects/behavior/tree/ExecutionNode.ts';
+export { InverterNode } from './objects/behavior/tree/InverterNode.ts';
+export { SelectorNode } from './objects/behavior/tree/SelectorNode.ts';
+export { SequenceNode } from './objects/behavior/tree/SequenceNode.ts';
 
 // Entities:
 export * from './objects/entities/types.ts';
-export { Entity } from './objects/entities/entity.ts';
-export { PersonEntity } from './objects/entities/entity.person.ts';
-export { FactoryBuildingEntity } from './objects/entities/entity.building.factory.ts';
 export { ChurchBuildingEntity } from './objects/entities/entity.building.church.ts';
+export { Entity } from './objects/entities/entity.ts';
+export { FactoryBuildingEntity } from './objects/entities/entity.building.factory.ts';
 export { MarketBuildingEntity } from './objects/entities/entity.building.market.ts';
+export { PersonEntity } from './objects/entities/entity.person.ts';
 export { SettlementEntity } from './objects/entities/entity.settlement.ts';
 
 // Drivers:
@@ -40,8 +41,8 @@ export { Material } from './objects/inventory/Material.ts';
 // Miscellaneous utilities:
 export { Collection } from './objects/classes/Collection.ts';
 export { Event } from './objects/classes/Event.ts';
-export { EventedValue } from './objects/classes/EventedValue.ts';
 export { EventedPromise } from './objects/classes/EventedPromise.ts';
+export { EventedValue } from './objects/classes/EventedValue.ts';
 export { Random } from './objects/classes/Random.ts';
 export { TimeLine } from './objects/classes/TimeLine.ts';
 

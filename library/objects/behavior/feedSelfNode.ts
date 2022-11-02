@@ -4,6 +4,7 @@ import { type Inventory } from '../inventory/Inventory.ts';
 import { type MaterialState } from '../inventory/types.ts';
 import { getEntitiesReachableByEntity, walkEntityToEntity } from './reusable/travel.ts';
 import { ExecutionNode } from './tree/ExecutionNode.ts';
+import { InverterNode } from './tree/InverterNode.ts';
 import { SelectorNode } from './tree/SelectorNode.ts';
 import { SequenceNode } from './tree/SequenceNode.ts';
 import { type EntityBlackboard } from './types.ts';
@@ -31,11 +32,14 @@ export const feedSelf = new SequenceNode<EntityBlackboard>(
 	}),
 	new SelectorNode(
 		new SequenceNode(
-			new ExecutionNode('Has no food?', ({ entity }) => {
-				// @TODO Use an inverter on "Has food"
-				const hasFood = !!entity.inventory.getAvailableItems().filter(filterEdibleMaterial).length;
-				return hasFood ? EventedPromise.reject() : EventedPromise.resolve();
-			}),
+			new InverterNode(
+				new ExecutionNode('Has no food?', ({ entity }) => {
+					// @TODO Use an inverter on "Has food"
+					const hasFood = !!entity.inventory.getAvailableItems().filter(filterEdibleMaterial)
+						.length;
+					return hasFood ? EventedPromise.resolve() : EventedPromise.reject();
+				}),
+			),
 			new ExecutionNode('Has money?', ({ entity }) => {
 				// @TODO Having at least "10" money is entirely arbitrary. Should change to:
 				// "enough money to buy something of nutritional value in a shop that I can reach"

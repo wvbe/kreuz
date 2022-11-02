@@ -2,19 +2,30 @@ import { type CallbackFn, type DestroyerFn } from '../types.ts';
 
 export class Event<Args extends unknown[] = []> {
 	#callbacks: CallbackFn<Args>[] = [];
-	protected label: string;
-	protected debug: boolean;
 
-	public constructor(label: string, debug?: boolean) {
+	protected label: string;
+
+	public constructor(label: string) {
 		this.label = label;
-		this.debug = !!debug;
+	}
+
+	/**
+	 * @deprecated Here for test purposes only/
+	 */
+	get $$$listeners() {
+		return this.#callbacks.length;
 	}
 
 	/**
 	 * Wait for this event to trigger and run the callback every time it does.
+	 *
+	 * Returns a function with which the event listener is removed again.
 	 */
 	public on(callback: CallbackFn<Args>): DestroyerFn {
 		if (typeof callback !== 'function') {
+			// This error should be prevented by TypeScripts type checking. However, you might not
+			// be using TS (or paying attention), and this bug will then not be discovered until the
+			// event is actually triggered. It is therefore nicer to just check right away.
 			throw new Error(
 				`Expected callback of Event(${
 					this.label ? `'${this.label}'` : ''
@@ -24,6 +35,9 @@ export class Event<Args extends unknown[] = []> {
 		const cancel = () => {
 			const index = this.#callbacks.indexOf(callback);
 			if (index === -1) {
+				console.warn(
+					`Destroying an event listener that was already destroyed, you may have a memory leak.`,
+				);
 				// Already destroyed
 				return;
 			}
@@ -35,9 +49,14 @@ export class Event<Args extends unknown[] = []> {
 
 	/**
 	 * Wait for this event to trigger and run the callback only the first time it does.
+	 *
+	 * Returns a function with which the event listener is removed again.
 	 */
 	public once(callback: CallbackFn<Args>): DestroyerFn {
 		if (typeof callback !== 'function') {
+			// This error should be prevented by TypeScripts type checking. However, you might not
+			// be using TS (or paying attention), and this bug will then not be discovered until the
+			// event is actually triggered. It is therefore nicer to just check right away.
 			throw new Error(
 				`Expected callback of Event(${
 					this.label ? `'${this.label}'` : ''
@@ -52,7 +71,9 @@ export class Event<Args extends unknown[] = []> {
 		const cancel = () => {
 			const index = this.#callbacks.indexOf(run);
 			if (index === -1) {
-				// Already destroyed
+				console.warn(
+					`Destroying an event listener that was already destroyed, you may have a memory leak.`,
+				);
 				return;
 			}
 			this.#callbacks.splice(index, 1);
@@ -64,10 +85,6 @@ export class Event<Args extends unknown[] = []> {
 	 * Trigger all callbacks that were waiting for this event.
 	 */
 	public emit(...args: Args): void {
-		if (this.debug) {
-			console.group(`🔔 ${this.label} (${this.#callbacks.length})`);
-		}
-
 		// Create a new array from callbacks so that the loop is not affected
 		// while once-ers change the true callbacks list by reference.
 		//
@@ -76,15 +93,12 @@ export class Event<Args extends unknown[] = []> {
 		for (let i = 0; i < callbacks.length; i++) {
 			callbacks[i](...args);
 		}
-
-		if (this.debug) {
-			console.groupEnd();
-		}
 	}
 
 	/**
-	 * Set a callback for multiple events.
+	 * Set a callback for any time any of multiple events emit.
 	 *
+	 * @todo test
 	 * @deprecated Not in use yet
 	 */
 	public static onAny(callback: CallbackFn, events: Event[]): DestroyerFn {
@@ -98,6 +112,8 @@ export class Event<Args extends unknown[] = []> {
 	}
 
 	/**
+	 * Set a callback for only the first time any of the given events emit.
+	 * @todo test
 	 * @deprecated Not in use yet
 	 */
 	public static onceFirst(callback: CallbackFn, events: Event[]): DestroyerFn {
@@ -119,6 +135,9 @@ export class Event<Args extends unknown[] = []> {
 		return destroy;
 	}
 
+	/**
+	 * Remove all listeners to this event.
+	 */
 	public clear() {
 		this.#callbacks = [];
 	}

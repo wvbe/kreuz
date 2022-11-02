@@ -4,6 +4,7 @@ import { type BehaviorTreeNodeI } from '@lib';
 const label: Record<string, string> = {
 	sequence: '→',
 	selector: '?',
+	inverter: '!',
 };
 const BehaviorTreeNode: FunctionComponent<{ node: BehaviorTreeNodeI }> = ({ node }) => {
 	return (

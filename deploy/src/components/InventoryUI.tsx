@@ -31,7 +31,7 @@ export const InventoryUI: FunctionComponent<{
 }> = ({ wallet, inventory }) => {
 	const stacks = useEvent(
 		inventory.$change,
-		[],
+		inventory.getStacks(),
 		useCallback(() => inventory.getStacks(), [inventory]),
 	);
 

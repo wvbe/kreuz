@@ -84,11 +84,12 @@ export class Coordinate implements CoordinateI {
 			return angle;
 		}
 	}
+
 	/**
 	 * @deprecated For debugging purposes only, may change without notice or tests
 	 */
 	toString() {
-		return this.toArray().join(',');
+		return `[${this.toArray().join(',')}]`;
 	}
 
 	/**

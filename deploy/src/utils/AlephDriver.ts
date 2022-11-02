@@ -2,7 +2,7 @@ import { Driver, EntityI, PersonEntity, type DriverI, type Game } from '@lib';
 import { setSelectedEntity } from '../hooks/useSelectedEntity.ts';
 export class AlephDriver extends Driver implements DriverI {
 	game: Game | null = null;
-	gameSpeed = 3;
+	gameSpeed = 4;
 	lastUpdate: number = Date.now();
 
 	private animate(game: Game) {
@@ -11,10 +11,8 @@ export class AlephDriver extends Driver implements DriverI {
 		}
 
 		const now = Date.now();
-		// if (this.lastUpdate !== null) {
 		const delta = now - this.lastUpdate;
 		game.time.steps(delta * this.gameSpeed);
-		// }
 		this.lastUpdate = now;
 		setTimeout(this.animate.bind(this, game), 10);
 	}

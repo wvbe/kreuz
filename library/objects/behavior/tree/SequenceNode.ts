@@ -27,9 +27,7 @@ export class SequenceNode<B extends Record<string, unknown> = Record<string, nev
 			const p = child.evaluate(blackboard, provenance);
 			p.then(next, prom.reject.bind(prom));
 		};
-		console.group('→');
 		next();
-		console.groupEnd();
 		return prom;
 	}
 }

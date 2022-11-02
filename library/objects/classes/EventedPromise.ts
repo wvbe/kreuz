@@ -39,6 +39,25 @@ export class EventedPromise {
 		this.id = ++i;
 		this.#$finish = $finish || new Event(`${this.constructor.name} $finish`);
 		this.#$interrupt = $interrupt || new Event(`${this.constructor.name} $interrupt`);
+
+		const stopListeningForFinish = this.#$finish.once(() => {
+			stopListeningForInterrupt();
+			if (this.isResolved || this.isRejected) {
+				// Programmer error:
+				throw new Error(`EventedPromise #${this.id} can only close once, unexpected finish`);
+			}
+			this.isResolved = true;
+			console.log(`${this.id} async resolve from constructor`);
+		});
+		const stopListeningForInterrupt = this.#$interrupt.once(() => {
+			stopListeningForFinish();
+			if (this.isResolved || this.isRejected) {
+				// Programmer error:
+				throw new Error('EventedPromise can only close once, unexpected interrupt');
+			}
+			this.isRejected = true;
+			console.log(`${this.id} async reject from constructor`);
+		});
 	}
 
 	public get isBusy() {
@@ -46,12 +65,6 @@ export class EventedPromise {
 	}
 
 	public resolve() {
-		if (this.isResolved || this.isRejected) {
-			// Programmer error:
-			throw new Error('EventedPromise can only close once, unexpected finish');
-		}
-
-		this.isResolved = true;
 		this.#$finish.emit();
 
 		// Untested
@@ -59,11 +72,6 @@ export class EventedPromise {
 	}
 
 	public reject() {
-		if (this.isResolved || this.isRejected) {
-			// Programmer error:
-			throw new Error('EventedPromise can only close once, unexpected interrupt');
-		}
-		this.isRejected = true;
 		this.#$interrupt.emit();
 	}
 
@@ -72,16 +80,20 @@ export class EventedPromise {
 	// letting the consumer be more verbose for now.
 	public then(onFulfilled: () => void, onRejected?: () => void): EventedPromise {
 		if (this.isResolved) {
+			console.log(`${this.id} resolve`);
 			onFulfilled();
 		} else if (this.isRejected) {
+			console.log(`${this.id} reject`);
 			onRejected?.();
 		} else {
 			const stopListeningForFinish = this.#$finish.once(() => {
 				stopListeningForInterrupt();
+				console.log(`${this.id} async resolve`);
 				onFulfilled();
 			});
 			const stopListeningForInterrupt = this.#$interrupt.once(() => {
 				stopListeningForFinish();
+				console.log(`${this.id} async reject`);
 				onRejected?.();
 			});
 		}

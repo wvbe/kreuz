@@ -5,12 +5,13 @@ import Game from '../Game.ts';
 import { DriverI } from './types.ts';
 
 export class Driver extends Attachable<[Game]> implements DriverI {
-	public readonly game = null;
-
 	public readonly $$animating = new EventedValue<boolean>(false, 'Driver $$animating');
+
 	public readonly $resume = new Event('Driver $resume');
+
 	public readonly $pause = new Event('Driver $pause');
-	constructor() {
+
+	public constructor() {
 		super();
 
 		this.$attach.on((game) => {
@@ -31,7 +32,7 @@ export class Driver extends Attachable<[Game]> implements DriverI {
 	 * @TODO should not return a promise, more like return destroyer
 	 * @TODO invent .run() in case you want a promise-based async?
 	 */
-	start(): Promise<void> {
+	public start(): Promise<void> {
 		if (this.$$animating.get()) {
 			throw new Error('Animation already started');
 		}

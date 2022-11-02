@@ -19,9 +19,11 @@
 .behavior-tree-node__label--sequence {
 	background-color: lightyellow;
 }
-
 .behavior-tree-node__label--selector {
 	background-color: lightblue;
+}
+.behavior-tree-node__label--inverter {
+	background-color: pink;
 }
 
 .behavior-tree-node__children {

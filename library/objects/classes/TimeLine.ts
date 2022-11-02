@@ -69,9 +69,6 @@ export class TimeLine extends EventedValue<number> {
 		this.step();
 	}
 
-	stringifyTimers() {
-		return `${this.#timers.size}::: ${Array.from(this.#timers.entries())}`;
-	}
 	/**
 	 * Schedule a callback for a relative amount of time in the future.
 	 *

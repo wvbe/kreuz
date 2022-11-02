@@ -57,10 +57,9 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 	public constructor(
 		initial: number,
 		options: ProgressingNumericValueOptions,
-		label: string,
-		debug?: boolean,
+		label: string
 	) {
-		super(initial, label, debug);
+		super(initial, label);
 		this.label = label;
 		this.#delta = options.delta;
 		this.#min = options.min || 0;

@@ -41,6 +41,13 @@ describe('Collection', () => {
 		expect(collection.length).toBe(3);
 	});
 
+	it('.get()', () => {
+		const collection = new Collection<{ id: number }>();
+		collection.add(obj1);
+		expect(collection.get(0)).toBe(obj1);
+		expect(() => collection.get(1)).toThrow();
+	});
+
 	it('.remove()', () => {
 		const { collection, onAdd, onRemove, onChange } = createMocks<{ id: number }>();
 		collection.add(obj1);

@@ -9,22 +9,45 @@ import { PersonEntity } from './entity.person.ts';
 import { type EntityI } from './types.ts';
 
 type FactoryBuildingEntityOptions = {
+	/**
+	 * The maximum amount of workers that can participate in the production cycle.
+	 *
+	 * - If set to "0", the factory will always be producing at its native production speed.
+	 *   For example, a water well.
+	 * - If set to a value higher than 0, the factory will produce at the occupancy/maxWorker ratio.
+	 *   For example, a stone quarry.
+	 */
 	maxWorkers: number;
-	// productionSpeedMultiplier: number;
-	// compatibleBlueprints: Blueprint[];
 };
 
 export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 	public readonly type = 'factory';
+
+	/**
+	 * A bag of goodies owned by this factory. It will add and subtract items as it works through
+	 * production cycles of the blueprint.
+	 */
 	public readonly inventory = new Inventory(8);
+
 	public readonly options: FactoryBuildingEntityOptions;
+
+	/**
+	 * The collection of PersonEntities working in this factory, providing production speed.
+	 */
 	public readonly $workers = new Collection<PersonEntity>();
 
+	/**
+	 * The blueprint this factory is busy with, if any.
+	 */
 	public readonly $blueprint = new EventedValue<Blueprint | null>(
 		null,
 		`${this.constructor.name} $blueprint`,
 	);
 
+	/**
+	 * How far along the production of one cycle of the blueprint is, and its delta (at which rate
+	 * progress increases).
+	 */
 	public readonly $$progress = new ProgressingNumericValue(
 		0,
 		{ min: 0, max: 1, delta: 0 },
@@ -113,8 +136,12 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 			throw new Error(`No blueprint set`);
 		}
 		const delta = 1 / blueprint.options.fullTimeEquivalent;
-		const multiplier = this.$workers.length / this.options.maxWorkers;
-		this.$$progress.setDelta(delta * multiplier);
+		if (this.options.maxWorkers === 0) {
+			this.$$progress.setDelta(delta);
+		} else {
+			const multiplier = this.$workers.length / this.options.maxWorkers;
+			this.$$progress.setDelta(delta * multiplier);
+		}
 	}
 
 	private isBusy() {

@@ -30,11 +30,6 @@ export class Tile extends Coordinate implements TileI {
 		return this.z >= 0;
 	}
 
-	// For debugging purposes only, may change without notice or tests
-	public toString() {
-		return '(' + [this.x, this.y].map((num: number) => num.toFixed(2)).join(',') + ')';
-	}
-
 	public isAdjacentToLand() {
 		return this.neighbors.some((n) => n.isLand());
 	}

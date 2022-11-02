@@ -27,9 +27,7 @@ export class SelectorNode<B extends Record<string, unknown> = Record<string, nev
 			const p = child.evaluate(blackboard, provenance);
 			p.then(prom.resolve.bind(prom), next);
 		};
-		console.group('?');
 		next();
-		console.groupEnd();
 		return prom;
 	}
 }

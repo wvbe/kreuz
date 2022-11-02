@@ -13,6 +13,19 @@ describe('Event', () => {
 		expect(cb).toHaveBeenCalledTimes(2);
 	});
 
+	it('.on() destroyer', () => {
+		console.warn = mock.fn();
+		const event = new Event('test');
+		const destroyer = event.on(() => {});
+		expect(event.$$$listeners).toBe(1);
+		destroyer();
+		expect(event.$$$listeners).toBe(0);
+		expect(() => destroyer()).not.toThrow();
+		expect(console.warn).toHaveBeenCalledWith(
+			`Destroying an event listener that was already destroyed, you may have a memory leak.`,
+		);
+	});
+
 	it('.once()', () => {
 		const event = new Event('test');
 		const cb = mock.fn();
@@ -22,6 +35,28 @@ describe('Event', () => {
 		expect(cb).toHaveBeenCalledTimes(1);
 		event.emit();
 		expect(cb).toHaveBeenCalledTimes(1);
+	});
+
+	it('.once() destroyer', () => {
+		console.warn = mock.fn();
+		const event = new Event('test');
+		const destroyer = event.once(() => {});
+		expect(event.$$$listeners).toBe(1);
+		destroyer();
+		expect(event.$$$listeners).toBe(0);
+		expect(() => destroyer()).not.toThrow();
+		expect(console.warn).toHaveBeenCalledWith(
+			`Destroying an event listener that was already destroyed, you may have a memory leak.`,
+		);
+	});
+
+	it('.clear()', () => {
+		const event = new Event('test');
+		event.on(() => {});
+		event.once(() => {});
+		expect(event.$$$listeners).toBe(2);
+		event.clear();
+		expect(event.$$$listeners).toBe(0);
 	});
 });
 
@@ -38,9 +73,5 @@ describe('Fixed issues', () => {
 		expect(cb).toHaveBeenCalledTimes(1);
 	});
 });
-
-// xit('#onAny', () => {});
-
-// xit('#onceFirst', () => {});
 
 run();

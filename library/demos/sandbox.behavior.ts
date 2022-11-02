@@ -15,6 +15,7 @@ import {
 	SettlementEntity,
 	materials,
 	FactoryBuildingEntity,
+	blueprints,
 } from '@lib';
 import { civvyBehavior } from '../objects/behavior/civvyBehavior.ts';
 import { loiterNode } from '../objects/behavior/loiterNode.ts';
@@ -64,9 +65,11 @@ const demo: Demo = (driver) => {
 	);
 	marketStall.inventory.change(materials.eggs, 30);
 
-	const factory = new FactoryBuildingEntity('factory', terrain.getTileClosestToXy(13, 8), {
+	const factory = new FactoryBuildingEntity('factory', terrain.getTileClosestToXy(13, 10), {
 		maxWorkers: 4,
 	});
+
+	factory.$blueprint.set(blueprints.beeKeeping);
 
 	game.entities.add(entity, church, settlement, marketStall, factory);
 

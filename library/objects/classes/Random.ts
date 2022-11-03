@@ -38,6 +38,10 @@ export class Random {
 		return arr[index];
 	}
 
+	static fromMapValues<X>(map: Record<string | number | symbol, X>, ...seed: SeedI[]) {
+		return this.fromArray(Object.values(map), ...seed);
+	}
+
 	/**
 	 * Returns a set of coordinates on a randomized Poisson distribution.
 	 */

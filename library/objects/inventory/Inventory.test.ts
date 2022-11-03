@@ -1,5 +1,4 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
-import { pickaxe } from '../constants/materials.ts';
 import { Inventory } from './Inventory.ts';
 import { Material } from './Material.ts';
 
@@ -48,6 +47,16 @@ describe('Inventory', () => {
 
 		inventory.change(test2, -33);
 		expect(inventory.availableOf(test2)).toBe(0);
+	});
+});
+
+describe('Issues', () => {
+	it('.set() does not allow setting to beyond half the available space', () => {
+		// Reproduction case is to fill the inventory with an item half-way, and then add one more:
+		const inventory = new Inventory(2);
+		inventory.set(test2, 33);
+		expect(() => inventory.set(test2, 34)).not.toThrow();
+		expect(inventory.availableOf(test2)).toBe(34);
 	});
 });
 

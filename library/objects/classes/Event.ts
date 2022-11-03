@@ -99,9 +99,12 @@ export class Event<Args extends unknown[] = []> {
 	 * Set a callback for any time any of multiple events emit.
 	 *
 	 * @todo test
-	 * @deprecated Not in use yet
+	 * @deprecated Untested
 	 */
-	public static onAny(callback: CallbackFn, events: Event[]): DestroyerFn {
+	public static onAny<Args extends unknown[] = []>(
+		callback: CallbackFn<Args>,
+		events: Event<Args>[],
+	): DestroyerFn {
 		const destroyers = events.map((event) => event.on(callback));
 		const destroy = () => {
 			for (let i = 0; i < destroyers.length; i++) {

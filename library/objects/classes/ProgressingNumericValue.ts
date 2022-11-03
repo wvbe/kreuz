@@ -50,15 +50,11 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 	 * The value that is passed along signifies wether or not extra compensation is expected for
 	 * the time elapsed in the cancelled timeout -- or more precisely at which decay rate.
 	 */
-	private readonly $recalibrate = new Event<[number]>(`${this.constructor.name} $recalibrate`);
+	public readonly $recalibrate = new Event<[number]>(`${this.constructor.name} $recalibrate`);
 
 	public readonly label: string;
 
-	public constructor(
-		initial: number,
-		options: ProgressingNumericValueOptions,
-		label: string
-	) {
+	public constructor(initial: number, options: ProgressingNumericValueOptions, label: string) {
 		super(initial, label);
 		this.label = label;
 		this.#delta = options.delta;
@@ -103,7 +99,9 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 					if (this.#delta !== 0) {
 						setTimeout(granularity / this.#delta);
 					}
-					this.applyDeltaForTimePassed(timePassed);
+					if (timePassed > 0) {
+						this.applyDeltaForTimePassed(timePassed);
+					}
 					// Apply decay _after_ setting new timeout, so that an event listener can unset the
 					// timeout again if the value is zero
 				}, delay);

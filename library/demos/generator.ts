@@ -3,6 +3,7 @@
  */
 
 import {
+	blueprints,
 	ChurchBuildingEntity,
 	FactoryBuildingEntity,
 	Game,
@@ -45,10 +46,13 @@ export function generateEntities(game: Game) {
 		throw new Error('The terrain does not contain any walkable tiles!');
 	}
 
-	for (let i = 0; i < Random.between(12, 20, game.seed, 'guardamount'); i++) {
+	// for (let i = 0; i < Random.between(12, 20, game.seed, 'guardamount'); i++) {
+	for (let i = 0; i < 3; i++) {
 		const id = `${game.seed}-person-${i}`;
 		const person = new PersonEntity(id, Random.fromArray(walkableTiles, id));
 		game.entities.add(person);
+
+		person.$behavior.set(civvyBehavior);
 	}
 
 	for (let i = 0; i < Random.between(3, 6, game.seed, 'settlements'); i++) {
@@ -67,12 +71,13 @@ export function generateEntities(game: Game) {
 	for (let i = 0; i < Random.between(6, 9, game.seed, 'factories'); i++) {
 		const id = `${game.seed}-factory-${i}`;
 		const tile = Random.fromArray(walkableTiles, id);
-		game.entities.add(
-			new FactoryBuildingEntity(id, tile, {
-				maxWorkers: 3,
-			}),
-		);
+		const factory = new FactoryBuildingEntity(id, tile, {
+			maxWorkers: 4,
+		});
+		game.entities.add(factory);
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
+
+		factory.setBlueprint(Random.fromMapValues(blueprints, id, 'blueprint'));
 	}
 
 	for (let i = 0; i < Random.between(3, 5, game.seed, 'market-stalls'); i++) {
@@ -88,12 +93,6 @@ export function generateEntities(game: Game) {
 		game.entities.add(new ChurchBuildingEntity(id, tile));
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 	}
-
-	game.entities
-		.filter<PersonEntity>((e) => e.type === 'person')
-		.forEach((p) => {
-			p.$behavior.set(civvyBehavior);
-		});
 }
 
 const demo: Demo = (driver) => {

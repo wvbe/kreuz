@@ -1,22 +1,30 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Event, EventedValue } from '@lib';
+import { Collection, Event, EventedValue } from '@lib';
 
 function noTransformSingle<T, O = T>(value: T): O {
 	// Shut the fuck up, TypeScript.
 	return value as unknown as O;
 }
 
+export function useCollection<T>(collection: Collection<T>) {
+	return useEventData<[T[], T[]], T[]>(
+		collection.$change,
+		collection.slice(),
+		useCallback(() => collection.slice(), [collection]),
+	);
+}
+
 /**
  * Useful if you want to subscribe to the value controlled by EventedValue.
  *
- * Contrary to {@link useEvent}, the returned value is not an array but only the value that is
+ * Contrary to {@link useEventData}, the returned value is not an array but only the value that is
  * actually being evented.
  */
 export function useEventedValue<T = void, O = T>(
 	eventedValue: EventedValue<T>,
 	transform: (value: T) => O = noTransformSingle,
 ): O {
-	const values = useEvent<[T], [O]>(
+	const values = useEventData<[T], [O]>(
 		eventedValue,
 		[transform(eventedValue.get())],
 		useCallback((value: T): [O] => [transform(value)], [transform]),
@@ -35,7 +43,7 @@ function noTransformMultiple<T extends unknown[], O = T>(...value: T): O {
  *
  * @deprecated clumsy naming/solving the wrong problem.
  */
-export function useEvent<T extends unknown[] = never[], O = T>(
+export function useEventData<T extends unknown[] = never[], O = T>(
 	eventedValue: Event<T>,
 	initial: O,
 	transform: (...value: T) => O = noTransformMultiple,

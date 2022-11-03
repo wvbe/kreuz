@@ -56,14 +56,16 @@ export class Inventory {
 	 * The amount of additional material of this type that could be stored in this inventory,
 	 * keeping in mind stack restrictions.
 	 */
-	public emptyOf(material: Material): number {
+	public allocatableTo(material: Material): number {
 		if (this.capacity === Infinity) {
 			return Infinity;
 		}
 
-		const emptyInCurrentStacks = this.availableOf(material) % material.stack;
+		const inAllocatedStacks =
+			Math.ceil(this.availableOf(material) / material.stack) * material.stack;
 		const openStacks = this.capacity - this.getUsedStackSpace();
-		return emptyInCurrentStacks + material.stack * openStacks;
+		const inOpenStacks = openStacks * material.stack;
+		return inAllocatedStacks + inOpenStacks;
 	}
 
 	/**
@@ -137,7 +139,7 @@ export class Inventory {
 			return;
 		}
 
-		if (quantity > this.emptyOf(material)) {
+		if (quantity > this.allocatableTo(material)) {
 			throw new Error(`Not enough stack space for ${quantity}x ${material.label}`);
 		}
 		if (stateIndex === -1) {

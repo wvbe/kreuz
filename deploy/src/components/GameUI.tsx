@@ -9,6 +9,7 @@ import { MaterialList } from './MaterialList.tsx';
 import { BlueprintList } from './BlueprintList.tsx';
 import { MapViewport } from './MapViewport.tsx';
 import { SelectedEntityDetails } from './EntityDetails.tsx';
+import { ProductionList } from './ProductionList.tsx';
 
 export const GameUI: FunctionComponent<{ game: Game; driver: AlephDriver }> = ({
 	game,
@@ -28,6 +29,7 @@ export const GameUI: FunctionComponent<{ game: Game; driver: AlephDriver }> = ({
 					<EventLog game={game} driver={driver} />
 					<MaterialList />
 					<BlueprintList />
+					<ProductionList game={game} />
 				</div>
 			</div>
 			<div className="game-viewport">

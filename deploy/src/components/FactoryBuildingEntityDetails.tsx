@@ -1,13 +1,13 @@
-import { FactoryBuildingEntity, PersonEntity, ProductionJob } from '@lib';
+import { FactoryBuildingEntity, PersonEntity } from '@lib';
 import { FunctionComponent } from 'react';
-import { useEvent, useEventedValue } from '../hooks/useEventedValue.ts';
+import { useEventData, useEventedValue } from '../hooks/useEventedValue.ts';
 import { FillBar } from './atoms/FillBar.tsx';
 import { InventoryUI } from './InventoryUI.tsx';
 
 export const FactoryBuildingEntityDetails: FunctionComponent<{ entity: FactoryBuildingEntity }> = ({
 	entity,
 }) => {
-	const workers = useEvent<[PersonEntity[], PersonEntity[]], number>(
+	const workers = useEventData<[PersonEntity[], PersonEntity[]], number>(
 		entity.$workers.$change,
 		entity.$workers.length,
 		() => entity.$workers.length,

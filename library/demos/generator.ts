@@ -46,8 +46,7 @@ export function generateEntities(game: Game) {
 		throw new Error('The terrain does not contain any walkable tiles!');
 	}
 
-	// for (let i = 0; i < Random.between(12, 20, game.seed, 'guardamount'); i++) {
-	for (let i = 0; i < 3; i++) {
+	for (let i = 0; i < Random.between(12, 20, game.seed, 'guardamount'); i++) {
 		const id = `${game.seed}-person-${i}`;
 		const person = new PersonEntity(id, Random.fromArray(walkableTiles, id));
 		game.entities.add(person);
@@ -72,7 +71,7 @@ export function generateEntities(game: Game) {
 		const id = `${game.seed}-factory-${i}`;
 		const tile = Random.fromArray(walkableTiles, id);
 		const factory = new FactoryBuildingEntity(id, tile, {
-			maxWorkers: 4,
+			maxWorkers: 3,
 		});
 		game.entities.add(factory);
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);

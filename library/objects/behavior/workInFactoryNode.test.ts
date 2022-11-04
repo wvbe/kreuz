@@ -1,4 +1,5 @@
 import { describe, expect, it, mock, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { loiterNode } from './loiterNode.ts';
 import { beeKeeping } from '../constants/blueprints.ts';
 import { honey } from '../constants/materials.ts';
 import { TestDriver } from '../drivers/TestDriver.ts';
@@ -6,6 +7,7 @@ import { FactoryBuildingEntity } from '../entities/entity.building.factory.ts';
 import { PersonEntity } from '../entities/entity.person.ts';
 import Game from '../Game.ts';
 import { generateGridTerrainFromAscii } from '../terrain/utils.ts';
+import { SelectorNode } from './tree/SelectorNode.ts';
 import { workInFactory } from './workInFactoryNode.ts';
 
 describe('BT: workInFactory', () => {
@@ -36,7 +38,10 @@ describe('BT: workInFactory', () => {
 
 	entity.$pathStart.on(pathStart);
 	entity.$pathEnd.on(pathEnd);
-	entity.$behavior.set(workInFactory);
+
+	// Wrap workInFactory in a selector node together with loiterNode, so that we will not end up
+	// in a max-call-stack-exceeded scenario when there is no available factory.
+	entity.$behavior.set(new SelectorNode(workInFactory, loiterNode));
 
 	it('t=5.000 Walked to factory', () => {
 		game.time.steps(5_000);
@@ -45,12 +50,13 @@ describe('BT: workInFactory', () => {
 		expect(pathEnd).toHaveBeenCalledTimes(1);
 		expect(entity.$$location.get().equals(factory.$$location.get())).toBeTruthy();
 		expect(factory.inventory.availableOf(honey)).toBe(0);
+		expect(factory.$$progress.get()).toBeGreaterThan(0);
 	});
 
 	it('t=15.000 Finished first production cycle', () => {
 		game.time.steps(10_000);
 		expect(game.time.now).toBe(15_000);
-		expect(pathStart).toHaveBeenCalledTimes(1);
+		expect(pathStart).toHaveBeenCalledTimes(2);
 		expect(pathEnd).toHaveBeenCalledTimes(1);
 		expect(factory.inventory.availableOf(honey)).toBe(2);
 	});
@@ -58,16 +64,16 @@ describe('BT: workInFactory', () => {
 	it('t=23.000 Finished second production cycle', () => {
 		game.time.steps(8_000);
 		expect(game.time.now).toBe(23_000);
-		expect(pathStart).toHaveBeenCalledTimes(1);
-		expect(pathEnd).toHaveBeenCalledTimes(1);
-		expect(factory.inventory.availableOf(honey)).toBe(4);
+		expect(pathStart).toHaveBeenCalledTimes(2);
+		expect(pathEnd).toHaveBeenCalledTimes(2);
+		expect(factory.inventory.availableOf(honey)).toBe(2);
 	});
 	it('t=31.000 Finished third production cycle', () => {
 		game.time.steps(8_000);
 		expect(game.time.now).toBe(31_000);
-		expect(pathStart).toHaveBeenCalledTimes(1);
-		expect(pathEnd).toHaveBeenCalledTimes(1);
-		expect(factory.inventory.availableOf(honey)).toBe(6);
+		expect(pathStart).toHaveBeenCalledTimes(3);
+		expect(pathEnd).toHaveBeenCalledTimes(2);
+		expect(factory.inventory.availableOf(honey)).toBe(2);
 	});
 });
 

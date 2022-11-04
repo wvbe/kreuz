@@ -116,19 +116,16 @@ describe('FactoryBuildingEntity', () => {
 		const time1 = game1.time.now;
 		const time2 = game2.time.now;
 
-		// It took 15 cycles times the normal production length, and three times as long (because
-		//   1/3rd of workers), and 135 other ticks (probably) for rounding off reasons.
+		// It took 15 cycles times the normal production length at 1x production speed (becaue 1 worker)
+		// plus 50 time extra -- presumably for rounding reasons
 		factory1.inventory.change(wheat, 30);
 		await driver1.start();
-		expect(game1.time.now - time1).toBe(wheatProcessing.options.fullTimeEquivalent * 15 * 3 + 135);
+		expect(game1.time.now - time1).toBe(wheatProcessing.options.fullTimeEquivalent * 15 + 50);
 
-		// It took 15 cycles times the normal production length, and three times as long (because
-		//   2/3rd of workers), and 68 other ticks (probably) for rounding off reasons.
+		// Using 2 works takes half the time
 		factory2.inventory.change(wheat, 30);
 		await driver2.start();
-		expect(game2.time.now - time2).toBe(
-			wheatProcessing.options.fullTimeEquivalent * 15 * (3 / 2) + 68,
-		);
+		expect(game2.time.now - time2).toBe((game1.time.now - time1) / 2);
 	});
 });
 

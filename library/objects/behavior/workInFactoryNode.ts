@@ -10,8 +10,11 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 		// @TODO Make function cheap in case entity is already on the same location as a factory.
 		const { game, entity } = blackboard;
 		const factories = getEntitiesReachableByEntity(game, entity)
-			.filter((e): e is FactoryBuildingEntity => e.type === 'factory')
-			.filter((e) => e.$blueprint.get());
+			.filter((entity): entity is FactoryBuildingEntity => entity.type === 'factory')
+			.filter(
+				(factory) =>
+					factory.$blueprint.get() && factory.$workers.length < factory.options.maxWorkers,
+			);
 		if (!factories.length) {
 			return EventedPromise.reject();
 		}
@@ -42,6 +45,10 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 
 			// Add worker, and remove it again when worker moves away
 			if (!factory.$workers.includes(entity)) {
+				if (factory.$workers.length >= factory.options.maxWorkers) {
+					// Aww shucks, somebody else took our spot before we could make it to the factory!
+					return EventedPromise.reject();
+				}
 				factory.$workers.add(entity);
 				entity.$$location.once(() => {
 					factory.$workers.remove(entity);

@@ -81,10 +81,8 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 			// See if production is sped up/slowed down if the worker occupancy changes:
 			this.$detach.once(
 				this.$workers.$change.on(() => {
-					console.log(`$workers $change ${this.$workers.length}`);
 					if (this.isBusy() || this.$blueprint.get()?.hasAllIngredients(this.inventory)) {
 						// Must already be busy or have the ingredients to start
-						console.log(`- Set progress delta`);
 						this.setProgressDelta();
 					}
 				}),
@@ -130,9 +128,11 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 	 * takes and the amount of workers in this factory.
 	 *
 	 * Note that it ignores wether or not inventory materials are available!
+	 *
+	 * @TODO Should avoid setProgressDelta for its side-effect, because it is more expensive
+	 *       than it has to be.
 	 */
 	private setProgressDelta() {
-		console.log('Setting progress delta');
 		const blueprint = this.$blueprint.get();
 		if (!blueprint) {
 			// Programmer error, you should have avoided calling this method:
@@ -142,8 +142,7 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 		if (this.options.maxWorkers === 0) {
 			this.$$progress.setDelta(delta);
 		} else {
-			const multiplier = this.$workers.length / this.options.maxWorkers;
-			this.$$progress.setDelta(delta * multiplier);
+			this.$$progress.setDelta(this.$workers.length * delta);
 		}
 	}
 

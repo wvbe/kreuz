@@ -90,8 +90,8 @@ describe('BT: loiterNode', () => {
 	it('t=500.000', () => {
 		game.time.steps(460_000);
 		expect(game.time.now).toBe(500_000);
-		expect(pathStart).toHaveBeenCalledTimes(3);
-		expect(pathEnd).toHaveBeenCalledTimes(3);
+		expect(pathStart).toHaveBeenCalledTimes(8);
+		expect(pathEnd).toHaveBeenCalledTimes(8);
 	});
 });
 

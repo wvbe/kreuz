@@ -16,18 +16,16 @@ const ProductionSummary: FunctionComponent<{
 	useEffect(
 		() =>
 			Event.onAny<[number]>(
-				() => {
-					setTotalDelta(getTotalDelta(entities));
-				},
+				() => setTotalDelta(getTotalDelta(entities)),
 				entities.map((factory) => factory.$$progress.$recalibrate),
 			),
 		[entities],
 	);
-	const hoursPerCycle = 1 / totalDelta / 1000;
+	const hoursPerCycle = totalDelta * 1000 * 24;
 	return (
 		<Row>
 			<Cell>{blueprint.name}</Cell>
-			<Cell>{hoursPerCycle === Infinity ? '∞' : hoursPerCycle.toFixed(1)} h/cycle</Cell>
+			<Cell>{hoursPerCycle === Infinity ? '∞' : hoursPerCycle.toFixed(1)}/day</Cell>
 		</Row>
 	);
 };

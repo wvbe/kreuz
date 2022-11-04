@@ -5,9 +5,26 @@ import type Game from '../Game.ts';
 import { type DestroyerFn } from '../types.ts';
 
 type ProgressingNumericValueOptions = {
+	/**
+	 * The lower boundary to which the value can be set.
+	 */
 	min?: number;
+	/**
+	 * The upper boundary to which the value can be set.
+	 */
 	max?: number;
+	/**
+	 * The change that is applied to this value every time tick. A positive number means the
+	 * value increases over time, while a negative number means the value lowers over time.
+	 *
+	 * The delta can never cause the value to exceed the min/max boundaries.
+	 */
 	delta: number;
+	/**
+	 * The frequency with which updates should happen. A small number means a higher granularity and
+	 * more updates. Defaults to 1/100th of the difference between min/max, in other words defaults
+	 * to 1%.
+	 */
 	granularity?: number;
 };
 /**
@@ -60,7 +77,7 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 		this.#delta = options.delta;
 		this.#min = options.min || 0;
 		this.#max = options.max || 1;
-		this.#granularity = options.granularity || 0.001;
+		this.#granularity = options.granularity || 0.01 * (this.#max - this.#min);
 		if (this.#min >= this.#max) {
 			throw new Error(
 				`The lower boundary of a ProgressingNumericValue must be less than the upper boundary`,
@@ -172,6 +189,9 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 
 	public setDelta(newDelta: number): void {
 		const oldDelta = this.#delta;
+		if (oldDelta === newDelta) {
+			return;
+		}
 		this.#delta = newDelta;
 		this.$recalibrate.emit(oldDelta);
 	}

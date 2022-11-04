@@ -16,7 +16,7 @@ import { PersonNeedId } from '../constants/needs.ts';
 export class Need extends ProgressingNumericValue {
 	public readonly id: PersonNeedId;
 	public constructor(id: PersonNeedId, initial: number, label: string, delta: number) {
-		super(initial, { delta }, label);
+		super(initial, { delta, granularity: 0.001 }, label);
 		this.id = id;
 	}
 }

@@ -19,15 +19,21 @@ export class TimeLine extends EventedValue<number> {
 
 	/**
 	 * Take one step. Runs all callbacks registers for that specific time, and then removes them.
+	 *
+	 * Note that this function sets .current and calls .emit(), same as the .set() method would do,
+	 * albeit execute timers in between. This avoids the case where time is not updated yet and setTimeout
+	 * of 1 frame thinks time progression is 0.
 	 */
 	public step(): void {
 		const frame = this.now + 1;
+
+		this.current = frame;
 		const timers = this.#timers.get(frame);
 		while (timers && timers.length > 0) {
 			timers.shift()?.();
 		}
 		this.#timers.delete(frame);
-		this.set(frame);
+		this.emit();
 	}
 
 	/**

@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
 import { Collection, Event, EventedValue } from '@lib';
+import { useCallback, useEffect, useState } from 'react';
 
 function noTransformSingle<T, O = T>(value: T): O {
 	// Shut the fuck up, TypeScript.
@@ -52,7 +52,9 @@ export function useEventData<T extends unknown[] = never[], O = T>(
 
 	useEffect(() => {
 		setValue(initial);
-		return eventedValue.on((...value) => setValue(transform(...value)));
+		return eventedValue.on(function useEventData_on(...value) {
+			setValue(transform(...value));
+		});
 	}, [transform, eventedValue]);
 
 	return value;

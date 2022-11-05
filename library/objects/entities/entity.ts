@@ -21,7 +21,7 @@ export class Entity extends Attachable<[Game]> implements EntityI {
 	 */
 	public type = 'entity';
 
-	constructor(id: string, location: CoordinateI) {
+	constructor(id: string, location: { x: number; y: number; z: number }) {
 		super();
 
 		this.id = id;

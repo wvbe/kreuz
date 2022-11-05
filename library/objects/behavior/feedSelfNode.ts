@@ -1,12 +1,11 @@
 import { EventedPromise } from '../classes/EventedPromise.ts';
-import { type MarketBuildingEntity } from '../entities/entity.building.market.ts';
 import { type Inventory } from '../inventory/Inventory.ts';
 import { type MaterialState } from '../inventory/types.ts';
 import {
 	createBuyFromMarketSequence,
-	DesirabilityScoreFn,
+	DesirabilityScoreFn
 } from './reusable/createBuyFromMarketBehavior.ts';
-import { getEntitiesReachableByEntity, walkEntityToEntity } from './reusable/travel.ts';
+import { createWaitBehavior } from './reusable/createWaitBehavior.ts';
 import { ExecutionNode } from './tree/ExecutionNode.ts';
 import { InverterNode } from './tree/InverterNode.ts';
 import { SelectorNode } from './tree/SelectorNode.ts';
@@ -54,20 +53,24 @@ export const feedSelf = new SequenceNode<EntityBlackboard>(
 			),
 			createBuyFromMarketSequence(scoreFoodDesirability),
 		),
-		new ExecutionNode('Eat from inventory?', ({ entity }) => {
-			// @TODO
-			// - Eat food over time?
-			const state = getMostEdibleStateFromInventory(entity.inventory);
-			if (!state) {
-				return EventedPromise.reject();
-			}
-			entity.inventory.change(state.material, -1);
-			const foodNeed = entity.needs.find((n) => n.id === 'food');
-			if (!foodNeed) {
-				throw new Error('Expected entity to have a need for food');
-			}
-			foodNeed.set(foodNeed.get() + state.material.nutrition);
-			return EventedPromise.resolve();
-		}),
+		new SequenceNode(
+			new ExecutionNode('Eat from inventory?', ({ entity }) => {
+				// @TODO
+				// - Eat food over time?
+				const state = getMostEdibleStateFromInventory(entity.inventory);
+				if (!state) {
+					return EventedPromise.reject();
+				}
+				entity.inventory.change(state.material, -1);
+				const foodNeed = entity.needs.find((n) => n.id === 'food');
+				if (!foodNeed) {
+					throw new Error('Expected entity to have a need for food');
+				}
+				foodNeed.set(foodNeed.get() + state.material.nutrition);
+				console.log(`${entity} ate ${state.material}`);
+				return EventedPromise.resolve();
+			}),
+			createWaitBehavior(500, 3000),
+		),
 	),
 );

@@ -17,7 +17,7 @@ export const EntityList: FunctionComponent<{ entities: Collection<EntityI> }> = 
 	const items = useMemo(
 		() =>
 			entities.map((entity, i) => (
-				<Row key={i} onClick={() => setSelectedEntity(entity)}>
+				<Row key={entity.id} onClick={() => setSelectedEntity(entity)}>
 					<Cell>
 						<EntityBadge entity={entity} />
 					</Cell>

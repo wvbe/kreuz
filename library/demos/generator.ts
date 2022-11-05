@@ -11,14 +11,16 @@ import {
 	materials,
 	PersonEntity,
 	Random,
-	SettlementEntity,
+	SettlementEntity
 } from '@lib';
-import { Demo } from './types.ts';
 import { civvyBehavior } from '../objects/behavior/civvyBehavior.ts';
+import { Demo } from './types.ts';
 import { generateDualMeshTerrain } from './utils/generateDualMeshTerrain.ts';
 const TOOLS = [materials.axe, materials.hammer, materials.pickaxe, materials.woodsaw];
 
-const FOODS = [materials.milk, materials.eggs, materials.butter];
+const FOODS = Object.values(materials).filter(
+	(material) => material.nutrition > 0 && !material.toxicity,
+);
 
 function generateRandomInventories(game: Game) {
 	const possibleRandomTools = [...TOOLS, null, null, null];
@@ -46,9 +48,10 @@ export function generateEntities(game: Game) {
 		throw new Error('The terrain does not contain any walkable tiles!');
 	}
 
-	for (let i = 0; i < Random.between(12, 20, game.seed, 'guardamount'); i++) {
+	for (let i = 0; i < Random.between(24, 36, game.seed, 'guardamount'); i++) {
 		const id = `${game.seed}-person-${i}`;
 		const person = new PersonEntity(id, Random.fromArray(walkableTiles, id));
+		person.wallet.set(Random.between(20, 500, id, 'munnie'));
 		game.entities.add(person);
 
 		person.$behavior.set(civvyBehavior);
@@ -79,10 +82,13 @@ export function generateEntities(game: Game) {
 		factory.setBlueprint(Random.fromMapValues(blueprints, id, 'blueprint'));
 	}
 
-	for (let i = 0; i < Random.between(3, 5, game.seed, 'market-stalls'); i++) {
+	for (let i = 0; i < Random.between(10, 15, game.seed, 'market-stalls'); i++) {
 		const id = `${game.seed}-market-stall-${i}`;
 		const tile = Random.fromArray(walkableTiles, id);
-		game.entities.add(new MarketBuildingEntity(id, tile, Random.fromArray(FOODS, id)));
+		const material = Random.fromArray(FOODS, id, '-mat');
+		const market = new MarketBuildingEntity(id, tile, material);
+		market.inventory.set(material, Math.round(material.stack * Random.between(1, 4, id)));
+		game.entities.add(market);
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 	}
 

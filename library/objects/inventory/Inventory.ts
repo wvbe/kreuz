@@ -53,7 +53,7 @@ export class Inventory {
 	}
 
 	/**
-	 * The amount of additional material of this type that could be stored in this inventory,
+	 * The total amount of additional material of this type that could be stored in this inventory,
 	 * keeping in mind stack restrictions.
 	 */
 	public allocatableTo(material: Material): number {
@@ -111,11 +111,14 @@ export class Inventory {
 	}
 
 	public change(material: Material, delta: number, skipEvent?: boolean) {
+		if (delta === 0) {
+			return;
+		}
 		const value = this.availableOf(material) + delta;
 		if (value < 0) {
 			throw new Error(`Not possible to have less than 0 ${material.label} in inventory`);
 		}
-		return this.set(material, value, skipEvent);
+		this.set(material, value, skipEvent);
 	}
 	public changeMultiple(states: MaterialState[], skipEvent?: boolean) {
 		states.forEach(({ material, quantity }, index) => {

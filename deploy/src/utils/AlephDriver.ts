@@ -57,7 +57,7 @@ export class AlephDriver extends Driver implements DriverI {
 
 		this.$detach.once(
 			this.$resume.on(() => {
-				self.document.title = 'Kreuz';
+				self.document.title = '⏩ Kreuz';
 			}),
 		);
 		this.$detach.once(

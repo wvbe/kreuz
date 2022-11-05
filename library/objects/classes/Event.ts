@@ -1,5 +1,8 @@
 import { type CallbackFn, type DestroyerFn } from '../types.ts';
 
+/**
+ * A Kreuz event emitter/listener. Always remember to unset your listeners at some point.
+ */
 export class Event<Args extends unknown[] = []> {
 	#callbacks: CallbackFn<Args>[] = [];
 
@@ -106,31 +109,35 @@ export class Event<Args extends unknown[] = []> {
 		events: Event<Args>[],
 	): DestroyerFn {
 		const destroyers = events.map((event) => event.on(callback));
-		const destroy = () => {
+		return () => {
 			for (let i = 0; i < destroyers.length; i++) {
 				destroyers[i]();
 			}
 		};
-		return destroy;
 	}
 
 	/**
 	 * Set a callback for only the first time any of the given events emit.
 	 * @todo test
+	 * @bug It seems like the destroyer of any event may be called twice
 	 * @deprecated Not in use yet
 	 */
 	public static onceFirst(callback: CallbackFn, events: Event[]): DestroyerFn {
 		const destroyers: DestroyerFn[] = [];
+		let isAlreadyDestroyed = false;
 		const destroy = () => {
+			if (isAlreadyDestroyed) {
+				// Programmer error in needing to call destroyer twice
+				throw new Error('Possible memory leak');
+			}
 			for (let i = 0; i < destroyers.length; i++) {
 				destroyers[i]();
 			}
 		};
 		const cb = () => {
 			callback();
-			for (let i = 0; i < destroyers.length; i++) {
-				destroyers[i]();
-			}
+			destroy();
+			isAlreadyDestroyed = true;
 		};
 		events.forEach((event) => {
 			destroyers.push(event.once(cb));

@@ -1,7 +1,10 @@
 import { EventedPromise } from '../../classes/EventedPromise.ts';
+import { TradeOrder } from '../../classes/TradeOrder.ts';
 import { MarketBuildingEntity } from '../../entities/entity.building.market.ts';
+import { HeroPersonEntity } from '../../entities/entity.person.hero.ts';
 import { PersonEntity } from '../../entities/entity.person.ts';
 import { Material } from '../../inventory/Material.ts';
+import { createWaitBehavior } from '../reusable/createWaitBehavior.ts';
 import { ExecutionNode } from '../tree/ExecutionNode.ts';
 import { SequenceNode } from '../tree/SequenceNode.ts';
 import { EntityBlackboard } from '../types.ts';
@@ -28,6 +31,9 @@ export type DesirabilityScoreFn = (
 	material: Material,
 	available: number,
 ) => number;
+
+const GOD = new HeroPersonEntity('King', 'god', { x: 0, y: 0, z: Infinity });
+(self as any).godEntity = GOD;
 
 export function createBuyFromMarketSequence(createDesirabilityScore: DesirabilityScoreFn) {
 	return new SequenceNode<EntityBlackboard>(
@@ -70,19 +76,54 @@ export function createBuyFromMarketSequence(createDesirabilityScore: Desirabilit
 				if (!deal) {
 					return EventedPromise.reject();
 				}
+
+				const buyAmount = Math.min(
+					// Don't buy more than what is being sold:
+					deal.market.inventory.availableOf(deal.material),
+					// Buy approximately as much as necessary to fill the need 100% once,
+					// but use only 30% of wealth to hoard that way:
+					Math.max(
+						Math.round(1 / deal.material.nutrition),
+						Math.floor((0.3 * entity.wallet.get()) / deal.material.value),
+					),
+					// Don't buy more than it can carry:
+					Math.max(0, deal.material.stack - entity.inventory.availableOf(deal.material)),
+				);
+				const tradeOrder = new TradeOrder({
+					owner1: entity,
+					inventory1: entity.inventory,
+					money1: buyAmount * deal.material.value,
+					stacks1: [],
+					owner2: GOD,
+					inventory2: deal.market.inventory,
+					money2: 0,
+					stacks2: [
+						{
+							material: deal.material,
+							quantity: buyAmount,
+						},
+					],
+				});
 				if (deal.market.inventory.availableOf(deal.material) < 1) {
 					return EventedPromise.reject();
 				}
 				if (entity.wallet.get() < deal.material.value) {
 					return EventedPromise.reject();
 				}
-
-				// Spend money in exchange for one of the material
-				entity.wallet.set(entity.wallet.get() - deal.material.value);
-				deal.market.inventory.change(deal.material, -1);
-				entity.inventory.change(deal.material, 1);
+				try {
+					tradeOrder.makeItHappen();
+				} catch (e: unknown) {
+					console.log((e as Error).message || e);
+					return EventedPromise.reject();
+				}
+				console.log(
+					`${entity} bought ${buyAmount} ${deal.material} from ${GOD} for ${
+						buyAmount * deal.material.value
+					}`,
+				);
 				return EventedPromise.resolve();
 			},
 		),
+		createWaitBehavior(1000, 3000),
 	);
 }

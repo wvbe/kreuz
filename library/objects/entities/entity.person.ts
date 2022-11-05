@@ -102,7 +102,7 @@ export class PersonEntity extends Entity {
 	 */
 	public type = 'person';
 
-	constructor(id: string, location: CoordinateI) {
+	constructor(id: string, location: { x: number; y: number; z: number }) {
 		super(id, location);
 
 		const gender = Random.boolean([id, this.constructor.name, 'gender']);

@@ -61,4 +61,8 @@ export class Material {
 		this.fluid = fluid || 0;
 		this.toxicity = toxicity || 0;
 	}
+
+	toString() {
+		return `${this.symbol} ${this.label}`;
+	}
 }

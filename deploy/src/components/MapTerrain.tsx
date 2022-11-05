@@ -8,7 +8,7 @@ export const MapTerrain: FunctionComponent<{ terrain: Terrain; entities: Collect
 	terrain,
 	entities,
 }) => {
-	const zoom = 25;
+	const zoom = 32;
 
 	const tiles = useMemo(
 		() =>
@@ -49,21 +49,31 @@ export const MapTerrain: FunctionComponent<{ terrain: Terrain; entities: Collect
 		[],
 	);
 
-	const width = (boundaries.maxX - boundaries.minX) * zoom + 2 * MARGIN;
-	const height = (boundaries.maxY - boundaries.minY) * zoom + 2 * MARGIN;
-
-	return (
-		<div
-			className="map-terrain"
-			style={{
+	const [terrainCss, svgProps, overlayCss] = useMemo(() => {
+		const width = (boundaries.maxX - boundaries.minX) * zoom + 2 * MARGIN;
+		const height = (boundaries.maxY - boundaries.minY) * zoom + 2 * MARGIN;
+		return [
+			{
 				width: `${width}px`,
 				height: `${height}px`,
-			}}
-		>
-			<svg height={height} width={width} viewBox={`${-MARGIN} ${-MARGIN} ${width} ${height}`}>
-				{tiles}
-			</svg>
-			<div style={{ position: 'absolute', top: MARGIN, left: MARGIN }}>{entities2}</div>
+			} as React.CSSProperties,
+			{
+				width,
+				height,
+				viewBox: `${-MARGIN} ${-MARGIN} ${width} ${height}`,
+			},
+			{
+				position: 'absolute',
+				top: MARGIN,
+				left: MARGIN,
+			} as React.CSSProperties,
+		];
+	}, []);
+
+	return (
+		<div className="map-terrain" style={terrainCss}>
+			<svg {...svgProps}>{tiles}</svg>
+			<div style={overlayCss}>{entities2}</div>
 		</div>
 	);
 };

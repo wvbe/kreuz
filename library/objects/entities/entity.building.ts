@@ -14,9 +14,6 @@ export type BuildingParameters = {
  * @deprecated Should probably use settlement entity instead
  */
 export class BuildingEntity extends Entity implements EntityI {
-	/**
-	 * @deprecated not used yet.
-	 */
 	public type = 'buiding';
 
 	protected readonly parameters: BuildingParameters;

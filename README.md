@@ -1,13 +1,17 @@
 # Kreuzzeug im Nagelhosen
 
-This is a toy project that I've tinkered with off and on for years. Although the code is open, it is
-not free. Please don't use this code without [submitting an issue first](https://github.com/wvbe/kreuzzeug-im-nagelhosen/issues/new).
+This is a toy project that I've used as a learning platform over the years, meant for my entertainment
+and hopefully yours one day.
 
-- [Demo](https://wvbe.github.io/kreuzzeug-im-nagelhosen/)
+The current latest iteration 
+
+- [Storybook demo using ThreeJS](https://wvbe.github.io/kreuzzeug-im-nagelhosen/)
 - [Board](https://github.com/users/wvbe/projects/4/)
 - [Milestones](https://github.com/wvbe/kreuzzeug-im-nagelhosen/milestones)
 
 Keywords: Poisson distribution, dual-mesh tile-based terrain, behavior tree.
+
+
 
 ### Setup
 

@@ -1,6 +1,6 @@
 import createGame from '@demo/generator.ts';
-import { useEffect, useMemo, useState } from 'react';
-import { DestroyerFn, type Game } from '@lib';
+import { type Game } from '@lib';
+import { useEffect, useState } from 'react';
 
 import { GameUI } from '~/src/components/GameUI.tsx';
 import { AlephDriver } from '~/src/utils/AlephDriver.ts';

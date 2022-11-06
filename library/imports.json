@@ -1,6 +1,5 @@
 {
 	"imports": {
-		"@lib": "./mod.ts",
 		"seedrandom": "https://esm.sh/seedrandom@3.0.5?pin=v96",
 		"poisson-disk-sampling": "https://raw.githubusercontent.com/wvbe/poisson-disk-sampling/deno-rc.1/mod.ts",
 		"@redblobgames/dual-mesh": "https://raw.githubusercontent.com/wvbe/dual-mesh/deno-rc.2/mod.ts",

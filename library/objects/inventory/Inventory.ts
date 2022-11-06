@@ -7,6 +7,13 @@ import { Event } from '../classes/Event.ts';
 import { type Material } from './Material.ts';
 import { type MaterialState } from './types.ts';
 
+function getRequiredStackSpace(cargo: MaterialState[]) {
+	return cargo.reduce<number>(
+		(amount, { material, quantity }) => amount + Math.ceil(quantity / material.stack),
+		0,
+	);
+}
+
 /**
  * An "inventory" is like a bunch of stacks that hold Materials. An inventory can be (un)restricted
  * to any amount of stacks, and any stack can be (any amount of) one material.
@@ -55,6 +62,8 @@ export class Inventory {
 	/**
 	 * The total amount of additional material of this type that could be stored in this inventory,
 	 * keeping in mind stack restrictions.
+	 *
+	 *
 	 */
 	public allocatableTo(material: Material): number {
 		if (this.capacity === Infinity) {
@@ -66,6 +75,32 @@ export class Inventory {
 		const openStacks = this.capacity - this.getUsedStackSpace();
 		const inOpenStacks = openStacks * material.stack;
 		return inAllocatedStacks + inOpenStacks;
+	}
+
+	/**
+	 * Returns TRUE if the specified material/quantities fit in this inventory on top of the stuff
+	 * that is already there -- keeping in mind that one stack can be of only one material type.
+	 */
+	public isEverythingAllocatable(cargo: MaterialState[]) {
+		if (this.capacity === Infinity) {
+			return true;
+		}
+
+		const combined = cargo.reduce(
+			(totals, { material, quantity }) => {
+				const existing = totals.find((t) => t.material === material);
+				if (existing) {
+					existing.quantity += quantity;
+				} else {
+					totals.push({ quantity, material });
+				}
+				return totals;
+			},
+			// Clone each object from getAvailableItems so we don't change the inventory by reference
+			// from within the reducer 😬
+			this.getAvailableItems().map((state) => ({ ...state })),
+		);
+		return getRequiredStackSpace(combined) <= this.capacity;
 	}
 
 	/**
@@ -101,13 +136,10 @@ export class Inventory {
 	}
 
 	/**
-	 * Get the number of stack slots that are in use
+	 * Get the number of whole or partial stack slots that are already in use.
 	 */
 	public getUsedStackSpace() {
-		return this.items.reduce<number>(
-			(amount, { material, quantity }) => amount + Math.ceil(quantity / material.stack),
-			0,
-		);
+		return getRequiredStackSpace(this.items);
 	}
 
 	public change(material: Material, delta: number, skipEvent?: boolean) {
@@ -116,7 +148,7 @@ export class Inventory {
 		}
 		const value = this.availableOf(material) + delta;
 		if (value < 0) {
-			throw new Error(`Not possible to have less than 0 ${material.label} in inventory`);
+			throw new Error(`Not possible to have less than 0 ${material} in inventory`);
 		}
 		this.set(material, value, skipEvent);
 	}
@@ -128,7 +160,7 @@ export class Inventory {
 
 	public set(material: Material, quantity: number, skipEvent?: boolean) {
 		if (quantity < 0) {
-			throw new Error(`Cannot have a negative amount of ${material.label}`);
+			throw new Error(`Cannot have a negative amount of ${material}`);
 		}
 		const stateIndex = this.items.findIndex((state) => state.material === material);
 		if (quantity === 0) {
@@ -143,7 +175,7 @@ export class Inventory {
 		}
 
 		if (quantity > this.allocatableTo(material)) {
-			throw new Error(`Not enough stack space for ${quantity}x ${material.label}`);
+			throw new Error(`Not enough stack space for ${quantity}x ${material}`);
 		}
 		if (stateIndex === -1) {
 			this.items.push({ material, quantity });

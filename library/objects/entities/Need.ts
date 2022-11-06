@@ -1,6 +1,5 @@
-import { Event } from '../classes/Event.ts';
 import { ProgressingNumericValue } from '../classes/ProgressingNumericValue.ts';
-import { PersonNeedId } from '../constants/needs.ts';
+import { type PersonNeedId } from '../constants/needs.ts';
 
 /**
  * A need represents the urgency with which a personnal requirement needs to be fulfilled. In most

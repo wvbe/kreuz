@@ -57,7 +57,7 @@ describe('FactoryBuildingEntity', () => {
 
 		const worker = new PersonEntity('worker', game.terrain.getTileClosestToXy(0, 0));
 		game.entities.add(worker);
-		const factory = game.entities.get(0) as FactoryBuildingEntity;
+		const factory = game.entities.get<FactoryBuildingEntity>(0);
 		factory.$workers.add(worker);
 		await driver.start();
 

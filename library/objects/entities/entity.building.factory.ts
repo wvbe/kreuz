@@ -11,13 +11,18 @@ import { type EntityI } from './types.ts';
 type FactoryBuildingEntityOptions = {
 	/**
 	 * The maximum amount of workers that can participate in the production cycle.
-	 *
-	 * - If set to "0", the factory will always be producing at its native production speed.
-	 *   For example, a water well.
-	 * - If set to a value higher than 0, the factory will produce at the occupancy/maxWorker ratio.
-	 *   For example, a stone quarry.
 	 */
 	maxWorkers: number;
+
+	/**
+	 * The maximum amount of stacks held by this factory's inventory.
+	 */
+	maxStackSpace: number;
+};
+
+const defaultFactoryBuildingEntityOptions: FactoryBuildingEntityOptions = {
+	maxWorkers: 1,
+	maxStackSpace: 8,
 };
 
 export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
@@ -27,12 +32,17 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 	 * A bag of goodies owned by this factory. It will add and subtract items as it works through
 	 * production cycles of the blueprint.
 	 */
-	public readonly inventory = new Inventory(8);
+	public readonly inventory: Inventory;
 
+	/**
+	 * Instantiation parameters.
+	 */
 	public readonly options: FactoryBuildingEntityOptions;
 
 	/**
 	 * The collection of PersonEntities working in this factory, providing production speed.
+	 *
+	 * Workers may join or leave at their leasure, so long as this.options.maxWorkers is not exceeded.
 	 */
 	public readonly $workers = new Collection<PersonEntity>();
 
@@ -62,14 +72,20 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 		return '🏭';
 	}
 
-	public constructor(id: string, location: CoordinateI, options: FactoryBuildingEntityOptions) {
+	public constructor(
+		id: string,
+		location: CoordinateI,
+		options: Partial<FactoryBuildingEntityOptions>,
+	) {
 		super(id, location, {
 			baseDepth: 1,
 			baseHeight: 1,
 			baseWidth: 1,
 			roofHeight: 1,
 		});
-		this.options = options;
+		this.options = { ...defaultFactoryBuildingEntityOptions, ...options };
+
+		this.inventory = new Inventory(this.options.maxStackSpace);
 
 		this.$attach.on((game) => {
 			this.$$progress.attach(game);
@@ -105,6 +121,7 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 						// Indicative of a bug somewhere!
 						throw new Error('Blueprint is somehow unset while the cycle is completing');
 					}
+					console.log(this.id + ' deliver products from ' + blueprint.name);
 					this.inventory.changeMultiple(blueprint.products);
 					this.$$progress.set(0);
 					if (!this.attemptStartBlueprint()) {
@@ -139,10 +156,13 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 			throw new Error(`No blueprint set`);
 		}
 		const delta = 1 / blueprint.options.fullTimeEquivalent;
-		if (this.options.maxWorkers === 0) {
+		if (blueprint.options.workersRequired <= 0) {
+			// If the blueprint does not require workers, process at 1x full speed
 			this.$$progress.setDelta(delta);
 		} else {
-			this.$$progress.setDelta(this.$workers.length * delta);
+			this.$$progress.setDelta(
+				Math.floor(this.$workers.length / blueprint.options.workersRequired) * delta,
+			);
 		}
 	}
 
@@ -173,7 +193,7 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 		if (!blueprint) {
 			return false;
 		}
-		if (!this.$workers.length) {
+		if (this.$workers.length < blueprint.options.workersRequired) {
 			return false;
 		}
 		if (this.isBusy()) {
@@ -181,11 +201,14 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 			// production cycle. --> @TODO
 			return false;
 		}
-		if (!blueprint.hasAllIngredients(this.inventory)) {
-			// Cannot start it now. The production cycle may start again when the
-			// inventory changes in such a way that there are enough materials --> @TODO
+
+		// BUG: Evaluating this will cause products to show up in inventory twice
+		if (!blueprint.allRequirementsMetByFactory(this)) {
 			return false;
 		}
+		// if (!blueprint.hasAllIngredients(this.inventory)) {
+		// 	return false;
+		// }
 
 		this.#avoidRespondingToOwnInventoryChange = true;
 		this.inventory.changeMultiple(

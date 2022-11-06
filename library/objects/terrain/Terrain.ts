@@ -1,6 +1,6 @@
 import { Coordinate } from './Coordinate.ts';
 import { SaveTerrainJson } from '../types-savedgame.ts';
-import { CoordinateI, TileFilterFn, TileI } from '../types.ts';
+import { CoordinateI, FilterFn, TileI } from '../types.ts';
 
 export class Terrain {
 	readonly #tiles: TileI[] = [];
@@ -37,8 +37,8 @@ export class Terrain {
 	 */
 	public selectContiguousTiles(
 		start: TileI,
-		selector: TileFilterFn<TileI> = (c) => c.isLand(),
-		inclusive: boolean = true,
+		selector: FilterFn<TileI> = (c) => c.isLand(),
+		inclusive = true,
 	): TileI[] {
 		const island: TileI[] = [];
 		const seen: TileI[] = [];
@@ -68,12 +68,12 @@ export class Terrain {
 		);
 	}
 
-	#islands: Map<TileFilterFn<TileI>, TileI[][]> = new Map();
+	#islands: Map<FilterFn<TileI>, TileI[][]> = new Map();
 
 	/**
 	 * Get a list of contigious groups of tiles, aka a list of islands.
 	 */
-	public getIslands(selector: TileFilterFn<TileI> = (t) => t.isLand()): TileI[][] {
+	public getIslands(selector: FilterFn<TileI> = (t) => t.isLand()): TileI[][] {
 		const fromCache = this.#islands.get(selector);
 		if (fromCache) {
 			return fromCache;

@@ -8,7 +8,7 @@ export class MarketBuildingEntity extends BuildingEntity implements EntityI {
 	public readonly type = 'market-stall';
 
 	public readonly inventory = new Inventory(4);
-	
+
 	private readonly material: Material;
 
 	constructor(id: string, location: CoordinateI, material: Material) {

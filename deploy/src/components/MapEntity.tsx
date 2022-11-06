@@ -13,7 +13,7 @@ export const MapEntity: FunctionComponent<
 	const { x, y } = useEventedValue(entity.$$location);
 	return (
 		<div
-			className={`map-entity map-entity--${entity.type} ${
+			className={`meta--emoji-symbols map-entity map-entity--${entity.type} ${
 				isSelected ? `map-entity--selected` : ''
 			}`}
 			onClick={() => setSelectedEntity(entity)}

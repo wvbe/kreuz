@@ -8,7 +8,9 @@
 	flex: 0 0 auto;
 	font-size: 2em;
 	line-height: calc(18em / 14);
-	padding-right: 3px;
+	/* width: 1.2em; */
+	padding-right: 6px;
+	text-align: center;
 }
 .badge__labels {
 	flex: 1 1 auto;

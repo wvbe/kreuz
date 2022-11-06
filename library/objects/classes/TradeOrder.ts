@@ -31,6 +31,7 @@ interface TradeEntityI extends EntityI {
 
 export class TradeOrder {
 	#order: TradeOrderJson;
+
 	constructor(order: TradeOrderJson) {
 		this.#order = order;
 	}
@@ -67,30 +68,13 @@ export class TradeOrder {
 				]),
 		);
 
-		reasons.push(
-			...stacks2
-				.filter(
-					({ material, quantity }) =>
-						inventory1.allocatableTo(material) - inventory1.availableOf(material) < quantity,
-				)
-				.map<TradeFailReasonMessage>(({ material }) => [
-					TradeFailReason.NO_SPACE_1,
-					owner1,
-					material,
-				]),
-		);
-		reasons.push(
-			...stacks1
-				.filter(
-					({ material, quantity }) =>
-						inventory2.allocatableTo(material) - inventory2.availableOf(material) < quantity,
-				)
-				.map<TradeFailReasonMessage>(({ material }) => [
-					TradeFailReason.NO_SPACE_2,
-					owner2,
-					material,
-				]),
-		);
+		if (!inventory1.isEverythingAllocatable(stacks2)) {
+			reasons.push([TradeFailReason.NO_SPACE_1, owner1]);
+		}
+
+		if (!inventory2.isEverythingAllocatable(stacks1)) {
+			reasons.push([TradeFailReason.NO_SPACE_2, owner2]);
+		}
 
 		return reasons;
 	}

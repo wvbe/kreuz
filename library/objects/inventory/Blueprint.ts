@@ -2,16 +2,19 @@ import { type DestroyerFn } from '../types.ts';
 import { type Inventory } from './Inventory.ts';
 import type Game from '../Game.ts';
 import { type MaterialState } from './types.ts';
+import { type FactoryBuildingEntity } from '../entities/entity.building.factory.ts';
 
 type BlueprintOptions = {
 	fullTimeEquivalent: number;
 	buildingName: string;
+	workersRequired: number;
 	// buildingCompatibility: string[];
 };
 
 const defaultBlueprintOptions: BlueprintOptions = {
 	fullTimeEquivalent: 1,
 	buildingName: 'Factory',
+	workersRequired: 1,
 	// buildingCompatibility: [],
 };
 
@@ -58,5 +61,25 @@ export class Blueprint {
 		return this.ingredients.every(
 			({ material, quantity }) => inventory.availableOf(material) >= quantity,
 		);
+	}
+
+	public canPlaceAllProducts(inventory: Inventory) {
+		return this.products.every(
+			({ material, quantity }) => inventory.availableOf(material) >= quantity,
+		);
+	}
+
+	public allRequirementsMetByFactory(factory: FactoryBuildingEntity) {
+		if (factory.$workers.length < this.options.workersRequired) {
+			return false;
+		}
+		if (!this.hasAllIngredients(factory.inventory)) {
+			return false;
+		}
+		if (!factory.inventory.isEverythingAllocatable(this.products)) {
+			return false;
+		}
+
+		return true;
 	}
 }

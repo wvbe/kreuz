@@ -37,13 +37,31 @@ describe('Inventory', () => {
 		inventory.set(test2, 100);
 		expect(inventory.getUsedStackSpace()).toBe(5);
 	});
+	it('.isEverythingAllocatable()', () => {
+		const inventory = new Inventory(2);
+		expect(
+			inventory.isEverythingAllocatable([
+				{ material: test1, quantity: 25 },
+				{ material: test2, quantity: 10 },
+				{ material: test2, quantity: 23 },
+			]),
+		).toBeTruthy();
+		inventory.change(test1, 1);
+		expect(
+			inventory.isEverythingAllocatable([
+				{ material: test1, quantity: 25 },
+				{ material: test2, quantity: 10 },
+				{ material: test2, quantity: 23 },
+			]),
+		).toBeFalsy();
+	});
 	it('.set()', () => {
 		const inventory = new Inventory(2);
 		inventory.set(test2, 33);
 		expect(inventory.availableOf(test2)).toBe(33);
 
-		expect(() => inventory.set(test1, -1)).toThrow(`Cannot have a negative amount of wheat`);
-		expect(() => inventory.set(test1, 26)).toThrow(`Not enough stack space for 26x wheat`);
+		expect(() => inventory.set(test1, -1)).toThrow(`Cannot have a negative amount of 🌾 wheat`);
+		expect(() => inventory.set(test1, 26)).toThrow(`Not enough stack space for 26x 🌾 wheat`);
 
 		inventory.change(test2, -33);
 		expect(inventory.availableOf(test2)).toBe(0);

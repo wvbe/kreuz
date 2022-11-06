@@ -1,22 +1,48 @@
 import { Random } from '../classes/Random.ts';
-import { SeedI } from '../types.ts';
-
+import { type SeedI } from '../types.ts';
 import namesFemale from './data/names-female.ts';
 import namesMale from './data/names-male.ts';
+
 export const FIRST_NAMES_M = namesMale;
+
 export const FIRST_NAMES_F = namesFemale;
 
-const SETTLEMENT_PREFIXES = ['Tool', 'Rap', 'Murder', 'Thief', 'Apple', 'Banana', 'Copy', 'Cop'];
+const SETTLEMENT_PREFIXES = [
+	'Apple',
+	'Banana',
+	'Barrel',
+	'Church',
+	'Cop',
+	'Copy',
+	'Kitten',
+	'Kitty',
+	'Muffin',
+	'Murder',
+	'Peanut',
+	'Potato',
+	'Puppy',
+	'Rabbit',
+	'Rap',
+	'Thief',
+	'Tiger',
+	'Tool',
+	'Wood',
+];
 const SETTLEMENT_SUFFIXES = [
-	'town',
 	' Town',
-	'ville',
+	'acre',
+	'beach',
 	'burgh',
 	'burough',
+	'dorff',
+	'field',
+	'hill',
+	'shire',
+	'stad',
+	'town',
 	'view',
+	'ville',
 	'wall',
-	'beach',
-	'acre',
 ];
 export function getRandomSettlementName(seed: SeedI[]) {
 	return [

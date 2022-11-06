@@ -4,11 +4,6 @@ import { type SaveTileJson } from './types-savedgame.ts';
 export type GameDistance = number;
 
 /**
- * A function that filters tiles.
- */
-export type TileFilterFn<T extends TileI> = (tile: T) => boolean;
-
-/**
  * A point in space
  */
 export interface CoordinateI {

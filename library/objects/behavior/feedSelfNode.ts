@@ -3,7 +3,7 @@ import { type Inventory } from '../inventory/Inventory.ts';
 import { type MaterialState } from '../inventory/types.ts';
 import {
 	createBuyFromMarketSequence,
-	DesirabilityScoreFn
+	DesirabilityScoreFn,
 } from './reusable/createBuyFromMarketBehavior.ts';
 import { createWaitBehavior } from './reusable/createWaitBehavior.ts';
 import { ExecutionNode } from './tree/ExecutionNode.ts';
@@ -36,37 +36,36 @@ const scoreFoodDesirability: DesirabilityScoreFn = (entity, _market, material) =
  */
 export const feedSelf = new SequenceNode<EntityBlackboard>(
 	new ExecutionNode('Hungry?', ({ entity }) => {
-		const food = entity.needs.find((need) => need.id === 'food');
-		if (!food || food.get() > 0.2) {
+		// @TODO replace with Needs/moods
+		const need = entity.needs.find((n) => n.id === 'food');
+		if (!need) {
 			return EventedPromise.reject();
 		}
-		return EventedPromise.resolve();
+		return need.get() < 0.2 ? EventedPromise.resolve() : EventedPromise.reject();
 	}),
 	new SelectorNode(
 		new SequenceNode(
 			new InverterNode(
 				new ExecutionNode('Has no food?', ({ entity }) => {
-					const hasFood = !!entity.inventory.getAvailableItems().filter(filterEdibleMaterial)
+					const hasSupplies = !!entity.inventory.getAvailableItems().filter(filterEdibleMaterial)
 						.length;
-					return hasFood ? EventedPromise.resolve() : EventedPromise.reject();
+					return hasSupplies ? EventedPromise.resolve() : EventedPromise.reject();
 				}),
 			),
 			createBuyFromMarketSequence(scoreFoodDesirability),
 		),
 		new SequenceNode(
 			new ExecutionNode('Eat from inventory?', ({ entity }) => {
-				// @TODO
-				// - Eat food over time?
 				const state = getMostEdibleStateFromInventory(entity.inventory);
 				if (!state) {
 					return EventedPromise.reject();
 				}
 				entity.inventory.change(state.material, -1);
-				const foodNeed = entity.needs.find((n) => n.id === 'food');
-				if (!foodNeed) {
+				const need = entity.needs.find((n) => n.id === 'food');
+				if (!need) {
 					throw new Error('Expected entity to have a need for food');
 				}
-				foodNeed.set(foodNeed.get() + state.material.nutrition);
+				need.set(need.get() + state.material.nutrition);
 				console.log(`${entity} ate ${state.material}`);
 				return EventedPromise.resolve();
 			}),

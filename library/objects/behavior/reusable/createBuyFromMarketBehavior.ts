@@ -1,16 +1,17 @@
 import { EventedPromise } from '../../classes/EventedPromise.ts';
 import { TradeOrder } from '../../classes/TradeOrder.ts';
-import { MarketBuildingEntity } from '../../entities/entity.building.market.ts';
-import { HeroPersonEntity } from '../../entities/entity.person.hero.ts';
-import { PersonEntity } from '../../entities/entity.person.ts';
-import { Material } from '../../inventory/Material.ts';
+import { headOfState } from '../../constants/heroes.ts';
+import { type FactoryBuildingEntity } from '../../entities/entity.building.factory.ts';
+import { type MarketBuildingEntity } from '../../entities/entity.building.market.ts';
+import { type PersonEntity } from '../../entities/entity.person.ts';
+import { type Material } from '../../inventory/Material.ts';
 import { createWaitBehavior } from '../reusable/createWaitBehavior.ts';
 import { ExecutionNode } from '../tree/ExecutionNode.ts';
 import { SequenceNode } from '../tree/SequenceNode.ts';
 import { EntityBlackboard } from '../types.ts';
 import { getEntitiesReachableByEntity, walkEntityToEntity } from './travel.ts';
 
-type DesirabilityRecord = {
+export type DesirabilityRecord = {
 	market: MarketBuildingEntity;
 	material: Material;
 	score: number;
@@ -27,13 +28,11 @@ type DesirabilityRecord = {
  */
 export type DesirabilityScoreFn = (
 	entity: PersonEntity,
-	market: MarketBuildingEntity,
+	// I am lazy, so union this shit
+	market: MarketBuildingEntity | FactoryBuildingEntity,
 	material: Material,
 	available: number,
 ) => number;
-
-const GOD = new HeroPersonEntity('King', 'god', { x: 0, y: 0, z: Infinity });
-(self as any).godEntity = GOD;
 
 export function createBuyFromMarketSequence(createDesirabilityScore: DesirabilityScoreFn) {
 	return new SequenceNode<EntityBlackboard>(
@@ -70,9 +69,6 @@ export function createBuyFromMarketSequence(createDesirabilityScore: Desirabilit
 		new ExecutionNode<EntityBlackboard & { deal?: DesirabilityRecord }>(
 			'Buy any food',
 			({ entity, deal }) => {
-				// @TODO
-				// - Put the money received from entity into somebody else's pocket
-				// - Buy more than one item, if money and stack space allows it
 				if (!deal) {
 					return EventedPromise.reject();
 				}
@@ -94,7 +90,7 @@ export function createBuyFromMarketSequence(createDesirabilityScore: Desirabilit
 					inventory1: entity.inventory,
 					money1: buyAmount * deal.material.value,
 					stacks1: [],
-					owner2: GOD,
+					owner2: headOfState,
 					inventory2: deal.market.inventory,
 					money2: 0,
 					stacks2: [
@@ -117,7 +113,7 @@ export function createBuyFromMarketSequence(createDesirabilityScore: Desirabilit
 					return EventedPromise.reject();
 				}
 				console.log(
-					`${entity} bought ${buyAmount} ${deal.material} from ${GOD} for ${
+					`${entity} bought ${buyAmount} ${deal.material} from ${headOfState} for ${
 						buyAmount * deal.material.value
 					}`,
 				);

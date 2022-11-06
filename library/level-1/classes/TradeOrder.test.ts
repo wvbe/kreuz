@@ -67,5 +67,49 @@ describe('TradeOrder', () => {
 			expect(order.findFailReasons().map(([reason]) => reason)).toEqual([]);
 		});
 	});
+	it('.makeItHappen()', () => {
+		const owner1 = new PersonEntity(
+			'a',
+			{ x: 0, y: 0, z: Infinity },
+			{ gender: 'm', firstName: 'test A' },
+		);
+		const owner2 = new PersonEntity(
+			'b',
+			{ x: 0, y: 0, z: Infinity },
+			{ gender: 'm', firstName: 'test B' },
+		);
+		owner1.wallet.set(50);
+		owner1.inventory.change(material1, 10);
+		owner1.inventory.change(material2, 10);
+		owner2.wallet.set(50);
+		owner2.inventory.change(material1, 10);
+		owner2.inventory.change(material2, 10);
+		const order = new TradeOrder({
+			owner1,
+			inventory1: owner1.inventory,
+			money1: 33,
+			stacks1: [
+				{ material: material1, quantity: 10 },
+				{ material: material2, quantity: 3 },
+			],
+			owner2,
+			inventory2: owner2.inventory,
+			money2: 25,
+			stacks2: [
+				{ material: material1, quantity: 3 },
+				{ material: material2, quantity: 10 },
+			],
+		});
+
+		order.makeItHappen();
+
+		expect(owner1.wallet.get()).toBe(42);
+		expect(owner2.wallet.get()).toBe(58);
+		expect(owner1.inventory.availableOf(material1)).toBe(3);
+		expect(owner1.inventory.availableOf(material2)).toBe(17);
+		expect(owner2.inventory.availableOf(material1)).toBe(17);
+		expect(owner2.inventory.availableOf(material2)).toBe(3);
+	});
+	// });
 });
 run();

@@ -128,7 +128,9 @@ export class Event<Args extends unknown[] = []> {
 		const destroy = () => {
 			if (isAlreadyDestroyed) {
 				// Programmer error in needing to call destroyer twice
-				throw new Error('Possible memory leak');
+				throw new Error(
+					`You've called the destroyer of an event listener that was already destroyed, this may indicate a memory leak`,
+				);
 			}
 			for (let i = 0; i < destroyers.length; i++) {
 				destroyers[i]();

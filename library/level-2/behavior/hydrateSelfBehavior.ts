@@ -113,21 +113,25 @@ export const hydrateSelfBehavior = new SequenceNode<EntityBlackboard>(
 							// Don't buy more than it can carry:
 							Math.max(0, deal.material.stack - entity.inventory.availableOf(deal.material)),
 						);
-						const tradeOrder = new TradeOrder({
-							owner1: entity,
-							inventory1: entity.inventory,
-							money1: buyAmount * deal.material.value,
-							stacks1: [],
-							owner2: headOfState,
-							inventory2: deal.factory.inventory,
-							money2: 0,
-							stacks2: [
-								{
-									material: deal.material,
-									quantity: buyAmount,
-								},
-							],
-						});
+						const tradeOrder = new TradeOrder(
+							{
+								owner: entity,
+								inventory: entity.inventory,
+								money: buyAmount * deal.material.value,
+								cargo: [],
+							},
+							{
+								owner: headOfState,
+								inventory: deal.factory.inventory,
+								money: 0,
+								cargo: [
+									{
+										material: deal.material,
+										quantity: buyAmount,
+									},
+								],
+							},
+						);
 						if (deal.factory.inventory.availableOf(deal.material) < 1) {
 							return EventedPromise.reject();
 						}

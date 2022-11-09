@@ -29,11 +29,27 @@ interface TradeEntityI extends EntityI {
 	wallet: EventedValue<number>;
 }
 
+type TradeOrderConstructorParam = {
+	owner: TradeEntityI;
+	inventory: Inventory;
+	money: number;
+	cargo: MaterialState[];
+};
 export class TradeOrder {
 	#order: TradeOrderJson;
 
-	constructor(order: TradeOrderJson) {
-		this.#order = order;
+	constructor(a: TradeOrderConstructorParam, b: TradeOrderConstructorParam) {
+		this.#order = {
+			owner1: a.owner,
+			inventory1: a.inventory,
+			money1: a.money,
+			stacks1: a.cargo,
+
+			owner2: b.owner,
+			inventory2: b.inventory,
+			money2: b.money,
+			stacks2: b.cargo,
+		};
 	}
 
 	public findFailReasons(): TradeFailReasonMessage[] {

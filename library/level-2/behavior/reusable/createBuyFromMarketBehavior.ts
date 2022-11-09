@@ -94,21 +94,25 @@ export function createBuyFromMarketSequence(createDesirabilityScore: Desirabilit
 					Math.floor(entity.wallet.get() / deal.material.value),
 				);
 
-				const tradeOrder = new TradeOrder({
-					owner1: entity,
-					inventory1: entity.inventory,
-					money1: buyAmount * deal.material.value,
-					stacks1: [],
-					owner2: headOfState,
-					inventory2: deal.market.inventory,
-					money2: 0,
-					stacks2: [
-						{
-							material: deal.material,
-							quantity: buyAmount,
-						},
-					],
-				});
+				const tradeOrder = new TradeOrder(
+					{
+						owner: entity,
+						inventory: entity.inventory,
+						money: buyAmount * deal.material.value,
+						cargo: [],
+					},
+					{
+						owner: headOfState,
+						inventory: deal.market.inventory,
+						money: 0,
+						cargo: [
+							{
+								material: deal.material,
+								quantity: buyAmount,
+							},
+						],
+					},
+				);
 				if (deal.market.inventory.availableOf(deal.material) < 1) {
 					return EventedPromise.reject();
 				}

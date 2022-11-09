@@ -20,16 +20,20 @@ describe('TradeOrder', () => {
 				{ x: 0, y: 0, z: Infinity },
 				{ gender: 'm', firstName: 'test B' },
 			);
-			const order = new TradeOrder({
-				owner1,
-				inventory1: owner1.inventory,
-				money1: 50,
-				stacks1: [{ material: material1, quantity: 9999 }],
-				owner2,
-				inventory2: owner2.inventory,
-				money2: 50,
-				stacks2: [{ material: material2, quantity: 9999 }],
-			});
+			const order = new TradeOrder(
+				{
+					owner: owner1,
+					inventory: owner1.inventory,
+					money: 50,
+					cargo: [{ material: material1, quantity: 9999 }],
+				},
+				{
+					owner: owner2,
+					inventory: owner2.inventory,
+					money: 50,
+					cargo: [{ material: material2, quantity: 9999 }],
+				},
+			);
 			expect(order.findFailReasons().map(([reason]) => reason)).toEqual([
 				TradeFailReason.NO_MONEY_1,
 				TradeFailReason.NO_MONEY_2,
@@ -54,16 +58,20 @@ describe('TradeOrder', () => {
 			owner1.inventory.change(material1, 10);
 			owner2.wallet.set(51);
 			owner2.inventory.change(material2, 10);
-			const order = new TradeOrder({
-				owner1,
-				inventory1: owner1.inventory,
-				money1: 50,
-				stacks1: [{ material: material1, quantity: 1 }],
-				owner2,
-				inventory2: owner2.inventory,
-				money2: 50,
-				stacks2: [{ material: material2, quantity: 1 }],
-			});
+			const order = new TradeOrder(
+				{
+					owner: owner1,
+					inventory: owner1.inventory,
+					money: 50,
+					cargo: [{ material: material1, quantity: 1 }],
+				},
+				{
+					owner: owner2,
+					inventory: owner2.inventory,
+					money: 50,
+					cargo: [{ material: material2, quantity: 1 }],
+				},
+			);
 			expect(order.findFailReasons().map(([reason]) => reason)).toEqual([]);
 		});
 	});
@@ -84,22 +92,26 @@ describe('TradeOrder', () => {
 		owner2.wallet.set(50);
 		owner2.inventory.change(material1, 10);
 		owner2.inventory.change(material2, 10);
-		const order = new TradeOrder({
-			owner1,
-			inventory1: owner1.inventory,
-			money1: 33,
-			stacks1: [
-				{ material: material1, quantity: 10 },
-				{ material: material2, quantity: 3 },
-			],
-			owner2,
-			inventory2: owner2.inventory,
-			money2: 25,
-			stacks2: [
-				{ material: material1, quantity: 3 },
-				{ material: material2, quantity: 10 },
-			],
-		});
+		const order = new TradeOrder(
+			{
+				owner: owner1,
+				inventory: owner1.inventory,
+				money: 33,
+				cargo: [
+					{ material: material1, quantity: 10 },
+					{ material: material2, quantity: 3 },
+				],
+			},
+			{
+				owner: owner2,
+				inventory: owner2.inventory,
+				money: 25,
+				cargo: [
+					{ material: material1, quantity: 3 },
+					{ material: material2, quantity: 10 },
+				],
+			},
+		);
 
 		order.makeItHappen();
 

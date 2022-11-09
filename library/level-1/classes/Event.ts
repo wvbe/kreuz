@@ -119,12 +119,17 @@ export class Event<Args extends unknown[] = []> {
 	public static onceFirst(callback: CallbackFn, events: Event[]): DestroyerFn {
 		const destroyers: DestroyerFn[] = [];
 		let isAlreadyDestroyed = false;
+		let triggerIndex: number;
 		const destroy = () => {
 			if (isAlreadyDestroyed) {
 				throw new Error(MSG_MEMORY_LEAK);
 			}
 			for (let i = 0; i < destroyers.length; i++) {
-				destroyers[i]();
+				if (i !== triggerIndex) {
+					destroyers[i]();
+				} else {
+					// The event that onced has already destroyed itself, no need to destroy it again
+				}
 			}
 		};
 		const cb = () => {
@@ -132,8 +137,13 @@ export class Event<Args extends unknown[] = []> {
 			destroy();
 			isAlreadyDestroyed = true;
 		};
-		events.forEach((event) => {
-			destroyers.push(event.once(cb));
+		events.forEach((event, index) => {
+			destroyers.push(
+				event.once(() => {
+					triggerIndex = index;
+					cb();
+				}),
+			);
 		});
 		return destroy;
 	}

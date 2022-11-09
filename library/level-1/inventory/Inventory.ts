@@ -87,6 +87,7 @@ export class Inventory {
 	 * The total amount of additional material of this type that could be stored in this inventory,
 	 * keeping in mind stack restrictions and (incoming) reserved space.
 	 *
+	 * @todo Test
 	 * @todo Test that reservations are taken into account
 	 */
 	public allocatableTo(material: Material): number {
@@ -105,8 +106,6 @@ export class Inventory {
 	/**
 	 * Returns TRUE if the specified material/quantities fit in this inventory on top of the stuff
 	 * that is already there -- keeping in mind that one stack can be of only one material type.
-	 *
-	 * @todo Test that reservations are taken into account
 	 */
 	public isEverythingAllocatable(cargo: MaterialState[]) {
 		if (this.capacity === Infinity) {

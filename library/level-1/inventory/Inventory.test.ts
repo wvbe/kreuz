@@ -1,9 +1,46 @@
 import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 import { Inventory } from './Inventory.ts';
 import { Material } from './Material.ts';
+import { TradeOrder } from '../classes/TradeOrder.ts';
+import { PersonEntity } from '../entities/entity.person.ts';
+import { MaterialState } from './types.ts';
 
 const test1 = new Material('wheat', { symbol: '🌾', stackSize: 25 });
 const test2 = new Material('barley', { symbol: '𐂏', stackSize: 33 });
+
+function createTradeOrderForCargo(
+	inventory1: Inventory,
+	cargo1: MaterialState[],
+	inventory2: Inventory,
+	cargo2: MaterialState[],
+): TradeOrder {
+	return new TradeOrder(
+		{
+			owner: new PersonEntity(
+				'a',
+				{ x: 0, y: 0, z: Infinity },
+				{ gender: 'm', firstName: 'test A' },
+			),
+			inventory: inventory1,
+			money: 0,
+			cargo: cargo1,
+		},
+		{
+			owner: new PersonEntity(
+				'b',
+				{ x: 0, y: 0, z: Infinity },
+				{ gender: 'f', firstName: 'test B' },
+			),
+			inventory: inventory2,
+			money: 0,
+			cargo: cargo2,
+		},
+	);
+}
+
+const godInventory = new Inventory();
+godInventory.change(test1, Infinity);
+godInventory.change(test2, Infinity);
 
 describe('Inventory', () => {
 	it('.availableOf()', () => {
@@ -12,6 +49,39 @@ describe('Inventory', () => {
 		inventory.set(test2, 420);
 		expect(inventory.availableOf(test1)).toBe(100);
 		expect(inventory.availableOf(test2)).toBe(420);
+	});
+	it('.reservedIncomingOf()', () => {
+		const inventory = new Inventory();
+		const tradeOrder = createTradeOrderForCargo(
+			godInventory,
+			[{ material: test1, quantity: 10 }],
+			inventory,
+			[],
+		);
+		inventory.makeReservation(tradeOrder);
+		expect(inventory.reservedIncomingOf(test1)).toBe(10);
+	});
+	it('.getReservedIncomingItems()', () => {
+		const inventory = new Inventory();
+		inventory.changeMultiple([
+			{ material: test1, quantity: 99 },
+			{ material: test2, quantity: 99 },
+		]);
+		inventory.makeReservation(
+			createTradeOrderForCargo(
+				godInventory,
+				[
+					{ material: test1, quantity: 1 },
+					{ material: test2, quantity: 1 },
+				],
+				inventory,
+				[],
+			),
+		);
+		expect(inventory.getReservedIncomingItems()).toEqual([
+			{ material: test1, quantity: 1 },
+			{ material: test2, quantity: 1 },
+		]);
 	});
 	it('.getStacks()', () => {
 		const inventory = new Inventory();
@@ -51,6 +121,31 @@ describe('Inventory', () => {
 			inventory.isEverythingAllocatable([
 				{ material: test1, quantity: 25 },
 				{ material: test2, quantity: 10 },
+				{ material: test2, quantity: 23 },
+			]),
+		).toBeFalsy();
+	});
+	it('.isEverythingAllocatable() with reservation', () => {
+		const inventory = new Inventory(2);
+		const tradeOrder = createTradeOrderForCargo(
+			godInventory,
+			[{ material: test2, quantity: 10 }],
+			inventory,
+			[],
+		);
+		inventory.makeReservation(tradeOrder);
+		expect(
+			inventory.isEverythingAllocatable([
+				{ material: test1, quantity: 25 },
+				// { material: test2, quantity: 10 },
+				{ material: test2, quantity: 23 },
+			]),
+		).toBeTruthy();
+		inventory.change(test1, 1);
+		expect(
+			inventory.isEverythingAllocatable([
+				{ material: test1, quantity: 25 },
+				// { material: test2, quantity: 10 },
 				{ material: test2, quantity: 23 },
 			]),
 		).toBeFalsy();

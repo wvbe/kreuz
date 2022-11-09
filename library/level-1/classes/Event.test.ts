@@ -23,10 +23,7 @@ describe('Event', () => {
 		expect(event.$$$listeners).toBe(1);
 		destroyer();
 		expect(event.$$$listeners).toBe(0);
-		expect(() => destroyer()).not.toThrow();
-		expect(console.warn).toHaveBeenCalledWith(
-			`Destroying an event listener that was already destroyed, you may have a memory leak.`,
-		);
+		expect(() => destroyer()).toThrow(/memory leak/i);
 	});
 
 	it('.once()', () => {
@@ -49,10 +46,7 @@ describe('Event', () => {
 		expect(event.$$$listeners).toBe(1);
 		destroyer();
 		expect(event.$$$listeners).toBe(0);
-		expect(() => destroyer()).not.toThrow();
-		expect(console.warn).toHaveBeenCalledWith(
-			`Destroying an event listener that was already destroyed, you may have a memory leak.`,
-		);
+		expect(() => destroyer()).toThrow(/memory leak/i);
 	});
 
 	it('.clear()', () => {
@@ -99,6 +93,7 @@ describe('Event', () => {
 		expect(event2.$$$listeners).toBe(1);
 
 		event1.emit();
+
 		expect(cb1).toHaveBeenCalledTimes(0);
 		expect(cb2).toHaveBeenCalledTimes(1);
 		expect(event1.$$$listeners).toBe(0);
@@ -107,7 +102,7 @@ describe('Event', () => {
 		event2.emit();
 		expect(cb2).toHaveBeenCalledTimes(1);
 
-		expect(() => destroyer2()).toThrow(/memory leak/);
+		expect(() => destroyer2()).toThrow(/memory leak/i);
 	});
 });
 

@@ -118,5 +118,15 @@ export class TradeOrder {
 			);
 		inventory1.changeMultiple(transfer1);
 		inventory2.changeMultiple(transfer2);
+
+		console.log(
+			`${owner1} and ${owner2} have made a trade:
+  ${owner1} paying 💰${money1} and ${
+				stacks1.length ? stacks1.map((s) => `${s.quantity}x${s.material}`).join(', ') : 'no cargo'
+			}
+  ${owner2} paying 💰${money2} and ${
+				stacks2.length ? stacks2.map((s) => `${s.quantity}x${s.material}`).join(', ') : 'no cargo'
+			}`,
+		);
 	}
 }

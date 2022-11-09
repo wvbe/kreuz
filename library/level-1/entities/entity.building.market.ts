@@ -24,6 +24,9 @@ export class MarketBuildingEntity extends BuildingEntity implements EntityI {
 	public get name() {
 		return `${this.material.label} stall`;
 	}
+	public get title() {
+		return `Sells ${this.material} for 💰${this.material.value} apiece`;
+	}
 
 	public get icon() {
 		return '🏪';

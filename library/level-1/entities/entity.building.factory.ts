@@ -121,7 +121,6 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 						// Indicative of a bug somewhere!
 						throw new Error('Blueprint is somehow unset while the cycle is completing');
 					}
-					console.log(this.id + ' deliver products from ' + blueprint.name);
 					this.inventory.changeMultiple(blueprint.products);
 					this.$$progress.set(0);
 					if (!this.attemptStartBlueprint()) {

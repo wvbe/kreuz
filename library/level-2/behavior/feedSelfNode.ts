@@ -68,7 +68,6 @@ export const feedSelf = new SequenceNode<EntityBlackboard>(
 					throw new Error('Expected entity to have a need for food');
 				}
 				need.set(need.get() + state.material.nutrition);
-				console.log(`${entity} ate ${state.material}`);
 				return EventedPromise.resolve();
 			}),
 			createWaitBehavior(500, 3000),

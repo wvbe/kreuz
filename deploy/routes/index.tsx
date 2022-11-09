@@ -1,4 +1,4 @@
-import createGame from '@demo/basement.ts';
+import { generator as createGame } from '@lib';
 import { type Game } from '@lib';
 import { useEffect, useState } from 'react';
 

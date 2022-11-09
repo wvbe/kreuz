@@ -79,15 +79,21 @@ export function createBuyFromMarketSequence(createDesirabilityScore: Desirabilit
 				const buyAmount = Math.min(
 					// Don't buy more than what is being sold:
 					deal.market.inventory.availableOf(deal.material),
+
 					// Buy approximately as much as necessary to fill the need 100% once,
 					// but use only 30% of wealth to hoard that way:
 					Math.max(
 						Math.round(1 / deal.material.nutrition),
 						Math.floor((0.3 * entity.wallet.get()) / deal.material.value),
 					),
+
 					// Don't buy more than it can carry:
 					Math.max(0, deal.material.stack - entity.inventory.availableOf(deal.material)),
+
+					// Don't buy more than you can pay for:
+					Math.floor(entity.wallet.get() / deal.material.value),
 				);
+
 				const tradeOrder = new TradeOrder({
 					owner1: entity,
 					inventory1: entity.inventory,
@@ -115,11 +121,6 @@ export function createBuyFromMarketSequence(createDesirabilityScore: Desirabilit
 					console.log((e as Error).message || e);
 					return EventedPromise.reject();
 				}
-				console.log(
-					`${entity} bought ${buyAmount} ${deal.material} from ${headOfState} for ${
-						buyAmount * deal.material.value
-					}`,
-				);
 				return EventedPromise.resolve();
 			},
 		),

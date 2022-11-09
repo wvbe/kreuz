@@ -37,7 +37,6 @@ export class EventedPromise {
 
 	public constructor($finish?: Event<unknown[]>, $interrupt?: Event<unknown[]>) {
 		this.id = ++i;
-		// console.log(`${this.id} create`);
 		this.#$finish = $finish || new Event(`${this.constructor.name} $finish`);
 		this.#$interrupt = $interrupt || new Event(`${this.constructor.name} $interrupt`);
 
@@ -48,7 +47,6 @@ export class EventedPromise {
 				throw new Error(`EventedPromise #${this.id} can only close once, unexpected finish`);
 			}
 			this.isResolved = true;
-			// console.log(`${this.id} async resolve from constructor`);
 		});
 		const stopListeningForInterrupt = this.#$interrupt.once(() => {
 			stopListeningForFinish();
@@ -57,7 +55,6 @@ export class EventedPromise {
 				throw new Error('EventedPromise can only close once, unexpected interrupt');
 			}
 			this.isRejected = true;
-			// console.log(`${this.id} async reject from constructor`);
 		});
 	}
 
@@ -78,20 +75,16 @@ export class EventedPromise {
 	// letting the consumer be more verbose for now.
 	public then(onFulfilled: () => void, onRejected?: () => void): EventedPromise {
 		if (this.isResolved) {
-			// console.log(`${this.id} resolve`);
 			onFulfilled();
 		} else if (this.isRejected) {
-			// console.log(`${this.id} reject`);
 			onRejected?.();
 		} else {
 			const stopListeningForFinish = this.#$finish.once(() => {
 				stopListeningForInterrupt();
-				// console.log(`${this.id} async resolve`);
 				onFulfilled();
 			});
 			const stopListeningForInterrupt = this.#$interrupt.once(() => {
 				stopListeningForFinish();
-				// console.log(`${this.id} async reject`);
 				onRejected?.();
 			});
 		}

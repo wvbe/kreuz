@@ -1,5 +1,6 @@
 import { type CallbackFn, type DestroyerFn } from '../types.ts';
 
+const MSG_MEMORY_LEAK = `You've called the destroyer of an event listener that was already destroyed, this may indicate a memory leak`;
 /**
  * A Kreuz event emitter/listener. Always remember to unset your listeners at some point.
  */
@@ -38,11 +39,7 @@ export class Event<Args extends unknown[] = []> {
 		const cancel = () => {
 			const index = this.#callbacks.indexOf(callback);
 			if (index === -1) {
-				console.warn(
-					`Destroying an event listener that was already destroyed, you may have a memory leak.`,
-				);
-				// Already destroyed
-				return;
+				throw new Error(MSG_MEMORY_LEAK);
 			}
 			this.#callbacks.splice(index, 1);
 		};
@@ -74,10 +71,7 @@ export class Event<Args extends unknown[] = []> {
 		const cancel = () => {
 			const index = this.#callbacks.indexOf(run);
 			if (index === -1) {
-				console.warn(
-					`Destroying an event listener that was already destroyed, you may have a memory leak.`,
-				);
-				return;
+				throw new Error(MSG_MEMORY_LEAK);
 			}
 			this.#callbacks.splice(index, 1);
 		};
@@ -127,10 +121,7 @@ export class Event<Args extends unknown[] = []> {
 		let isAlreadyDestroyed = false;
 		const destroy = () => {
 			if (isAlreadyDestroyed) {
-				// Programmer error in needing to call destroyer twice
-				throw new Error(
-					`You've called the destroyer of an event listener that was already destroyed, this may indicate a memory leak`,
-				);
+				throw new Error(MSG_MEMORY_LEAK);
 			}
 			for (let i = 0; i < destroyers.length; i++) {
 				destroyers[i]();

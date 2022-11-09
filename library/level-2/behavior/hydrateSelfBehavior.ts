@@ -140,11 +140,6 @@ export const hydrateSelfBehavior = new SequenceNode<EntityBlackboard>(
 							console.log((e as Error).message || e);
 							return EventedPromise.reject();
 						}
-						console.log(
-							`${entity} bought ${buyAmount} ${deal.material} from ${headOfState} for ${
-								buyAmount * deal.material.value
-							}`,
-						);
 						return EventedPromise.resolve();
 					},
 				),
@@ -163,7 +158,6 @@ export const hydrateSelfBehavior = new SequenceNode<EntityBlackboard>(
 					throw new Error('Expected entity to have a need for water');
 				}
 				need.set(need.get() + state.material.fluid);
-				console.log(`${entity} drank ${state.material}`);
 				return EventedPromise.resolve();
 			}),
 			createWaitBehavior(500, 3000),

@@ -79,6 +79,43 @@ export class TradeOrder {
 		return reasons;
 	}
 
+	/**
+	 * Returns the plussed and minussed items for each party. Returns an array with two lists:
+	 * - Items added and removed from inventory1 if the deal were to complete
+	 * - Items added and removed from inventory2 if the deal were to complete
+	 */
+	public getCargoExchanged(): [MaterialState[], MaterialState[]] {
+		const { stacks1, stacks2 } = this.#order;
+		return [...stacks1, ...stacks2]
+			.map(({ material }) => material)
+			.filter((m, i, a) => a.indexOf(m) === i)
+			.reduce<[MaterialState[], MaterialState[]]>(
+				([transfer1, transfer2], mat) => {
+					const offer1 = stacks1.find(({ material }) => material === mat)?.quantity || 0;
+					const offer2 = stacks2.find(({ material }) => material === mat)?.quantity || 0;
+					const owedToOwner2 = offer1 - offer2;
+					if (owedToOwner2 !== 0) {
+						const sender = owedToOwner2 > 0 ? transfer1 : transfer2;
+						const receiver = owedToOwner2 > 0 ? transfer2 : transfer1;
+						sender.push({ material: mat, quantity: -Math.abs(owedToOwner2) });
+						receiver.push({ material: mat, quantity: Math.abs(owedToOwner2) });
+					}
+					return [transfer1, transfer2];
+				},
+				[[], []],
+			);
+	}
+
+	public getCargoExchangedToInventory(inventory: Inventory): MaterialState[] {
+		if (inventory === this.#order.inventory1) {
+			return this.getCargoExchanged()[0];
+		}
+		if (inventory === this.#order.inventory2) {
+			return this.getCargoExchanged()[1];
+		}
+		throw new Error(`This inventory is not party to the trade order`);
+	}
+
 	public makeItHappen(): void {
 		const failReasons = this.findFailReasons();
 		if (failReasons.length) {
@@ -98,24 +135,7 @@ export class TradeOrder {
 		}
 
 		// Transfer inventory items
-		const [transfer1, transfer2] = [...stacks1, ...stacks2]
-			.map(({ material }) => material)
-			.filter((m, i, a) => a.indexOf(m) === i)
-			.reduce<[MaterialState[], MaterialState[]]>(
-				([transfer1, transfer2], mat) => {
-					const offer1 = stacks1.find(({ material }) => material === mat)?.quantity || 0;
-					const offer2 = stacks2.find(({ material }) => material === mat)?.quantity || 0;
-					const owedToOwner2 = offer1 - offer2;
-					if (owedToOwner2 !== 0) {
-						const sender = owedToOwner2 > 0 ? transfer1 : transfer2;
-						const receiver = owedToOwner2 > 0 ? transfer2 : transfer1;
-						sender.push({ material: mat, quantity: -Math.abs(owedToOwner2) });
-						receiver.push({ material: mat, quantity: Math.abs(owedToOwner2) });
-					}
-					return [transfer1, transfer2];
-				},
-				[[], []],
-			);
+		const [transfer1, transfer2] = this.getCargoExchanged();
 		inventory1.changeMultiple(transfer1);
 		inventory2.changeMultiple(transfer2);
 

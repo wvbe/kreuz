@@ -51,7 +51,7 @@ describe('Inventory', () => {
 		expect(inventory.availableOf(test2)).toBe(420);
 	});
 	it('.reservedIncomingOf()', () => {
-		const inventory = new Inventory();
+		const inventory = new Inventory(1);
 		const tradeOrder = createTradeOrderForCargo(
 			godInventory,
 			[{ material: test1, quantity: 10 }],
@@ -60,6 +60,22 @@ describe('Inventory', () => {
 		);
 		inventory.makeReservation(tradeOrder);
 		expect(inventory.reservedIncomingOf(test1)).toBe(10);
+		expect(inventory.availableOf(test1)).toBe(0);
+		expect(inventory.allocatableTo(test1)).toBe(25);
+	});
+	it('.reservedOutgoingOf()', () => {
+		const inventory = new Inventory(1);
+		inventory.set(test1, 15);
+		const tradeOrder = createTradeOrderForCargo(
+			inventory,
+			[{ material: test1, quantity: 10 }],
+			godInventory,
+			[],
+		);
+		inventory.makeReservation(tradeOrder);
+		expect(inventory.reservedOutgoingOf(test1)).toBe(10);
+		expect(inventory.availableOf(test1)).toBe(5);
+		expect(inventory.allocatableTo(test1)).toBe(25);
 	});
 	it('.getReservedIncomingItems()', () => {
 		const inventory = new Inventory();

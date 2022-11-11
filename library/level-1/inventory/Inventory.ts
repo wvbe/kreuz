@@ -28,6 +28,11 @@ export class Inventory {
 	 */
 	private readonly items: MaterialState[] = [];
 
+	/**
+	 * Reservations should be made when cargo is slowly being transferred into or out of this
+	 * inventory, so that the inventory does not end up with a negative amount of material, or an
+	 * amount greater than the capacity.
+	 */
 	private readonly reservations = new Map<TradeOrder, MaterialState[]>();
 
 	/**
@@ -48,28 +53,41 @@ export class Inventory {
 	}
 
 	/**
-	 * @deprecated Not tested.
+	 * List all cargo that is available to be picked up -- meaning all cargo already in stock, minus
+	 * what has been reserved by others.
 	 */
 	public getAvailableItems() {
-		return this.items.filter(({ quantity }) => quantity > 0);
+		return this.items
+			.filter(({ quantity }) => quantity > 0)
+			.map(({ material, quantity }) => ({
+				material,
+				quantity: quantity - this.reservedOutgoingOf(material),
+			}));
 	}
 
 	/**
 	 * The amount of this material in stock, ready for somebody else to do something with.
 	 *
-	 * @todo This should take reservations into account
+	 * This keeps in mind that some material might already be locked in as an outgoing reservation.
 	 */
 	public availableOf(material: Material): number {
-		return this.items.find((item) => item.material === material)?.quantity || 0;
+		return (
+			(this.items.find((item) => item.material === material)?.quantity || 0) -
+			this.reservedOutgoingOf(material)
+		);
 	}
 
+	/**
+	 * List all cargo expected to be delivered soon.
+	 */
 	public getReservedIncomingItems() {
 		return Array.from(this.reservations.values())
 			.reduce<MaterialState[]>((states, exchange) => states.concat(exchange), [])
 			.filter(({ quantity }) => quantity > 0);
 	}
+
 	/**
-	 * Get the quantity of this material expected to come in in the future.
+	 * Get the quantity of this material expected to delivered in the future.
 	 */
 	public reservedIncomingOf(material: Material): number {
 		let total = 0;
@@ -84,8 +102,33 @@ export class Inventory {
 	}
 
 	/**
+	 * List all cargo expected to be picked up soon
+	 */
+	public getReservedOutgoingItems() {
+		return Array.from(this.reservations.values())
+			.reduce<MaterialState[]>((states, exchange) => states.concat(exchange), [])
+			.filter(({ quantity }) => quantity < 0);
+	}
+
+	/**
+	 * Get the quantity of this material expected to be picked up in the future.
+	 */
+	public reservedOutgoingOf(material: Material): number {
+		let total = 0;
+		for (const exchange of this.reservations.values()) {
+			for (const { quantity, material: mat } of exchange) {
+				if (mat === material && quantity < 0) {
+					total -= quantity;
+				}
+			}
+		}
+		return total;
+	}
+
+	/**
 	 * The total amount of additional material of this type that could be stored in this inventory,
-	 * keeping in mind stack restrictions and (incoming) reserved space.
+	 * regardless of what has already been stored/reserved of it, but do keeping in mind that stacks
+	 * cannot be mixed.
 	 *
 	 * @todo Test
 	 * @todo Test that reservations are taken into account
@@ -95,17 +138,24 @@ export class Inventory {
 			return Infinity;
 		}
 
-		const inOccupiedStacks =
-			Math.ceil((this.availableOf(material) + this.reservedIncomingOf(material)) / material.stack) *
-			material.stack;
-		const openStacks = this.capacity - this.getUsedStackSpace();
-		const inOpenStacks = openStacks * material.stack;
-		return inOccupiedStacks + inOpenStacks;
+		const amountOfEmptyStacks = this.capacity - this.getUsedStackSpace();
+		const allocatableToEmptyStacks = amountOfEmptyStacks * material.stack;
+
+		const amountOfOccupiedStacks = Math.ceil(
+			(this.availableOf(material) +
+				this.reservedIncomingOf(material) +
+				this.reservedOutgoingOf(material)) /
+				material.stack,
+		);
+		const allocatableToOccupiedStacks = amountOfOccupiedStacks * material.stack;
+
+		return allocatableToOccupiedStacks + allocatableToEmptyStacks;
 	}
 
 	/**
 	 * Returns TRUE if the specified material/quantities fit in this inventory on top of the stuff
-	 * that is already there -- keeping in mind that one stack can be of only one material type.
+	 * that is already there -- keeping in mind that one stack can be of only one material type, and
+	 * that some materials or available space has already been locked in for reservations.
 	 */
 	public isEverythingAllocatable(cargo: MaterialState[]) {
 		if (this.capacity === Infinity) {
@@ -125,9 +175,10 @@ export class Inventory {
 			// Clone each object from getAvailableItems so we don't change the inventory by reference
 			// from within the reducer 😬
 			[
-				...this.getAvailableItems().map((state) => ({ ...state })),
-				...this.getReservedIncomingItems().map((state) => ({ ...state })),
-			],
+				...this.getAvailableItems(),
+				...this.getReservedIncomingItems(),
+				...this.getReservedOutgoingItems(),
+			].map((state) => ({ ...state })),
 		);
 		return getRequiredStackSpace(combined) <= this.capacity;
 	}
@@ -158,13 +209,18 @@ export class Inventory {
 	}
 
 	/**
-	 * Get the number of whole or partial stack slots that are already in use.
+	 * Get the number of whole or partial stack slots that are already in use. Does NOT take reservations
+	 * into account.
 	 *
 	 * @TODO take reservations into account? The only consumer of getUsedStackSpace already takes reservations
 	 * into account elsehow. Maybe clarify that getUsedStackSpace does in fact _not_ keep reservations in mind.
 	 */
 	public getUsedStackSpace() {
-		return getRequiredStackSpace(this.items);
+		return getRequiredStackSpace([
+			...this.items,
+			...this.getReservedIncomingItems(),
+			...this.getReservedOutgoingItems(),
+		]);
 	}
 
 	/**
@@ -172,22 +228,17 @@ export class Inventory {
 	 *
 	 * You can choose to (not) emit an update.
 	 *
-	 * @TODO keep reservations in mind
+	 * @TODO Keep upper limit in mind? Hm.
 	 */
 	public change(material: Material, delta: number, skipEvent?: boolean) {
 		if (delta === 0) {
 			return;
 		}
-		const value = this.availableOf(material) + delta;
+		const value = this.availableOf(material) + this.reservedOutgoingOf(material) + delta;
 		if (value < 0) {
 			throw new Error(`Not possible to have less than 0 ${material} in inventory`);
 		}
 		this.set(material, value, skipEvent);
-	}
-	public changeMultiple(states: MaterialState[], skipEvent?: boolean) {
-		states.forEach(({ material, quantity }, index) => {
-			this.change(material, quantity, index === states.length - 1 ? skipEvent : true);
-		});
 	}
 
 	/**
@@ -195,6 +246,12 @@ export class Inventory {
 	 *
 	 * You can choose to (not) emit an update once.
 	 */
+	public changeMultiple(states: MaterialState[], skipEvent?: boolean) {
+		states.forEach(({ material, quantity }, index) => {
+			this.change(material, quantity, index === states.length - 1 ? skipEvent : true);
+		});
+	}
+
 	public set(material: Material, quantity: number, skipEvent?: boolean) {
 		if (quantity < 0) {
 			throw new Error(`Cannot have a negative amount of ${material}`);

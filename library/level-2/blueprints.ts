@@ -28,6 +28,7 @@ export const getWaterFromWell = new Blueprint(
 );
 
 export const growWheat = new Blueprint('Growing wheat', [], [{ material: wheat, quantity: 1 }], {
+	workersRequired: 0,
 	fullTimeEquivalent: 10000,
 	buildingName: 'Wheat farm',
 });

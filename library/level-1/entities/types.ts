@@ -62,3 +62,7 @@ export interface EntityI extends AttachableI {
 
 	serializeToSaveJson(): SaveEntityJson;
 }
+
+export interface TradeEntityI extends EntityI {
+	wallet: EventedValue<number>;
+}

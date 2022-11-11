@@ -1,7 +1,6 @@
-import { EntityI } from '../entities/types.ts';
+import { type TradeEntityI } from '../entities/types.ts';
 import { type Inventory } from '../inventory/Inventory.ts';
 import { type MaterialState } from '../inventory/types.ts';
-import { EventedValue } from './EventedValue.ts';
 
 type TradeOrderJson = {
 	inventory1: Inventory;
@@ -25,10 +24,6 @@ export enum TradeFailReason {
 
 type TradeFailReasonMessage = [TradeFailReason, ...any];
 
-interface TradeEntityI extends EntityI {
-	wallet: EventedValue<number>;
-}
-
 type TradeOrderConstructorParam = {
 	owner: TradeEntityI;
 	inventory: Inventory;
@@ -36,10 +31,13 @@ type TradeOrderConstructorParam = {
 	cargo: MaterialState[];
 };
 export class TradeOrder {
-	#order: TradeOrderJson;
+	/**
+	 * @deprecated Should be renamed to more nicely named properties
+	 */
+	public readonly order: TradeOrderJson;
 
 	constructor(a: TradeOrderConstructorParam, b: TradeOrderConstructorParam) {
-		this.#order = {
+		this.order = {
 			owner1: a.owner,
 			inventory1: a.inventory,
 			money1: a.money,
@@ -54,8 +52,7 @@ export class TradeOrder {
 
 	public findFailReasons(): TradeFailReasonMessage[] {
 		const reasons: TradeFailReasonMessage[] = [];
-		const { inventory1, inventory2, money1, money2, owner1, owner2, stacks1, stacks2 } =
-			this.#order;
+		const { inventory1, inventory2, money1, money2, owner1, owner2, stacks1, stacks2 } = this.order;
 
 		if (owner1.wallet.get() < money1) {
 			reasons.push([TradeFailReason.NO_MONEY_1, owner1, money1]);
@@ -101,7 +98,7 @@ export class TradeOrder {
 	 * - Items added and removed from inventory2 if the deal were to complete
 	 */
 	public getCargoExchanged(): [MaterialState[], MaterialState[]] {
-		const { stacks1, stacks2 } = this.#order;
+		const { stacks1, stacks2 } = this.order;
 		return [...stacks1, ...stacks2]
 			.map(({ material }) => material)
 			.filter((m, i, a) => a.indexOf(m) === i)
@@ -123,10 +120,10 @@ export class TradeOrder {
 	}
 
 	public getCargoExchangedToInventory(inventory: Inventory): MaterialState[] {
-		if (inventory === this.#order.inventory1) {
+		if (inventory === this.order.inventory1) {
 			return this.getCargoExchanged()[0];
 		}
-		if (inventory === this.#order.inventory2) {
+		if (inventory === this.order.inventory2) {
 			return this.getCargoExchanged()[1];
 		}
 		throw new Error(`This inventory is not party to the trade order`);
@@ -138,8 +135,7 @@ export class TradeOrder {
 			throw new Error(`Deal invalid:\n\t${failReasons.join('\n\t')}`);
 		}
 
-		const { inventory1, inventory2, money1, money2, owner1, owner2, stacks1, stacks2 } =
-			this.#order;
+		const { inventory1, inventory2, money1, money2, owner1, owner2, stacks1, stacks2 } = this.order;
 
 		// Pay money
 		const owedToOwner2 = money1 - money2;

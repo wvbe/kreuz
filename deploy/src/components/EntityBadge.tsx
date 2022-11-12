@@ -1,6 +1,11 @@
 import { EntityI } from '@lib';
 import { FunctionComponent } from 'react';
+import { useEventedValue } from '../hooks/useEventedValue.ts';
 import { Badge } from './atoms/Badge.tsx';
 
+const InnnerEntityBadge: FunctionComponent<{ entity: EntityI }> = ({ entity }) => {
+	const status = useEventedValue(entity.$status);
+	return <Badge icon={entity.icon} title={entity.name} subtitle={status || ''} />;
+};
 export const EntityBadge: FunctionComponent<{ entity?: EntityI }> = ({ entity }) =>
-	entity ? <Badge icon={entity.icon} title={entity.name} subtitle={entity.title} /> : null;
+	entity ? <InnnerEntityBadge entity={entity} /> : null;

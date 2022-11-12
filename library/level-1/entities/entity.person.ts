@@ -180,10 +180,6 @@ export class PersonEntity extends Entity {
 		return this.userData.gender === 'm' ? '👨' : '👩';
 	}
 
-	public get title() {
-		return 'Sitting around…';
-	}
-
 	/**
 	 * Make the entity choose a path from its current location to the destination, and start an
 	 * animation.
@@ -261,9 +257,7 @@ export class PersonEntity extends Entity {
 			// @TODO remove at some point?
 			throw new Error('This should never happen I suppose');
 		}
-		const distance = this.$$location.get().euclideanDistanceTo(coordinate);
-
 		const done = () => this.$stepEnd.emit(coordinate);
-		this.$stepStart.emit(coordinate, distance / this.walkSpeed, done);
+		this.$stepStart.emit(coordinate, this.distanceTo(coordinate) / this.walkSpeed, done);
 	}
 }

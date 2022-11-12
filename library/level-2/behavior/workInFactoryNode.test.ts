@@ -69,7 +69,7 @@ describe('BT: workInFactory', () => {
 	it('t=23.000 Finished second production cycle', () => {
 		game.time.steps(8_000);
 		expect(game.time.now).toBe(23_000);
-		expect(pathStart).toHaveBeenCalledTimes(2);
+		expect(pathStart).toHaveBeenCalledTimes(3);
 		expect(pathEnd).toHaveBeenCalledTimes(2);
 		expect(factory.inventory.availableOf(honey)).toBe(2);
 	});
@@ -77,7 +77,7 @@ describe('BT: workInFactory', () => {
 		game.time.steps(8_000);
 		expect(game.time.now).toBe(31_000);
 		expect(pathStart).toHaveBeenCalledTimes(3);
-		expect(pathEnd).toHaveBeenCalledTimes(2);
+		expect(pathEnd).toHaveBeenCalledTimes(3);
 		expect(factory.inventory.availableOf(honey)).toBe(2);
 	});
 });

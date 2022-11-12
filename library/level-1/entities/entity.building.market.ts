@@ -19,13 +19,11 @@ export class MarketBuildingEntity extends BuildingEntity implements EntityI {
 			roofHeight: 1,
 		});
 		this.material = material;
+		this.$status.set(`Sells ${this.material} for 💰${this.material.value} apiece`, true);
 	}
 
 	public get name() {
 		return `${this.material.label} stall`;
-	}
-	public get title() {
-		return `Sells ${this.material} for 💰${this.material.value} apiece`;
 	}
 
 	public get icon() {

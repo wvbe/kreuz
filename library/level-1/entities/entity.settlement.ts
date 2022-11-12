@@ -24,6 +24,8 @@ export class SettlementEntity extends Entity implements EntityI {
 		super(id, location);
 		this.parameters = parameters;
 		this.buildings = [];
+
+		this.$status.set(`Town of ${Math.round(this.parameters.areaSize * 1000)} souls.`, true);
 	}
 
 	public get name(): string {
@@ -31,8 +33,5 @@ export class SettlementEntity extends Entity implements EntityI {
 	}
 	public get icon(): string {
 		return '🏠';
-	}
-	public get title() {
-		return `Town of ${Math.round(this.parameters.areaSize * 1000)} souls.`;
 	}
 }

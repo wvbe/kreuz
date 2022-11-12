@@ -1,8 +1,8 @@
-import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
-import { Inventory } from './Inventory.ts';
-import { Material } from './Material.ts';
+import { describe, expect, it, mock, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 import { TradeOrder } from '../classes/TradeOrder.ts';
 import { PersonEntity } from '../entities/entity.person.ts';
+import { Inventory } from './Inventory.ts';
+import { Material } from './Material.ts';
 import { MaterialState } from './types.ts';
 
 const test1 = new Material('wheat', { symbol: '🌾', stackSize: 25 });
@@ -176,6 +176,16 @@ describe('Inventory', () => {
 
 		inventory.change(test2, -33);
 		expect(inventory.availableOf(test2)).toBe(0);
+	});
+	it('.changeMultiple()', () => {
+		const inventory = new Inventory(2);
+		const cb = mock.fn();
+		inventory.$change.on(cb);
+		inventory.changeMultiple([
+			{ material: test1, quantity: 1 },
+			{ material: test2, quantity: 1 },
+		]);
+		expect(cb).toHaveBeenCalledTimes(1);
 	});
 });
 

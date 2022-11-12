@@ -13,6 +13,7 @@ export class AlephDriver extends Driver implements DriverI {
 		const now = Date.now();
 		const delta = now - this.lastUpdate;
 		game.time.steps(delta * this.gameSpeed);
+		// game.time.jump();
 		this.lastUpdate = now;
 		setTimeout(this.animate.bind(this, game), 10);
 	}

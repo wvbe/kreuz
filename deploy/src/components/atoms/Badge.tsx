@@ -1,4 +1,5 @@
 import { FunctionComponent } from 'react';
+import { PopOnUpdateSpan } from './PopOnUpdateSpan.tsx';
 
 export const Badge: FunctionComponent<{ icon: string; title: string; subtitle: string }> = ({
 	icon,
@@ -10,7 +11,9 @@ export const Badge: FunctionComponent<{ icon: string; title: string; subtitle: s
 			<div className="meta--emoji-symbols badge__icon">{icon}</div>
 			<div className="badge__labels">
 				<h1>{title}</h1>
-				<p>{subtitle}</p>
+				<p>
+					<PopOnUpdateSpan text={subtitle} />
+				</p>
 			</div>
 		</header>
 	);

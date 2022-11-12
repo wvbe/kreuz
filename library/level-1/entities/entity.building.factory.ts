@@ -188,26 +188,32 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 	 * Returns a boolean on wether the blueprint if we now started or not.
 	 */
 	private attemptStartBlueprint(): boolean {
-		const blueprint = this.$blueprint.get();
-		if (!blueprint) {
-			return false;
-		}
-		if (this.$workers.length < blueprint.options.workersRequired) {
-			return false;
-		}
 		if (this.isBusy()) {
 			// Cannot start it now. The updated blueprint will be picked up on the next
 			// production cycle. --> @TODO
 			return false;
 		}
 
-		// BUG: Evaluating this will cause products to show up in inventory twice
-		if (!blueprint.allRequirementsMetByFactory(this)) {
+		const blueprint = this.$blueprint.get();
+		if (!blueprint) {
+			this.$status.set('Waiting for instructions…');
 			return false;
 		}
-		// if (!blueprint.hasAllIngredients(this.inventory)) {
-		// 	return false;
-		// }
+		if (this.$workers.length < blueprint.options.workersRequired) {
+			this.$status.set('Waiting for enough workers…');
+			return false;
+		}
+
+		if (!blueprint.hasAllIngredients(this.inventory)) {
+			this.$status.set('Waiting for the required materials…');
+			return false;
+		}
+		if (!this.inventory.isEverythingAllocatable(blueprint.products)) {
+			this.$status.set('Waiting to clear space for products…');
+			return false;
+		}
+
+		this.$status.set('Working…');
 
 		this.#avoidRespondingToOwnInventoryChange = true;
 		this.inventory.changeMultiple(

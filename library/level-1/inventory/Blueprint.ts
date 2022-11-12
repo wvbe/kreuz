@@ -46,15 +46,15 @@ export class Blueprint {
 	 * @deprecated Please consider method docs.
 	 */
 	public transferIngredients(inventoryFrom: Inventory, inventoryTo: Inventory) {
-		this.ingredients.forEach(({ material, quantity }) => {
+		for (const { material, quantity } of this.ingredients) {
 			const demand =
 				Math.min(quantity, inventoryFrom.availableOf(material)) - inventoryTo.availableOf(material);
 			if (demand <= 0) {
-				return;
+				continue;
 			}
 			inventoryFrom.change(material, -demand);
 			inventoryTo.change(material, demand);
-		});
+		}
 	}
 
 	public hasAllIngredients(inventory: Inventory) {
@@ -67,19 +67,5 @@ export class Blueprint {
 		return this.products.every(
 			({ material, quantity }) => inventory.availableOf(material) >= quantity,
 		);
-	}
-
-	public allRequirementsMetByFactory(factory: FactoryBuildingEntity) {
-		if (factory.$workers.length < this.options.workersRequired) {
-			return false;
-		}
-		if (!this.hasAllIngredients(factory.inventory)) {
-			return false;
-		}
-		if (!factory.inventory.isEverythingAllocatable(this.products)) {
-			return false;
-		}
-
-		return true;
 	}
 }

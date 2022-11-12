@@ -62,6 +62,7 @@ export const feedSelf = new SequenceNode<EntityBlackboard>(
 				if (!state) {
 					return EventedPromise.reject();
 				}
+				entity.$status.set(`Muching on ${state.material}`);
 				entity.inventory.change(state.material, -1);
 				const need = entity.needs.find((n) => n.id === 'food');
 				if (!need) {
@@ -71,6 +72,10 @@ export const feedSelf = new SequenceNode<EntityBlackboard>(
 				return EventedPromise.resolve();
 			}),
 			createWaitBehavior(500, 3000),
+			new ExecutionNode('Unset status', ({ entity }) => {
+				entity.$status.set(null);
+				return EventedPromise.resolve();
+			}),
 		),
 	),
 );

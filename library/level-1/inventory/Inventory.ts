@@ -217,6 +217,8 @@ export class Inventory {
 	 */
 	public getUsedStackSpace() {
 		return getRequiredStackSpace([
+			// @BUG: This places items from different lists in different stacks, while in truth they can possibly
+			// be combined.
 			...this.items,
 			...this.getReservedIncomingItems(),
 			...this.getReservedOutgoingItems(),
@@ -247,9 +249,10 @@ export class Inventory {
 	 * You can choose to (not) emit an update once.
 	 */
 	public changeMultiple(states: MaterialState[], skipEvent?: boolean) {
-		states.forEach(({ material, quantity }, index) => {
-			this.change(material, quantity, index === states.length - 1 ? skipEvent : true);
-		});
+		let index = 0;
+		for (const { material, quantity } of states) {
+			this.change(material, quantity, ++index === states.length ? skipEvent : true);
+		}
 	}
 
 	public set(material: Material, quantity: number, skipEvent?: boolean) {

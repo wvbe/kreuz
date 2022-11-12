@@ -53,7 +53,7 @@ export interface EntityI extends AttachableI {
 	 * for example:
 	 *   "Delivering a pancake"
 	 */
-	title: string;
+	$status: EventedValue<null | string>;
 
 	/**
 	 * The location of this entity, if it is standing on any particular tile.

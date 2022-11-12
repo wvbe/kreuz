@@ -2,6 +2,7 @@ import { Blueprint, EntityI, Event, FactoryBuildingEntity, Game } from '@lib';
 import { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { useCollection } from '../hooks/useEventedValue.ts';
 import { CollapsibleWindow } from './atoms/CollapsibleWindow.tsx';
+import { PopOnUpdateSpan } from './atoms/PopOnUpdateSpan.tsx';
 import { Cell, Row, Table } from './atoms/Table.tsx';
 
 function getTotalDelta(entities: FactoryBuildingEntity[]) {
@@ -25,7 +26,11 @@ const ProductionSummary: FunctionComponent<{
 	return (
 		<Row>
 			<Cell>{blueprint.name}</Cell>
-			<Cell>{hoursPerCycle === Infinity ? '∞' : hoursPerCycle.toFixed(1)}/day</Cell>
+			<Cell>
+				<PopOnUpdateSpan
+					text={`${hoursPerCycle === Infinity ? '∞' : hoursPerCycle.toFixed(1)}/day`}
+				/>
+			</Cell>
 		</Row>
 	);
 };

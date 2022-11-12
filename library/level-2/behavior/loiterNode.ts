@@ -16,9 +16,10 @@ export const loiterNode = new SelectorNode<EntityBlackboard>(
 			if ((entity.needs.find((need) => need.id === 'energy')?.get() || 0) < 0.2) {
 				return EventedPromise.reject();
 			}
+			entity.$status.set('Wandering around…');
 			const start = game.terrain.getTileEqualToLocation(entity.$$location.get());
 			const destination = Random.fromArray(
-				[start, ...game.terrain.selectClosestTiles(start, 50)],
+				[start, ...game.terrain.selectClosestTiles(start, 5)],
 				entity.id,
 				'loiter walk',
 				++ticker,
@@ -26,10 +27,11 @@ export const loiterNode = new SelectorNode<EntityBlackboard>(
 			return entity.walkToTile(destination);
 		}),
 		new ExecutionNode('Pause', ({ game, entity }) => {
-			return game.time.wait(Random.between(1000, 10000, entity.id, 'loiter wait', ++ticker));
+			return game.time.wait(Random.between(1000, 3000, entity.id, 'loiter wait', ++ticker));
 		}),
 	),
 	new ExecutionNode('Wait', ({ game, entity }) => {
-		return game.time.wait(Random.between(1000, 10000, entity.id, 'loiter wait', ++ticker));
+		entity.$status.set(null);
+		return game.time.wait(Random.between(1000, 3000, entity.id, 'loiter wait', ++ticker));
 	}),
 );

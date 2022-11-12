@@ -91,8 +91,13 @@ export const hydrateSelfBehavior = new SequenceNode<EntityBlackboard>(
 				}),
 				new ExecutionNode<EntityBlackboard & { deal?: DesirabilityRecord }>(
 					'Walk to factory',
-					({ game, entity, deal }) =>
-						deal ? walkEntityToEntity(game, entity, deal.factory) : EventedPromise.reject(),
+					({ game, entity, deal }) => {
+						if (!deal) {
+							return EventedPromise.reject();
+						}
+						entity.$status.set(`Walking to a well`);
+						return walkEntityToEntity(game, entity, deal.factory);
+					},
 				),
 				new ExecutionNode<EntityBlackboard & { deal?: DesirabilityRecord }>(
 					'Grab water',
@@ -101,6 +106,7 @@ export const hydrateSelfBehavior = new SequenceNode<EntityBlackboard>(
 							return EventedPromise.reject();
 						}
 
+						entity.$status.set(`Drawing water`);
 						const buyAmount = Math.min(
 							// Don't buy more than what is being sold:
 							deal.factory.inventory.availableOf(deal.material),
@@ -156,6 +162,7 @@ export const hydrateSelfBehavior = new SequenceNode<EntityBlackboard>(
 				if (!state) {
 					return EventedPromise.reject();
 				}
+				entity.$status.set(`Drinking ${state.material}`);
 				entity.inventory.change(state.material, -1);
 				const need = entity.needs.find((n) => n.id === 'water');
 				if (!need) {
@@ -165,6 +172,10 @@ export const hydrateSelfBehavior = new SequenceNode<EntityBlackboard>(
 				return EventedPromise.resolve();
 			}),
 			createWaitBehavior(500, 3000),
+			new ExecutionNode('Unset status', ({ entity }) => {
+				entity.$status.set(null);
+				return EventedPromise.resolve();
+			}),
 		),
 	),
 );

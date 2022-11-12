@@ -40,7 +40,12 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 					return demand;
 				}
 				blueprint.ingredients
-					.filter(({ material }) => factory.inventory.availableOf(material) < material.stack)
+					.filter(
+						({ material }) =>
+							factory.inventory.availableOf(material) +
+								factory.inventory.reservedIncomingOf(material) <
+							material.stack,
+					)
 					.forEach(({ material }) => {
 						demand.push({ entity: factory, material, quantity: material.stack });
 					});
@@ -49,11 +54,16 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 
 		const demandInMarketStalls = game.entities
 			.filter<MarketBuildingEntity>((entity) => entity.type === 'market-stall')
-			.filter((factory) => factory.inventory.availableOf(factory.material) < factory.material.stack)
-			.map((factory) => ({
-				entity: factory,
-				material: factory.material,
-				quantity: factory.material.stack,
+			.filter(
+				(marketStall) =>
+					marketStall.inventory.availableOf(marketStall.material) +
+						marketStall.inventory.reservedIncomingOf(marketStall.material) <
+					marketStall.material.stack,
+			)
+			.map((marketStall) => ({
+				entity: marketStall,
+				material: marketStall.material,
+				quantity: marketStall.material.stack,
 			}));
 
 		// @TODO
@@ -110,6 +120,7 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 		);
 
 		Object.assign(blackboard, { tradeOrder, from: supplyDemand.supplier, to: supplyDemand.entity });
+
 		supplyDemand.supplier.inventory.makeReservation(tradeOrder);
 		supplyDemand.entity.inventory.makeReservation(tradeOrder);
 
@@ -117,7 +128,10 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 	}),
 	new ExecutionNode<
 		EntityBlackboard & { tradeOrder: TradeOrder; from: TradeEntityI; to: TradeEntityI }
-	>('Walk to supplier', ({ game, entity, from }) => walkEntityToEntity(game, entity, from)),
+	>('Walk to supplier', ({ game, entity, from }) => {
+		entity.$status.set(`Going to pick up materials for transport`);
+		return walkEntityToEntity(game, entity, from);
+	}),
 	new ExecutionNode<
 		EntityBlackboard & { tradeOrder: TradeOrder; from: TradeEntityI; to: TradeEntityI }
 	>('Load goods', ({ entity, tradeOrder }) => {
@@ -133,7 +147,10 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 	}),
 	new ExecutionNode<
 		EntityBlackboard & { tradeOrder: TradeOrder; from: TradeEntityI; to: TradeEntityI }
-	>('Walk to deliver', ({ game, entity, to }) => walkEntityToEntity(game, entity, to)),
+	>('Walk to deliver', ({ game, entity, to }) => {
+		entity.$status.set(`Delivering some materials`);
+		return walkEntityToEntity(game, entity, to);
+	}),
 	new ExecutionNode<
 		EntityBlackboard & { tradeOrder: TradeOrder; from: TradeEntityI; to: TradeEntityI }
 	>('Unload goods', ({ entity, tradeOrder }) => {

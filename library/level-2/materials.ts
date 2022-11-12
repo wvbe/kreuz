@@ -16,6 +16,14 @@ export const flour = new Material('Flour', {
 	stackSize: 100,
 });
 
+export const bread = new Material('Bread', {
+	symbol: '🥖',
+	stackSize: 100,
+
+	value: 3,
+	nutrition: 0.8,
+});
+
 // The harder outer layer of cereal grain. A byproduct of making flour.
 export const bran = new Material('Bran', {
 	symbol: 'B',

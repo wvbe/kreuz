@@ -86,29 +86,16 @@ export function generateEntities(game: Game) {
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 	}
 
-	for (let i = 0; i < Random.between(6, 9, game.seed, 'factories'); i++) {
+	for (let i = 0; i < Random.between(16, 20, game.seed, 'factories'); i++) {
 		const id = `${game.seed}-factory-${i}`;
 		const tile = Random.fromArray(walkableTiles, id);
-		const blueprint = Random.fromArray(
-			Object.values(blueprints).filter((blueprint) => blueprint.options.workersRequired > 0),
-			id,
-			'blueprint',
-		);
+		const blueprint = Random.fromArray(Object.values(blueprints), id, 'blueprint');
 		const factory = new FactoryBuildingEntity(id, tile, {
 			maxWorkers: 3 * blueprint.options.workersRequired,
 		});
 		game.entities.add(factory);
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 		factory.setBlueprint(blueprint);
-	}
-
-	for (let i = 0; i < Random.between(6, 9, game.seed, 'wells'); i++) {
-		const id = `${game.seed}-well-${i}`;
-		const tile = Random.fromArray(walkableTiles, id);
-		const factory = new FactoryBuildingEntity(id, tile, { maxStackSpace: 1, maxWorkers: 0 });
-		game.entities.add(factory);
-		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
-		factory.setBlueprint(blueprints.getWaterFromWell);
 	}
 
 	for (let i = 0; i < Random.between(10, 15, game.seed, 'market-stalls'); i++) {

@@ -6,7 +6,4 @@ export class ForestEntity extends Entity implements EntityI {
 	public get name(): string {
 		return 'Tree';
 	}
-	public get title(): string {
-		return 'Sucking moisture';
-	}
 }

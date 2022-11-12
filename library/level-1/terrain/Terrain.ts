@@ -10,9 +10,9 @@ export class Terrain {
 		this.#tiles = tiles;
 		this.size = size;
 		// this.mesh = mesh;
-		this.#tiles.forEach((coordinate, i) => {
+		for (const coordinate of this.#tiles) {
 			coordinate.terrain = this;
-		});
+		}
 	}
 
 	/**

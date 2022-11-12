@@ -66,8 +66,13 @@ export function createBuyFromMarketSequence(createDesirabilityScore: Desirabilit
 		}),
 		new ExecutionNode<EntityBlackboard & { deal?: DesirabilityRecord }>(
 			'Walk to market',
-			({ game, entity, deal }) =>
-				deal ? walkEntityToEntity(game, entity, deal.market) : EventedPromise.reject(),
+			({ game, entity, deal }) => {
+				if (!deal) {
+					return EventedPromise.reject();
+				}
+				entity.$status.set('Walking to a market');
+				return walkEntityToEntity(game, entity, deal.market);
+			},
 		),
 		new ExecutionNode<EntityBlackboard & { deal?: DesirabilityRecord }>(
 			'Buy any food',
@@ -75,6 +80,7 @@ export function createBuyFromMarketSequence(createDesirabilityScore: Desirabilit
 				if (!deal) {
 					return EventedPromise.reject();
 				}
+				entity.$status.set('Buying food');
 
 				const buyAmount = Math.min(
 					// Don't buy more than what is being sold:

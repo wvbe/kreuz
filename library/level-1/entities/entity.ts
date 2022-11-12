@@ -21,6 +21,11 @@ export class Entity extends Attachable<[Game]> implements EntityI {
 	 */
 	public type = 'entity';
 
+	public readonly $status = new EventedValue<string | null>(
+		null,
+		`${this.constructor.name} $status`,
+	);
+
 	constructor(id: string, location: { x: number; y: number; z: number }) {
 		super();
 
@@ -44,9 +49,12 @@ export class Entity extends Attachable<[Game]> implements EntityI {
 		return `${this.icon} ${this.name}`;
 	}
 
-	public get title(): string {
-		// @TODO
-		return 'Idle';
+	public distanceTo(otehr: CoordinateI | EntityI) {
+		if ((otehr as EntityI).$$location) {
+			return this.$$location.get().euclideanDistanceTo((otehr as EntityI).$$location.get());
+		} else {
+			return this.$$location.get().euclideanDistanceTo(otehr as CoordinateI);
+		}
 	}
 
 	toString() {

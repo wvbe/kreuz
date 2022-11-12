@@ -13,10 +13,29 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 		const { game, entity } = blackboard;
 		const factories = getEntitiesReachableByEntity(game, entity)
 			.filter((entity): entity is FactoryBuildingEntity => entity.type === 'factory')
-			.filter(
-				(factory) =>
-					factory.$blueprint.get() && factory.$workers.length < factory.options.maxWorkers,
-			);
+			.filter((factory) => {
+				const blueprint = factory.$blueprint.get();
+				if (!blueprint) {
+					return false;
+				}
+				if (factory.$workers.length >= factory.options.maxWorkers) {
+					return false;
+				}
+				if (
+					blueprint.ingredients.some(
+						({ material, quantity }) => factory.inventory.availableOf(material) < quantity,
+					)
+				) {
+					// Ignore factories that do not have enough materials to produce
+					return false;
+				}
+				return true;
+			})
+			.map((factory) => ({
+				factory,
+				distance: factory.$$location.get().euclideanDistanceTo(entity.$$location.get()),
+			}))
+			.sort((a, b) => a.distance - b.distance);
 		if (!factories.length) {
 			return EventedPromise.reject();
 		}
@@ -27,7 +46,7 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 		// - ... preferably have space to put the product, or demand for it
 		// Test this prioritization!
 
-		Object.assign(blackboard, { factory: factories[0] });
+		Object.assign(blackboard, { factory: factories[0].factory });
 
 		return EventedPromise.resolve();
 	}),
@@ -37,6 +56,7 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 			if (!factory) {
 				return EventedPromise.reject();
 			}
+			entity.$status.set(`Going to ${factory} for work`);
 			return walkEntityToEntity(game, entity, factory);
 		},
 	),
@@ -56,10 +76,15 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 					factory.$workers.remove(entity);
 				});
 			}
+			entity.$status.set(`Working in ${factory}`);
 			// Finish job when one work cycle completes
 			factory.$$progress.onceAbove(1, () => promise.resolve(), true);
 
 			return promise;
 		},
 	),
+	new ExecutionNode('Unset status', ({ entity }) => {
+		entity.$status.set(null);
+		return EventedPromise.resolve();
+	}),
 );

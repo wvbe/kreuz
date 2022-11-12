@@ -1,9 +1,11 @@
 import { Blueprint } from '../level-1.ts';
 import {
 	bran,
+	bread,
 	bronzeIngot,
 	butter,
 	copperIngot,
+	eggs,
 	flour,
 	freshWater,
 	honey,
@@ -28,7 +30,7 @@ export const getWaterFromWell = new Blueprint(
 );
 
 export const growWheat = new Blueprint('Growing wheat', [], [{ material: wheat, quantity: 1 }], {
-	workersRequired: 0,
+	workersRequired: 1,
 	fullTimeEquivalent: 10000,
 	buildingName: 'Wheat farm',
 });
@@ -47,6 +49,20 @@ export const wheatProcessing = new Blueprint(
 	},
 );
 
+export const breadBaking = new Blueprint(
+	'Baking bread',
+	[
+		{ material: flour, quantity: 2 },
+		{ material: freshWater, quantity: 1 },
+	],
+	[{ material: bread, quantity: 1 }],
+	{
+		workersRequired: 1,
+		fullTimeEquivalent: 5000,
+		buildingName: 'Bakery',
+	},
+);
+
 export const beeKeeping = new Blueprint('Bee-keeping', [], [{ material: honey, quantity: 2 }], {
 	fullTimeEquivalent: 8000,
 	buildingName: 'Apiary',
@@ -61,6 +77,18 @@ export const butterMaking = new Blueprint(
 		buildingName: 'Butter factory',
 	},
 );
+
+export const chickenCoop = new Blueprint(
+	'Keeping chickens',
+	[{ material: bran, quantity: 5 }],
+	[{ material: eggs, quantity: 5 }],
+	{
+		workersRequired: 0,
+		fullTimeEquivalent: 12000,
+		buildingName: 'Chicken coop',
+	},
+);
+
 export const ironIngotProduction = new Blueprint(
 	'Making iron ingots',
 	[{ material: rawIronOre, quantity: 3 }],

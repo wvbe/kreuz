@@ -20,9 +20,9 @@ export class DualMeshTile extends Tile implements TileI {
 	 * Designed to be used with the Mesh r_circulate_t() method.
 	 */
 	private addOutlineFromCirculation(points: [number, number][], anyPointIsAdjacentToEdge: boolean) {
-		points.forEach(([x, y]) => {
+		for (const [x, y] of points) {
 			this.#outlinePoints.push(new Coordinate(x - this.x, y - this.y, 0));
-		});
+		}
 		this.#isGhost = anyPointIsAdjacentToEdge;
 	}
 	/**

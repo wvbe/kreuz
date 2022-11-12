@@ -25,10 +25,10 @@ export class RandomSelectorNode<B extends Record<string, unknown> = Record<strin
 		const prom = new EventedPromise();
 		const children = this.children.slice();
 		const next = () => {
-			const child = Random.fromArray(children, ...this.#createSeed(blackboard));
-			if (!child) {
+			if (!children.length) {
 				return prom.reject();
 			}
+			const child = Random.fromArray(children, ...this.#createSeed(blackboard));
 			children.splice(children.indexOf(child), 1);
 			child.evaluate(blackboard, provenance).then(prom.resolve.bind(prom), next);
 		};

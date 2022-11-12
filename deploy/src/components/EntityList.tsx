@@ -1,4 +1,4 @@
-import { Collection, CoordinateI, EntityI, EventedValue } from '@lib';
+import { Collection, CoordinateI, EntityI, EventedValue, FilterFn } from '@lib';
 import { FunctionComponent, useMemo } from 'react';
 import { useEventedValue } from '../hooks/useEventedValue.ts';
 import { setSelectedEntity } from '../hooks/useSelectedEntity.ts';
@@ -13,10 +13,15 @@ const EntityLocationPhrase: FunctionComponent<{ location: EventedValue<Coordinat
 	const { x, y } = useEventedValue(location);
 	return <PopOnUpdateSpan text={`Lat:${y.toFixed(2)} Lng:${x.toFixed(2)}`} />;
 };
-export const EntityList: FunctionComponent<{ entities: Collection<EntityI> }> = ({ entities }) => {
+
+export const EntityList: FunctionComponent<{
+	label: string;
+	entities: Collection<EntityI>;
+	filter: FilterFn<EntityI>;
+}> = ({ label, entities, filter }) => {
 	const items = useMemo(
 		() =>
-			entities.map((entity, i) => (
+			entities.filter(filter).map((entity, i) => (
 				<Row key={entity.id} onClick={() => setSelectedEntity(entity)}>
 					<Cell>
 						<EntityBadge entity={entity} />
@@ -26,11 +31,11 @@ export const EntityList: FunctionComponent<{ entities: Collection<EntityI> }> = 
 					</Cell>
 				</Row>
 			)),
-		[],
+		[filter],
 	);
 
 	return (
-		<CollapsibleWindow label={`Entities panel`} initiallyOpened>
+		<CollapsibleWindow label={label}>
 			<Table>{items}</Table>
 		</CollapsibleWindow>
 	);

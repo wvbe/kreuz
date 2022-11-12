@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useCallback } from 'react';
 import { MapTerrain } from './MapTerrain.tsx';
 import { AlephDriver } from '../utils/AlephDriver.ts';
 import { EntityList } from './EntityList.tsx';
@@ -25,11 +25,24 @@ export const GameUI: FunctionComponent<{ game: Game; driver: AlephDriver }> = ({
 					<SelectedEntityDetails />
 				</div>
 				<div className="game-ui__workspace">
-					<EntityList entities={game.entities} />
-					<EventLog game={game} driver={driver} />
+					<EntityList
+						label="People"
+						entities={game.entities}
+						filter={useCallback((e) => e.type === 'person', [])}
+					/>
+					<EntityList
+						label="Factories"
+						entities={game.entities}
+						filter={useCallback((e) => e.type === 'factory', [])}
+					/>
+					<EntityList
+						label="Markets"
+						entities={game.entities}
+						filter={useCallback((e) => e.type === 'market-stall', [])}
+					/>
+					<ProductionList game={game} />
 					<MaterialList />
 					<BlueprintList />
-					<ProductionList game={game} />
 				</div>
 			</div>
 			<div className="game-viewport">

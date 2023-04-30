@@ -272,6 +272,7 @@ export class Inventory {
 		}
 
 		if (quantity > this.allocatableTo(material)) {
+			// BUG: A factory may reach this point, and the error is then not handled
 			throw new Error(`Not enough stack space for ${quantity}x ${material}`);
 		}
 		if (stateIndex === -1) {

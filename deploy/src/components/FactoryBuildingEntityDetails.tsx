@@ -3,6 +3,7 @@ import { FunctionComponent } from 'react';
 import { useEventData, useEventedValue } from '../hooks/useEventedValue.ts';
 import { FillBar } from './atoms/FillBar.tsx';
 import { InventoryUI } from './InventoryUI.tsx';
+import { BlueprintBadge } from './BlueprintBadge.tsx';
 
 export const FactoryBuildingEntityDetails: FunctionComponent<{ entity: FactoryBuildingEntity }> = ({
 	entity,
@@ -23,12 +24,13 @@ export const FactoryBuildingEntityDetails: FunctionComponent<{ entity: FactoryBu
 			{blueprint ? (
 				<FillBar
 					ratio={progress}
-					label={'Production'}
+					label={blueprint.name}
 					labelRight={`${Math.round(progress * 100)}%`}
 				/>
 			) : (
 				<p>No blueprint</p>
 			)}
+			<BlueprintBadge blueprint={blueprint} />
 			<InventoryUI inventory={entity.inventory} />
 		</article>
 	);

@@ -1,4 +1,4 @@
-import { expect, it, describe, run, mock } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { expect, it, describe, run, mock } from 'tincan';
 import { TimeLine } from './TimeLine.ts';
 
 function noop() {

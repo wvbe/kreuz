@@ -1,4 +1,4 @@
-import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { describe, expect, it, run } from 'tincan';
 import { Blueprint } from './Blueprint.ts';
 import { Inventory } from './Inventory.ts';
 import { Material } from './Material.ts';

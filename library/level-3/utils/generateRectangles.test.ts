@@ -1,4 +1,4 @@
-import { expect, it, describe, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { expect, it, describe, run } from 'tincan';
 import { RectangleParty } from './generateRectangles.ts';
 
 it('generateRectangles', () => {

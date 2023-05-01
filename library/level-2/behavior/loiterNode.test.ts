@@ -1,4 +1,4 @@
-import { describe, expect, it, mock, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { describe, expect, it, mock, run } from 'tincan';
 import { TestDriver, PersonEntity, Game, generateGridTerrainFromAscii } from '../../level-1.ts';
 
 import { loiterNode } from './loiterNode.ts';

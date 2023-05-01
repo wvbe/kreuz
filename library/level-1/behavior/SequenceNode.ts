@@ -1,4 +1,4 @@
-import { EventedPromise } from '../../level-1.ts';
+import { EventedPromise } from '../classes/EventedPromise.ts';
 import { type BehaviorTreeNodeI } from './types.ts';
 
 /**

@@ -1,4 +1,4 @@
-import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { describe, expect, it, run } from 'tincan';
 
 import { FactoryBuildingEntity, PersonEntity, SettlementEntity, TestDriver } from '../level-1.ts';
 import createGeneratorDemo from './generator.ts';

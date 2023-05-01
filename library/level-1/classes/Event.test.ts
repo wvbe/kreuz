@@ -1,4 +1,4 @@
-import { expect, it, describe, mock, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { expect, it, describe, mock, run } from 'tincan';
 import { CallbackFn } from '../types.ts';
 import { Event } from './Event.ts';
 

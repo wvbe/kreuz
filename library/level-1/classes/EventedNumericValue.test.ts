@@ -1,4 +1,4 @@
-import { expect, it, describe, mock, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { expect, it, describe, mock, run } from 'tincan';
 import { EventedNumericValue } from './EventedNumericValue.ts';
 
 describe('EventedNumericValue', () => {

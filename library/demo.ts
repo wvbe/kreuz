@@ -13,7 +13,7 @@
 
 import { TestDriver } from './mod.ts';
 
-const demo = await import(Deno.args[0]);
+const demo = await import(self.Deno.args[0]);
 const { driver, game } = demo.default(new TestDriver());
 try {
 	await driver.start();

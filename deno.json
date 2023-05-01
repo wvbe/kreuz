@@ -1,0 +1,15 @@
+{
+	"importMap": "./imports.json",
+	"compilerOptions": {
+		"lib": ["deno.window", "dom"],
+		"jsx": "react-jsx"
+	},
+	"tasks": {
+		"debug": "deno run --allow-all --inspect-brk",
+		"build": "deno run -A application/build.ts _site/index.html",
+		"bundle:deprecated": "deno bundle ./library/mod.ts bundle.js",
+		"test": "deno test",
+		"dnt": "deno run --allow-all ./library/dnt.ts",
+		"coverage": "TMP=$(mktemp -d) && deno task test --coverage=$TMP && deno coverage $TMP --lcov > $TMP/lcov.lcov && genhtml -o coverage $TMP/lcov.lcov"
+	}
+}

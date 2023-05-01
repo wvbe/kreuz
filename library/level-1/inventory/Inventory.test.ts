@@ -1,4 +1,4 @@
-import { describe, expect, it, mock, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { describe, expect, it, mock, run } from 'tincan';
 import { TradeOrder } from '../classes/TradeOrder.ts';
 import { PersonEntity } from '../entities/entity.person.ts';
 import { Inventory } from './Inventory.ts';

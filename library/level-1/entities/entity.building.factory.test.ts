@@ -2,7 +2,7 @@
  * @TODO Decouple from level 2 and 3 APIs
  */
 
-import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { describe, expect, it, run } from 'tincan';
 import { TestDriver } from '../drivers/TestDriver.ts';
 import Game from '../Game.ts';
 import { Blueprint } from '../inventory/Blueprint.ts';

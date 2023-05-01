@@ -1,4 +1,4 @@
-import { describe, run, expect, it } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { describe, run, expect, it } from 'tincan';
 
 import createBasementDemo from './basement.ts';
 

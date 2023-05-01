@@ -1,4 +1,4 @@
-import { describe, expect, it, mock, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { describe, expect, it, mock, run } from 'tincan';
 import { loiterNode } from './loiterNode.ts';
 import { beeKeeping } from '../blueprints.ts';
 import { honey } from '../materials.ts';

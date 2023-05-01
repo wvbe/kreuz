@@ -1,4 +1,4 @@
-import { expect, it, describe, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { expect, it, describe, run } from 'tincan';
 import { EventedPromise } from '../classes/EventedPromise.ts';
 import { ExecutionNode } from './ExecutionNode.ts';
 import { SelectorNode } from './SelectorNode.ts';

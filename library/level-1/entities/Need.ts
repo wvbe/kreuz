@@ -1,5 +1,5 @@
 import { ProgressingNumericValue } from '../classes/ProgressingNumericValue.ts';
-import { PersonNeedId } from '../mod.ts';
+import { PersonNeedId } from '../constants/needs.ts';
 
 /**
  * A need represents the urgency with which a personnal requirement needs to be fulfilled. In most

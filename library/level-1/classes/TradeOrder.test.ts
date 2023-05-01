@@ -1,4 +1,4 @@
-import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+import { describe, expect, it, run } from 'tincan';
 import { PersonEntity } from '../entities/entity.person.ts';
 import { Material } from '../inventory/Material.ts';
 import { Coordinate } from '../terrain/Coordinate.ts';

@@ -1,4 +1,4 @@
-import { FactoryBuildingEntity, PersonEntity } from '@lib';
+import { FactoryBuildingEntity, PersonEntity, Collection } from '@lib';
 import React, { FunctionComponent } from 'react';
 import { useEventData, useEventedValue } from '../hooks/useEventedValue.ts';
 import { FillBar } from './atoms/FillBar.tsx';
@@ -8,10 +8,10 @@ import { BlueprintBadge } from './BlueprintBadge.tsx';
 export const FactoryBuildingEntityDetails: FunctionComponent<{ entity: FactoryBuildingEntity }> = ({
 	entity,
 }) => {
-	const workers = useEventData<[PersonEntity[], PersonEntity[]], number>(
+	const workers = useEventData<[PersonEntity[], PersonEntity[]], Collection<PersonEntity>>(
 		entity.$workers.$change,
-		entity.$workers.length,
-		() => entity.$workers.length,
+		entity.$workers,
+		() => entity.$workers,
 	);
 	const blueprint = useEventedValue(entity.$blueprint);
 	const progress = useEventedValue(entity.$$progress);
@@ -19,8 +19,15 @@ export const FactoryBuildingEntityDetails: FunctionComponent<{ entity: FactoryBu
 	return (
 		<article className="entity-details">
 			<p>
-				Workers: {workers} out of {entity.options.maxWorkers}
+				Workers: {workers.length} out of {entity.options.maxWorkers}
 			</p>
+			{workers.length ? (
+				<ul>
+					{workers.map((worker) => (
+						<li key={worker.id}>{worker.label}</li>
+					))}
+				</ul>
+			) : null}
 			{blueprint ? (
 				<FillBar
 					ratio={progress}

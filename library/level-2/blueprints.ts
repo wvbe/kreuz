@@ -89,6 +89,16 @@ export const chickenCoop = new Blueprint(
 	},
 );
 
+export const ironOreMining = new Blueprint(
+	'Mining iron ore',
+	[],
+	[{ material: rawIronOre, quantity: 1 }],
+	{
+		workersRequired: 3,
+		fullTimeEquivalent: 13000,
+		buildingName: 'Iron mine',
+	},
+);
 export const ironIngotProduction = new Blueprint(
 	'Making iron ingots',
 	[{ material: rawIronOre, quantity: 3 }],
@@ -99,6 +109,17 @@ export const ironIngotProduction = new Blueprint(
 		buildingName: 'Iron foundry',
 	},
 );
+
+export const copperOreMining = new Blueprint(
+	'Mining copper ore',
+	[],
+	[{ material: rawCopperOre, quantity: 1 }],
+	{
+		workersRequired: 3,
+		fullTimeEquivalent: 13000,
+		buildingName: 'Copper mine',
+	},
+);
 export const copperIngotProduction = new Blueprint(
 	'Making copper ingots',
 	[{ material: rawCopperOre, quantity: 3 }],
@@ -107,6 +128,17 @@ export const copperIngotProduction = new Blueprint(
 		workersRequired: 2,
 		fullTimeEquivalent: 5000,
 		buildingName: 'Copper foundry',
+	},
+);
+
+export const tinOreMining = new Blueprint(
+	'Mining tin ore',
+	[],
+	[{ material: rawTinOre, quantity: 1 }],
+	{
+		workersRequired: 3,
+		fullTimeEquivalent: 13000,
+		buildingName: 'Tin mine',
 	},
 );
 export const tinIngotProduction = new Blueprint(
@@ -122,10 +154,10 @@ export const tinIngotProduction = new Blueprint(
 export const bronzeIngotProduction = new Blueprint(
 	'Making bronze ingots',
 	[
-		{ material: copperIngot, quantity: 0.88 },
-		{ material: tinIngot, quantity: 0.12 },
+		{ material: copperIngot, quantity: 5 },
+		{ material: tinIngot, quantity: 1 },
 	],
-	[{ material: bronzeIngot, quantity: 1 }],
+	[{ material: bronzeIngot, quantity: 6 }],
 	{
 		workersRequired: 2,
 		fullTimeEquivalent: 5000,

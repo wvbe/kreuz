@@ -1,10 +1,9 @@
-import { Game } from '@lib';
+import { Game, type DriverI } from '@lib';
 import React, { FunctionComponent, useCallback } from 'react';
 import { useEventedValue } from '../hooks/useEventedValue.ts';
-import { AlephDriver } from '../utils/AlephDriver.ts';
 import { FillBar } from './atoms/FillBar.tsx';
 
-export const Clock: FunctionComponent<{ game: Game; driver: AlephDriver }> = ({ game, driver }) => {
+export const Clock: FunctionComponent<{ game: Game; driver: DriverI }> = ({ game, driver }) => {
 	const time = useEventedValue(game.time);
 	const isAnimating = useEventedValue(driver.$$animating);
 	const pause = useCallback(() => {

@@ -3,15 +3,13 @@
 This is a toy project that I've used as a learning platform over the years, meant for my entertainment
 and hopefully yours one day.
 
-The current latest iteration 
+The current latest iteration
 
-- [Storybook demo using ThreeJS](https://wvbe.github.io/kreuzzeug-im-nagelhosen/)
+- [Online demo](https://wvbe.github.io/kreuzzeug-im-nagelhosen/)
 - [Board](https://github.com/users/wvbe/projects/4/)
 - [Milestones](https://github.com/wvbe/kreuzzeug-im-nagelhosen/milestones)
 
 Keywords: Poisson distribution, dual-mesh tile-based terrain, behavior tree.
-
-
 
 ### Setup
 
@@ -23,7 +21,7 @@ need for that.
 ### Scripts
 
 ```ts
-cd library && deno task test
+deno task test
 ```
 
 ### Glossary of terms

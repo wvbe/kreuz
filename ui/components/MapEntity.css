@@ -17,16 +17,3 @@
 .map-entity--person {
 	z-index: 1;
 }
-
-/* .map-entity--settlement {
-	width: 10px;
-	height: 3px;
-	border: 1px solid black;
-	background-color: palevioletred;
-}
-.map-entity--factory {
-	width: 4px;
-	height: 6px;
-	border: 1px solid black;
-	background-color: lightskyblue;
-} */

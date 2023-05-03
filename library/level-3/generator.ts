@@ -54,7 +54,7 @@ export function generateEntities(game: Game) {
 		throw new Error('The terrain does not contain any walkable tiles!');
 	}
 
-	for (let i = 0; i < Random.between(24, 36, game.seed, 'guardamount'); i++) {
+	for (let i = 0; i < Random.between(36, 54, game.seed, 'guardamount'); i++) {
 		const id = `${game.seed}-person-${i}`;
 		const gender = Random.boolean([id, 'gender'], 0.5) ? 'm' : 'f';
 		const firstName = Random.fromArray(
@@ -86,13 +86,19 @@ export function generateEntities(game: Game) {
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 	}
 
-	for (let i = 0; i < Random.between(16, 20, game.seed, 'factories'); i++) {
+	for (let i = 0; i < Random.between(24, 32, game.seed, 'factories'); i++) {
 		const id = `${game.seed}-factory-${i}`;
 		const tile = Random.fromArray(walkableTiles, id);
 		const blueprint = Random.fromArray(Object.values(blueprints), id, 'blueprint');
 		const factory = new FactoryBuildingEntity(id, tile, {
 			maxWorkers: 3 * blueprint.options.workersRequired,
 		});
+		blueprint.ingredients.forEach(({ material }) =>
+			factory.inventory.set(material, Math.round(material.stack * Random.between(0.2, 1, id))),
+		);
+		blueprint.products.forEach(({ material }) =>
+			factory.inventory.set(material, Math.round(material.stack * Random.between(0.2, 1, id))),
+		);
 		game.entities.add(factory);
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 		factory.setBlueprint(blueprint);

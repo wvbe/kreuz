@@ -5,6 +5,7 @@ import { Badge } from './atoms/Badge.tsx';
 import { FillBar } from './atoms/FillBar.tsx';
 import { BehaviorTree } from './BehaviorTree.tsx';
 import { InventoryUI } from './InventoryUI.tsx';
+import { TradeOrderLog } from './TradeOrderLog.tsx';
 
 const PersonEntityNeed: FunctionComponent<{ need: Need }> = ({ need }) => {
 	const value = useEventedValue(need);
@@ -35,7 +36,7 @@ export const PersonEntityDetails: FunctionComponent<{ entity: PersonEntity }> = 
 		<article className="entity-details">
 			{needs}
 			<InventoryUI inventory={entity.inventory} wallet={entity.wallet} />
-			<BehaviorTree root={behavior} />
+			<TradeOrderLog log={entity.$log} />
 		</article>
 	);
 };

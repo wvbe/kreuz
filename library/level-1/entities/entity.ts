@@ -1,5 +1,7 @@
 import { Attachable } from '../classes/Attachable.ts';
+import { Collection } from '../classes/Collection.ts';
 import { EventedValue } from '../classes/EventedValue.ts';
+import { type TradeOrder } from '../classes/TradeOrder.ts';
 import type Game from '../Game.ts';
 import { Coordinate } from '../terrain/Coordinate.ts';
 import { type SaveEntityJson } from '../types-savedgame.ts';
@@ -25,6 +27,8 @@ export class Entity extends Attachable<[Game]> implements EntityI {
 		null,
 		`${this.constructor.name} $status`,
 	);
+
+	public readonly $log = new Collection<TradeOrder>();
 
 	constructor(id: string, location: { x: number; y: number; z: number }) {
 		super();

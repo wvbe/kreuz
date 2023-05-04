@@ -135,14 +135,14 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 	new ExecutionNode<
 		EntityBlackboard & { tradeOrder: TradeOrder; from: TradeEntityI; to: TradeEntityI }
 	>('Load goods', ({ entity, tradeOrder }) => {
-		tradeOrder.order.inventory1.cancelReservation(tradeOrder);
-		tradeOrder.order.inventory1.changeMultiple(
-			tradeOrder.order.stacks1.map(({ quantity, material }) => ({
+		tradeOrder.inventory1.cancelReservation(tradeOrder);
+		tradeOrder.inventory1.changeMultiple(
+			tradeOrder.stacks1.map(({ quantity, material }) => ({
 				quantity: -quantity,
 				material,
 			})),
 		);
-		entity.inventory.changeMultiple(tradeOrder.order.stacks1);
+		entity.inventory.changeMultiple(tradeOrder.stacks1);
 		return EventedPromise.resolve();
 	}),
 	new ExecutionNode<
@@ -155,13 +155,13 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 		EntityBlackboard & { tradeOrder: TradeOrder; from: TradeEntityI; to: TradeEntityI }
 	>('Unload goods', ({ entity, tradeOrder }) => {
 		entity.inventory.changeMultiple(
-			tradeOrder.order.stacks1.map(({ quantity, material }) => ({
+			tradeOrder.stacks1.map(({ quantity, material }) => ({
 				quantity: -quantity,
 				material,
 			})),
 		);
-		tradeOrder.order.inventory2.changeMultiple(tradeOrder.order.stacks1);
-		tradeOrder.order.inventory2.cancelReservation(tradeOrder);
+		tradeOrder.inventory2.changeMultiple(tradeOrder.stacks1);
+		tradeOrder.inventory2.cancelReservation(tradeOrder);
 		return EventedPromise.resolve();
 	}),
 );

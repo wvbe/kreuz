@@ -76,7 +76,7 @@ export function createBuyFromMarketSequence(createDesirabilityScore: Desirabilit
 		),
 		new ExecutionNode<EntityBlackboard & { deal?: DesirabilityRecord }>(
 			'Buy any food',
-			({ entity, deal }) => {
+			({ entity, deal, game }) => {
 				if (!deal) {
 					return EventedPromise.reject();
 				}
@@ -126,7 +126,7 @@ export function createBuyFromMarketSequence(createDesirabilityScore: Desirabilit
 					return EventedPromise.reject();
 				}
 				try {
-					tradeOrder.makeItHappen();
+					tradeOrder.makeItHappen(game.time.now);
 				} catch (e: unknown) {
 					console.log((e as Error).message || e);
 					return EventedPromise.reject();

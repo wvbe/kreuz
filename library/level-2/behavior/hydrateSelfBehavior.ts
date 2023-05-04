@@ -101,7 +101,7 @@ export const hydrateSelfBehavior = new SequenceNode<EntityBlackboard>(
 				),
 				new ExecutionNode<EntityBlackboard & { deal?: DesirabilityRecord }>(
 					'Grab water',
-					({ entity, deal }) => {
+					({ entity, deal, game }) => {
 						if (!deal) {
 							return EventedPromise.reject();
 						}
@@ -145,7 +145,7 @@ export const hydrateSelfBehavior = new SequenceNode<EntityBlackboard>(
 							return EventedPromise.reject();
 						}
 						try {
-							tradeOrder.makeItHappen();
+							tradeOrder.makeItHappen(game.time.now);
 						} catch (e: unknown) {
 							console.log((e as Error).message || e);
 							return EventedPromise.reject();

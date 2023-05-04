@@ -113,7 +113,7 @@ describe('TradeOrder', () => {
 			},
 		);
 
-		order.makeItHappen();
+		order.makeItHappen(0);
 
 		expect(owner1.wallet.get()).toBe(42);
 		expect(owner2.wallet.get()).toBe(58);

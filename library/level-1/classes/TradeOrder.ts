@@ -30,29 +30,36 @@ type TradeOrderConstructorParam = {
 	money: number;
 	cargo: MaterialState[];
 };
+
 export class TradeOrder {
-	/**
-	 * @deprecated Should be renamed to more nicely named properties
-	 */
-	public readonly order: TradeOrderJson;
+	public inventory1: Inventory;
+	public inventory2: Inventory;
+	public money1: number;
+	public money2: number;
+	public owner1: TradeEntityI;
+	public owner2: TradeEntityI;
+	public stacks1: MaterialState[];
+	public stacks2: MaterialState[];
+
+	// Optionally record the time at which the deal was finished. If this value is null, deal is
+	// unfinished.
+	public timeFinalised: number | null = null;
 
 	constructor(a: TradeOrderConstructorParam, b: TradeOrderConstructorParam) {
-		this.order = {
-			owner1: a.owner,
-			inventory1: a.inventory,
-			money1: a.money,
-			stacks1: a.cargo,
+		this.owner1 = a.owner;
+		this.inventory1 = a.inventory;
+		this.money1 = a.money;
+		this.stacks1 = a.cargo;
 
-			owner2: b.owner,
-			inventory2: b.inventory,
-			money2: b.money,
-			stacks2: b.cargo,
-		};
+		this.owner2 = b.owner;
+		this.inventory2 = b.inventory;
+		this.money2 = b.money;
+		this.stacks2 = b.cargo;
 	}
 
 	public findFailReasons(): TradeFailReasonMessage[] {
 		const reasons: TradeFailReasonMessage[] = [];
-		const { inventory1, inventory2, money1, money2, owner1, owner2, stacks1, stacks2 } = this.order;
+		const { inventory1, inventory2, money1, money2, owner1, owner2, stacks1, stacks2 } = this;
 
 		if (owner1.wallet.get() < money1) {
 			reasons.push([TradeFailReason.NO_MONEY_1, owner1, money1]);
@@ -98,7 +105,7 @@ export class TradeOrder {
 	 * - Items added and removed from inventory2 if the deal were to complete
 	 */
 	public getCargoExchanged(): [MaterialState[], MaterialState[]] {
-		const { stacks1, stacks2 } = this.order;
+		const { stacks1, stacks2 } = this;
 		return [...stacks1, ...stacks2]
 			.map(({ material }) => material)
 			.filter((m, i, a) => a.indexOf(m) === i)
@@ -120,22 +127,22 @@ export class TradeOrder {
 	}
 
 	public getCargoExchangedToInventory(inventory: Inventory): MaterialState[] {
-		if (inventory === this.order.inventory1) {
+		if (inventory === this.inventory1) {
 			return this.getCargoExchanged()[0];
 		}
-		if (inventory === this.order.inventory2) {
+		if (inventory === this.inventory2) {
 			return this.getCargoExchanged()[1];
 		}
 		throw new Error(`This inventory is not party to the trade order`);
 	}
 
-	public makeItHappen(): void {
+	public makeItHappen(time: number): void {
 		const failReasons = this.findFailReasons();
 		if (failReasons.length) {
 			throw new Error(`Deal invalid:\n\t${failReasons.join('\n\t')}`);
 		}
 
-		const { inventory1, inventory2, money1, money2, owner1, owner2, stacks1, stacks2 } = this.order;
+		const { inventory1, inventory2, money1, money2, owner1, owner2, stacks1, stacks2 } = this;
 
 		// Pay money
 		const owedToOwner2 = money1 - money2;
@@ -151,14 +158,23 @@ export class TradeOrder {
 		inventory1.changeMultiple(transfer1);
 		inventory2.changeMultiple(transfer2);
 
-		console.log(
-			`${owner1} and ${owner2} have made a trade:
-  ${owner1} paying 💰${money1} and ${
+		this.timeFinalised = time;
+
+		owner1.$log.add(this);
+		owner2.$log.add(this);
+		console.log(this.getSummary());
+	}
+
+	public getSummary() {
+		const { money1, money2, owner1, owner2, stacks1, stacks2 } = this;
+		return [
+			`${owner1} and ${owner2} have made a trade:`,
+			`  ${owner1} paying 💰${money1} and ${
 				stacks1.length ? stacks1.map((s) => `${s.quantity}x${s.material}`).join(', ') : 'no cargo'
-			}
-  ${owner2} paying 💰${money2} and ${
+			}`,
+			`  ${owner2} paying 💰${money2} and ${
 				stacks2.length ? stacks2.map((s) => `${s.quantity}x${s.material}`).join(', ') : 'no cargo'
 			}`,
-		);
+		].join('\n');
 	}
 }

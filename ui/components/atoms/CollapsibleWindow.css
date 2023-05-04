@@ -9,7 +9,7 @@
 }
 .collapsible-window > header {
 	margin: 3px;
-	background-color: lightgray;
+	background-color: #aaaaff;
 	cursor: pointer;
 	display: flex;
 	flex-direction: row;
@@ -24,7 +24,7 @@
 }
 
 .collapsible-window > header:hover {
-	background-color: darkgray;
+	background-color: #7a7ae9;
 }
 .collapsible-window > header > * + * {
 	margin-left: 3px;

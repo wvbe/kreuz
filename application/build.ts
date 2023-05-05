@@ -3,6 +3,8 @@ import { denoPlugins } from 'esbuild-deno-loader';
 import postcss from 'npm:postcss';
 import postcssImport from 'npm:postcss-import';
 import postcssMinify from 'npm:postcss-minify';
+import postcssInlineBase64 from 'npm:postcss-inline-base64';
+
 import { fromFileUrl } from 'path';
 import fs from 'npm:fs-extra';
 
@@ -32,6 +34,11 @@ async function buildCssFile(): Promise<string> {
 	const css = await Deno.readTextFile(fromFileUrl(import.meta.resolve('./application.css')));
 	const result = await postcss()
 		.use(postcssImport())
+		.use(
+			postcssInlineBase64({
+				baseDir: fromFileUrl(import.meta.resolve('../')),
+			}),
+		)
 		.use(postcssMinify())
 		.process(css, {
 			from: fromFileUrl(import.meta.resolve('./application.css')),

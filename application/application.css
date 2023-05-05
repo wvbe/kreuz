@@ -1,1 +1,6 @@
 @import url('../ui/mod.css');
+
+body {
+	background: url('b64---./images/old_mathematics.png---');
+	/* background-size: 25%; */
+}

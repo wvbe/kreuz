@@ -3,7 +3,7 @@ import Poisson from 'poisson-disk-sampling';
 //https://www.npmjs.com/package/seedrandom
 import seedrandom from 'seedrandom';
 
-import { SeedI } from '../types.ts';
+import { type SeedI } from '../types.ts';
 
 export class Random {
 	/**

@@ -1,12 +1,11 @@
 import React, { FunctionComponent, useCallback } from 'react';
-import { MapTerrain } from './MapTerrain.tsx';
+import { MapTerrain } from '../map/MapTerrain.tsx';
 import { EntityList } from './EntityList.tsx';
 import { Clock } from './Clock.tsx';
-import { EventLog } from './EventLog.tsx';
 import { type DriverI, type Game } from '@lib';
 import { MaterialList } from './MaterialList.tsx';
 import { BlueprintList } from './BlueprintList.tsx';
-import { MapViewport } from './MapViewport.tsx';
+import { MapViewport } from '../map/MapViewport.tsx';
 import { SelectedEntityDetails } from './EntityDetails.tsx';
 import { ProductionList } from './ProductionList.tsx';
 

@@ -18,7 +18,7 @@ export class Terrain {
 	/**
 	 * Array of all tiles that make up this terrain.
 	 */
-	get tiles() {
+	get tiles(): TileI[] {
 		return this.#tiles;
 	}
 

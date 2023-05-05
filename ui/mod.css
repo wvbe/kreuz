@@ -7,10 +7,11 @@
 @import url('./components/InventoryStack.css');
 @import url('./components/atoms/Badge.css');
 @import url('./components/atoms/CollapsibleWindow.css');
-@import url('./components/MapTerrain.css');
+@import url('./map/MapTerrain.css');
+@import url('./map/MapTile.css');
 @import url('./components/atoms/Table.css');
 @import url('./components/BehaviorTree.css');
-@import url('./components/MapEntity.css');
+@import url('./map/MapEntity.css');
 /* @import url('./components/EntityList.css'); */
 
 :root {

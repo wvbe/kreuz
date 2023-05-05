@@ -1,6 +1,7 @@
 import { Collection, EntityI, type Terrain } from '@lib';
 import React, { FunctionComponent, useMemo } from 'react';
 import { MapEntity } from './MapEntity.tsx';
+import { MapTile } from './MapTile.tsx';
 
 const MARGIN = 25;
 
@@ -11,17 +12,7 @@ export const MapTerrain: FunctionComponent<{ terrain: Terrain; entities: Collect
 	const zoom = 32;
 
 	const tiles = useMemo(
-		() =>
-			terrain.tiles.map((tile, i) => {
-				if (!tile.isLand()) {
-					return null;
-				}
-				const points = tile
-					.getOutlineCoordinates()
-					.map((coord) => `${(tile.x + coord.x) * zoom},${(tile.y + coord.y) * zoom}`)
-					.join(' ');
-				return <polygon key={i} points={points} />;
-			}),
+		() => terrain.tiles.map((tile, i) => <MapTile key={i} zoom={zoom} tile={tile} />),
 		[terrain.tiles],
 	);
 

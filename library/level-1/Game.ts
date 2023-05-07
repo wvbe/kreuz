@@ -1,4 +1,4 @@
-import { Collection } from './classes/Collection.ts';
+import { KeyedCollection } from './classes/KeyedCollection.ts';
 import { Event } from './classes/Event.ts';
 import { TimeLine } from './classes/TimeLine.ts';
 import { EntityI } from './entities/types.ts';
@@ -9,8 +9,7 @@ import { SeedI } from './types.ts';
 export default class Game {
 	public readonly terrain: Terrain;
 
-	// @TODO handle spontaneous changes
-	public readonly entities = new Collection<EntityI>();
+	public readonly entities = new KeyedCollection<'id', EntityI>('id');
 
 	public readonly time = new TimeLine();
 

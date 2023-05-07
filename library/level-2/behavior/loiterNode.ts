@@ -4,7 +4,7 @@ import {
 	ExecutionNode,
 	SelectorNode,
 	SequenceNode,
-} from '../../level-1.ts';
+} from '../../level-1/mod.ts';
 import { type EntityBlackboard } from './types.ts';
 
 // Some "entropy" lolz0r

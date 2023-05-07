@@ -1,4 +1,4 @@
-import { Blueprint } from '../level-1.ts';
+import { Blueprint } from '../level-1/mod.ts';
 import {
 	bran,
 	bread,

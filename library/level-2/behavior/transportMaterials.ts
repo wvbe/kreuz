@@ -7,7 +7,7 @@ import {
 	type Material,
 	TradeOrder,
 	TradeEntityI,
-} from '../../level-1.ts';
+} from '../../level-1/mod.ts';
 import { headOfState } from '../heroes.ts';
 import { walkEntityToEntity } from './reusable/travel.ts';
 import { type EntityBlackboard } from './types.ts';

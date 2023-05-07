@@ -2,7 +2,7 @@ import { describe, run, expect, it } from 'tincan';
 
 import createBasementDemo from './basement.ts';
 
-import { type PersonEntity, TestDriver } from '../level-1.ts';
+import { type PersonEntity, TestDriver } from '../level-1/mod.ts';
 
 describe('"The basement"', () => {
 	const { driver, game } = createBasementDemo(new TestDriver());

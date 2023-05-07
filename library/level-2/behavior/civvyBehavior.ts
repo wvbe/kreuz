@@ -1,4 +1,4 @@
-import { RandomSelectorNode } from '../../level-1.ts';
+import { RandomSelectorNode } from '../../level-1/mod.ts';
 import { feedSelf } from './feedSelfNode.ts';
 import { hydrateSelfBehavior } from './hydrateSelfBehavior.ts';
 import { loiterNode } from './loiterNode.ts';

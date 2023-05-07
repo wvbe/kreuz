@@ -1,4 +1,4 @@
-import { Material } from '../level-1.ts';
+import { Material } from '../level-1/mod.ts';
 
 /*
  * FOOD AND AGRICULTURE

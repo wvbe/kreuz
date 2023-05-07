@@ -1,5 +1,5 @@
 import { describe, expect, it, mock, run } from 'tincan';
-import { TestDriver, PersonEntity, Game, generateGridTerrainFromAscii } from '../../level-1.ts';
+import { TestDriver, PersonEntity, Game, generateGridTerrainFromAscii } from '../../level-1/mod.ts';
 
 import { loiterNode } from './loiterNode.ts';
 

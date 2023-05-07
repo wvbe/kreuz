@@ -75,3 +75,5 @@ if (Deno.args[0]) {
 } else {
 	console.log(page);
 }
+
+console.error(new Date().toISOString() + '\tBuild OK');

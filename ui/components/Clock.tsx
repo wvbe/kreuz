@@ -2,8 +2,12 @@ import { Game, type DriverI } from '@lib';
 import React, { FunctionComponent, useCallback } from 'react';
 import { useEventedValue } from '../hooks/useEventedValue.ts';
 import { FillBar } from './atoms/FillBar.tsx';
+import { useDriverContext } from '../context/DriverContext.tsx';
+import { useGameContext } from '../context/GameContext.tsx';
 
-export const Clock: FunctionComponent<{ game: Game; driver: DriverI }> = ({ game, driver }) => {
+export const Clock: FunctionComponent = () => {
+	const driver = useDriverContext();
+	const game = useGameContext();
 	const time = useEventedValue(game.time);
 	const isAnimating = useEventedValue(driver.$$animating);
 	const pause = useCallback(() => {

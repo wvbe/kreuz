@@ -8,13 +8,15 @@ import { BlueprintList } from './BlueprintList.tsx';
 import { MapViewport } from '../map/MapViewport.tsx';
 import { SelectedEntityDetails } from './EntityDetails.tsx';
 import { ProductionList } from './ProductionList.tsx';
+import { useGameContext } from '../context/GameContext.tsx';
 
-export const GameUI: FunctionComponent<{ game: Game; driver: DriverI }> = ({ game, driver }) => {
+export const GameUI: FunctionComponent = () => {
+	const game = useGameContext();
 	return (
 		<>
 			<div className="game-ui">
 				<div className="game-ui__clock">
-					<Clock game={game} driver={driver} />
+					<Clock />
 				</div>
 				<div className="game-ui__info">
 					<SelectedEntityDetails />

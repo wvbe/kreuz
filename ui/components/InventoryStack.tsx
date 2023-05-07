@@ -13,9 +13,9 @@ export const InventoryStack: FunctionComponent<{
 	>
 		<div className="inventory-stack__symbol">{material?.symbol || '❓'}</div>
 		<div className="inventory-stack__quantity">
-			<PopOnUpdateSpan
-				text={quantity === Infinity ? '∞' : quantity === -Infinity ? '-' : String(quantity)}
-			/>
+			<PopOnUpdateSpan>
+				{quantity === Infinity ? '∞' : quantity === -Infinity ? '-' : String(quantity)}
+			</PopOnUpdateSpan>
 		</div>
 	</div>
 );

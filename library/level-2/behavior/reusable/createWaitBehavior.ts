@@ -4,7 +4,7 @@ import {
 	PersonEntity,
 	Material,
 	ExecutionNode,
-} from '../../../level-1.ts';
+} from '../../../level-1/mod.ts';
 
 import { EntityBlackboard } from '../types.ts';
 

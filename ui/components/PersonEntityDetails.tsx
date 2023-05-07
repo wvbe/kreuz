@@ -36,7 +36,7 @@ export const PersonEntityDetails: FunctionComponent<{ entity: PersonEntity }> = 
 		<article className="entity-details">
 			{needs}
 			<InventoryUI inventory={entity.inventory} wallet={entity.wallet} />
-			<TradeOrderLog log={entity.$log} />
+			<TradeOrderLog entity={entity} log={entity.$log} />
 		</article>
 	);
 };

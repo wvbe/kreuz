@@ -15,8 +15,8 @@ import {
 	Random,
 	MarketBuildingEntity,
 	SettlementEntity,
-} from '../level-1.ts';
-import { blueprints, materials, bt, getRandomSettlementName } from '../level-2.ts';
+} from '../level-1/mod.ts';
+import { blueprints, materials, bt, getRandomSettlementName } from '../level-2/mod.ts';
 import { Demo } from './types.ts';
 
 const demo: Demo = (driver) => {

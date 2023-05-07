@@ -11,8 +11,8 @@ import {
 	Game,
 	generateGridTerrainFromAscii,
 	PersonEntity,
-} from '../level-1.ts';
-import { blueprints, bt, materials } from '../level-2.ts';
+} from '../level-1/mod.ts';
+import { blueprints, bt, materials } from '../level-2/mod.ts';
 import { Demo } from './types.ts';
 
 const demo: Demo = (driver) => {

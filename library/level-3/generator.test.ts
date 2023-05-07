@@ -1,6 +1,11 @@
 import { describe, expect, it, run } from 'tincan';
 
-import { FactoryBuildingEntity, PersonEntity, SettlementEntity, TestDriver } from '../level-1.ts';
+import {
+	FactoryBuildingEntity,
+	PersonEntity,
+	SettlementEntity,
+	TestDriver,
+} from '../level-1/mod.ts';
 import createGeneratorDemo from './generator.ts';
 
 describe('Default generator', () => {

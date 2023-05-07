@@ -1,4 +1,4 @@
-import { HeroPersonEntity } from '../level-1.ts';
+import { HeroPersonEntity } from '../level-1/mod.ts';
 
 export const headOfState = new HeroPersonEntity(
 	'King',
@@ -9,5 +9,3 @@ export const headOfState = new HeroPersonEntity(
 		firstName: 'Richard',
 	},
 );
-
-(self as any).king = headOfState;

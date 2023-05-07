@@ -2,17 +2,6 @@ import { type TradeEntityI } from '../entities/types.ts';
 import { type Inventory } from '../inventory/Inventory.ts';
 import { type MaterialState } from '../inventory/types.ts';
 
-type TradeOrderJson = {
-	inventory1: Inventory;
-	inventory2: Inventory;
-	money1: number;
-	money2: number;
-	owner1: TradeEntityI;
-	owner2: TradeEntityI;
-	stacks1: MaterialState[];
-	stacks2: MaterialState[];
-};
-
 export enum TradeFailReason {
 	NO_MONEY_1 = 'Buyer has no money',
 	NO_MONEY_2 = 'Seller has no money',
@@ -30,6 +19,13 @@ type TradeOrderConstructorParam = {
 	money: number;
 	cargo: MaterialState[];
 };
+
+function stackToString(stacks: (number | MaterialState)[]): string {
+	return stacks
+		.filter((s) => !!s)
+		.map((s) => (typeof s === 'number' ? `💰${s.toFixed(2)}` : `${s.quantity}x${s.material}`))
+		.join(', ');
+}
 
 export class TradeOrder {
 	public inventory1: Inventory;
@@ -165,16 +161,38 @@ export class TradeOrder {
 		console.log(this.getSummary());
 	}
 
-	public getSummary() {
+	public getSummary(): string {
 		const { money1, money2, owner1, owner2, stacks1, stacks2 } = this;
 		return [
 			`${owner1} and ${owner2} have made a trade:`,
-			`  ${owner1} paying 💰${money1} and ${
-				stacks1.length ? stacks1.map((s) => `${s.quantity}x${s.material}`).join(', ') : 'no cargo'
+			`  ${owner1} paying 💰${money1.toFixed(2)} and ${
+				stacks1.length ? stackToString(stacks1) : 'no cargo'
 			}`,
-			`  ${owner2} paying 💰${money2} and ${
-				stacks2.length ? stacks2.map((s) => `${s.quantity}x${s.material}`).join(', ') : 'no cargo'
+			`  ${owner2} paying 💰${money2.toFixed(2)} and ${
+				stacks2.length ? stackToString(stacks2) : 'no cargo'
 			}`,
 		].join('\n');
+	}
+
+	public getSummaryForOwner(owner: TradeEntityI): string {
+		const part1 = {
+				owner: this.owner1,
+				money: this.money1,
+				goods: stackToString([this.money1, ...this.stacks1]),
+			},
+			part2 = {
+				owner: this.owner2,
+				money: this.money2,
+				goods: stackToString([this.money2, ...this.stacks2]),
+			};
+		const self = owner === this.owner1 ? part1 : part2;
+		const other = owner === this.owner1 ? part2 : part1;
+		if (self.money && !other.money) {
+			return `Bought ${other.goods} for ${self.goods} from ${other.owner}`;
+		} else if (other.money && !self.money) {
+			return `Sold ${self.goods} for ${other.goods} to ${other.owner}`;
+		} else {
+			return `Traded ${self.goods} for ${other.goods} with ${other.owner}`;
+		}
 	}
 }

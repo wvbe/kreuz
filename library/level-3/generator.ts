@@ -10,7 +10,7 @@ import {
 	PersonEntity,
 	Random,
 	SettlementEntity,
-} from '../level-1.ts';
+} from '../level-1/mod.ts';
 import {
 	blueprints,
 	materials,
@@ -18,7 +18,7 @@ import {
 	getRandomSettlementName,
 	FIRST_NAMES_M,
 	FIRST_NAMES_F,
-} from '../level-2.ts';
+} from '../level-2/mod.ts';
 import { Demo } from './types.ts';
 import { generateDualMeshTerrain } from './utils/generateDualMeshTerrain.ts';
 

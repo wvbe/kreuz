@@ -1,6 +1,6 @@
 import MeshBuilder from '@redblobgames/dual-mesh/create';
 import Poisson from 'poisson-disk-sampling';
-import { Terrain, Random, DualMeshTile, type SeedI, GameDistance } from '../../level-1.ts';
+import { Terrain, Random, DualMeshTile, type SeedI, GameDistance } from '../../level-1/mod.ts';
 
 type CoordinateArray = [GameDistance, GameDistance, GameDistance];
 

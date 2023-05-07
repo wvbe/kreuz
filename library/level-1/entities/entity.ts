@@ -6,13 +6,12 @@ import type Game from '../Game.ts';
 import { Coordinate } from '../terrain/Coordinate.ts';
 import { type SaveEntityJson } from '../types-savedgame.ts';
 import { type CoordinateI } from '../types.ts';
+import { token } from '../utilities/replacementToken.ts';
 import { type EntityI } from './types.ts';
 
 export class Entity extends Attachable<[Game]> implements EntityI {
 	/**
 	 * Unique identifier
-	 *
-	 * Probably more useful as a seed than anything else.
 	 */
 	public readonly id: string;
 
@@ -61,8 +60,8 @@ export class Entity extends Attachable<[Game]> implements EntityI {
 		}
 	}
 
-	toString() {
-		return this.label;
+	toString(): string {
+		return token('entity', this);
 	}
 
 	/**

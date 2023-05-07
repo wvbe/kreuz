@@ -9,7 +9,7 @@ import {
 	TradeOrder,
 	type FactoryBuildingEntity,
 	type Material,
-} from '../../level-1.ts';
+} from '../../level-1/mod.ts';
 import { getWaterFromWell } from '../blueprints.ts';
 import { headOfState } from '../heroes.ts';
 import { DesirabilityScoreFn } from './reusable/createBuyFromMarketBehavior.ts';

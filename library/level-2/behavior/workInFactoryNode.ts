@@ -3,7 +3,7 @@ import {
 	type FactoryBuildingEntity,
 	ExecutionNode,
 	SequenceNode,
-} from '../../level-1.ts';
+} from '../../level-1/mod.ts';
 import { getEntitiesReachableByEntity, walkEntityToEntity } from './reusable/travel.ts';
 import { type EntityBlackboard } from './types.ts';
 

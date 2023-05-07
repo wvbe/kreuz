@@ -4,6 +4,7 @@ import { useCollection } from '../hooks/useEventedValue.ts';
 import { CollapsibleWindow } from './atoms/CollapsibleWindow.tsx';
 import { PopOnUpdateSpan } from './atoms/PopOnUpdateSpan.tsx';
 import { Cell, Row, Table } from './atoms/Table.tsx';
+import { useGameContext } from '../context/GameContext.tsx';
 
 function getTotalDelta(entities: FactoryBuildingEntity[]) {
 	return entities.reduce((total, entity) => (total += entity.$$progress.delta), 0);
@@ -27,15 +28,16 @@ const ProductionSummary: FunctionComponent<{
 		<Row>
 			<Cell>{blueprint.name}</Cell>
 			<Cell>
-				<PopOnUpdateSpan
-					text={`${hoursPerCycle === Infinity ? '∞' : hoursPerCycle.toFixed(1)}/day`}
-				/>
+				<PopOnUpdateSpan>{`${
+					hoursPerCycle === Infinity ? '∞' : hoursPerCycle.toFixed(1)
+				}/day`}</PopOnUpdateSpan>
 			</Cell>
 		</Row>
 	);
 };
 
-export const ProductionList: FunctionComponent<{ game: Game }> = ({ game }) => {
+export const ProductionList: FunctionComponent = () => {
+	const game = useGameContext();
 	const entities = useCollection(game.entities);
 	const products = useMemo(() => {
 		const entitiesByBlueprint: Record<string, FactoryBuildingEntity[]> = {};

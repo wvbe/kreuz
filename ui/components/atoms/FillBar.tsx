@@ -1,4 +1,4 @@
-import React,{ FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import { PopOnUpdateSpan } from './PopOnUpdateSpan.tsx';
 
 export const FillBar: FunctionComponent<{ ratio: number; label?: string; labelRight?: string }> = ({
@@ -11,8 +11,10 @@ export const FillBar: FunctionComponent<{ ratio: number; label?: string; labelRi
 		<div className="fillbar">
 			{(label || labelRight) && (
 				<div className="fillbar__labels">
-					{label && <PopOnUpdateSpan text={label} className="fillbar__label" />}
-					{labelRight && <PopOnUpdateSpan text={labelRight} className="fillbar__label-right" />}
+					{label && <PopOnUpdateSpan className="fillbar__label">{label}</PopOnUpdateSpan>}
+					{labelRight && (
+						<PopOnUpdateSpan className="fillbar__label-right">{labelRight}</PopOnUpdateSpan>
+					)}
 				</div>
 			)}
 			<div className="fillbar__track">

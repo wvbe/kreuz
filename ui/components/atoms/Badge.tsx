@@ -1,7 +1,7 @@
-import React, { FunctionComponent } from 'react';
+import React, { type FunctionComponent, type ReactNode } from 'react';
 import { PopOnUpdateSpan } from './PopOnUpdateSpan.tsx';
 
-export const Badge: FunctionComponent<{ icon: string; title: string; subtitle: string }> = ({
+export const Badge: FunctionComponent<{ icon: string; title: ReactNode; subtitle: ReactNode }> = ({
 	icon,
 	title,
 	subtitle,
@@ -12,7 +12,7 @@ export const Badge: FunctionComponent<{ icon: string; title: string; subtitle: s
 			<div className="badge__labels">
 				<h1>{title}</h1>
 				<p>
-					<PopOnUpdateSpan text={subtitle} />
+					<PopOnUpdateSpan>{subtitle}</PopOnUpdateSpan>
 				</p>
 			</div>
 		</header>

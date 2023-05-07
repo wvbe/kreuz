@@ -7,7 +7,7 @@ import {
 	type Material,
 	ExecutionNode,
 	SequenceNode,
-} from '../../../level-1.ts';
+} from '../../../level-1/mod.ts';
 
 import { headOfState } from '../../heroes.ts';
 import { EntityBlackboard } from '../types.ts';

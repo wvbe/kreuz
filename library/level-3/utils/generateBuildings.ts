@@ -1,4 +1,4 @@
-import { Coordinate, Random, SeedI } from '../../level-1.ts';
+import { Coordinate, Random, SeedI } from '../../level-1/mod.ts';
 import { RectangleParty } from './generateRectangles.ts';
 
 type BuildingI = {

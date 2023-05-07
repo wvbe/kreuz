@@ -3,7 +3,7 @@ import {
 	type PersonEntity,
 	type EntityI,
 	type Game,
-} from '../../../level-1.ts';
+} from '../../../level-1/mod.ts';
 
 export function walkEntityToEntity(
 	game: Game,

@@ -1,17 +1,17 @@
 import { CallbackFn, SortFn } from '../types.ts';
 import { Event } from './Event.ts';
 
-export class Collection<T> {
-	#collection: Array<T> = [];
-	public readonly $add = new Event<[T[]]>('Collection $add');
-	public readonly $remove = new Event<[T[]]>('Collection $remove');
-	public readonly $change = new Event<[T[], T[]]>('Collection $change');
+export class Collection<ItemGeneric> {
+	protected readonly list: Array<ItemGeneric> = [];
+	public readonly $add = new Event<[ItemGeneric[]]>('Collection $add');
+	public readonly $remove = new Event<[ItemGeneric[]]>('Collection $remove');
+	public readonly $change = new Event<[ItemGeneric[], ItemGeneric[]]>('Collection $change');
 
-	public add(...items: T[]) {
+	public add(...items: ItemGeneric[]) {
 		this.change(items, []);
 	}
 
-	public remove(...items: T[]) {
+	public remove(...items: ItemGeneric[]) {
 		this.change([], items);
 	}
 
@@ -22,14 +22,14 @@ export class Collection<T> {
 	 * - If items that were removed from the collection, a list of them is emitted as $remove
 	 * - If either occurred, both lists (added and removed) are emitted as the $change event
 	 */
-	public change(addItems: T[], removeItems: T[]) {
-		this.#collection.push(...addItems);
+	public change(addItems: ItemGeneric[], removeItems: ItemGeneric[]) {
+		this.list.push(...addItems);
 		const wasActuallyRemoved = removeItems.filter((item) => {
-			const index = this.#collection.indexOf(item);
+			const index = this.list.indexOf(item);
 			if (index === -1) {
 				return false;
 			}
-			this.#collection.splice(index, 1);
+			this.list.splice(index, 1);
 			return true;
 		});
 		if (addItems.length) {
@@ -43,50 +43,50 @@ export class Collection<T> {
 		}
 	}
 
-	public get<S extends T = T>(index: number): S {
-		const result = this.#collection[index];
+	public get<S extends ItemGeneric = ItemGeneric>(index: number): S {
+		const result = this.list[index];
 		if (!result) {
 			throw new Error(`Could not get item ${index} from ${this.constructor.name}`);
 		}
 		return result as S;
 	}
 
-	public findIndex(filter: (item: T, index: number, array: T[]) => boolean): number {
-		return this.#collection.findIndex(filter);
+	public findIndex(
+		filter: (item: ItemGeneric, index: number, array: ItemGeneric[]) => boolean,
+	): number {
+		return this.list.findIndex(filter);
 	}
-	public find(filter: (item: T, index: number, array: T[]) => boolean): T | undefined {
-		return this.#collection.find(filter);
+	public find(
+		filter: (item: ItemGeneric, index: number, array: ItemGeneric[]) => boolean,
+	): ItemGeneric | undefined {
+		return this.list.find(filter);
 	}
-	public slice(start?: number, end?: number): T[] {
-		return this.#collection.slice(start, end);
+	public slice(start?: number, end?: number): ItemGeneric[] {
+		return this.list.slice(start, end);
 	}
-	public shift(): T | undefined {
-		return this.#collection.shift();
+	public shift(): ItemGeneric | undefined {
+		return this.list.shift();
 	}
 
 	get length() {
-		return this.#collection.length;
+		return this.list.length;
 	}
-	public sort(sorter: SortFn<T>) {
-		this.#collection.sort(sorter);
+	public sort(sorter: SortFn<ItemGeneric>) {
+		this.list.sort(sorter);
 		return this;
 	}
-	public forEach(callback: CallbackFn<[T, number, T[]]>): void {
-		return this.#collection.forEach(callback);
+	public forEach(callback: CallbackFn<[ItemGeneric, number, ItemGeneric[]]>): void {
+		return this.list.forEach(callback);
 	}
-	public map<X>(mapper: (item: T, index: number, all: T[]) => X): X[] {
-		return this.#collection.map(mapper);
+	public map<X>(mapper: (item: ItemGeneric, index: number, all: ItemGeneric[]) => X): X[] {
+		return this.list.map(mapper);
 	}
-	public filter<X = T>(filter: (item: T, index: number, array: T[]) => boolean) {
-		return this.#collection.filter(filter) as unknown[] as X[];
+	public filter<X = ItemGeneric>(
+		filter: (item: ItemGeneric, index: number, array: ItemGeneric[]) => boolean,
+	) {
+		return this.list.filter(filter) as unknown[] as X[];
 	}
-	/**
-	 * @deprecated You probably meant to use add(), because it will trigger update events.
-	 */
-	public push(...items: T[]): number {
-		return this.#collection.push(...items);
-	}
-	public includes(item: T): boolean {
-		return this.#collection.includes(item);
+	public includes(item: ItemGeneric): boolean {
+		return this.list.includes(item);
 	}
 }

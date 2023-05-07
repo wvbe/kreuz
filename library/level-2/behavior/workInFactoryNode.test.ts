@@ -9,7 +9,7 @@ import {
 	Game,
 	generateGridTerrainFromAscii,
 	SelectorNode,
-} from '../../level-1.ts';
+} from '../../level-1/mod.ts';
 import { workInFactory } from './workInFactoryNode.ts';
 
 describe('BT: workInFactory', () => {

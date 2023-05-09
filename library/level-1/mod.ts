@@ -52,4 +52,4 @@ export * from './constants/needs.ts';
 
 // Utilities
 export * from './types.ts';
-export * from './utilities/replacementToken.ts';
+export * from './utilities/ReplacementSpace.ts';

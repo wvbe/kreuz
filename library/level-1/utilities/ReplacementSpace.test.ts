@@ -1,5 +1,5 @@
 import { describe, expect, it, run } from 'tincan';
-import { token, replace, type ReplacementBuckets } from './replacementToken.ts';
+import { ReplacementSpace } from './ReplacementSpace.ts';
 
 it('replace', () => {
 	const objects: Record<string, Record<string, { id: string; toString: () => string }>> = {
@@ -12,17 +12,17 @@ it('replace', () => {
 			b: { id: 'b', toString: () => 'B' },
 		},
 	};
-	const buckets: ReplacementBuckets = {
+	const space = new ReplacementSpace({
 		foo: (id) => objects.foo[id],
 		bar: (id) => objects.bar[id],
-	};
-	const str = `${token('bar', objects.bar.a)} foo ${token('foo', objects.foo.a)} bar ${token(
+	});
+	const str = `${space.token('bar', objects.bar.a)} foo ${space.token(
 		'foo',
-		objects.foo.b,
-	)} baz`;
+		objects.foo.a,
+	)} bar ${space.token('foo', objects.foo.b)} baz`;
 	expect(str).toBe('#{bar:a} foo #{foo:a} bar #{foo:b} baz');
 
-	const replaced = replace(buckets, str);
+	const replaced = space.replace(str);
 	expect(replaced).toEqual([objects.bar.a, ' foo ', objects.foo.a, ' bar ', objects.foo.b, ' baz']);
 });
 

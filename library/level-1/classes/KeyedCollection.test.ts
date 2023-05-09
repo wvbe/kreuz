@@ -2,7 +2,7 @@ import { expect, it, describe, run, mock } from 'tincan';
 import { KeyedCollection } from './KeyedCollection.ts';
 
 describe('KeyedCollection', () => {
-	const collection = new KeyedCollection<{ id: number; name: string }>('id');
+	const collection = new KeyedCollection<'id', { id: number; name: string }>('id');
 
 	collection.add({ id: 1, name: 'One' });
 

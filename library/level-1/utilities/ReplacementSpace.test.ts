@@ -23,7 +23,14 @@ it('replace', () => {
 	expect(str).toBe('#{bar:a} foo #{foo:a} bar #{foo:b} baz');
 
 	const replaced = space.replace(str);
-	expect(replaced).toEqual([objects.bar.a, ' foo ', objects.foo.a, ' bar ', objects.foo.b, ' baz']);
+	expect(replaced).toEqual([
+		[objects.bar.a, 'a', '#{bar:a}'],
+		' foo ',
+		[objects.foo.a, 'a', '#{foo:a}'],
+		' bar ',
+		[objects.foo.b, 'b', '#{foo:b}'],
+		' baz',
+	]);
 });
 
 run();

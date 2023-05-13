@@ -15,6 +15,7 @@ export const bt = {
 // Constants
 export * as blueprints from './blueprints.ts';
 export * as materials from './materials.ts';
+export * as heroes from './heroes.ts';
 
 // Data & generators
 export * from './constants/names.ts';

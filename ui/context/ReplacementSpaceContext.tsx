@@ -5,7 +5,7 @@ import React, {
 	useContext,
 	useMemo,
 } from 'react';
-import { ReplacementSpace, type EntityI } from '@lib';
+import { ReplacementSpace, type EntityI, token, heroes } from '@lib';
 import { useGameContext } from './GameContext.tsx';
 
 type RepSpaceBuckets = {
@@ -21,7 +21,8 @@ export const ReplacementSpaceContext: FunctionComponent<{
 	const space = useMemo(
 		() =>
 			new ReplacementSpace<RepSpaceBuckets>({
-				entity: (id) => game.entities.getByKey(id),
+				entity: (id) =>
+					id === heroes.headOfState.id ? heroes.headOfState : game.entities.getByKey(id),
 			}),
 		[game],
 	);

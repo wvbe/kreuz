@@ -10,6 +10,16 @@ type BucketFunctions<BucketsGeneric extends Record<string, { id: string }>> = Re
 	(id: string) => BucketItems<BucketsGeneric> | null
 >;
 
+export type ReplacementSpaceResult<BucketsGeneric extends Record<string, { id: string }>> = Array<
+	| string
+	| [
+			// A tuple of the matching item (or null), the key, and the entire token
+			BucketItems<BucketsGeneric> | null,
+			string,
+			string,
+	  ]
+>;
+
 export class ReplacementSpace<BucketsGeneric extends Record<string, { id: string }>> {
 	#buckets: BucketFunctions<BucketsGeneric>;
 
@@ -21,9 +31,9 @@ export class ReplacementSpace<BucketsGeneric extends Record<string, { id: string
 		return token(bucket, item);
 	}
 
-	public replace(phrase: string): Array<string | BucketItems<BucketsGeneric> | null> {
+	public replace(phrase: string): ReplacementSpaceResult<BucketsGeneric> {
 		const regex = /#\{([^:]*):([^}]*)\}/g;
-		const results: Array<string | BucketItems<BucketsGeneric> | null> = [];
+		const results: ReplacementSpaceResult<BucketsGeneric> = [];
 
 		console.log('Replace', phrase);
 		let trailingIndex = 0;
@@ -31,7 +41,7 @@ export class ReplacementSpace<BucketsGeneric extends Record<string, { id: string
 		while ((match = regex.exec(phrase))) {
 			const [token, bucket, key] = match;
 			results.push(phrase.substring(trailingIndex, match.index));
-			results.push(this.#buckets[bucket](key));
+			results.push([this.#buckets[bucket](key) || null, key, token]);
 			trailingIndex = match.index + token.length;
 		}
 		results.push(phrase.substring(trailingIndex));

@@ -70,7 +70,7 @@ export function createBuyFromMarketSequence(createDesirabilityScore: Desirabilit
 				if (!deal) {
 					return EventedPromise.reject();
 				}
-				entity.$status.set('Walking to a market');
+				entity.$status.set(`Walking to ${deal.market}`);
 				return walkEntityToEntity(game, entity, deal.market);
 			},
 		),

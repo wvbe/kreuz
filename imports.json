@@ -11,6 +11,7 @@
 
 		"react": "https://esm.sh/react@18.2.0?pin=v118",
 		"react-dom": "https://esm.sh/react-dom@18.2.0?pin=v118",
+		"react-router-dom": "npm:react-router-dom@6.11.1",
 
 		"path": " https://deno.land/std@0.185.0/path/mod.ts",
 		"tincan": "https://deno.land/x/tincan@1.0.1/mod.ts",

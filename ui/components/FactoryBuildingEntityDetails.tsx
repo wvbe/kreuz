@@ -4,7 +4,7 @@ import { useEventData, useEventedValue } from '../hooks/useEventedValue.ts';
 import { FillBar } from './atoms/FillBar.tsx';
 import { InventoryUI } from './InventoryUI.tsx';
 import { BlueprintBadge } from './BlueprintBadge.tsx';
-
+import { EntityLink } from './EntityLink.tsx';
 export const FactoryBuildingEntityDetails: FunctionComponent<{ entity: FactoryBuildingEntity }> = ({
 	entity,
 }) => {
@@ -24,7 +24,9 @@ export const FactoryBuildingEntityDetails: FunctionComponent<{ entity: FactoryBu
 			{workers.length ? (
 				<ul>
 					{workers.map((worker) => (
-						<li key={worker.id}>{worker.label}</li>
+						<li key={worker.id}>
+							<EntityLink entity={worker} />
+						</li>
 					))}
 				</ul>
 			) : null}

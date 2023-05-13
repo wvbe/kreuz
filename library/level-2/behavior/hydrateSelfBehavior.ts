@@ -95,7 +95,7 @@ export const hydrateSelfBehavior = new SequenceNode<EntityBlackboard>(
 						if (!deal) {
 							return EventedPromise.reject();
 						}
-						entity.$status.set(`Walking to a well`);
+						entity.$status.set(`Walking to ${deal.factory}`);
 						return walkEntityToEntity(game, entity, deal.factory);
 					},
 				),

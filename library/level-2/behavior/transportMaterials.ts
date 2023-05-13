@@ -129,7 +129,7 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 	new ExecutionNode<
 		EntityBlackboard & { tradeOrder: TradeOrder; from: TradeEntityI; to: TradeEntityI }
 	>('Walk to supplier', ({ game, entity, from }) => {
-		entity.$status.set(`Going to pick up materials for transport`);
+		entity.$status.set(`Going to pick up materials from ${from}`);
 		return walkEntityToEntity(game, entity, from);
 	}),
 	new ExecutionNode<
@@ -148,7 +148,7 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 	new ExecutionNode<
 		EntityBlackboard & { tradeOrder: TradeOrder; from: TradeEntityI; to: TradeEntityI }
 	>('Walk to deliver', ({ game, entity, to }) => {
-		entity.$status.set(`Delivering some materials`);
+		entity.$status.set(`Delivering materials to ${to}`);
 		return walkEntityToEntity(game, entity, to);
 	}),
 	new ExecutionNode<

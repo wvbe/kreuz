@@ -25,7 +25,7 @@ export const Clock: FunctionComponent = () => {
 				Resume
 			</button>
 			<FillBar
-				ratio={(time % 1000) / 1000}
+				ratio={(time % (1000 * 24)) / (1000 * 24)}
 				label={`${Math.ceil(time / 1000)} hours since start of the game`}
 			/>
 

@@ -2,24 +2,30 @@ export function token(bucket: string | number | symbol, item: { id: string }): s
 	return `#{${String(bucket)}:${item.id}}`;
 }
 
-export class ReplacementSpace<
-	BucketsGeneric extends Record<string, (key: string) => ItemGeneric>,
-	ItemGeneric extends { id: string },
-> {
-	#buckets: BucketsGeneric;
+type BucketItems<BucketsGeneric extends Record<string, { id: string }>> =
+	BucketsGeneric extends Record<string, infer I> ? I : never;
 
-	public constructor(buckets: BucketsGeneric) {
+type BucketFunctions<BucketsGeneric extends Record<string, { id: string }>> = Record<
+	string,
+	(id: string) => BucketItems<BucketsGeneric> | null
+>;
+
+export class ReplacementSpace<BucketsGeneric extends Record<string, { id: string }>> {
+	#buckets: BucketFunctions<BucketsGeneric>;
+
+	public constructor(buckets: BucketFunctions<BucketsGeneric>) {
 		this.#buckets = buckets;
 	}
 
-	public token(bucket: keyof BucketsGeneric, item: ItemGeneric): string {
+	public token(bucket: keyof BucketsGeneric, item: BucketItems<BucketsGeneric>): string {
 		return token(bucket, item);
 	}
 
-	public replace(phrase: string): Array<string | ItemGeneric> {
+	public replace(phrase: string): Array<string | BucketItems<BucketsGeneric> | null> {
 		const regex = /#\{([^:]*):([^}]*)\}/g;
-		const results: Array<string | ItemGeneric> = [];
+		const results: Array<string | BucketItems<BucketsGeneric> | null> = [];
 
+		console.log('Replace', phrase);
 		let trailingIndex = 0;
 		let match;
 		while ((match = regex.exec(phrase))) {

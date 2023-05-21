@@ -99,6 +99,9 @@ export class Coordinate implements CoordinateI {
 		return [this.x, this.y, this.z];
 	}
 
+	public clone() {
+		return Coordinate.clone(this);
+	}
 	static clone(coord: { x: number; y: number; z: number }) {
 		return new Coordinate(coord.x, coord.y, coord.z);
 	}

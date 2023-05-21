@@ -2,6 +2,7 @@ import { Collection, EntityI, type Terrain } from '@lib';
 import React, { FunctionComponent, useMemo } from 'react';
 import { MapEntity } from './MapEntity.tsx';
 import { MapTile } from './MapTile.tsx';
+import { MapTerrainOutline } from './MapTerrainOutline.tsx';
 
 const MARGIN = 25;
 
@@ -63,7 +64,12 @@ export const MapTerrain: FunctionComponent<{ terrain: Terrain; entities: Collect
 
 	return (
 		<div className="map-terrain" style={terrainCss}>
-			<svg {...svgProps}>{tiles}</svg>
+			<svg {...svgProps}>
+				<g className="tiles">{tiles}</g>
+				{/* <g className="outline">
+					<MapTerrainOutline terrain={terrain} />
+				</g> */}
+			</svg>
 			<div style={overlayCss}>{entities2}</div>
 		</div>
 	);

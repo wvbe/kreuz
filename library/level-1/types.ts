@@ -21,6 +21,7 @@ export interface CoordinateI {
 	transform(dx: GameDistance, dy: GameDistance, dz: GameDistance): this;
 	transform(delta: CoordinateI): this;
 	scale(multiplier: number): this;
+	clone(): CoordinateI;
 }
 
 /**

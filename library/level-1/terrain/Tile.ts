@@ -17,12 +17,16 @@ export class Tile extends Coordinate implements TileI {
 		return this === coord || (coord && this.x === coord.x && this.y === coord.y);
 	}
 
+	public clone(): Tile {
+		return Tile.clone(this);
+	}
 	/**
 	 * @deprecated not currently in use?
 	 */
 	public static clone(coord: TileI) {
 		const coord2 = new Tile(coord.x, coord.y, coord.z);
 		coord2.terrain = coord.terrain;
+		coord2.neighbors.splice(0, 0, ...coord.neighbors);
 		return coord2;
 	}
 

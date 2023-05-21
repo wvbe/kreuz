@@ -1,8 +1,8 @@
 import React, { FunctionComponent, useMemo } from 'react';
 import { materials } from '@lib';
-import { Cell, Row, Table } from './atoms/Table.tsx';
+import { Cell, Row, Table } from '../components/atoms/Table.tsx';
 import { InventoryStack } from './InventoryStack.tsx';
-import { CollapsibleWindow } from './atoms/CollapsibleWindow.tsx';
+import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow.tsx';
 
 const materialsList = Object.keys(materials).map((key) => materials[key as keyof typeof materials]);
 

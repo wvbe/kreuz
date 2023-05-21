@@ -30,5 +30,5 @@ export const MapTile: FunctionComponent<{ zoom: number; tile: TileI }> = ({ tile
 		.map((coord) => `${(tile.x + coord.x) * zoom},${(tile.y + coord.y) * zoom}`)
 		.join(' ');
 
-	return <polygon points={points} fill={green} />;
+	return <polygon points={points} fill={green.toString()} />;
 };

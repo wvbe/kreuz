@@ -1,11 +1,10 @@
-import { PersonEntity, PERSON_NEEDS, Need } from '@lib';
+import { Need, PERSON_NEEDS, PersonEntity } from '@lib';
 import React, { FunctionComponent, useMemo } from 'react';
+
+import { InventoryUI } from '../inventory/InventoryUI.tsx';
+import { TradeOrderLog } from '../components/TradeOrderLog.tsx';
+import { FillBar } from '../components/atoms/FillBar.tsx';
 import { useEventedValue } from '../hooks/useEventedValue.ts';
-import { Badge } from './atoms/Badge.tsx';
-import { FillBar } from './atoms/FillBar.tsx';
-import { BehaviorTree } from './BehaviorTree.tsx';
-import { InventoryUI } from './InventoryUI.tsx';
-import { TradeOrderLog } from './TradeOrderLog.tsx';
 
 const PersonEntityNeed: FunctionComponent<{ need: Need }> = ({ need }) => {
 	const value = useEventedValue(need);

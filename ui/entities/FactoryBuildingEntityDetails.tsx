@@ -1,10 +1,10 @@
 import { FactoryBuildingEntity, PersonEntity, Collection } from '@lib';
 import React, { FunctionComponent } from 'react';
 import { useEventData, useEventedValue } from '../hooks/useEventedValue.ts';
-import { FillBar } from './atoms/FillBar.tsx';
-import { InventoryUI } from './InventoryUI.tsx';
-import { BlueprintBadge } from './BlueprintBadge.tsx';
-import { EntityLink } from './EntityLink.tsx';
+import { FillBar } from '../components/atoms/FillBar.tsx';
+import { InventoryUI } from '../inventory/InventoryUI.tsx';
+import { BlueprintBadge } from '../components/BlueprintBadge.tsx';
+import { EntityLink } from '../entities/EntityLink.tsx';
 export const FactoryBuildingEntityDetails: FunctionComponent<{ entity: FactoryBuildingEntity }> = ({
 	entity,
 }) => {

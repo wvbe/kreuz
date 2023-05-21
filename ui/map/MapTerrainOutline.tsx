@@ -1,7 +1,5 @@
-import { Collection, type CoordinateI, type EntityI, type Terrain } from '@lib';
+import { type CoordinateI, type Terrain } from '@lib';
 import React, { FunctionComponent, useMemo } from 'react';
-import { MapEntity } from './MapEntity.tsx';
-import { MapTile } from './MapTile.tsx';
 
 const MARGIN = 25;
 

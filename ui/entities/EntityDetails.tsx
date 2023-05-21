@@ -10,7 +10,7 @@ import { EntityBadge } from './EntityBadge.tsx';
 import { FactoryBuildingEntityDetails } from './FactoryBuildingEntityDetails.tsx';
 import { MarketBuildingEntityDetails } from './MarketBuildingEntityDetails.tsx';
 import { PersonEntityDetails } from './PersonEntityDetails.tsx';
-import { CollapsibleWindow } from './atoms/CollapsibleWindow.tsx';
+import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow.tsx';
 
 export const EntityDetails: FunctionComponent<{ entity?: EntityI }> = ({ entity }) => {
 	if (!entity) {

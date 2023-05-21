@@ -2,9 +2,9 @@
 
 @import url('./components/GameUI.css');
 @import url('./components/atoms/FillBar.css');
-@import url('./components/PersonEntityDetails.css');
-@import url('./components/InventoryUI.css');
-@import url('./components/InventoryStack.css');
+@import url('./entities/PersonEntityDetails.css');
+@import url('./inventory/InventoryUI.css');
+@import url('./inventory/InventoryStack.css');
 @import url('./components/atoms/Badge.css');
 @import url('./components/atoms/CollapsibleWindow.css');
 @import url('./map/MapTerrain.css');

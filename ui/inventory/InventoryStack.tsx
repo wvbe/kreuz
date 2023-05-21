@@ -1,6 +1,6 @@
 import { Material } from '@lib';
 import React, { FunctionComponent } from 'react';
-import { PopOnUpdateSpan } from './atoms/PopOnUpdateSpan.tsx';
+import { PopOnUpdateSpan } from '../components/atoms/PopOnUpdateSpan.tsx';
 
 export const InventoryStack: FunctionComponent<{
 	material: Material | null;

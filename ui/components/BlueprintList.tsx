@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useMemo } from 'react';
 import { blueprints } from '@lib';
 import { Cell, Row, Table } from './atoms/Table.tsx';
-import { InventoryBag } from './InventoryUI.tsx';
+import { InventoryBag } from '../inventory/InventoryUI.tsx';
 import { CollapsibleWindow } from './atoms/CollapsibleWindow.tsx';
 
 const blueprintsList = Object.keys(blueprints).map(

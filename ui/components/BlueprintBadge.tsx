@@ -1,6 +1,6 @@
 import { Blueprint } from '@lib';
 import React, { FunctionComponent } from 'react';
-import { InventoryBag } from './InventoryUI.tsx';
+import { InventoryBag } from '../inventory/InventoryUI.tsx';
 import { Cell, Row, Table } from './atoms/Table.tsx';
 
 export const BlueprintBadge: FunctionComponent<{ blueprint: Blueprint | null }> = ({

@@ -2,9 +2,9 @@ import { Collection, CoordinateI, EntityI, EventedValue, FilterFn } from '@lib';
 import React, { FunctionComponent, useMemo } from 'react';
 import { useEventedValue } from '../hooks/useEventedValue.ts';
 import { setSelectedEntity } from '../hooks/useSelectedEntity.ts';
-import { CollapsibleWindow } from './atoms/CollapsibleWindow.tsx';
-import { PopOnUpdateSpan } from './atoms/PopOnUpdateSpan.tsx';
-import { Cell, Row, Table } from './atoms/Table.tsx';
+import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow.tsx';
+import { PopOnUpdateSpan } from '../components/atoms/PopOnUpdateSpan.tsx';
+import { Cell, Row, Table } from '../components/atoms/Table.tsx';
 import { EntityBadge } from './EntityBadge.tsx';
 
 const EntityLocationPhrase: FunctionComponent<{ location: EventedValue<CoordinateI> }> = ({

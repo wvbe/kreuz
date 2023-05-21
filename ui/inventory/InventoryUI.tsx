@@ -1,7 +1,7 @@
 import { EventedValue, Inventory, MaterialState } from '@lib';
 import React, { FunctionComponent, useCallback } from 'react';
-import { useEventData, useEventedValue } from '../hooks/useEventedValue.ts';
 import { InventoryStack } from './InventoryStack.tsx';
+import { useEventData, useEventedValue } from '../hooks/useEventedValue.ts';
 
 export const InventoryBag: FunctionComponent<{ stacks: MaterialState[]; capacity?: number }> = ({
 	stacks,

@@ -1,5 +1,5 @@
 import React, { useMemo, type FunctionComponent } from 'react';
-import { EntityLink } from '../EntityLink.tsx';
+import { EntityLink } from '../../entities/EntityLink.tsx';
 import { useReplacementSpaceContext } from '../../context/ReplacementSpaceContext.tsx';
 
 export const TokenizedText: FunctionComponent<{ text: string }> = ({ text }) => {

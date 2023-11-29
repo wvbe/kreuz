@@ -28,13 +28,13 @@ const demo: Demo = (driver) => {
 	const game = new Game('1', terrain);
 	driver.attach(game);
 
-	const farm = new FactoryBuildingEntity('farm', terrain.getTileClosestToXy(3, 3), {
+	const farm = new FactoryBuildingEntity('farm', terrain.getTileClosestToXy(3, 3).toArray(), {
 		maxStackSpace: 6,
 	});
 	farm.setBlueprint(blueprints.growWheat);
 	farm.inventory.set(materials.wheat, 99);
 
-	const mill = new FactoryBuildingEntity('mill', terrain.getTileClosestToXy(8, 3), {
+	const mill = new FactoryBuildingEntity('mill', terrain.getTileClosestToXy(8, 3).toArray(), {
 		maxStackSpace: 6,
 	});
 	mill.setBlueprint(blueprints.wheatProcessing);
@@ -42,7 +42,7 @@ const demo: Demo = (driver) => {
 	game.entities.add(farm, mill);
 
 	for (let i = 0; i < 5; i++) {
-		const entity = new PersonEntity(`person-${i}`, terrain.getTileClosestToXy(0, 0), {
+		const entity = new PersonEntity(`person-${i}`, terrain.getTileClosestToXy(0, 0).toArray(), {
 			gender: 'm',
 			firstName: 'Melanie',
 		});

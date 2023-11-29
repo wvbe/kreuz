@@ -3,7 +3,7 @@ import { EventedValue } from '../classes/EventedValue.ts';
 import { ProgressingNumericValue } from '../classes/ProgressingNumericValue.ts';
 import { Blueprint } from '../inventory/Blueprint.ts';
 import { Inventory } from '../inventory/Inventory.ts';
-import { type CoordinateI } from '../types.ts';
+import { type SimpleCoordinate } from '../types.ts';
 import { BuildingEntity } from './entity.building.ts';
 import { PersonEntity } from './entity.person.ts';
 import { type EntityI } from './types.ts';
@@ -74,7 +74,7 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 
 	public constructor(
 		id: string,
-		location: CoordinateI,
+		location: SimpleCoordinate,
 		options: Partial<FactoryBuildingEntityOptions>,
 	) {
 		super(id, location, {

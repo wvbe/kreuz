@@ -1,6 +1,7 @@
 import { Coordinate } from './Coordinate.ts';
 import { SaveTerrainJson } from '../types-savedgame.ts';
 import { CoordinateI, FilterFn, TileI } from '../types.ts';
+import { DualMeshTile } from './DualMeshTile.ts';
 
 export class Terrain {
 	readonly #tiles: TileI[] = [];
@@ -154,10 +155,17 @@ export class Terrain {
 	/**
 	 * Serialize for a save game JSON
 	 */
-	public serializeToSaveJson(): SaveTerrainJson {
+	public toSaveJson(): SaveTerrainJson {
 		return {
-			tiles: this.#tiles.map((tile) => tile.serializeToSaveJson()),
+			tiles: this.#tiles.map((tile) => tile.toSaveJson()),
 			size: this.size,
 		};
+	}
+	public static fromSaveJson(save: SaveTerrainJson) {
+		const terrain = new Terrain(
+			save.size,
+			save.tiles.map((tile) => DualMeshTile.fromSaveJson(tile)),
+		);
+		return terrain;
 	}
 }

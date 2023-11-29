@@ -1,6 +1,6 @@
 import { Inventory } from '../inventory/Inventory.ts';
 import { Material } from '../inventory/Material.ts';
-import { CoordinateI } from '../types.ts';
+import { SimpleCoordinate } from '../types.ts';
 import { BuildingEntity } from './entity.building.ts';
 import { EntityI } from './types.ts';
 
@@ -11,7 +11,7 @@ export class MarketBuildingEntity extends BuildingEntity implements EntityI {
 
 	public readonly material: Material;
 
-	constructor(id: string, location: CoordinateI, material: Material) {
+	constructor(id: string, location: SimpleCoordinate, material: Material) {
 		super(id, location, {
 			baseDepth: 1,
 			baseHeight: 1,

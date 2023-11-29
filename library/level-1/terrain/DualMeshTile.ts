@@ -1,6 +1,7 @@
 import { Coordinate } from './Coordinate.ts';
 import { TileI } from '../types.ts';
 import { Tile } from './Tile.ts';
+import { type SaveTileJson } from '../types-savedgame.ts';
 
 export class DualMeshTile extends Tile implements TileI {
 	public readonly neighbors: DualMeshTile[] = [];
@@ -61,5 +62,21 @@ export class DualMeshTile extends Tile implements TileI {
 
 	public isAdjacentToEdge() {
 		return !!this.#isGhost;
+	}
+
+	public toSaveJson(): SaveTileJson {
+		return {
+			center: this.toArray(),
+			outline: this.#outlinePoints.map((point) => point.toArray()),
+			ghost: !!this.#isGhost,
+		};
+	}
+	public static fromSaveJson(save: SaveTileJson) {
+		const tile = new DualMeshTile(
+			...save.center,
+			save.outline.map((point) => point.slice(0, 2) as [number, number]),
+			save.ghost,
+		);
+		return tile;
 	}
 }

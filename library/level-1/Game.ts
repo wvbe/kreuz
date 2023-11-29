@@ -5,6 +5,7 @@ import { EntityI } from './entities/types.ts';
 import { Terrain } from './terrain/Terrain.ts';
 import { SavedGameJson } from './types-savedgame.ts';
 import { SeedI } from './types.ts';
+import { castSaveJsonToEntity } from './entities/castSaveJsonToEntity.ts';
 
 export default class Game {
 	public readonly terrain: Terrain;
@@ -62,13 +63,18 @@ export default class Game {
 	/**
 	 * Serialize for a save game JSON
 	 */
-	public serializeToSaveJson(): SavedGameJson {
+	public toSaveJson(): SavedGameJson {
 		return {
 			version: 'alpha', // todo version some time,
-			terrain: this.terrain.serializeToSaveJson(),
-			entities: this.entities.map((entity) => entity.serializeToSaveJson()),
-			time: this.time.serializeToSaveJson(),
+			terrain: this.terrain.toSaveJson(),
+			entities: this.entities.map((entity) => entity.toSaveJson()) as SavedGameJson['entities'],
+			time: this.time.toSaveJson(),
 			seed: this.seed,
 		};
+	}
+	public static instantiateFromSaveJson(save: SavedGameJson): Game {
+		const game = new Game(save.seed, Terrain.fromSaveJson(save.terrain));
+		game.entities.add(...save.entities.map((entity) => castSaveJsonToEntity(entity)));
+		return game;
 	}
 }

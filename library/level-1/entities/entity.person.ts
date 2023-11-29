@@ -6,7 +6,8 @@ import { Path } from '../classes/Path.ts';
 import { PersonNeedId, PERSON_NEEDS } from '../constants/needs.ts';
 import type Game from '../Game.ts';
 import { Inventory } from '../inventory/Inventory.ts';
-import { type CallbackFn, type CoordinateI, type TileI } from '../types.ts';
+import { SaveEntityJson } from '../types-savedgame.ts';
+import { type CallbackFn, type CoordinateI, type TileI, type SimpleCoordinate } from '../types.ts';
 import { Entity } from './entity.ts';
 import { Need } from './Need.ts';
 
@@ -15,7 +16,10 @@ type PersonEntityOptions = {
 	firstName: string;
 	needs?: Partial<Record<PersonNeedId, number>>;
 };
+
 type PersonEntityBehavior = BehaviorTreeNodeI<{ game: Game; entity: PersonEntity }> | null;
+
+export type SavePersonEntityJson = SaveEntityJson<'person'> & Required<PersonEntityOptions>;
 
 export class PersonEntity extends Entity {
 	// The amount of game coordinate per millisecond
@@ -105,11 +109,7 @@ export class PersonEntity extends Entity {
 	 */
 	public type = 'person';
 
-	constructor(
-		id: string,
-		location: { x: number; y: number; z: number },
-		options: PersonEntityOptions,
-	) {
+	constructor(id: string, location: SimpleCoordinate, options: PersonEntityOptions) {
 		super(id, location);
 
 		const { needs, ...userData } = options;
@@ -259,5 +259,11 @@ export class PersonEntity extends Entity {
 		}
 		const done = () => this.$stepEnd.emit(coordinate);
 		this.$stepStart.emit(coordinate, this.distanceTo(coordinate) / this.walkSpeed, done);
+	}
+
+	public static fromSaveJson(save: SavePersonEntityJson) {
+		const { id, location, ...parameters } = save;
+		const inst = new PersonEntity(id, location, parameters);
+		return inst;
 	}
 }

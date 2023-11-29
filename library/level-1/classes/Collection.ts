@@ -56,14 +56,17 @@ export class Collection<ItemGeneric> {
 	): number {
 		return this.list.findIndex(filter);
 	}
+
 	public find(
 		filter: (item: ItemGeneric, index: number, array: ItemGeneric[]) => boolean,
 	): ItemGeneric | undefined {
 		return this.list.find(filter);
 	}
+
 	public slice(start?: number, end?: number): ItemGeneric[] {
 		return this.list.slice(start, end);
 	}
+
 	public shift(): ItemGeneric | undefined {
 		return this.list.shift();
 	}
@@ -71,21 +74,26 @@ export class Collection<ItemGeneric> {
 	get length() {
 		return this.list.length;
 	}
+
 	public sort(sorter: SortFn<ItemGeneric>) {
 		this.list.sort(sorter);
 		return this;
 	}
+
 	public forEach(callback: CallbackFn<[ItemGeneric, number, ItemGeneric[]]>): void {
 		return this.list.forEach(callback);
 	}
+
 	public map<X>(mapper: (item: ItemGeneric, index: number, all: ItemGeneric[]) => X): X[] {
 		return this.list.map(mapper);
 	}
+
 	public filter<X = ItemGeneric>(
 		filter: (item: ItemGeneric, index: number, array: ItemGeneric[]) => boolean,
 	) {
 		return this.list.filter(filter) as unknown[] as X[];
 	}
+
 	public includes(item: ItemGeneric): boolean {
 		return this.list.includes(item);
 	}

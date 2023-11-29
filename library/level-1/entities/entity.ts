@@ -5,7 +5,7 @@ import { type TradeOrder } from '../classes/TradeOrder.ts';
 import type Game from '../Game.ts';
 import { Coordinate } from '../terrain/Coordinate.ts';
 import { type SaveEntityJson } from '../types-savedgame.ts';
-import { type CoordinateI } from '../types.ts';
+import { type CoordinateI, type SimpleCoordinate } from '../types.ts';
 import { token } from '../utilities/ReplacementSpace.ts';
 import { type EntityI } from './types.ts';
 
@@ -29,13 +29,13 @@ export class Entity extends Attachable<[Game]> implements EntityI {
 
 	public readonly $log = new Collection<TradeOrder>();
 
-	constructor(id: string, location: { x: number; y: number; z: number }) {
+	constructor(id: string, location: SimpleCoordinate) {
 		super();
 
 		this.id = id;
 
 		this.$$location = new EventedValue(
-			Coordinate.clone(location),
+			new Coordinate(...location),
 			`${this.constructor.name} $$location`,
 		);
 	}
@@ -67,7 +67,7 @@ export class Entity extends Attachable<[Game]> implements EntityI {
 	/**
 	 * Serialize for a save game JSON
 	 */
-	public serializeToSaveJson(): SaveEntityJson {
+	public toSaveJson(): SaveEntityJson {
 		return {
 			type: this.type,
 			id: this.id,

@@ -43,9 +43,13 @@ const demo = (driver: DriverI) => {
 	const game = new Game('1', generateGridTerrainFromAscii(`XXX`));
 	driver.attach(game);
 
-	const factory = new FactoryBuildingEntity('factory', game.terrain.getTileClosestToXy(0, 0), {
-		maxWorkers: 3,
-	});
+	const factory = new FactoryBuildingEntity(
+		'factory',
+		game.terrain.getTileClosestToXy(0, 0).toArray(),
+		{
+			maxWorkers: 3,
+		},
+	);
 	factory.setBlueprint(wheatProcessing);
 	game.entities.add(factory);
 
@@ -86,7 +90,7 @@ describe('FactoryBuildingEntity', () => {
 		expect(game.time.now).toBe(0);
 		expect(game.time.getNextEventAbsoluteTime()).toBe(Infinity);
 
-		const worker = new PersonEntity('worker', game.terrain.getTileClosestToXy(0, 0), {
+		const worker = new PersonEntity('worker', game.terrain.getTileClosestToXy(0, 0).toArray(), {
 			gender: 'm',
 			firstName: 'test',
 		});
@@ -129,7 +133,7 @@ describe('FactoryBuildingEntity', () => {
 		const { game: game1, driver: driver1 } = demo(new TestDriver());
 		const factory1 = game1.entities.get(0) as FactoryBuildingEntity;
 		for (let i = 0; i < 1; i++) {
-			const worker = new PersonEntity(String(i), game1.terrain.getTileClosestToXy(0, 0), {
+			const worker = new PersonEntity(String(i), game1.terrain.getTileClosestToXy(0, 0).toArray(), {
 				gender: 'm',
 				firstName: 'test ' + i,
 			});
@@ -143,7 +147,7 @@ describe('FactoryBuildingEntity', () => {
 		const { game: game2, driver: driver2 } = demo(new TestDriver());
 		const factory2 = game2.entities.get(0) as FactoryBuildingEntity;
 		for (let i = 0; i < 2; i++) {
-			const worker = new PersonEntity(String(i), game2.terrain.getTileClosestToXy(0, 0), {
+			const worker = new PersonEntity(String(i), game2.terrain.getTileClosestToXy(0, 0).toArray(), {
 				gender: 'm',
 				firstName: 'test ' + i,
 			});

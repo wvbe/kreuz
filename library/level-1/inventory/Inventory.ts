@@ -5,7 +5,7 @@
 
 import { Event } from '../classes/Event.ts';
 import { TradeOrder } from '../classes/TradeOrder.ts';
-import { type Material } from './Material.ts';
+import { Material } from './Material.ts';
 import { type MaterialState } from './types.ts';
 
 function getRequiredStackSpace(cargo: MaterialState[]) {
@@ -328,4 +328,23 @@ export class Inventory {
 
 		this.cancelReservation(tradeOrder);
 	}
+
+	public static fromSaveJson(save: SaveInventoryJson) {
+		const { capacity, items } = save;
+		const inst = new Inventory(capacity === null ? Infinity : capacity);
+		inst.changeMultiple(
+			items.map(({ materialIconLabel, quantity }) => ({
+				// @TODO look up the actual material belonging to `materialIconLabel`
+				material: new Material('Unknown', { symbol: '❓', stackSize: 100 }),
+				quantity,
+			})),
+			true,
+		);
+		return inst;
+	}
 }
+
+type SaveInventoryJson = {
+	capacity: number | null;
+	items: Array<{ materialIconLabel: string; quantity: number }>;
+};

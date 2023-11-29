@@ -29,13 +29,13 @@ const demo: Demo = (driver) => {
 	const game = new Game('1', terrain);
 	driver.attach(game);
 
-	const entity = new PersonEntity('1', terrain.getTileClosestToXy(0, 0), {
+	const entity = new PersonEntity('1', terrain.getTileClosestToXy(0, 0).toArray(), {
 		gender: 'm',
 		firstName: 'Melanie',
 	});
 	game.entities.add(entity);
 
-	const well = new FactoryBuildingEntity('2', terrain.getTileClosestToXy(3, 3), {
+	const well = new FactoryBuildingEntity('2', terrain.getTileClosestToXy(3, 3).toArray(), {
 		maxWorkers: 0,
 		maxStackSpace: 1,
 	});

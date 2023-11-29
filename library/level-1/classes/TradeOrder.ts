@@ -158,7 +158,6 @@ export class TradeOrder {
 
 		owner1.$log.add(this);
 		owner2.$log.add(this);
-		console.log(this.getSummary());
 	}
 
 	public getSummary(): string {

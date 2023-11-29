@@ -1,4 +1,5 @@
-import { CoordinateI } from '../types.ts';
+import { type SaveEntityJson } from '../types-savedgame.ts';
+import { SimpleCoordinate } from '../types.ts';
 import { Entity } from './entity.ts';
 import { EntityI } from './types.ts';
 
@@ -9,18 +10,17 @@ export type SettlementParametersI = {
 	scale: number;
 };
 
+export type SaveSettlementEntityJson = SaveEntityJson<'settlement'> & SettlementParametersI;
+
 export class SettlementEntity extends Entity implements EntityI {
 	public readonly parameters: SettlementParametersI;
 
 	// @TODO proper implementation of BuildingI and CollectionI
 	public readonly buildings: never[];
 
-	/**
-	 * @deprecated not used yet.
-	 */
 	public type = 'settlement';
 
-	constructor(id: string, location: CoordinateI, parameters: SettlementParametersI) {
+	constructor(id: string, location: SimpleCoordinate, parameters: SettlementParametersI) {
 		super(id, location);
 		this.parameters = parameters;
 		this.buildings = [];
@@ -33,5 +33,10 @@ export class SettlementEntity extends Entity implements EntityI {
 	}
 	public get icon(): string {
 		return '🏠';
+	}
+	public static fromSaveJson(save: SaveSettlementEntityJson) {
+		const { id, location, ...parameters } = save;
+		const inst = new SettlementEntity(id, location, parameters);
+		return inst;
 	}
 }

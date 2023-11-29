@@ -31,13 +31,17 @@ describe('BT: workInFactory', () => {
 	);
 	new TestDriver().attach(game);
 
-	const entity = new PersonEntity('person-1', game.terrain.getTileClosestToXy(3, 3), {
+	const entity = new PersonEntity('person-1', game.terrain.getTileClosestToXy(3, 3).toArray(), {
 		gender: 'm',
 		firstName: 'test',
 	});
-	const factory = new FactoryBuildingEntity('factory', game.terrain.getTileClosestToXy(5, 5), {
-		maxWorkers: 1,
-	});
+	const factory = new FactoryBuildingEntity(
+		'factory',
+		game.terrain.getTileClosestToXy(5, 5).toArray(),
+		{
+			maxWorkers: 1,
+		},
+	);
 	factory.setBlueprint(beeKeeping);
 	game.entities.add(entity, factory);
 

@@ -62,7 +62,7 @@ export interface EntityI extends AttachableI {
 	 */
 	$$location: EventedValue<CoordinateI>;
 
-	serializeToSaveJson(): SaveEntityJson;
+	toSaveJson(): SaveEntityJson;
 }
 
 /**

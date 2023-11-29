@@ -10,9 +10,8 @@ import Color from 'color';
 // 	<color name='dry-grass-patches-5' rgb='AE9F68' r='174' g='158' b='103' />
 // </palette>
 
-const greens = ['#A09E55', '#8F8A49', '#6D733D', '#828034', '#AE9F68'];
-
 const baseGreen = Color('#8F8A49');
+
 export const MapTile: FunctionComponent<{ zoom: number; tile: TileI }> = ({ tile, zoom }) => {
 	const green = useMemo(
 		() =>

@@ -10,16 +10,8 @@ const material2 = new Material('beta', { stackSize: 10, symbol: 'b' });
 describe('TradeOrder', () => {
 	describe('.findFailReasons()', () => {
 		it('every fail possible', () => {
-			const owner1 = new PersonEntity(
-				'a',
-				{ x: 0, y: 0, z: Infinity },
-				{ gender: 'm', firstName: 'test A' },
-			);
-			const owner2 = new PersonEntity(
-				'b',
-				{ x: 0, y: 0, z: Infinity },
-				{ gender: 'm', firstName: 'test B' },
-			);
+			const owner1 = new PersonEntity('a', [0, 0, Infinity], { gender: 'm', firstName: 'test A' });
+			const owner2 = new PersonEntity('b', [0, 0, Infinity], { gender: 'm', firstName: 'test B' });
 			const order = new TradeOrder(
 				{
 					owner: owner1,
@@ -44,16 +36,8 @@ describe('TradeOrder', () => {
 			]);
 		});
 		it('no fails at all', () => {
-			const owner1 = new PersonEntity(
-				'a',
-				{ x: 0, y: 0, z: Infinity },
-				{ gender: 'm', firstName: 'test A' },
-			);
-			const owner2 = new PersonEntity(
-				'b',
-				{ x: 0, y: 0, z: Infinity },
-				{ gender: 'm', firstName: 'test B' },
-			);
+			const owner1 = new PersonEntity('a', [0, 0, Infinity], { gender: 'm', firstName: 'test A' });
+			const owner2 = new PersonEntity('b', [0, 0, Infinity], { gender: 'm', firstName: 'test B' });
 			owner1.wallet.set(51);
 			owner1.inventory.change(material1, 10);
 			owner2.wallet.set(51);
@@ -76,16 +60,8 @@ describe('TradeOrder', () => {
 		});
 	});
 	it('.makeItHappen()', () => {
-		const owner1 = new PersonEntity(
-			'a',
-			{ x: 0, y: 0, z: Infinity },
-			{ gender: 'm', firstName: 'test A' },
-		);
-		const owner2 = new PersonEntity(
-			'b',
-			{ x: 0, y: 0, z: Infinity },
-			{ gender: 'm', firstName: 'test B' },
-		);
+		const owner1 = new PersonEntity('a', [0, 0, Infinity], { gender: 'm', firstName: 'test A' });
+		const owner2 = new PersonEntity('b', [0, 0, Infinity], { gender: 'm', firstName: 'test B' });
 		owner1.wallet.set(50);
 		owner1.inventory.change(material1, 10);
 		owner1.inventory.change(material2, 10);

@@ -3,6 +3,8 @@ import { type SaveTileJson } from './types-savedgame.ts';
 
 export type GameDistance = number;
 
+export type SimpleCoordinate = [GameDistance, GameDistance, GameDistance];
+
 /**
  * A point in space
  */
@@ -17,7 +19,7 @@ export interface CoordinateI {
 	hasNaN(): boolean;
 	manhattanDistanceTo(coord: CoordinateI): GameDistance;
 	toString(): string;
-	toArray(): [GameDistance, GameDistance, GameDistance];
+	toArray(): SimpleCoordinate;
 	transform(dx: GameDistance, dy: GameDistance, dz: GameDistance): this;
 	transform(delta: CoordinateI): this;
 	scale(multiplier: number): this;
@@ -41,7 +43,7 @@ export interface TileI extends CoordinateI {
 	isAdjacentToEdge(): boolean;
 	isAdjacentToLand(): boolean;
 	isLand(): boolean;
-	serializeToSaveJson(): SaveTileJson;
+	toSaveJson(): SaveTileJson;
 }
 
 export type SeedI = string | number;

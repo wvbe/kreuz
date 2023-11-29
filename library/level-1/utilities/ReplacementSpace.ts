@@ -35,7 +35,6 @@ export class ReplacementSpace<BucketsGeneric extends Record<string, { id: string
 		const regex = /#\{([^:]*):([^}]*)\}/g;
 		const results: ReplacementSpaceResult<BucketsGeneric> = [];
 
-		console.log('Replace', phrase);
 		let trailingIndex = 0;
 		let match;
 		while ((match = regex.exec(phrase))) {

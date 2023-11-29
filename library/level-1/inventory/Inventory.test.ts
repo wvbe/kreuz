@@ -16,21 +16,13 @@ function createTradeOrderForCargo(
 ): TradeOrder {
 	return new TradeOrder(
 		{
-			owner: new PersonEntity(
-				'a',
-				{ x: 0, y: 0, z: Infinity },
-				{ gender: 'm', firstName: 'test A' },
-			),
+			owner: new PersonEntity('a', [0, 0, Infinity], { gender: 'm', firstName: 'test A' }),
 			inventory: inventory1,
 			money: 0,
 			cargo: cargo1,
 		},
 		{
-			owner: new PersonEntity(
-				'b',
-				{ x: 0, y: 0, z: Infinity },
-				{ gender: 'f', firstName: 'test B' },
-			),
+			owner: new PersonEntity('b', [0, 0, Infinity], { gender: 'f', firstName: 'test B' }),
 			inventory: inventory2,
 			money: 0,
 			cargo: cargo2,

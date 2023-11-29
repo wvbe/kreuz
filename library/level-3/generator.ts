@@ -62,7 +62,7 @@ export function generateEntities(game: Game) {
 			id,
 			'gender',
 		);
-		const person = new PersonEntity(id, Random.fromArray(walkableTiles, id), {
+		const person = new PersonEntity(id, Random.fromArray(walkableTiles, id).toArray(), {
 			gender,
 			firstName,
 		});
@@ -76,7 +76,7 @@ export function generateEntities(game: Game) {
 		const id = `${game.seed}-settlement-${i}`;
 		const tile = Random.fromArray(walkableTiles, id);
 		game.entities.add(
-			new SettlementEntity(id, tile, {
+			new SettlementEntity(id, tile.toArray(), {
 				name: getRandomSettlementName([id]),
 				areaSize: Random.between(0.3, 0.6, game.seed, 'setsize', i),
 				minimumBuildingLength: 0.2,
@@ -90,7 +90,7 @@ export function generateEntities(game: Game) {
 		const id = `${game.seed}-factory-${i}`;
 		const tile = Random.fromArray(walkableTiles, id);
 		const blueprint = Random.fromArray(Object.values(blueprints), id, 'blueprint');
-		const factory = new FactoryBuildingEntity(id, tile, {
+		const factory = new FactoryBuildingEntity(id, tile.toArray(), {
 			maxWorkers: 3 * blueprint.options.workersRequired,
 		});
 		blueprint.ingredients.forEach(({ material }) =>
@@ -108,7 +108,7 @@ export function generateEntities(game: Game) {
 		const id = `${game.seed}-market-stall-${i}`;
 		const tile = Random.fromArray(walkableTiles, id);
 		const material = Random.fromArray(FOODS, id, '-mat');
-		const market = new MarketBuildingEntity(id, tile, material);
+		const market = new MarketBuildingEntity(id, tile.toArray(), material);
 		market.inventory.set(material, Math.round(material.stack * Random.between(1, 4, id)));
 		game.entities.add(market);
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
@@ -117,7 +117,7 @@ export function generateEntities(game: Game) {
 	for (let i = 0; i < Random.between(2, 4, game.seed, 'churches'); i++) {
 		const id = `${game.seed}-church-${i}`;
 		const tile = Random.fromArray(walkableTiles, id);
-		game.entities.add(new ChurchBuildingEntity(id, tile));
+		game.entities.add(new ChurchBuildingEntity(id, tile.toArray()));
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 	}
 }

@@ -22,7 +22,7 @@ describe('BT: loiterNode', () => {
 	);
 	new TestDriver().attach(game);
 
-	const entity = new PersonEntity('person-1', game.terrain.getTileClosestToXy(3, 3), {
+	const entity = new PersonEntity('person-1', game.terrain.getTileClosestToXy(3, 3).toArray(), {
 		gender: 'm',
 		firstName: 'test',
 	});

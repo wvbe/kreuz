@@ -49,10 +49,11 @@ export class Tile extends Coordinate implements TileI {
 	/**
 	 * Serialize for a save game JSON
 	 */
-	public serializeToSaveJson(): SaveTileJson {
+	public toSaveJson(): SaveTileJson {
 		return {
 			center: this.toArray(),
 			outline: this.getOutlineCoordinates().map((coord) => coord.toArray()),
+			ghost: false,
 		};
 	}
 }

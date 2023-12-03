@@ -1,8 +1,18 @@
 import { type AttachableI } from '../classes/Attachable.ts';
 import { Event } from '../classes/Event.ts';
-import { EventedNumericValue } from '../classes/EventedNumericValue.ts';
+import {
+	EventedNumericValue,
+	type SaveEventedNumericValueJson,
+} from '../classes/EventedNumericValue.ts';
 import type Game from '../Game.ts';
 import { type DestroyerFn } from '../types.ts';
+
+export type SaveProgressingNumericValueJson = SaveEventedNumericValueJson & {
+	min: number;
+	max: number;
+	delta: number;
+	granularity: number;
+};
 
 type ProgressingNumericValueOptions = {
 	/**
@@ -194,5 +204,15 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 		}
 		this.#delta = newDelta;
 		this.$recalibrate.emit(oldDelta);
+	}
+
+	public toSaveJson(): SaveProgressingNumericValueJson {
+		return {
+			...super.toSaveJson(),
+			min: this.#min,
+			max: this.#max,
+			delta: this.#delta,
+			granularity: this.#granularity,
+		};
 	}
 }

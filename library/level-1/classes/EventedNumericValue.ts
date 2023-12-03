@@ -1,6 +1,15 @@
 import { type CallbackFn, type DestroyerFn } from '../types.ts';
 import { Event } from './Event.ts';
-import { EventedValue } from './EventedValue.ts';
+import { EventedValue, type SaveEventedValueJson } from './EventedValue.ts';
+
+export type SaveEventedNumericValueJson = SaveEventedValueJson<number> & {
+	boundaries: Array<{
+		min: number;
+		max: number;
+		minInclusive: boolean;
+		maxInclusive: boolean;
+	}>;
+};
 
 type BetweenRange = {
 	min: number;
@@ -125,5 +134,16 @@ export class EventedNumericValue extends EventedValue<number> {
 		for (let i = 0; i < ranges.length; i++) {
 			ranges[i].event.emit();
 		}
+	}
+	public toSaveJson(): SaveEventedNumericValueJson {
+		return {
+			...super.toSaveJson(),
+			boundaries: this.#boundaryInfo.map((boundary) => ({
+				min: boundary.min,
+				max: boundary.max,
+				minInclusive: boundary.minInclusive,
+				maxInclusive: boundary.maxInclusive,
+			})),
+		};
 	}
 }

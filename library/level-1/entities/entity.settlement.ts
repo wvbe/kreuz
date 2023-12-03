@@ -10,7 +10,7 @@ export type SettlementParametersI = {
 	scale: number;
 };
 
-export type SaveSettlementEntityJson = SaveEntityJson<'settlement'> & SettlementParametersI;
+export type SaveSettlementEntityJson = SaveEntityJson<string> & SettlementParametersI;
 
 export class SettlementEntity extends Entity implements EntityI {
 	public readonly parameters: SettlementParametersI;

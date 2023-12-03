@@ -68,7 +68,7 @@ export const PERSON_NEEDS: Array<{
 		moods: [
 			{ upUntil: 20 / 100, label: 'existential dread' },
 			{ upUntil: 33 / 100, label: 'depressed' },
-			{ upUntil: 60 / 100, label: 'plagued by guild' },
+			{ upUntil: 60 / 100, label: 'plagued by guilt' },
 			{ upUntil: 90 / 100, label: null },
 			{ upUntil: Infinity, label: 'reassured' },
 		],

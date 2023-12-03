@@ -8,9 +8,9 @@ import { type SaveSettlementEntityJson, SettlementEntity } from './entity.settle
 export function castSaveJsonToEntity(save: SaveSettlementEntityJson | SavePersonEntityJson) {
 	switch (save.type) {
 		case 'person':
-			return PersonEntity.fromSaveJson(save);
+		// 	return PersonEntity.fromSaveJson(save);
 		case 'settlement':
-			return SettlementEntity.fromSaveJson(save);
+		// 	return SettlementEntity.fromSaveJson(save);
 		// case 'church':
 		// 	return ChurchBuildingEntity.fromSaveJson(save);
 		// case 'factory':

@@ -8,9 +8,9 @@ export class HeroPersonEntity extends PersonEntity {
 	}
 
 	public get name(): string {
-		return `${this.prefix} ${this.userData.firstName}`;
+		return `${this.prefix} ${this.passport.firstName}`;
 	}
 	public get icon(): string {
-		return this.userData.gender === 'm' ? '👑' : '👑';
+		return this.passport.gender === 'm' ? '👑' : '👑';
 	}
 }

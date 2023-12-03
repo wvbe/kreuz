@@ -1,5 +1,10 @@
-import { ProgressingNumericValue } from '../classes/ProgressingNumericValue.ts';
+import {
+	ProgressingNumericValue,
+	type SaveProgressingNumericValueJson,
+} from '../classes/ProgressingNumericValue.ts';
 import { PersonNeedId } from '../constants/needs.ts';
+
+export type SaveNeedJson = SaveProgressingNumericValueJson & { id: PersonNeedId };
 
 /**
  * A need represents the urgency with which a personnal requirement needs to be fulfilled. In most
@@ -17,5 +22,12 @@ export class Need extends ProgressingNumericValue {
 	public constructor(id: PersonNeedId, initial: number, label: string, delta: number) {
 		super(initial, { delta, granularity: 0.001 }, label);
 		this.id = id;
+	}
+
+	public toSaveJson(): SaveNeedJson {
+		return {
+			...super.toSaveJson(),
+			id: this.id,
+		};
 	}
 }

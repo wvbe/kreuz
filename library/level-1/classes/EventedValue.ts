@@ -1,5 +1,8 @@
 import { Event } from './Event.ts';
 
+export type SaveEventedValueJson<T> = {
+	current: T;
+};
 export class EventedValue<T> extends Event<[T]> {
 	protected current: T;
 
@@ -36,5 +39,11 @@ export class EventedValue<T> extends Event<[T]> {
 	 */
 	public emit() {
 		super.emit(this.current);
+	}
+
+	public toSaveJson(): SaveEventedValueJson<T> {
+		return {
+			current: this.current,
+		};
 	}
 }

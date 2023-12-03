@@ -14,7 +14,9 @@ export type SavedGameJson = {
 		size: number;
 	};
 	entities: Array<SaveSettlementEntityJson | SavePersonEntityJson>;
-	time: {};
+	time: {
+		current: number;
+	};
 	seed: string | number;
 };
 

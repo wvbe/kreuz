@@ -120,6 +120,8 @@ export class TimeLine extends EventedValue<number> {
 	 * Serialize for a save game JSON
 	 */
 	public toSaveJson(): SaveTimeJson {
-		return {};
+		return {
+			...super.toSaveJson(),
+		};
 	}
 }

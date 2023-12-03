@@ -9,17 +9,22 @@ import { Inventory } from '../inventory/Inventory.ts';
 import { SaveEntityJson } from '../types-savedgame.ts';
 import { type CallbackFn, type CoordinateI, type TileI, type SimpleCoordinate } from '../types.ts';
 import { Entity } from './entity.ts';
-import { Need } from './Need.ts';
+import { Need, type SaveNeedJson } from './Need.ts';
 
-type PersonEntityOptions = {
+type PersonEntityPassportOptions = {
 	gender: 'm' | 'f';
 	firstName: string;
-	needs?: Partial<Record<PersonNeedId, number>>;
+};
+type PersonEntityNeedOptions = {
+	needs: Partial<Record<PersonNeedId, number>>;
 };
 
 type PersonEntityBehavior = BehaviorTreeNodeI<{ game: Game; entity: PersonEntity }> | null;
 
-export type SavePersonEntityJson = SaveEntityJson<'person'> & Required<PersonEntityOptions>;
+export type SavePersonEntityJson = SaveEntityJson<string> & {
+	passport: PersonEntityPassportOptions;
+	needs: SaveNeedJson[];
+};
 
 export class PersonEntity extends Entity {
 	// The amount of game coordinate per millisecond
@@ -84,7 +89,7 @@ export class PersonEntity extends Entity {
 	 * The kind of information that would show up in a passport -- but since this is a perfect world,
 	 * there is no discrimination based on this to speak of :)
 	 */
-	public readonly userData: {
+	public readonly passport: {
 		gender: 'm' | 'f';
 		firstName: string;
 	};
@@ -107,14 +112,18 @@ export class PersonEntity extends Entity {
 	/**
 	 * @deprecated not used yet.
 	 */
-	public type = 'person';
+	public type = 'person' as const;
 
-	constructor(id: string, location: SimpleCoordinate, options: PersonEntityOptions) {
+	constructor(
+		id: string,
+		location: SimpleCoordinate,
+		options: PersonEntityPassportOptions & Partial<PersonEntityNeedOptions>,
+	) {
 		super(id, location);
 
-		const { needs, ...userData } = options;
+		const { needs, ...passport } = options;
 		this.needs.forEach((need) => need.set(needs?.[need.id] || 1, true));
-		this.userData = userData;
+		this.passport = passport;
 
 		// Movement handling
 		this.$stepEnd.on((loc) => {
@@ -174,10 +183,10 @@ export class PersonEntity extends Entity {
 	}
 
 	public get name(): string {
-		return this.userData.firstName;
+		return this.passport.firstName;
 	}
 	public get icon(): string {
-		return this.userData.gender === 'm' ? '👨' : '👩';
+		return this.passport.gender === 'm' ? '👨' : '👩';
 	}
 
 	/**
@@ -261,9 +270,19 @@ export class PersonEntity extends Entity {
 		this.$stepStart.emit(coordinate, this.distanceTo(coordinate) / this.walkSpeed, done);
 	}
 
+	public toSaveJson(): SavePersonEntityJson {
+		return {
+			...super.toSaveJson(),
+			passport: this.passport,
+			needs: this.needs.map((need) => need.toSaveJson()),
+		};
+	}
 	public static fromSaveJson(save: SavePersonEntityJson) {
-		const { id, location, ...parameters } = save;
-		const inst = new PersonEntity(id, location, parameters);
+		const { id, location, passport, needs } = save;
+		const inst = new PersonEntity(id, location, {
+			...passport,
+			// needs: needs.map((need) => Need.fromSaveJson(need)),
+		});
 		return inst;
 	}
 }

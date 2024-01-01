@@ -10,10 +10,10 @@ import {
 	PersonEntity,
 	Random,
 	SettlementEntity,
+	materials,
 } from '../level-1/mod.ts';
 import {
 	blueprints,
-	materials,
 	bt,
 	getRandomSettlementName,
 	FIRST_NAMES_M,

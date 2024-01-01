@@ -72,9 +72,9 @@ export default class Game {
 			seed: this.seed,
 		};
 	}
-	public static instantiateFromSaveJson(save: SavedGameJson): Game {
+	public static fromSaveJson(save: SavedGameJson): Game {
 		const game = new Game(save.seed, Terrain.fromSaveJson(save.terrain));
-		// game.entities.add(...save.entities.map((entity) => castSaveJsonToEntity(entity)));
+		game.entities.add(...save.entities.map((entity) => castSaveJsonToEntity(entity)));
 		return game;
 	}
 }

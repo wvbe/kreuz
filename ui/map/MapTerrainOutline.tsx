@@ -23,7 +23,7 @@ export const MapTerrainOutline: FunctionComponent<{
 								),
 							[] as CoordinateI[],
 						);
-					const points = tile
+					const sharedPoints = tile
 						.getOutlineCoordinates()
 						.map((coord, index, all) => ({
 							index,
@@ -38,12 +38,12 @@ export const MapTerrainOutline: FunctionComponent<{
 						);
 
 					const lines: CoordinateI[][] = [];
-					if (!points.length) {
+					if (!sharedPoints.length) {
 						return lines;
 					}
 
 					let index = 0;
-					points.forEach((point, _index) => {
+					sharedPoints.forEach((point, _index) => {
 						if (!lines.length || point.index !== index) {
 							index = point.index;
 							lines.push([]);
@@ -52,8 +52,8 @@ export const MapTerrainOutline: FunctionComponent<{
 						line.push(point.coord);
 						index++;
 					});
-					if (points[0].index === 0 && points[points.length - 1].last) {
-						lines[lines.length - 1].push(points[0].coord);
+					if (sharedPoints[0].index === 0 && sharedPoints[sharedPoints.length - 1].last) {
+						lines[lines.length - 1].push(sharedPoints[0].coord);
 					}
 					return lines;
 				}, [] as CoordinateI[][])
@@ -63,8 +63,10 @@ export const MapTerrainOutline: FunctionComponent<{
 							<polyline
 								points={points.map((coord) => `${coord.x * zoom},${coord.y * zoom}`).join(' ')}
 								stroke={'black'}
-								strokeWidth={5}
+								strokeWidth={4}
 								fill="none"
+								strokeLinejoin="round"
+								strokeLinecap="round"
 							/>
 						))}
 					</g>

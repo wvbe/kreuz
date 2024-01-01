@@ -2,6 +2,10 @@ import { expect, it, describe, mock, run } from 'tincan';
 import { EventedNumericValue } from './EventedNumericValue.ts';
 
 describe('EventedNumericValue', () => {
+	it('Save/load round-robins to an equal object', () => {
+		const value = new EventedNumericValue(5, 'test');
+		expect(value).toEqual(EventedNumericValue.fromSaveJson(value.toSaveJson()));
+	});
 	it('.onBetween()', () => {
 		const value = new EventedNumericValue(0, 'test');
 		const cb = mock.fn();

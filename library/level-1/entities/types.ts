@@ -2,8 +2,7 @@ import { type AttachableI } from '../classes/Attachable.ts';
 import { Collection } from '../classes/Collection.ts';
 import { type EventedValue } from '../classes/EventedValue.ts';
 import { TradeOrder } from '../classes/TradeOrder.ts';
-import type Game from '../Game.ts';
-import { type SaveEntityJson } from '../types-savedgame.ts';
+import { type SaveEntityJson } from './entity.ts';
 import { type CoordinateI } from '../types.ts';
 
 export interface EntityI extends AttachableI {

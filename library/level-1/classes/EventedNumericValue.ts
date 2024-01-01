@@ -2,7 +2,7 @@ import { type CallbackFn, type DestroyerFn } from '../types.ts';
 import { Event } from './Event.ts';
 import { EventedValue, type SaveEventedValueJson } from './EventedValue.ts';
 
-export type SaveEventedNumericValueJson = SaveEventedValueJson<number> & {
+export type SaveEventedNumericValueJson = SaveEventedValueJson & {
 	boundaries: Array<{
 		min: number;
 		max: number;
@@ -129,8 +129,8 @@ export class EventedNumericValue extends EventedValue<number> {
 		if (skipUpdate) {
 			return;
 		}
-		const ranges = this.getCurrentRanges().filter((range) => !valueInRange(last, range));
 
+		const ranges = this.getCurrentRanges().filter((range) => !valueInRange(last, range));
 		for (let i = 0; i < ranges.length; i++) {
 			ranges[i].event.emit();
 		}
@@ -145,5 +145,8 @@ export class EventedNumericValue extends EventedValue<number> {
 				maxInclusive: boundary.maxInclusive,
 			})),
 		};
+	}
+	public static fromSaveJson(json: SaveEventedNumericValueJson): EventedNumericValue {
+		return new EventedNumericValue(json.current as number, json.label);
 	}
 }

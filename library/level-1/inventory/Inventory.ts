@@ -3,6 +3,8 @@
  * https://github.com/wvbe/experimental-factory-game/blob/master/src/classes/Inventory.ts
  */
 
+import { getMaterialForId, getIdForMaterial } from './util.ts';
+
 import { Event } from '../classes/Event.ts';
 import { TradeOrder } from '../classes/TradeOrder.ts';
 import { Material } from './Material.ts';
@@ -14,6 +16,11 @@ function getRequiredStackSpace(cargo: MaterialState[]) {
 		0,
 	);
 }
+
+export type SaveInventoryJson = {
+	capacity: number | null;
+	items: Array<{ material: string; quantity: number }>;
+};
 
 /**
  * An "inventory" is like a bunch of stacks that hold Materials. An inventory can be (un)restricted
@@ -329,22 +336,42 @@ export class Inventory {
 		this.cancelReservation(tradeOrder);
 	}
 
-	public static fromSaveJson(save: SaveInventoryJson) {
-		const { capacity, items } = save;
-		const inst = new Inventory(capacity === null ? Infinity : capacity);
-		inst.changeMultiple(
-			items.map(({ materialIconLabel, quantity }) => ({
-				// @TODO look up the actual material belonging to `materialIconLabel`
-				material: new Material('Unknown', { symbol: '❓', stackSize: 100 }),
+	public toSaveJson(): SaveInventoryJson {
+		return {
+			capacity: this.capacity,
+			items: this.items.map(({ material, quantity }) => ({
+				material: getIdForMaterial(material),
+				quantity,
+			})),
+		};
+	}
+
+	public overwriteFromSaveJson(save: SaveInventoryJson) {
+		if (this.capacity !== save.capacity) {
+			throw new Error(
+				`Cannot overwrite an existing inventory with a saved inventory of a different size.`,
+			);
+		}
+		this.items.splice(0, this.items.length);
+		this.changeMultiple(
+			save.items.map(({ material, quantity }) => ({
+				material: getMaterialForId(material),
 				quantity,
 			})),
 			true,
 		);
-		return inst;
 	}
-}
 
-type SaveInventoryJson = {
-	capacity: number | null;
-	items: Array<{ materialIconLabel: string; quantity: number }>;
-};
+	// public static fromSaveJson(save: SaveInventoryJson) {
+	// 	const { capacity, items } = save;
+	// 	const inst = new Inventory(capacity === null ? Infinity : capacity);
+	// 	inst.changeMultiple(
+	// 		items.map(({ material, quantity }) => ({
+	// 			material: getMaterialForId(material),
+	// 			quantity,
+	// 		})),
+	// 		true,
+	// 	);
+	// 	return inst;
+	// }
+}

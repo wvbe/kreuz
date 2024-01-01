@@ -1,6 +1,5 @@
-import { type SaveEntityJson } from '../types-savedgame.ts';
 import { SimpleCoordinate } from '../types.ts';
-import { Entity } from './entity.ts';
+import { Entity, type SaveEntityJson } from './entity.ts';
 import { EntityI } from './types.ts';
 
 export type SettlementParametersI = {
@@ -10,20 +9,16 @@ export type SettlementParametersI = {
 	scale: number;
 };
 
-export type SaveSettlementEntityJson = SaveEntityJson<string> & SettlementParametersI;
+export type SaveSettlementEntityJson = SaveEntityJson & { options: SettlementParametersI };
 
 export class SettlementEntity extends Entity implements EntityI {
 	public readonly parameters: SettlementParametersI;
-
-	// @TODO proper implementation of BuildingI and CollectionI
-	public readonly buildings: never[];
 
 	public type = 'settlement';
 
 	constructor(id: string, location: SimpleCoordinate, parameters: SettlementParametersI) {
 		super(id, location);
 		this.parameters = parameters;
-		this.buildings = [];
 
 		this.$status.set(`Town of ${Math.round(this.parameters.areaSize * 1000)} souls.`, true);
 	}
@@ -31,12 +26,21 @@ export class SettlementEntity extends Entity implements EntityI {
 	public get name(): string {
 		return this.parameters.name;
 	}
+
 	public get icon(): string {
 		return '🏠';
 	}
+
+	public toSaveJson(): SaveSettlementEntityJson {
+		return {
+			...super.toSaveJson(),
+			options: this.parameters,
+		};
+	}
+
 	public static fromSaveJson(save: SaveSettlementEntityJson) {
-		const { id, location, ...parameters } = save;
-		const inst = new SettlementEntity(id, location, parameters);
+		const { id, location, options } = save;
+		const inst = new SettlementEntity(id, location, options);
 		return inst;
 	}
 }

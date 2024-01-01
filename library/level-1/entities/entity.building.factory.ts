@@ -1,12 +1,18 @@
 import { Collection } from '../classes/Collection.ts';
-import { EventedValue } from '../classes/EventedValue.ts';
+import { EventedValue, type SaveEventedValueJson } from '../classes/EventedValue.ts';
 import { ProgressingNumericValue } from '../classes/ProgressingNumericValue.ts';
-import { Blueprint } from '../inventory/Blueprint.ts';
-import { Inventory } from '../inventory/Inventory.ts';
+import { Blueprint, type SaveBlueprintJson } from '../inventory/Blueprint.ts';
+import { Inventory, type SaveInventoryJson } from '../inventory/Inventory.ts';
 import { type SimpleCoordinate } from '../types.ts';
-import { BuildingEntity } from './entity.building.ts';
+import { BuildingEntity, type SaveBuildingEntityJson } from './entity.building.ts';
 import { PersonEntity } from './entity.person.ts';
 import { type EntityI } from './types.ts';
+
+export type SaveFactoryBuildingEntityJson = SaveBuildingEntityJson & {
+	options: FactoryBuildingEntityOptions;
+	inventory: SaveInventoryJson;
+	blueprint: SaveEventedValueJson;
+};
 
 type FactoryBuildingEntityOptions = {
 	/**
@@ -52,6 +58,14 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 	public readonly $blueprint = new EventedValue<Blueprint | null>(
 		null,
 		`${this.constructor.name} $blueprint`,
+		{
+			toJson(current) {
+				return current ? current.toSaveJson() : null;
+			},
+			fromJson(saved) {
+				return saved ? Blueprint.fromSaveJson(saved as SaveBlueprintJson) : null;
+			},
+		},
 	);
 
 	/**
@@ -228,5 +242,22 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 		this.setProgressDelta();
 
 		return true;
+	}
+
+	public toSaveJson(): SaveFactoryBuildingEntityJson {
+		return {
+			...super.toSaveJson(),
+			options: this.options,
+			inventory: this.inventory.toSaveJson(),
+			blueprint: this.$blueprint.toSaveJson(),
+		};
+	}
+	public static fromSaveJson(save: SaveFactoryBuildingEntityJson): FactoryBuildingEntity {
+		const { id, location, options, inventory, blueprint, status } = save;
+		const inst = new FactoryBuildingEntity(id, location, options);
+		inst.inventory.overwriteFromSaveJson(inventory);
+		inst.$blueprint.overwriteFromSaveJson(blueprint);
+		inst.$status.overwriteFromSaveJson(status);
+		return inst;
 	}
 }

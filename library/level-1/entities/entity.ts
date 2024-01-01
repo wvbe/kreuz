@@ -1,13 +1,19 @@
 import { Attachable } from '../classes/Attachable.ts';
 import { Collection } from '../classes/Collection.ts';
-import { EventedValue } from '../classes/EventedValue.ts';
+import { EventedValue, type SaveEventedValueJson } from '../classes/EventedValue.ts';
 import { type TradeOrder } from '../classes/TradeOrder.ts';
 import type Game from '../Game.ts';
 import { Coordinate } from '../terrain/Coordinate.ts';
-import { type SaveEntityJson } from '../types-savedgame.ts';
 import { type CoordinateI, type SimpleCoordinate } from '../types.ts';
 import { token } from '../utilities/ReplacementSpace.ts';
 import { type EntityI } from './types.ts';
+
+export type SaveEntityJson = {
+	type: string;
+	id: string;
+	location: SimpleCoordinate;
+	status: SaveEventedValueJson;
+};
 
 export class Entity extends Attachable<[Game]> implements EntityI {
 	/**
@@ -72,6 +78,7 @@ export class Entity extends Attachable<[Game]> implements EntityI {
 			type: this.type,
 			id: this.id,
 			location: this.$$location.get().toArray(),
+			status: this.$status.toSaveJson(),
 		};
 	}
 }

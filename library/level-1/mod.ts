@@ -11,6 +11,7 @@ export { Collection } from './classes/Collection.ts';
 export { Event } from './classes/Event.ts';
 export { EventedPromise } from './classes/EventedPromise.ts';
 export { EventedValue } from './classes/EventedValue.ts';
+export { EventedNumericValue } from './classes/EventedNumericValue.ts';
 export { Path } from './classes/Path.ts';
 export { Random } from './classes/Random.ts';
 export { TimeLine } from './classes/TimeLine.ts';
@@ -37,6 +38,7 @@ export { default as Game } from './Game.ts';
 export { Blueprint } from './inventory/Blueprint.ts';
 export { Inventory } from './inventory/Inventory.ts';
 export { Material } from './inventory/Material.ts';
+export * as materials from './inventory/materials.ts';
 
 // Terrain:
 export * from './inventory/types.ts';

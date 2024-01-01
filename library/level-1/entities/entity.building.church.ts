@@ -1,6 +1,8 @@
 import { SimpleCoordinate } from '../types.ts';
-import { BuildingEntity } from './entity.building.ts';
+import { BuildingEntity, type SaveBuildingEntityJson } from './entity.building.ts';
 import { EntityI } from './types.ts';
+
+export type SaveChurchBuildingEntityJson = SaveBuildingEntityJson;
 
 export class ChurchBuildingEntity extends BuildingEntity implements EntityI {
 	public readonly type = 'church';
@@ -20,5 +22,11 @@ export class ChurchBuildingEntity extends BuildingEntity implements EntityI {
 
 	public get icon() {
 		return '💒';
+	}
+
+	public static fromSaveJson(save: SaveChurchBuildingEntityJson): ChurchBuildingEntity {
+		const { id, location } = save;
+		const inst = new ChurchBuildingEntity(id, location);
+		return inst;
 	}
 }

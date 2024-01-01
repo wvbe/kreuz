@@ -1,29 +1,34 @@
 import { type BehaviorTreeNodeI } from '../behavior/types.ts';
 import { Event } from '../classes/Event.ts';
 import { EventedPromise } from '../classes/EventedPromise.ts';
-import { EventedValue } from '../classes/EventedValue.ts';
+import { EventedValue, type SaveEventedValueJson } from '../classes/EventedValue.ts';
 import { Path } from '../classes/Path.ts';
 import { PersonNeedId, PERSON_NEEDS } from '../constants/needs.ts';
 import type Game from '../Game.ts';
-import { Inventory } from '../inventory/Inventory.ts';
-import { SaveEntityJson } from '../types-savedgame.ts';
+import { Inventory, type SaveInventoryJson } from '../inventory/Inventory.ts';
 import { type CallbackFn, type CoordinateI, type TileI, type SimpleCoordinate } from '../types.ts';
-import { Entity } from './entity.ts';
+import { Entity, type SaveEntityJson } from './entity.ts';
 import { Need, type SaveNeedJson } from './Need.ts';
 
 type PersonEntityPassportOptions = {
 	gender: 'm' | 'f';
 	firstName: string;
 };
+
 type PersonEntityNeedOptions = {
 	needs: Partial<Record<PersonNeedId, number>>;
 };
 
-type PersonEntityBehavior = BehaviorTreeNodeI<{ game: Game; entity: PersonEntity }> | null;
+type PersonEntityBehavior = BehaviorTreeNodeI<{
+	game: Game;
+	entity: PersonEntity;
+}> | null;
 
-export type SavePersonEntityJson = SaveEntityJson<string> & {
+export type SavePersonEntityJson = SaveEntityJson & {
 	passport: PersonEntityPassportOptions;
 	needs: SaveNeedJson[];
+	wallet: SaveEventedValueJson;
+	inventory: SaveInventoryJson;
 };
 
 export class PersonEntity extends Entity {
@@ -109,9 +114,6 @@ export class PersonEntity extends Entity {
 		(config) => new Need(config.id, 1, config.label, config.decay),
 	);
 
-	/**
-	 * @deprecated not used yet.
-	 */
 	public type = 'person' as const;
 
 	constructor(
@@ -275,14 +277,20 @@ export class PersonEntity extends Entity {
 			...super.toSaveJson(),
 			passport: this.passport,
 			needs: this.needs.map((need) => need.toSaveJson()),
+			inventory: this.inventory.toSaveJson(),
+			wallet: this.wallet.toSaveJson(),
 		};
 	}
+
 	public static fromSaveJson(save: SavePersonEntityJson) {
-		const { id, location, passport, needs } = save;
+		const { id, location, passport, needs, inventory, wallet, status } = save;
 		const inst = new PersonEntity(id, location, {
 			...passport,
 			// needs: needs.map((need) => Need.fromSaveJson(need)),
 		});
+		inst.$status.overwriteFromSaveJson(status);
+		inst.inventory.overwriteFromSaveJson(inventory);
+		inst.wallet.overwriteFromSaveJson(wallet);
 		return inst;
 	}
 }

@@ -1,9 +1,13 @@
-import { type DestroyerFn } from '../types.ts';
 import { type Inventory } from './Inventory.ts';
-import type Game from '../Game.ts';
 import { type MaterialState } from './types.ts';
-import { type FactoryBuildingEntity } from '../entities/entity.building.factory.ts';
+import { getMaterialForId, getIdForMaterial } from './util.ts';
 
+export type SaveBlueprintJson = {
+	name: string;
+	ingredients: Array<{ material: string; quantity: number }>;
+	products: Array<{ material: string; quantity: number }>;
+	options: BlueprintOptions;
+};
 type BlueprintOptions = {
 	fullTimeEquivalent: number;
 	buildingName: string;
@@ -66,6 +70,36 @@ export class Blueprint {
 	public canPlaceAllProducts(inventory: Inventory) {
 		return this.products.every(
 			({ material, quantity }) => inventory.availableOf(material) >= quantity,
+		);
+	}
+
+	public toSaveJson(): SaveBlueprintJson {
+		return {
+			name: this.name,
+			ingredients: this.ingredients.map(({ material, quantity }) => ({
+				material: getIdForMaterial(material),
+				quantity,
+			})),
+			products: this.products.map(({ material, quantity }) => ({
+				material: getIdForMaterial(material),
+				quantity,
+			})),
+			options: this.options,
+		};
+	}
+
+	public static fromSaveJson(save: SaveBlueprintJson) {
+		return new Blueprint(
+			save.name,
+			save.ingredients.map(({ material, quantity }) => ({
+				material: getMaterialForId(material),
+				quantity,
+			})),
+			save.products.map(({ material, quantity }) => ({
+				material: getMaterialForId(material),
+				quantity,
+			})),
+			save.options,
 		);
 	}
 }

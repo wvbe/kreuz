@@ -2,11 +2,13 @@ import { type EventedPromise } from '../classes/EventedPromise.ts';
 import { PersonEntity } from '../entities/entity.person.ts';
 import Game from '../Game.ts';
 
-export interface BehaviorTreeNodeI<B extends Record<string, unknown> = Record<string, never>> {
+export interface BehaviorTreeNodeI<
+	BlackboardGeneric extends Record<string, unknown> = Record<string, never>,
+> {
 	type: string;
-	evaluate(blackboard: B, provenance?: number[]): EventedPromise;
+	evaluate(blackboard: BlackboardGeneric, provenance?: number[]): EventedPromise;
 	label?: string;
-	children?: BehaviorTreeNodeI<B>[];
+	children?: BehaviorTreeNodeI<BlackboardGeneric>[];
 }
 
 export type ExecutionNodeFn<B extends Record<string, unknown>> = (blackboard: B) => EventedPromise;

@@ -1,4 +1,4 @@
-import { Material } from '../level-1/mod.ts';
+import { Material } from './Material.ts';
 
 /*
  * FOOD AND AGRICULTURE
@@ -141,6 +141,7 @@ export const woodsaw = new Material('Woodsaw', {
 
 	value: 70,
 });
+
 export const axe = new Material('Woodaxe', {
 	symbol: '🪓',
 	stackSize: 1,

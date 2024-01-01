@@ -1,17 +1,35 @@
+import { JsonValue } from 'https://deno.land/std@0.185.0/json/common.ts';
 import { Event } from './Event.ts';
 
-export type SaveEventedValueJson<T> = {
-	current: T;
+export type SaveEventedValueJson = {
+	current: JsonValue;
+	label: string;
 };
+
+type SerializationOptions<T> = {
+	toJson: (value: T) => JsonValue;
+	fromJson: (json: JsonValue) => T;
+};
+
 export class EventedValue<T> extends Event<[T]> {
 	protected current: T;
+
+	#serializationOptions: SerializationOptions<T>;
 
 	/**
 	 * Create a new value that emits an event when changed.
 	 */
-	public constructor(initial: T, label: string) {
+	public constructor(initial: T, label: string, serializationOptions?: SerializationOptions<T>) {
 		super(label);
 		this.current = initial;
+		this.#serializationOptions = serializationOptions || {
+			toJson(value) {
+				return value as JsonValue;
+			},
+			fromJson(json) {
+				return json as T;
+			},
+		};
 	}
 
 	/**
@@ -41,9 +59,14 @@ export class EventedValue<T> extends Event<[T]> {
 		super.emit(this.current);
 	}
 
-	public toSaveJson(): SaveEventedValueJson<T> {
+	public toSaveJson(): SaveEventedValueJson {
 		return {
-			current: this.current,
+			current: this.#serializationOptions.toJson(this.current),
+			label: this.label,
 		};
+	}
+
+	public overwriteFromSaveJson(save: SaveEventedValueJson) {
+		this.set(this.#serializationOptions.fromJson(save.current), true);
 	}
 }

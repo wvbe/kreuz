@@ -28,11 +28,14 @@ export function generateDualMeshTerrain(seed: SeedI, size: number, density: numb
 	});
 
 	const mesh = meshBuilder.create();
+
 	const tiles = meshBuilder.points
-		.map((coordinates, i) => {
+		.map(([x, y, z], i) => {
 			const outline = mesh.r_circulate_t([], i);
 			return new DualMeshTile(
-				...(coordinates as CoordinateArray),
+				x,
+				y,
+				z,
 				outline.map((i: number) => [mesh.t_x(i), mesh.t_y(i)]),
 				outline.some((index: number) => mesh.t_ghost(index)),
 			);

@@ -1,7 +1,7 @@
 import { describe, expect, it, mock, run } from 'tincan';
 import { loiterNode } from './loiterNode.ts';
 import { beeKeeping } from '../blueprints.ts';
-import { honey } from '../materials.ts';
+import { honey } from '../../level-1/inventory/materials.ts';
 import {
 	TestDriver,
 	FactoryBuildingEntity,

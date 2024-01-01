@@ -1,8 +1,15 @@
 import { Coordinate } from './Coordinate.ts';
-import { SaveTerrainJson } from '../types-savedgame.ts';
-import { CoordinateI, FilterFn, TileI } from '../types.ts';
+import { type CoordinateI, type FilterFn, type TileI, type SimpleCoordinate } from '../types.ts';
 import { DualMeshTile } from './DualMeshTile.ts';
 
+export type SaveTerrainJson = {
+	tiles: Array<{
+		center: SimpleCoordinate;
+		outline: SimpleCoordinate[];
+		ghost: boolean;
+	}>;
+	size: number;
+};
 export class Terrain {
 	readonly #tiles: TileI[] = [];
 	public readonly size: number;

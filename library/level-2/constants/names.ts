@@ -1,4 +1,5 @@
-import { Random, type SeedI } from '../../level-1/mod.ts';
+import { Random } from '../../level-1/classes/Random.ts';
+import { SeedI } from '../../level-1/types.ts';
 import namesFemale from './data/names-female.ts';
 import namesMale from './data/names-male.ts';
 

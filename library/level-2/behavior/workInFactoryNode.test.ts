@@ -2,15 +2,16 @@ import { describe, expect, it, mock, run } from 'tincan';
 import { loiterNode } from './loiterNode.ts';
 import { beeKeeping } from '../blueprints.ts';
 import { honey } from '../../level-1/inventory/materials.ts';
-import {
-	TestDriver,
-	FactoryBuildingEntity,
-	PersonEntity,
-	Game,
-	generateGridTerrainFromAscii,
-	SelectorNode,
-} from '../../level-1/mod.ts';
+
+import { generateGridTerrainFromAscii } from '../../level-1/terrain/utils.ts';
+import { TestDriver } from '../../level-1/drivers/TestDriver.ts';
+import { PersonEntity } from '../../level-1/entities/entity.person.ts';
+import Game from '../../level-1/Game.ts';
+
 import { workInFactory } from './workInFactoryNode.ts';
+import { FactoryBuildingEntity } from '../../level-1/entities/entity.building.factory.ts';
+import { SelectorNode } from '../../level-1/behavior/SelectorNode.ts';
+import { headOfState } from '../heroes.ts';
 
 describe('BT: workInFactory', () => {
 	const pathStart = mock.fn();
@@ -38,6 +39,7 @@ describe('BT: workInFactory', () => {
 	const factory = new FactoryBuildingEntity(
 		'factory',
 		game.terrain.getTileClosestToXy(5, 5).toArray(),
+		headOfState,
 		{
 			maxWorkers: 1,
 		},

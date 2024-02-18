@@ -1,9 +1,7 @@
-import {
-	EventedPromise,
-	type FactoryBuildingEntity,
-	ExecutionNode,
-	SequenceNode,
-} from '../../level-1/mod.ts';
+import { ExecutionNode } from '../../level-1/behavior/ExecutionNode.ts';
+import { SequenceNode } from '../../level-1/behavior/SequenceNode.ts';
+import { EventedPromise } from '../../level-1/classes/EventedPromise.ts';
+import { FactoryBuildingEntity } from '../../level-1/entities/entity.building.factory.ts';
 import { getEntitiesReachableByEntity, walkEntityToEntity } from './reusable/travel.ts';
 import { type EntityBlackboard } from './types.ts';
 

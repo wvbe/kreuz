@@ -11,6 +11,7 @@ import { type DriverI } from '../mod.ts';
 import { generateGridTerrainFromAscii } from '../terrain/utils.ts';
 import { FactoryBuildingEntity } from './entity.building.factory.ts';
 import { PersonEntity } from './entity.person.ts';
+import { headOfState } from '../../level-2/heroes.ts';
 
 // Test data
 const wheat = new Material('Wheat', {
@@ -46,6 +47,7 @@ const demo = (driver: DriverI) => {
 	const factory = new FactoryBuildingEntity(
 		'factory',
 		game.terrain.getTileClosestToXy(0, 0).toArray(),
+		headOfState,
 		{
 			maxWorkers: 3,
 		},

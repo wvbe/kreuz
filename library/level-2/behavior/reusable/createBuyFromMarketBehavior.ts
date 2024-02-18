@@ -1,18 +1,14 @@
-import {
-	EventedPromise,
-	TradeOrder,
-	type FactoryBuildingEntity,
-	type MarketBuildingEntity,
-	type PersonEntity,
-	type Material,
-	ExecutionNode,
-	SequenceNode,
-} from '../../../level-1/mod.ts';
-
-import { headOfState } from '../../heroes.ts';
 import { EntityBlackboard } from '../types.ts';
 import { getEntitiesReachableByEntity, walkEntityToEntity } from './travel.ts';
 import { createWaitBehavior } from '../reusable/createWaitBehavior.ts';
+import { MarketBuildingEntity } from '../../../level-1/entities/entity.building.market.ts';
+import { Material } from '../../../level-1/inventory/Material.ts';
+import { PersonEntity } from '../../../level-1/entities/entity.person.ts';
+import { FactoryBuildingEntity } from '../../../level-1/entities/entity.building.factory.ts';
+import { SequenceNode } from '../../../level-1/behavior/SequenceNode.ts';
+import { ExecutionNode } from '../../../level-1/behavior/ExecutionNode.ts';
+import { EventedPromise } from '../../../level-1/classes/EventedPromise.ts';
+import { TradeOrder } from '../../../level-1/classes/TradeOrder.ts';
 
 export type DesirabilityRecord = {
 	market: MarketBuildingEntity;
@@ -108,7 +104,7 @@ export function createBuyFromMarketSequence(createDesirabilityScore: Desirabilit
 						cargo: [],
 					},
 					{
-						owner: headOfState,
+						owner: deal.market.owner,
 						inventory: deal.market.inventory,
 						money: 0,
 						cargo: [

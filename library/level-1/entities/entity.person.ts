@@ -1,8 +1,10 @@
+import { behaviorNodeRegistry } from '../../level-2/behavior/behaviorNodeRegistry.ts';
 import { type BehaviorTreeNodeI } from '../behavior/types.ts';
 import { Event } from '../classes/Event.ts';
 import { EventedPromise } from '../classes/EventedPromise.ts';
 import { EventedValue, type SaveEventedValueJson } from '../classes/EventedValue.ts';
 import { Path } from '../classes/Path.ts';
+import { SaveRegistryItemJson } from '../classes/Registry.ts';
 import { PersonNeedId, PERSON_NEEDS } from '../constants/needs.ts';
 import type Game from '../Game.ts';
 import { Inventory, type SaveInventoryJson } from '../inventory/Inventory.ts';
@@ -19,7 +21,7 @@ type PersonEntityNeedOptions = {
 	needs: Partial<Record<PersonNeedId, number>>;
 };
 
-type PersonEntityBehavior = BehaviorTreeNodeI<{
+export type PersonEntityBehavior = BehaviorTreeNodeI<{
 	game: Game;
 	entity: PersonEntity;
 }> | null;
@@ -27,6 +29,7 @@ type PersonEntityBehavior = BehaviorTreeNodeI<{
 export type SavePersonEntityJson = SaveEntityJson & {
 	passport: PersonEntityPassportOptions;
 	needs: SaveNeedJson[];
+	behavior: SaveEventedValueJson;
 	wallet: SaveEventedValueJson;
 	inventory: SaveInventoryJson;
 };
@@ -85,9 +88,13 @@ export class PersonEntity extends Entity {
 	 * The behavior tree root node for this entity. Calling `.evaluate()` on it will return an
 	 * {@link EventedPromise} of whatever it is that this entity should be doing.
 	 */
-	public readonly $behavior = new EventedValue<PersonEntityBehavior>(
+	public readonly $behavior = new EventedValue<PersonEntityBehavior | null>(
 		null,
 		`${this.constructor.name} $behavior`,
+		{
+			fromJson: (id) => behaviorNodeRegistry.itemFromSaveJson(id as string),
+			toJson: (node) => behaviorNodeRegistry.itemToSaveJson(node),
+		},
 	);
 
 	/**
@@ -277,17 +284,19 @@ export class PersonEntity extends Entity {
 			...super.toSaveJson(),
 			passport: this.passport,
 			needs: this.needs.map((need) => need.toSaveJson()),
+			behavior: this.$behavior.toSaveJson(),
 			inventory: this.inventory.toSaveJson(),
 			wallet: this.wallet.toSaveJson(),
 		};
 	}
 
 	public static fromSaveJson(save: SavePersonEntityJson) {
-		const { id, location, passport, needs, inventory, wallet, status } = save;
+		const { id, location, passport, needs, behavior, inventory, wallet, status } = save;
 		const inst = new PersonEntity(id, location, {
 			...passport,
 			// needs: needs.map((need) => Need.fromSaveJson(need)),
 		});
+		inst.$behavior.overwriteFromSaveJson(behavior);
 		inst.$status.overwriteFromSaveJson(status);
 		inst.inventory.overwriteFromSaveJson(inventory);
 		inst.wallet.overwriteFromSaveJson(wallet);

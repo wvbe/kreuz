@@ -1,14 +1,11 @@
-import {
-	EventedPromise,
-	ExecutionNode,
-	type FactoryBuildingEntity,
-	SequenceNode,
-	type MarketBuildingEntity,
-	type Material,
-	TradeOrder,
-	TradeEntityI,
-} from '../../level-1/mod.ts';
-import { headOfState } from '../heroes.ts';
+import { ExecutionNode } from '../../level-1/behavior/ExecutionNode.ts';
+import { SequenceNode } from '../../level-1/behavior/SequenceNode.ts';
+import { EventedPromise } from '../../level-1/classes/EventedPromise.ts';
+import { TradeOrder } from '../../level-1/classes/TradeOrder.ts';
+import { FactoryBuildingEntity } from '../../level-1/entities/entity.building.factory.ts';
+import { MarketBuildingEntity } from '../../level-1/entities/entity.building.market.ts';
+import { TradeEntityI } from '../../level-1/entities/types.ts';
+import { Material } from '../../level-1/inventory/Material.ts';
 import { walkEntityToEntity } from './reusable/travel.ts';
 import { type EntityBlackboard } from './types.ts';
 
@@ -99,8 +96,7 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 
 		const tradeOrder = new TradeOrder(
 			{
-				// @TODO who owns the supplier?
-				owner: headOfState,
+				owner: supplyDemand.supplier.owner,
 				inventory: supplyDemand.supplier.inventory,
 				money: 0,
 				cargo: [
@@ -111,8 +107,7 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 				],
 			},
 			{
-				// @TODO who owns the buyer?
-				owner: headOfState,
+				owner: supplyDemand.entity.owner,
 				inventory: supplyDemand.entity.inventory,
 				money: supplyDemand.material.value * supplyDemand.quantity,
 				cargo: [],

@@ -12,6 +12,7 @@ import {
 	generateGridTerrainFromAscii,
 	PersonEntity,
 } from '../level-1/mod.ts';
+import { headOfState } from '../level-2/heroes.ts';
 import { blueprints } from '../level-2/mod.ts';
 import { Demo } from './types.ts';
 
@@ -35,10 +36,15 @@ const demo: Demo = (driver) => {
 	});
 	game.entities.add(entity);
 
-	const well = new FactoryBuildingEntity('2', terrain.getTileClosestToXy(3, 3).toArray(), {
-		maxWorkers: 0,
-		maxStackSpace: 1,
-	});
+	const well = new FactoryBuildingEntity(
+		'2',
+		terrain.getTileClosestToXy(3, 3).toArray(),
+		headOfState,
+		{
+			maxWorkers: 0,
+			maxStackSpace: 1,
+		},
+	);
 	game.entities.add(well);
 
 	well.setBlueprint(blueprints.getWaterFromWell);

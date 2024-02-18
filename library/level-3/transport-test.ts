@@ -13,6 +13,7 @@ import {
 	PersonEntity,
 	materials,
 } from '../level-1/mod.ts';
+import { headOfState } from '../level-2/heroes.ts';
 import { blueprints, bt } from '../level-2/mod.ts';
 import { Demo } from './types.ts';
 
@@ -29,15 +30,25 @@ const demo: Demo = (driver) => {
 	const game = new Game('1', terrain);
 	driver.attach(game);
 
-	const farm = new FactoryBuildingEntity('farm', terrain.getTileClosestToXy(3, 3).toArray(), {
-		maxStackSpace: 6,
-	});
+	const farm = new FactoryBuildingEntity(
+		'farm',
+		terrain.getTileClosestToXy(3, 3).toArray(),
+		headOfState,
+		{
+			maxStackSpace: 6,
+		},
+	);
 	farm.setBlueprint(blueprints.growWheat);
 	farm.inventory.set(materials.wheat, 99);
 
-	const mill = new FactoryBuildingEntity('mill', terrain.getTileClosestToXy(8, 3).toArray(), {
-		maxStackSpace: 6,
-	});
+	const mill = new FactoryBuildingEntity(
+		'mill',
+		terrain.getTileClosestToXy(8, 3).toArray(),
+		headOfState,
+		{
+			maxStackSpace: 6,
+		},
+	);
 	mill.setBlueprint(blueprints.wheatProcessing);
 
 	game.entities.add(farm, mill);

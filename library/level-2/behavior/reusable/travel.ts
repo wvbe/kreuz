@@ -1,9 +1,7 @@
-import {
-	type EventedPromise,
-	type PersonEntity,
-	type EntityI,
-	type Game,
-} from '../../../level-1/mod.ts';
+import Game from '../../../level-1/Game.ts';
+import { EventedPromise } from '../../../level-1/classes/EventedPromise.ts';
+import { PersonEntity } from '../../../level-1/entities/entity.person.ts';
+import { EntityI } from '../../../level-1/entities/types.ts';
 
 export function walkEntityToEntity(
 	game: Game,

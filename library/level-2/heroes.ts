@@ -1,6 +1,6 @@
-import { HeroPersonEntity } from '../level-1/mod.ts';
+import { PersonEntity } from '../level-1/entities/entity.person.ts';
 
-export const headOfState = new HeroPersonEntity('King', '$$$ king', [0, 0, Infinity], {
+export const headOfState = new PersonEntity('$$$ king', [0, 0, Infinity], {
 	gender: 'm',
 	firstName: 'Richard',
 });

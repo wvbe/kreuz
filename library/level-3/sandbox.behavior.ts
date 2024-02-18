@@ -17,6 +17,7 @@ import {
 	SettlementEntity,
 	materials,
 } from '../level-1/mod.ts';
+import { headOfState } from '../level-2/heroes.ts';
 import { blueprints, bt, getRandomSettlementName } from '../level-2/mod.ts';
 import { Demo } from './types.ts';
 
@@ -68,12 +69,14 @@ const demo: Demo = (driver) => {
 		'market',
 		terrain.getTileClosestToXy(5, 5).toArray(),
 		materials.eggs,
+		headOfState,
 	);
 	marketStall.inventory.change(materials.eggs, 30);
 
 	const factory = new FactoryBuildingEntity(
 		'factory',
 		terrain.getTileClosestToXy(13, 10).toArray(),
+		headOfState,
 		{
 			maxWorkers: 4,
 		},

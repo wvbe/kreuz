@@ -12,6 +12,7 @@ import {
 	SettlementEntity,
 	materials,
 } from '../level-1/mod.ts';
+import { headOfState } from '../level-2/heroes.ts';
 import {
 	blueprints,
 	bt,
@@ -90,7 +91,7 @@ export function generateEntities(game: Game) {
 		const id = `${game.seed}-factory-${i}`;
 		const tile = Random.fromArray(walkableTiles, id);
 		const blueprint = Random.fromArray(Object.values(blueprints), id, 'blueprint');
-		const factory = new FactoryBuildingEntity(id, tile.toArray(), {
+		const factory = new FactoryBuildingEntity(id, tile.toArray(), headOfState, {
 			maxWorkers: 3 * blueprint.options.workersRequired,
 		});
 		blueprint.ingredients.forEach(({ material }) =>
@@ -108,7 +109,7 @@ export function generateEntities(game: Game) {
 		const id = `${game.seed}-market-stall-${i}`;
 		const tile = Random.fromArray(walkableTiles, id);
 		const material = Random.fromArray(FOODS, id, '-mat');
-		const market = new MarketBuildingEntity(id, tile.toArray(), material);
+		const market = new MarketBuildingEntity(id, tile.toArray(), material, headOfState);
 		market.inventory.set(material, Math.round(material.stack * Random.between(1, 4, id)));
 		game.entities.add(market);
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);

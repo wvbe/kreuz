@@ -55,3 +55,4 @@ export * from './constants/needs.ts';
 // Utilities
 export * from './types.ts';
 export * from './utilities/ReplacementSpace.ts';
+export { Registry } from './classes/Registry.ts';

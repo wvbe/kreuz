@@ -3,13 +3,10 @@
  * https://github.com/wvbe/experimental-factory-game/blob/master/src/classes/Inventory.ts
  */
 
-import { getMaterialForId, getIdForMaterial } from './util.ts';
-
 import { Event } from '../classes/Event.ts';
 import { TradeOrder } from '../classes/TradeOrder.ts';
 import { Material } from './Material.ts';
 import { type MaterialState } from './types.ts';
-import Game from '../Game.ts';
 import { SaveJsonContext } from '../types-savedgame.ts';
 
 function getRequiredStackSpace(cargo: MaterialState[]) {
@@ -338,19 +335,17 @@ export class Inventory {
 		this.cancelReservation(tradeOrder);
 	}
 
-	// @TODO Registry
-	public toSaveJson(_context: SaveJsonContext): SaveInventoryJson {
+	public toSaveJson(context: SaveJsonContext): SaveInventoryJson {
 		return {
 			capacity: this.capacity,
 			items: this.items.map(({ material, quantity }) => ({
-				material: getIdForMaterial(material),
+				material: context.materials.key(material, true),
 				quantity,
 			})),
 		};
 	}
 
-	// @TODO Registry
-	public overwriteFromSaveJson(_context: SaveJsonContext, save: SaveInventoryJson) {
+	public overwriteFromSaveJson(context: SaveJsonContext, save: SaveInventoryJson) {
 		if (this.capacity !== save.capacity) {
 			throw new Error(
 				`Cannot overwrite an existing inventory with a saved inventory of a different size.`,
@@ -359,7 +354,7 @@ export class Inventory {
 		this.items.splice(0, this.items.length);
 		this.changeMultiple(
 			save.items.map(({ material, quantity }) => ({
-				material: getMaterialForId(material),
+				material: context.materials.item(material, true),
 				quantity,
 			})),
 			true,

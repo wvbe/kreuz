@@ -10,7 +10,6 @@ import {
 	PersonEntity,
 	Random,
 	SettlementEntity,
-	materials,
 } from '../level-1/mod.ts';
 import { headOfState } from '../level-2/heroes.ts';
 import {
@@ -19,6 +18,7 @@ import {
 	FIRST_NAMES_M,
 	behavior,
 	blueprints,
+	materials,
 	getRandomSettlementName,
 } from '../level-2/mod.ts';
 import { Demo } from './types.ts';

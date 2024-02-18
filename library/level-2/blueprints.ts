@@ -16,7 +16,7 @@ import {
 	rawTinOre,
 	tinIngot,
 	wheat,
-} from '../level-1/inventory/materials.ts';
+} from './materials.ts';
 
 export const getWaterFromWell = new Blueprint(
 	'Drawing water',

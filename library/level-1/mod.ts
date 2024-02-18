@@ -38,7 +38,6 @@ export { default as Game, type GameAssets } from './Game.ts';
 export { Blueprint } from './inventory/Blueprint.ts';
 export { Inventory } from './inventory/Inventory.ts';
 export { Material } from './inventory/Material.ts';
-export * as materials from './inventory/materials.ts';
 
 // Terrain:
 export * from './inventory/types.ts';

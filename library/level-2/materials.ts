@@ -1,4 +1,4 @@
-import { Material } from './Material.ts';
+import { Material } from '../level-1/inventory/Material.ts';
 
 /*
  * FOOD AND AGRICULTURE

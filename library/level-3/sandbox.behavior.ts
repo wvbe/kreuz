@@ -15,10 +15,15 @@ import {
 	Random,
 	MarketBuildingEntity,
 	SettlementEntity,
-	materials,
 } from '../level-1/mod.ts';
 import { headOfState } from '../level-2/heroes.ts';
-import { blueprints, behavior, getRandomSettlementName, DEFAULT_ASSETS } from '../level-2/mod.ts';
+import {
+	blueprints,
+	behavior,
+	getRandomSettlementName,
+	DEFAULT_ASSETS,
+	materials,
+} from '../level-2/mod.ts';
 import { Demo } from './types.ts';
 
 const demo: Demo = (driver) => {

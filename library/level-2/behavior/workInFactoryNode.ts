@@ -3,9 +3,9 @@ import {
 	type FactoryBuildingEntity,
 	ExecutionNode,
 	SequenceNode,
-  EntityBlackboard,
+	EntityBlackboard,
 } from '../../level-1/mod.ts';
-import { getEntitiesReachableByEntity, walkEntityToEntity } from './reusable/travel.ts'
+import { getEntitiesReachableByEntity, walkEntityToEntity } from './reusable/travel.ts';
 
 export const workInFactory = new SequenceNode<EntityBlackboard>(
 	new ExecutionNode('Find', (blackboard) => {

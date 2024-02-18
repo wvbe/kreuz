@@ -1,17 +1,21 @@
-import { KeyedCollection } from './classes/KeyedCollection.ts';
-import { Event } from './classes/Event.ts';
-import { TimeLine } from './classes/TimeLine.ts';
-import { EntityI } from './entities/types.ts';
-import { Terrain } from './terrain/Terrain.ts';
-import { SavedGameJson, SaveJsonContext } from './types-savedgame.ts';
-import { SeedI } from './types.ts';
-import { castSaveJsonToEntity } from './entities/castSaveJsonToEntity.ts';
-import { Registry } from './classes/Registry.ts';
-import { BehaviorTreeNodeI } from './mod.ts';
 import { EntityBlackboard } from './behavior/types.ts';
+import { Event } from './classes/Event.ts';
+import { KeyedCollection } from './classes/KeyedCollection.ts';
+import { Registry } from './classes/Registry.ts';
+import { TimeLine } from './classes/TimeLine.ts';
+import { castSaveJsonToEntity } from './entities/castSaveJsonToEntity.ts';
+import { EntityI } from './entities/types.ts';
+import { Blueprint } from './inventory/Blueprint.ts';
+import { Material } from './inventory/Material.ts';
+import { BehaviorTreeNodeI } from './mod.ts';
+import { Terrain } from './terrain/Terrain.ts';
+import { SavedGameJson } from './types-savedgame.ts';
+import { SeedI } from './types.ts';
 
 export type GameAssets = {
 	behaviorNodes: Registry<BehaviorTreeNodeI<EntityBlackboard>>;
+	materials: Registry<Material>;
+	blueprints: Registry<Blueprint>;
 };
 export default class Game {
 	public readonly terrain: Terrain;

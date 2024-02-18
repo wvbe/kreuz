@@ -1,5 +1,4 @@
-import { behaviorNodeRegistry } from '../../level-2/behavior/behaviorNodeRegistry.ts';
-import { type BehaviorTreeNodeI } from '../behavior/types.ts';
+import { EntityBlackboard, type BehaviorTreeNodeI } from '../behavior/types.ts';
 import { Event } from '../classes/Event.ts';
 import { EventedPromise } from '../classes/EventedPromise.ts';
 import { EventedValue, type SaveEventedValueJson } from '../classes/EventedValue.ts';
@@ -8,6 +7,7 @@ import { SaveRegistryItemJson } from '../classes/Registry.ts';
 import { PersonNeedId, PERSON_NEEDS } from '../constants/needs.ts';
 import type Game from '../Game.ts';
 import { Inventory, type SaveInventoryJson } from '../inventory/Inventory.ts';
+import { SaveJsonContext } from '../types-savedgame.ts';
 import { type CallbackFn, type CoordinateI, type TileI, type SimpleCoordinate } from '../types.ts';
 import { Entity, type SaveEntityJson } from './entity.ts';
 import { Need, type SaveNeedJson } from './Need.ts';
@@ -21,10 +21,7 @@ type PersonEntityNeedOptions = {
 	needs: Partial<Record<PersonNeedId, number>>;
 };
 
-export type PersonEntityBehavior = BehaviorTreeNodeI<{
-	game: Game;
-	entity: PersonEntity;
-}> | null;
+export type PersonEntityBehavior = BehaviorTreeNodeI<EntityBlackboard> | null;
 
 export type SavePersonEntityJson = SaveEntityJson & {
 	passport: PersonEntityPassportOptions;
@@ -92,8 +89,8 @@ export class PersonEntity extends Entity {
 		null,
 		`${this.constructor.name} $behavior`,
 		{
-			fromJson: (id) => behaviorNodeRegistry.itemFromSaveJson(id as string),
-			toJson: (node) => behaviorNodeRegistry.itemToSaveJson(node),
+			fromJson: (context, id) => context.behaviorNodes.itemFromSaveJson(id as string),
+			toJson: (context, node) => context.behaviorNodes.itemToSaveJson(node),
 		},
 	);
 
@@ -279,27 +276,27 @@ export class PersonEntity extends Entity {
 		this.$stepStart.emit(coordinate, this.distanceTo(coordinate) / this.walkSpeed, done);
 	}
 
-	public toSaveJson(): SavePersonEntityJson {
+	public toSaveJson(context: SaveJsonContext): SavePersonEntityJson {
 		return {
-			...super.toSaveJson(),
+			...super.toSaveJson(context),
 			passport: this.passport,
-			needs: this.needs.map((need) => need.toSaveJson()),
-			behavior: this.$behavior.toSaveJson(),
-			inventory: this.inventory.toSaveJson(),
-			wallet: this.wallet.toSaveJson(),
+			needs: this.needs.map((need) => need.toSaveJson(context)),
+			behavior: this.$behavior.toSaveJson(context),
+			inventory: this.inventory.toSaveJson(context),
+			wallet: this.wallet.toSaveJson(context),
 		};
 	}
 
-	public static fromSaveJson(save: SavePersonEntityJson) {
+	public static fromSaveJson(context: SaveJsonContext, save: SavePersonEntityJson) {
 		const { id, location, passport, needs, behavior, inventory, wallet, status } = save;
 		const inst = new PersonEntity(id, location, {
 			...passport,
 			// needs: needs.map((need) => Need.fromSaveJson(need)),
 		});
-		inst.$behavior.overwriteFromSaveJson(behavior);
-		inst.$status.overwriteFromSaveJson(status);
-		inst.inventory.overwriteFromSaveJson(inventory);
-		inst.wallet.overwriteFromSaveJson(wallet);
+		inst.$behavior.overwriteFromSaveJson(context, behavior);
+		inst.$status.overwriteFromSaveJson(context, status);
+		inst.inventory.overwriteFromSaveJson(context, inventory);
+		inst.wallet.overwriteFromSaveJson(context, wallet);
 		return inst;
 	}
 }

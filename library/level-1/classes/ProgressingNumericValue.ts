@@ -5,6 +5,7 @@ import {
 	type SaveEventedNumericValueJson,
 } from '../classes/EventedNumericValue.ts';
 import type Game from '../Game.ts';
+import { SaveJsonContext } from '../types-savedgame.ts';
 import { type DestroyerFn } from '../types.ts';
 
 export type SaveProgressingNumericValueJson = SaveEventedNumericValueJson & {
@@ -206,9 +207,9 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 		this.$recalibrate.emit(oldDelta);
 	}
 
-	public toSaveJson(): SaveProgressingNumericValueJson {
+	public toSaveJson(context: SaveJsonContext): SaveProgressingNumericValueJson {
 		return {
-			...super.toSaveJson(),
+			...super.toSaveJson(context),
 			min: this.#min,
 			max: this.#max,
 			delta: this.#delta,

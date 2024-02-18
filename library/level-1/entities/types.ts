@@ -4,6 +4,7 @@ import { type EventedValue } from '../classes/EventedValue.ts';
 import { TradeOrder } from '../classes/TradeOrder.ts';
 import { type SaveEntityJson } from './entity.ts';
 import { type CoordinateI } from '../types.ts';
+import { SaveJsonContext } from '../types-savedgame.ts';
 
 export interface EntityI extends AttachableI {
 	/**
@@ -61,7 +62,7 @@ export interface EntityI extends AttachableI {
 	 */
 	$$location: EventedValue<CoordinateI>;
 
-	toSaveJson(): SaveEntityJson;
+	toSaveJson(context: SaveJsonContext): SaveEntityJson;
 }
 
 /**

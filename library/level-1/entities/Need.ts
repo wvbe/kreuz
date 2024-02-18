@@ -3,6 +3,7 @@ import {
 	type SaveProgressingNumericValueJson,
 } from '../classes/ProgressingNumericValue.ts';
 import { PersonNeedId } from '../constants/needs.ts';
+import { SaveJsonContext } from '../types-savedgame.ts';
 
 export type SaveNeedJson = SaveProgressingNumericValueJson & { id: PersonNeedId };
 
@@ -24,9 +25,9 @@ export class Need extends ProgressingNumericValue {
 		this.id = id;
 	}
 
-	public toSaveJson(): SaveNeedJson {
+	public toSaveJson(context: SaveJsonContext): SaveNeedJson {
 		return {
-			...super.toSaveJson(),
+			...super.toSaveJson(context),
 			id: this.id,
 		};
 	}

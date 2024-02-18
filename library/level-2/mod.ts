@@ -1,18 +1,7 @@
-// Behavior tree
-import { civvyBehavior } from './behavior/civvyBehavior.ts';
-import { feedSelf } from './behavior/feedSelfNode.ts';
-import { hydrateSelfBehavior } from './behavior/hydrateSelfBehavior.ts';
-import { loiterNode } from './behavior/loiterNode.ts';
-import { workInFactory } from './behavior/workInFactoryNode.ts';
-export const bt = {
-	civvyBehavior,
-	feedSelf,
-	hydrateSelfBehavior,
-	loiterNode,
-	workInFactory,
-};
+export { DEFAULT_ASSETS } from './DEFAULT_ASSETS.ts';
 
 // Constants
+export * as behavior from './behavior.ts';
 export * as blueprints from './blueprints.ts';
 export * as heroes from './heroes.ts';
 

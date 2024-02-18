@@ -1,3 +1,5 @@
+import Game from '../Game.ts';
+import { SaveJsonContext } from '../types-savedgame.ts';
 import { type Inventory } from './Inventory.ts';
 import { type MaterialState } from './types.ts';
 import { getMaterialForId, getIdForMaterial } from './util.ts';
@@ -73,7 +75,8 @@ export class Blueprint {
 		);
 	}
 
-	public toSaveJson(): SaveBlueprintJson {
+	// @TODO Registry
+	public toSaveJson(_context: SaveJsonContext): SaveBlueprintJson {
 		return {
 			name: this.name,
 			ingredients: this.ingredients.map(({ material, quantity }) => ({
@@ -88,7 +91,8 @@ export class Blueprint {
 		};
 	}
 
-	public static fromSaveJson(save: SaveBlueprintJson) {
+	// @TODO Registry
+	public static fromSaveJson(_context: SaveJsonContext, save: SaveBlueprintJson) {
 		return new Blueprint(
 			save.name,
 			save.ingredients.map(({ material, quantity }) => ({

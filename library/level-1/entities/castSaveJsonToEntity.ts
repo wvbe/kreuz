@@ -1,3 +1,5 @@
+import Game from '../Game.ts';
+import { SaveJsonContext } from '../types-savedgame.ts';
 import {
 	ChurchBuildingEntity,
 	type SaveChurchBuildingEntityJson,
@@ -14,6 +16,7 @@ import { PersonEntity, type SavePersonEntityJson } from './entity.person.ts';
 import { type SaveSettlementEntityJson, SettlementEntity } from './entity.settlement.ts';
 
 export function castSaveJsonToEntity(
+	context: SaveJsonContext,
 	save:
 		| SaveSettlementEntityJson
 		| SavePersonEntityJson
@@ -23,16 +26,15 @@ export function castSaveJsonToEntity(
 ) {
 	switch (save.type) {
 		case 'person':
-			return PersonEntity.fromSaveJson(save as SavePersonEntityJson);
+			return PersonEntity.fromSaveJson(context, save as SavePersonEntityJson);
 		case 'settlement':
-			return SettlementEntity.fromSaveJson(save as SaveSettlementEntityJson);
+			return SettlementEntity.fromSaveJson(context, save as SaveSettlementEntityJson);
 		case 'church':
-			return ChurchBuildingEntity.fromSaveJson(save as SaveChurchBuildingEntityJson);
+			return ChurchBuildingEntity.fromSaveJson(context, save as SaveChurchBuildingEntityJson);
 		case 'factory':
-			return FactoryBuildingEntity.fromSaveJson(save as SaveFactoryBuildingEntityJson);
+			return FactoryBuildingEntity.fromSaveJson(context, save as SaveFactoryBuildingEntityJson);
 		case 'market-stall':
-			return MarketBuildingEntity.fromSaveJson(save as SaveMarketBuildingEntityJson);
-		default:
-			throw new Error(`Unsupported entity type "${save.type}" for save JSON`);
+			return MarketBuildingEntity.fromSaveJson(context, save as SaveMarketBuildingEntityJson);
 	}
+	throw new Error(`Unsupported entity type "${save.type}" for save JSON`);
 }

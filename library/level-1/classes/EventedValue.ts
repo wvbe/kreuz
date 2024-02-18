@@ -1,5 +1,7 @@
 import { JsonValue } from 'https://deno.land/std@0.185.0/json/common.ts';
 import { Event } from './Event.ts';
+import Game from '../Game.ts';
+import { SaveJsonContext } from '../types-savedgame.ts';
 
 export type SaveEventedValueJson = {
 	current: JsonValue;
@@ -7,8 +9,8 @@ export type SaveEventedValueJson = {
 };
 
 type SerializationOptions<T> = {
-	toJson: (value: T) => JsonValue;
-	fromJson: (json: JsonValue) => T;
+	toJson: (context: SaveJsonContext, value: T) => JsonValue;
+	fromJson: (context: SaveJsonContext, json: JsonValue) => T;
 };
 
 export class EventedValue<T> extends Event<[T]> {
@@ -23,10 +25,10 @@ export class EventedValue<T> extends Event<[T]> {
 		super(label);
 		this.current = initial;
 		this.#serializationOptions = serializationOptions || {
-			toJson(value) {
+			toJson(_context, value) {
 				return value as JsonValue;
 			},
-			fromJson(json) {
+			fromJson(_context, json) {
 				return json as T;
 			},
 		};
@@ -59,14 +61,14 @@ export class EventedValue<T> extends Event<[T]> {
 		super.emit(this.current);
 	}
 
-	public toSaveJson(): SaveEventedValueJson {
+	public toSaveJson(context: SaveJsonContext): SaveEventedValueJson {
 		return {
-			current: this.#serializationOptions.toJson(this.current),
+			current: this.#serializationOptions.toJson(context, this.current),
 			label: this.label,
 		};
 	}
 
-	public overwriteFromSaveJson(save: SaveEventedValueJson) {
-		this.set(this.#serializationOptions.fromJson(save.current), true);
+	public overwriteFromSaveJson(context: SaveJsonContext, save: SaveEventedValueJson) {
+		this.set(this.#serializationOptions.fromJson(context, save.current), true);
 	}
 }

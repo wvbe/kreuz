@@ -1,8 +1,10 @@
+import Game from '../Game.ts';
 import { Collection } from '../classes/Collection.ts';
 import { EventedValue, type SaveEventedValueJson } from '../classes/EventedValue.ts';
 import { ProgressingNumericValue } from '../classes/ProgressingNumericValue.ts';
 import { Blueprint, type SaveBlueprintJson } from '../inventory/Blueprint.ts';
 import { Inventory, type SaveInventoryJson } from '../inventory/Inventory.ts';
+import { SaveJsonContext } from '../types-savedgame.ts';
 import { type SimpleCoordinate } from '../types.ts';
 import { BuildingEntity, type SaveBuildingEntityJson } from './entity.building.ts';
 import { SavePersonEntityJson } from './entity.person.ts';
@@ -63,11 +65,11 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 		null,
 		`${this.constructor.name} $blueprint`,
 		{
-			toJson(current) {
-				return current ? current.toSaveJson() : null;
+			toJson(context, current) {
+				return current ? current.toSaveJson(context) : null;
 			},
-			fromJson(saved) {
-				return saved ? Blueprint.fromSaveJson(saved as SaveBlueprintJson) : null;
+			fromJson(context, saved) {
+				return saved ? Blueprint.fromSaveJson(context, saved as SaveBlueprintJson) : null;
 			},
 		},
 	);
@@ -250,21 +252,29 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 		return true;
 	}
 
-	public toSaveJson(): SaveFactoryBuildingEntityJson {
+	public toSaveJson(context: SaveJsonContext): SaveFactoryBuildingEntityJson {
 		return {
-			...super.toSaveJson(),
+			...super.toSaveJson(context),
 			options: this.options,
-			inventory: this.inventory.toSaveJson(),
-			owner: this.owner.toSaveJson(),
-			blueprint: this.$blueprint.toSaveJson(),
+			inventory: this.inventory.toSaveJson(context),
+			owner: this.owner.toSaveJson(context),
+			blueprint: this.$blueprint.toSaveJson(context),
 		};
 	}
-	public static fromSaveJson(save: SaveFactoryBuildingEntityJson): FactoryBuildingEntity {
+	public static fromSaveJson(
+		context: SaveJsonContext,
+		save: SaveFactoryBuildingEntityJson,
+	): FactoryBuildingEntity {
 		const { id, location, options, inventory, owner, blueprint, status } = save;
-		const inst = new FactoryBuildingEntity(id, location, PersonEntity.fromSaveJson(owner), options);
-		inst.inventory.overwriteFromSaveJson(inventory);
-		inst.$blueprint.overwriteFromSaveJson(blueprint);
-		inst.$status.overwriteFromSaveJson(status);
+		const inst = new FactoryBuildingEntity(
+			id,
+			location,
+			PersonEntity.fromSaveJson(context, owner),
+			options,
+		);
+		inst.inventory.overwriteFromSaveJson(context, inventory);
+		inst.$blueprint.overwriteFromSaveJson(context, blueprint);
+		inst.$status.overwriteFromSaveJson(context, status);
 		return inst;
 	}
 }

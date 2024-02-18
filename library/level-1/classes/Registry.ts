@@ -16,7 +16,7 @@ export class Registry<ItemGeneric> extends Map<string, ItemGeneric> {
 	/**
 	 * Returns the key with which an item was registered, `null` otherwise.
 	 */
-	public key(item: ItemGeneric) {
+	public key(item: ItemGeneric): string | null {
 		for (const [key, entryItem] of this.entries()) {
 			if (entryItem === item) {
 				return key;
@@ -38,6 +38,7 @@ export class Registry<ItemGeneric> extends Map<string, ItemGeneric> {
 		}
 		return node;
 	}
+
 	/**
 	 * Utility method to easily return an instance based on a reference in save JSON.
 	 */

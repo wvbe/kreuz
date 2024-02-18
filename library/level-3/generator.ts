@@ -14,11 +14,12 @@ import {
 } from '../level-1/mod.ts';
 import { headOfState } from '../level-2/heroes.ts';
 import {
-	blueprints,
-	bt,
-	getRandomSettlementName,
-	FIRST_NAMES_M,
+	DEFAULT_ASSETS,
 	FIRST_NAMES_F,
+	FIRST_NAMES_M,
+	behavior,
+	blueprints,
+	getRandomSettlementName,
 } from '../level-2/mod.ts';
 import { Demo } from './types.ts';
 import { generateDualMeshTerrain } from './utils/generateDualMeshTerrain.ts';
@@ -70,7 +71,7 @@ export function generateEntities(game: Game) {
 		person.wallet.set(Random.between(20, 500, id, 'munnie'));
 		game.entities.add(person);
 
-		person.$behavior.set(bt.civvyBehavior);
+		person.$behavior.set(behavior.civvyBehavior);
 	}
 
 	for (let i = 0; i < Random.between(3, 6, game.seed, 'settlements'); i++) {
@@ -124,7 +125,7 @@ export function generateEntities(game: Game) {
 }
 
 const demo: Demo = (driver) => {
-	const game = new Game(1, generateDualMeshTerrain(1, 40, 1));
+	const game = new Game(1, generateDualMeshTerrain(1, 40, 1), DEFAULT_ASSETS);
 	driver.attach(game);
 
 	generateEntities(game);

@@ -13,7 +13,7 @@ import {
 	PersonEntity,
 } from '../level-1/mod.ts';
 import { headOfState } from '../level-2/heroes.ts';
-import { blueprints } from '../level-2/mod.ts';
+import { blueprints, DEFAULT_ASSETS } from '../level-2/mod.ts';
 import { Demo } from './types.ts';
 
 const demo: Demo = (driver) => {
@@ -27,7 +27,7 @@ const demo: Demo = (driver) => {
 		XXXXXXXXXXXX
 	`);
 
-	const game = new Game('1', terrain);
+	const game = new Game('1', terrain, DEFAULT_ASSETS);
 	driver.attach(game);
 
 	const entity = new PersonEntity('1', terrain.getTileClosestToXy(0, 0).toArray(), {

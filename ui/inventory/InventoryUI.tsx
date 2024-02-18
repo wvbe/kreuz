@@ -14,7 +14,7 @@ export const InventoryBag: FunctionComponent<{ stacks: MaterialState[]; capacity
 		{capacity && capacity !== Infinity && stacks.length < capacity
 			? Array.from(new Array(capacity - stacks.length)).map((_, i) => (
 					<InventoryStack key={`ghost-${i}`} material={null} quantity={-Infinity} isGhost />
-				))
+			  ))
 			: null}
 	</div>
 );

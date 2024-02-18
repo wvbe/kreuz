@@ -14,7 +14,8 @@ import {
 	materials,
 } from '../level-1/mod.ts';
 import { headOfState } from '../level-2/heroes.ts';
-import { blueprints, bt } from '../level-2/mod.ts';
+import { DEFAULT_ASSETS } from '../level-2/mod.ts';
+import { blueprints, behavior } from '../level-2/mod.ts';
 import { Demo } from './types.ts';
 
 const demo: Demo = (driver) => {
@@ -27,7 +28,7 @@ const demo: Demo = (driver) => {
 		XXXXXXXXXXXX
 		XXXXXXXXXXXX
 	`);
-	const game = new Game('1', terrain);
+	const game = new Game('1', terrain, DEFAULT_ASSETS);
 	driver.attach(game);
 
 	const farm = new FactoryBuildingEntity(
@@ -59,7 +60,7 @@ const demo: Demo = (driver) => {
 			firstName: 'Melanie',
 		});
 		game.entities.add(entity);
-		entity.$behavior.set(bt.civvyBehavior);
+		entity.$behavior.set(behavior.civvyBehavior);
 	}
 
 	return { driver, game };

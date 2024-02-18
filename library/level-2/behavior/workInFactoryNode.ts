@@ -1,9 +1,11 @@
-import { ExecutionNode } from '../../level-1/behavior/ExecutionNode.ts';
-import { SequenceNode } from '../../level-1/behavior/SequenceNode.ts';
-import { EventedPromise } from '../../level-1/classes/EventedPromise.ts';
-import { FactoryBuildingEntity } from '../../level-1/entities/entity.building.factory.ts';
-import { getEntitiesReachableByEntity, walkEntityToEntity } from './reusable/travel.ts';
-import { type EntityBlackboard } from './types.ts';
+import {
+	EventedPromise,
+	type FactoryBuildingEntity,
+	ExecutionNode,
+	SequenceNode,
+  EntityBlackboard,
+} from '../../level-1/mod.ts';
+import { getEntitiesReachableByEntity, walkEntityToEntity } from './reusable/travel.ts'
 
 export const workInFactory = new SequenceNode<EntityBlackboard>(
 	new ExecutionNode('Find', (blackboard) => {

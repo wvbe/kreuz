@@ -4,6 +4,7 @@ import { EventedValue, type SaveEventedValueJson } from '../classes/EventedValue
 import { type TradeOrder } from '../classes/TradeOrder.ts';
 import type Game from '../Game.ts';
 import { Coordinate } from '../terrain/Coordinate.ts';
+import { SaveJsonContext } from '../types-savedgame.ts';
 import { type CoordinateI, type SimpleCoordinate } from '../types.ts';
 import { token } from '../utilities/ReplacementSpace.ts';
 import { type EntityI } from './types.ts';
@@ -73,12 +74,12 @@ export class Entity extends Attachable<[Game]> implements EntityI {
 	/**
 	 * Serialize for a save game JSON
 	 */
-	public toSaveJson(): SaveEntityJson {
+	public toSaveJson(context: SaveJsonContext): SaveEntityJson {
 		return {
 			type: this.type,
 			id: this.id,
 			location: this.$$location.get().toArray(),
-			status: this.$status.toSaveJson(),
+			status: this.$status.toSaveJson(context),
 		};
 	}
 }

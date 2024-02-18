@@ -1,10 +1,8 @@
 import { describe, expect, it, mock, run } from 'tincan';
+import { TestDriver, PersonEntity, Game, generateGridTerrainFromAscii } from '../../level-1/mod.ts';
 
 import { loiterNode } from './loiterNode.ts';
-import { generateGridTerrainFromAscii } from '../../level-1/terrain/utils.ts';
-import { TestDriver } from '../../level-1/drivers/TestDriver.ts';
-import { PersonEntity } from '../../level-1/entities/entity.person.ts';
-import Game from '../../level-1/Game.ts';
+import { DEFAULT_ASSETS } from '../DEFAULT_ASSETS.ts';
 
 describe('BT: loiterNode', () => {
 	const pathStart = mock.fn();
@@ -22,6 +20,7 @@ describe('BT: loiterNode', () => {
 			XXXXXXXXXXXXXXXXXXXXX
 			XXXXXXXXXXXXXXXXXXXXX
 		`),
+		DEFAULT_ASSETS,
 	);
 	new TestDriver().attach(game);
 

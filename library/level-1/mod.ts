@@ -34,7 +34,7 @@ export { Need } from './entities/Need.ts';
 
 // Inventory:
 export * from './entities/types.ts';
-export { default as Game } from './Game.ts';
+export { default as Game, type GameAssets } from './Game.ts';
 export { Blueprint } from './inventory/Blueprint.ts';
 export { Inventory } from './inventory/Inventory.ts';
 export { Material } from './inventory/Material.ts';

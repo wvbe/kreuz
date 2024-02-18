@@ -1,3 +1,5 @@
+import Game from '../Game.ts';
+import { SaveJsonContext } from '../types-savedgame.ts';
 import { SimpleCoordinate } from '../types.ts';
 import { BuildingEntity, type SaveBuildingEntityJson } from './entity.building.ts';
 import { EntityI } from './types.ts';
@@ -24,7 +26,10 @@ export class ChurchBuildingEntity extends BuildingEntity implements EntityI {
 		return '💒';
 	}
 
-	public static fromSaveJson(save: SaveChurchBuildingEntityJson): ChurchBuildingEntity {
+	public static fromSaveJson(
+		_context: SaveJsonContext,
+		save: SaveChurchBuildingEntityJson,
+	): ChurchBuildingEntity {
 		const { id, location } = save;
 		const inst = new ChurchBuildingEntity(id, location);
 		return inst;

@@ -1,3 +1,5 @@
+import Game from '../Game.ts';
+import { SaveJsonContext } from '../types-savedgame.ts';
 import { SimpleCoordinate } from '../types.ts';
 import { Entity, type SaveEntityJson } from './entity.ts';
 import { EntityI } from './types.ts';
@@ -31,14 +33,14 @@ export class SettlementEntity extends Entity implements EntityI {
 		return '🏠';
 	}
 
-	public toSaveJson(): SaveSettlementEntityJson {
+	public toSaveJson(context: SaveJsonContext): SaveSettlementEntityJson {
 		return {
-			...super.toSaveJson(),
+			...super.toSaveJson(context),
 			options: this.parameters,
 		};
 	}
 
-	public static fromSaveJson(save: SaveSettlementEntityJson) {
+	public static fromSaveJson(context: SaveJsonContext, save: SaveSettlementEntityJson) {
 		const { id, location, options } = save;
 		const inst = new SettlementEntity(id, location, options);
 		return inst;

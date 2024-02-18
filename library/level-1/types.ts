@@ -1,3 +1,4 @@
+import { BehaviorTreeNodeI } from './mod.ts';
 import { type Terrain } from './terrain/Terrain.ts';
 import { type SaveTileJson } from './types-savedgame.ts';
 
@@ -45,6 +46,9 @@ export interface TileI extends CoordinateI {
 	isLand(): boolean;
 	toSaveJson(): SaveTileJson;
 }
+export type AssetsI = {
+	behaviorNodes: BehaviorTreeNodeI;
+};
 
 export type SeedI = string | number;
 

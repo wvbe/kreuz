@@ -1,3 +1,5 @@
+import Game from '../Game.ts';
+import { SaveJsonContext } from '../types-savedgame.ts';
 import { type CallbackFn, type DestroyerFn } from '../types.ts';
 import { Event } from './Event.ts';
 import { EventedValue, type SaveEventedValueJson } from './EventedValue.ts';
@@ -135,9 +137,9 @@ export class EventedNumericValue extends EventedValue<number> {
 			ranges[i].event.emit();
 		}
 	}
-	public toSaveJson(): SaveEventedNumericValueJson {
+	public toSaveJson(context: SaveJsonContext): SaveEventedNumericValueJson {
 		return {
-			...super.toSaveJson(),
+			...super.toSaveJson(context),
 			boundaries: this.#boundaryInfo.map((boundary) => ({
 				min: boundary.min,
 				max: boundary.max,

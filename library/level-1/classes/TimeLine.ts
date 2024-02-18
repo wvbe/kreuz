@@ -2,6 +2,7 @@ import { CallbackFn, DestroyerFn } from '../types.ts';
 import { SaveTimeJson } from '../types-savedgame.ts';
 import { EventedValue } from './EventedValue.ts';
 import { EventedPromise } from './EventedPromise.ts';
+import { SaveJsonContext } from '../types-savedgame.ts';
 
 export class TimeLine extends EventedValue<number> {
 	#timers = new Map<number, CallbackFn[]>();
@@ -119,9 +120,9 @@ export class TimeLine extends EventedValue<number> {
 	/**
 	 * Serialize for a save game JSON
 	 */
-	public toSaveJson(): SaveTimeJson {
+	public toSaveJson(context: SaveJsonContext): SaveTimeJson {
 		return {
-			...super.toSaveJson(),
+			...super.toSaveJson(context),
 		};
 	}
 }

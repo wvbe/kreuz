@@ -12,6 +12,7 @@ import { generateGridTerrainFromAscii } from '../terrain/utils.ts';
 import { FactoryBuildingEntity } from './entity.building.factory.ts';
 import { PersonEntity } from './entity.person.ts';
 import { headOfState } from '../../level-2/heroes.ts';
+import { DEFAULT_ASSETS } from '../../level-2/DEFAULT_ASSETS.ts';
 
 // Test data
 const wheat = new Material('Wheat', {
@@ -41,7 +42,7 @@ const wheat = new Material('Wheat', {
 	);
 
 const demo = (driver: DriverI) => {
-	const game = new Game('1', generateGridTerrainFromAscii(`XXX`));
+	const game = new Game('1', generateGridTerrainFromAscii(`XXX`), DEFAULT_ASSETS);
 	driver.attach(game);
 
 	const factory = new FactoryBuildingEntity(

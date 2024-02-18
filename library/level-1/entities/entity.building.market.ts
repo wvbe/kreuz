@@ -5,6 +5,8 @@ import { SimpleCoordinate } from '../types.ts';
 import { BuildingEntity } from './entity.building.ts';
 import { type SaveBuildingEntityJson } from './entity.building.ts';
 import { EntityI } from './types.ts';
+import Game from '../Game.ts';
+import { SaveJsonContext } from '../types-savedgame.ts';
 
 export type SaveMarketBuildingEntityJson = SaveBuildingEntityJson & {
 	material: Material;
@@ -41,19 +43,27 @@ export class MarketBuildingEntity extends BuildingEntity implements EntityI {
 		return '🏪';
 	}
 
-	public toSaveJson(): SaveMarketBuildingEntityJson {
+	public toSaveJson(context: SaveJsonContext): SaveMarketBuildingEntityJson {
 		return {
-			...super.toSaveJson(),
+			...super.toSaveJson(context),
 			material: this.material,
-			owner: this.owner.toSaveJson(),
-			inventory: this.inventory.toSaveJson(),
+			owner: this.owner.toSaveJson(context),
+			inventory: this.inventory.toSaveJson(context),
 		};
 	}
 
-	public static fromSaveJson(save: SaveMarketBuildingEntityJson): MarketBuildingEntity {
+	public static fromSaveJson(
+		context: SaveJsonContext,
+		save: SaveMarketBuildingEntityJson,
+	): MarketBuildingEntity {
 		const { id, location, material, inventory, owner } = save;
-		const inst = new MarketBuildingEntity(id, location, material, PersonEntity.fromSaveJson(owner));
-		inst.inventory.overwriteFromSaveJson(inventory);
+		const inst = new MarketBuildingEntity(
+			id,
+			location,
+			material,
+			PersonEntity.fromSaveJson(context, owner),
+		);
+		inst.inventory.overwriteFromSaveJson(context, inventory);
 		return inst;
 	}
 }

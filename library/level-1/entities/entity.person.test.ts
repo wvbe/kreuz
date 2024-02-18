@@ -3,17 +3,10 @@
  */
 
 import { describe, expect, it, run } from 'tincan';
-import { TestDriver } from '../drivers/TestDriver.ts';
-import Game from '../Game.ts';
-import { Blueprint } from '../inventory/Blueprint.ts';
-import { Material } from '../inventory/Material.ts';
-import { type DriverI } from '../mod.ts';
-import { generateGridTerrainFromAscii } from '../terrain/utils.ts';
-import { FactoryBuildingEntity } from './entity.building.factory.ts';
 import { PersonEntity } from './entity.person.ts';
-import { headOfState } from '../../level-2/heroes.ts';
 
 import { hydrateSelfBehavior } from '../../level-2/behavior/hydrateSelfBehavior.ts';
+import { DEFAULT_ASSETS } from '../../level-2/mod.ts';
 describe('PersonEntity', () => {
 	it(`save without behavior`, async () => {
 		const entity = new PersonEntity('guy', [0, 0, Infinity], {
@@ -21,7 +14,7 @@ describe('PersonEntity', () => {
 			gender: 'm',
 			needs: {},
 		});
-		expect(entity.toSaveJson().behavior).toEqual({
+		expect(entity.toSaveJson(DEFAULT_ASSETS).behavior).toEqual({
 			current: null,
 			label: 'PersonEntity $behavior',
 		});
@@ -33,8 +26,8 @@ describe('PersonEntity', () => {
 			needs: {},
 		});
 		entity.$behavior.set(hydrateSelfBehavior);
-		expect(entity.toSaveJson().behavior).toEqual({
-			current: 'node-17',
+		expect(entity.toSaveJson(DEFAULT_ASSETS).behavior).toEqual({
+			current: 'bt-17',
 			label: 'PersonEntity $behavior',
 		});
 	});
@@ -49,7 +42,9 @@ describe('PersonEntity', () => {
 			return entity;
 		}
 
-		expect(PersonEntity.fromSaveJson(makeEntity().toSaveJson())).toEqual(makeEntity());
+		expect(
+			PersonEntity.fromSaveJson(DEFAULT_ASSETS, makeEntity().toSaveJson(DEFAULT_ASSETS)),
+		).toEqual(makeEntity());
 	});
 });
 

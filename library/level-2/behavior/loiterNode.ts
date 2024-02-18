@@ -1,9 +1,11 @@
-import { ExecutionNode } from '../../level-1/behavior/ExecutionNode.ts';
-import { SelectorNode } from '../../level-1/behavior/SelectorNode.ts';
-import { SequenceNode } from '../../level-1/behavior/SequenceNode.ts';
-import { EventedPromise } from '../../level-1/classes/EventedPromise.ts';
-import { Random } from '../../level-1/classes/Random.ts';
-import { type EntityBlackboard } from './types.ts';
+import {
+	EventedPromise,
+	Random,
+	ExecutionNode,
+	SelectorNode,
+	SequenceNode,
+	EntityBlackboard,
+} from '../../level-1/mod.ts';
 
 // Some "entropy" lolz0r
 let ticker = 0;

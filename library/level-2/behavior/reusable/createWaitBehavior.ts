@@ -1,6 +1,4 @@
-import { ExecutionNode } from '../../../level-1/behavior/ExecutionNode.ts';
-import { Random } from '../../../level-1/classes/Random.ts';
-import { EntityBlackboard } from '../types.ts';
+import { Random, ExecutionNode, EntityBlackboard } from '../../../level-1/mod.ts';
 
 let ticker = 0;
 export function createWaitBehavior(lowerBounary: number, upperBoundary: number) {

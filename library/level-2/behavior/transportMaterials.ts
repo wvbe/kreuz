@@ -1,13 +1,15 @@
-import { ExecutionNode } from '../../level-1/behavior/ExecutionNode.ts';
-import { SequenceNode } from '../../level-1/behavior/SequenceNode.ts';
-import { EventedPromise } from '../../level-1/classes/EventedPromise.ts';
-import { TradeOrder } from '../../level-1/classes/TradeOrder.ts';
-import { FactoryBuildingEntity } from '../../level-1/entities/entity.building.factory.ts';
-import { MarketBuildingEntity } from '../../level-1/entities/entity.building.market.ts';
-import { TradeEntityI } from '../../level-1/entities/types.ts';
-import { Material } from '../../level-1/inventory/Material.ts';
+import {
+	EventedPromise,
+	ExecutionNode,
+	type FactoryBuildingEntity,
+	SequenceNode,
+	type MarketBuildingEntity,
+	type Material,
+	TradeOrder,
+	TradeEntityI,
+	EntityBlackboard,
+} from '../../level-1/mod.ts';
 import { walkEntityToEntity } from './reusable/travel.ts';
-import { type EntityBlackboard } from './types.ts';
 
 type Demand = {
 	// @TODO replace with TradeEntity?

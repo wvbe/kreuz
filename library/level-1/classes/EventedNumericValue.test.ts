@@ -1,10 +1,13 @@
 import { expect, it, describe, mock, run } from 'tincan';
+import { SaveJsonContext } from '../types-savedgame.ts';
 import { EventedNumericValue } from './EventedNumericValue.ts';
 
 describe('EventedNumericValue', () => {
 	it('Save/load round-robins to an equal object', () => {
 		const value = new EventedNumericValue(5, 'test');
-		expect(value).toEqual(EventedNumericValue.fromSaveJson(value.toSaveJson()));
+		expect(value).toEqual(
+			EventedNumericValue.fromSaveJson(value.toSaveJson({} as SaveJsonContext)),
+		);
 	});
 	it('.onBetween()', () => {
 		const value = new EventedNumericValue(0, 'test');

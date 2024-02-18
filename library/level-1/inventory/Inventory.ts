@@ -9,6 +9,8 @@ import { Event } from '../classes/Event.ts';
 import { TradeOrder } from '../classes/TradeOrder.ts';
 import { Material } from './Material.ts';
 import { type MaterialState } from './types.ts';
+import Game from '../Game.ts';
+import { SaveJsonContext } from '../types-savedgame.ts';
 
 function getRequiredStackSpace(cargo: MaterialState[]) {
 	return cargo.reduce<number>(
@@ -336,7 +338,8 @@ export class Inventory {
 		this.cancelReservation(tradeOrder);
 	}
 
-	public toSaveJson(): SaveInventoryJson {
+	// @TODO Registry
+	public toSaveJson(_context: SaveJsonContext): SaveInventoryJson {
 		return {
 			capacity: this.capacity,
 			items: this.items.map(({ material, quantity }) => ({
@@ -346,7 +349,8 @@ export class Inventory {
 		};
 	}
 
-	public overwriteFromSaveJson(save: SaveInventoryJson) {
+	// @TODO Registry
+	public overwriteFromSaveJson(_context: SaveJsonContext, save: SaveInventoryJson) {
 		if (this.capacity !== save.capacity) {
 			throw new Error(
 				`Cannot overwrite an existing inventory with a saved inventory of a different size.`,
@@ -361,17 +365,4 @@ export class Inventory {
 			true,
 		);
 	}
-
-	// public static fromSaveJson(save: SaveInventoryJson) {
-	// 	const { capacity, items } = save;
-	// 	const inst = new Inventory(capacity === null ? Infinity : capacity);
-	// 	inst.changeMultiple(
-	// 		items.map(({ material, quantity }) => ({
-	// 			material: getMaterialForId(material),
-	// 			quantity,
-	// 		})),
-	// 		true,
-	// 	);
-	// 	return inst;
-	// }
 }

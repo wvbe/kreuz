@@ -1,9 +1,7 @@
-import { EventedPromise } from '../classes/EventedPromise.ts';
-import { type ExecutionNodeFn, type BehaviorTreeNodeI } from './types.ts';
+import { type BehaviorTreeNodeI, type ExecutionNodeFn } from './types.ts';
 
 /**
- * Will execute a bit of code and return an {@link EventedPromise} that is either running (`.isBusy`),
- * succeeded (`isResolved`) or failed (`isRejected`)
+ * Will execute a bit of code and return a {@link Promise}.
  *
  * Control flow nodes like {@link SequenceNode} and {@link SelectorNode} will propagate these
  * results in different ways to make the behavior tree complete.
@@ -29,7 +27,7 @@ export class ExecutionNode<B extends Record<string, unknown> = Record<string, ne
 		}
 	}
 
-	public evaluate(blackboard: B, _provenance?: number[]): EventedPromise {
+	public evaluate(blackboard: B, _provenance?: number[]): void | Promise<void> {
 		const result = this.#callback(blackboard);
 		// const label = result.isBusy ? 'busy' : result.isRejected ? 'rejected' : 'resolved';
 		return result;

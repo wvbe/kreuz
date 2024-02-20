@@ -1,5 +1,5 @@
+import { EntityI } from '../../../../level-1/mod.ts';
 import {
-	EventedPromise,
 	TradeOrder,
 	type FactoryBuildingEntity,
 	type MarketBuildingEntity,
@@ -8,10 +8,10 @@ import {
 	ExecutionNode,
 	SequenceNode,
 	EntityBlackboard,
-} from '../../../level-1/mod.ts';
+} from '../../../../level-1/mod.ts';
 
-import { getEntitiesReachableByEntity, walkEntityToEntity } from './travel.ts';
-import { createWaitBehavior } from '../reusable/createWaitBehavior.ts';
+import { getEntitiesReachableByEntity, walkEntityToEntity } from '../travel.ts';
+import { createWaitBehavior } from './createWaitBehavior.ts';
 
 export type DesirabilityRecord = {
 	market: MarketBuildingEntity;
@@ -36,12 +36,15 @@ export type DesirabilityScoreFn = (
 	available: number,
 ) => number;
 
-export function createBuyFromMarketSequence(createDesirabilityScore: DesirabilityScoreFn) {
+export function createBuyFromMarketSequence(
+	sellerFilter: (entity: EntityI) => boolean,
+	createDesirabilityScore: DesirabilityScoreFn,
+) {
 	return new SequenceNode<EntityBlackboard>(
 		new ExecutionNode('Find a deal', (blackboard) => {
 			const { game, entity } = blackboard;
 			const mostDesirableDeal = getEntitiesReachableByEntity(game, entity)
-				.filter((e): e is MarketBuildingEntity => e.type === 'market-stall')
+				.filter(sellerFilter)
 				.reduce<DesirabilityRecord[]>(
 					(records, market) =>
 						records.concat(
@@ -58,16 +61,15 @@ export function createBuyFromMarketSequence(createDesirabilityScore: Desirabilit
 				.shift();
 
 			if (!mostDesirableDeal) {
-				return EventedPromise.reject();
+				throw new Error(`There wasn't an attractive deal to be made`);
 			}
 			Object.assign(blackboard, { deal: mostDesirableDeal });
-			return EventedPromise.resolve();
 		}),
 		new ExecutionNode<EntityBlackboard & { deal?: DesirabilityRecord }>(
-			'Walk to market',
+			'Walk to vendor',
 			({ game, entity, deal }) => {
 				if (!deal) {
-					return EventedPromise.reject();
+					throw new Error(`There isn't a deal to be made`);
 				}
 				entity.$status.set(`Walking to ${deal.market}`);
 				return walkEntityToEntity(game, entity, deal.market);
@@ -75,9 +77,9 @@ export function createBuyFromMarketSequence(createDesirabilityScore: Desirabilit
 		),
 		new ExecutionNode<EntityBlackboard & { deal?: DesirabilityRecord }>(
 			'Buy any food',
-			({ entity, deal, game }) => {
+			async ({ entity, deal, game }) => {
 				if (!deal) {
-					return EventedPromise.reject();
+					throw new Error(`There isn't a deal to be made`);
 				}
 				entity.$status.set('Buying food');
 
@@ -119,18 +121,13 @@ export function createBuyFromMarketSequence(createDesirabilityScore: Desirabilit
 					},
 				);
 				if (deal.market.inventory.availableOf(deal.material) < 1) {
-					return EventedPromise.reject();
+					throw new Error(`The required ${deal.material} isn't available at the market`);
 				}
 				if (entity.wallet.get() < deal.material.value) {
-					return EventedPromise.reject();
+					throw new Error(`The buyer doesn't have enough money`);
 				}
-				try {
-					tradeOrder.makeItHappen(game.time.now);
-				} catch (e: unknown) {
-					console.log((e as Error).message || e);
-					return EventedPromise.reject();
-				}
-				return EventedPromise.resolve();
+
+				tradeOrder.makeItHappen(game.time.now);
 			},
 		),
 		createWaitBehavior(1000, 3000),

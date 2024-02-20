@@ -93,7 +93,9 @@ export function generateEntities(game: Game) {
 		const tile = Random.fromArray(walkableTiles, id);
 		const blueprint = Random.fromArray(Object.values(blueprints), id, 'blueprint');
 		const factory = new FactoryBuildingEntity(id, tile.toArray(), headOfState, {
+			blueprint,
 			maxWorkers: 3 * blueprint.options.workersRequired,
+			maxStackSpace: 8,
 		});
 		blueprint.ingredients.forEach(({ material }) =>
 			factory.inventory.set(material, Math.round(material.stack * Random.between(0.2, 1, id))),
@@ -103,7 +105,6 @@ export function generateEntities(game: Game) {
 		);
 		game.entities.add(factory);
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
-		factory.setBlueprint(blueprint);
 	}
 
 	for (let i = 0; i < Random.between(10, 15, game.seed, 'market-stalls'); i++) {

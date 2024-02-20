@@ -35,10 +35,11 @@ const demo: Demo = (driver) => {
 		terrain.getTileClosestToXy(3, 3).toArray(),
 		headOfState,
 		{
+			blueprint: blueprints.growWheat,
+			maxWorkers: 1,
 			maxStackSpace: 6,
 		},
 	);
-	farm.setBlueprint(blueprints.growWheat);
 	farm.inventory.set(materials.wheat, 99);
 
 	const mill = new FactoryBuildingEntity(
@@ -46,10 +47,11 @@ const demo: Demo = (driver) => {
 		terrain.getTileClosestToXy(8, 3).toArray(),
 		headOfState,
 		{
+			blueprint: blueprints.wheatProcessing,
+			maxWorkers: 1,
 			maxStackSpace: 6,
 		},
 	);
-	mill.setBlueprint(blueprints.wheatProcessing);
 
 	game.entities.add(farm, mill);
 

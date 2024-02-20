@@ -50,10 +50,11 @@ const demo = (driver: DriverI) => {
 		game.terrain.getTileClosestToXy(0, 0).toArray(),
 		headOfState,
 		{
+			blueprint: wheatProcessing,
+			maxStackSpace: 8,
 			maxWorkers: 3,
 		},
 	);
-	factory.setBlueprint(wheatProcessing);
 	game.entities.add(factory);
 
 	return { driver, game };

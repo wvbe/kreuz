@@ -1,4 +1,3 @@
-import { EventedPromise } from '../classes/EventedPromise.ts';
 import { Random } from '../classes/Random.ts';
 import { SeedI } from '../types.ts';
 import { SelectorNode } from './SelectorNode.ts';
@@ -21,18 +20,20 @@ export class RandomSelectorNode<B extends Record<string, unknown> = Record<strin
 		this.#createSeed = createSeedFromBlackboard;
 	}
 
-	public evaluate(blackboard: B, provenance?: number[]): EventedPromise {
-		const prom = new EventedPromise();
+	public async evaluate(blackboard: B, provenance?: number[]): Promise<void> {
 		const children = this.children.slice();
-		const next = () => {
+		const next = async () => {
 			if (!children.length) {
-				return prom.reject();
+				throw new Error('No child nodes to randomly choose from');
 			}
 			const child = Random.fromArray(children, ...this.#createSeed(blackboard));
 			children.splice(children.indexOf(child), 1);
-			child.evaluate(blackboard, provenance).then(prom.resolve.bind(prom), next);
+			try {
+				await child.evaluate(blackboard, provenance);
+			} catch (_) {
+				await next();
+			}
 		};
-		next();
-		return prom;
+		await next();
 	}
 }

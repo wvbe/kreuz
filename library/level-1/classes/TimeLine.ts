@@ -1,8 +1,6 @@
+import { SaveJsonContext, SaveTimeJson } from '../types-savedgame.ts';
 import { CallbackFn, DestroyerFn } from '../types.ts';
-import { SaveTimeJson } from '../types-savedgame.ts';
 import { EventedValue } from './EventedValue.ts';
-import { EventedPromise } from './EventedPromise.ts';
-import { SaveJsonContext } from '../types-savedgame.ts';
 
 export class TimeLine extends EventedValue<number> {
 	#timers = new Map<number, CallbackFn[]>();
@@ -109,12 +107,12 @@ export class TimeLine extends EventedValue<number> {
 		};
 	}
 
-	public wait(time: number): EventedPromise {
-		const promise = new EventedPromise();
-		this.setTimeout(() => {
-			promise.resolve();
-		}, time);
-		return promise;
+	public async wait(time: number): Promise<void> {
+		await new Promise<void>((resolve) => {
+			this.setTimeout(() => {
+				resolve();
+			}, time);
+		});
 	}
 
 	/**

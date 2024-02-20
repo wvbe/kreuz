@@ -1,5 +1,4 @@
 import {
-	EventedPromise,
 	type FactoryBuildingEntity,
 	ExecutionNode,
 	SequenceNode,
@@ -37,7 +36,7 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 			}))
 			.sort((a, b) => a.distance - b.distance);
 		if (!factories.length) {
-			return EventedPromise.reject();
+			throw new Error(`There are no factories in need for workers`);
 		}
 
 		// @TODO
@@ -47,14 +46,12 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 		// Test this prioritization!
 
 		Object.assign(blackboard, { factory: factories[0].factory });
-
-		return EventedPromise.resolve();
 	}),
 	new ExecutionNode<EntityBlackboard & { factory: FactoryBuildingEntity }>(
 		'Walk',
 		({ game, entity, factory }) => {
 			if (!factory) {
-				return EventedPromise.reject();
+				throw new Error(`Theres no factory to go to`);
 			}
 			entity.$status.set(`Going to ${factory} for work`);
 			return walkEntityToEntity(game, entity, factory);
@@ -62,14 +59,12 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 	),
 	new ExecutionNode<EntityBlackboard & { factory: FactoryBuildingEntity }>(
 		'Work',
-		({ entity, factory }) => {
-			const promise = new EventedPromise();
-
+		async ({ entity, factory }) => {
 			// Add worker, and remove it again when worker moves away
 			if (!factory.$workers.includes(entity)) {
 				if (factory.$workers.length >= factory.options.maxWorkers) {
 					// Aww shucks, somebody else took our spot before we could make it to the factory!
-					return EventedPromise.reject();
+					throw new Error(`The job was already taken by somebody else when ${entity} arrived`);
 				}
 				factory.$workers.add(entity);
 				entity.$$location.once(() => {
@@ -77,14 +72,14 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 				});
 			}
 			entity.$status.set(`Working in ${factory}`);
-			// Finish job when one work cycle completes
-			factory.$$progress.onceAbove(1, () => promise.resolve(), true);
 
-			return promise;
+			// Finish job when one work cycle completes
+			await new Promise<void>((resolve) => {
+				factory.$$progress.onceAbove(1, () => resolve(), true);
+			});
 		},
 	),
 	new ExecutionNode('Unset status', ({ entity }) => {
 		entity.$status.set(null);
-		return EventedPromise.resolve();
 	}),
 );

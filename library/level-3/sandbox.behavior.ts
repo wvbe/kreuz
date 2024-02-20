@@ -83,11 +83,11 @@ const demo: Demo = (driver) => {
 		terrain.getTileClosestToXy(13, 10).toArray(),
 		headOfState,
 		{
+			blueprint: blueprints.beeKeeping,
 			maxWorkers: 4,
+			maxStackSpace: 8,
 		},
 	);
-
-	factory.$blueprint.set(blueprints.beeKeeping);
 
 	game.entities.add(entity, church, settlement, marketStall, factory);
 

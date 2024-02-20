@@ -1,4 +1,4 @@
-import { Random, ExecutionNode, EntityBlackboard } from '../../../level-1/mod.ts';
+import { Random, ExecutionNode, EntityBlackboard } from '../../../../level-1/mod.ts';
 
 let ticker = 0;
 export function createWaitBehavior(lowerBounary: number, upperBoundary: number) {

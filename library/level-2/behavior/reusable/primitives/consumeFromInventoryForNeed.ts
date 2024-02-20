@@ -1,4 +1,4 @@
-import { EventedPromise, Material, PersonEntity, PersonNeedId } from '../../../level-1/mod.ts';
+import { Material, PersonEntity, PersonNeedId } from '../../../../level-1/mod.ts';
 
 type ConsumptionType = {
 	createStatus(material: Material): string;
@@ -6,6 +6,10 @@ type ConsumptionType = {
 	materialProperty: keyof Material;
 };
 
+/**
+ * @todo
+ * Make the need be fulfilled over a short amount of time, instead of instantaneously
+ */
 export function consumeFromInventoryForNeed(
 	config: ConsumptionType,
 	entity: PersonEntity,
@@ -18,11 +22,16 @@ export function consumeFromInventoryForNeed(
 		throw new Error(`Expected entity to need ${config.needId}, but they don't`);
 	}
 	need.set(need.get() + (material[config.materialProperty] as number));
-	return EventedPromise.resolve();
 }
 
 consumeFromInventoryForNeed.DRINK = {
 	createStatus: (material) => `Drinking ${material}`,
 	needId: 'water',
 	materialProperty: 'fluid',
+} as ConsumptionType;
+
+consumeFromInventoryForNeed.EAT = {
+	createStatus: (material) => `Eating ${material}`,
+	needId: 'food',
+	materialProperty: 'nutrition',
 } as ConsumptionType;

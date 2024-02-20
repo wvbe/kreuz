@@ -1,4 +1,3 @@
-import { EventedPromise } from '../classes/EventedPromise.ts';
 import { type BehaviorTreeNodeI } from './types.ts';
 
 /**
@@ -16,17 +15,17 @@ export class SequenceNode<B extends Record<string, unknown> = Record<string, nev
 		this.children = children;
 	}
 
-	public evaluate(blackboard: B, provenance?: number[]): EventedPromise {
-		const prom = new EventedPromise();
+	public async evaluate(blackboard: B, provenance?: number[]): Promise<void> {
 		let index = 0;
-		const next = () => {
+		const next = async () => {
 			const child = this.children[index++];
 			if (!child) {
-				return prom.resolve();
+				// return prom.resolve();
+				throw new Error('No child nodes to sequence from');
 			}
-			child.evaluate(blackboard, provenance).then(next, prom.reject.bind(prom));
+			await child.evaluate(blackboard, provenance);
+			await next();
 		};
-		next();
-		return prom;
+		await next();
 	}
 }

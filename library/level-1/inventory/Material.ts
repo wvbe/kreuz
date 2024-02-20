@@ -23,6 +23,7 @@ export class Material {
 	 * The amount of "food" need that is fulfilled by consuming one of these.
 	 */
 	public readonly nutrition: number;
+
 	/**
 	 * The amount of "water" need that is fulfilled by consuming one of these.
 	 */

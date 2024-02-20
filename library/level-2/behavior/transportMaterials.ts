@@ -1,5 +1,4 @@
 import {
-	EventedPromise,
 	ExecutionNode,
 	type FactoryBuildingEntity,
 	SequenceNode,
@@ -27,7 +26,7 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 		const { game, entity } = blackboard;
 
 		if (entity.inventory.getUsedStackSpace() >= entity.inventory.capacity) {
-			return EventedPromise.reject();
+			throw new Error(`${entity} cannot carry any more.`);
 		}
 
 		// @TODO Use a more refined measure than just transferring exactly one whole stack
@@ -93,7 +92,7 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 			.shift();
 
 		if (!supplyDemand) {
-			return EventedPromise.reject();
+			throw new Error(`There are no hauling jobs to do`);
 		}
 
 		const tradeOrder = new TradeOrder(
@@ -120,8 +119,6 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 
 		supplyDemand.supplier.inventory.makeReservation(tradeOrder);
 		supplyDemand.entity.inventory.makeReservation(tradeOrder);
-
-		return EventedPromise.resolve();
 	}),
 	new ExecutionNode<
 		EntityBlackboard & { tradeOrder: TradeOrder; from: TradeEntityI; to: TradeEntityI }
@@ -140,7 +137,6 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 			})),
 		);
 		entity.inventory.changeMultiple(tradeOrder.stacks1);
-		return EventedPromise.resolve();
 	}),
 	new ExecutionNode<
 		EntityBlackboard & { tradeOrder: TradeOrder; from: TradeEntityI; to: TradeEntityI }
@@ -159,6 +155,5 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 		);
 		tradeOrder.inventory2.changeMultiple(tradeOrder.stacks1);
 		tradeOrder.inventory2.cancelReservation(tradeOrder);
-		return EventedPromise.resolve();
 	}),
 );

@@ -18,7 +18,12 @@ export type SaveFactoryBuildingEntityJson = SaveBuildingEntityJson & {
 	blueprint: SaveEventedValueJson;
 };
 
-type FactoryBuildingEntityOptions = {
+export type FactoryBuildingEntityOptions = {
+	/**
+	 * The type of production work that goes on in this factory.
+	 */
+	blueprint: Blueprint;
+
 	/**
 	 * The maximum amount of workers that can participate in the production cycle.
 	 */
@@ -28,11 +33,6 @@ type FactoryBuildingEntityOptions = {
 	 * The maximum amount of stacks held by this factory's inventory.
 	 */
 	maxStackSpace: number;
-};
-
-const defaultFactoryBuildingEntityOptions: FactoryBuildingEntityOptions = {
-	maxWorkers: 1,
-	maxStackSpace: 8,
 };
 
 export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
@@ -96,7 +96,7 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 		id: string,
 		location: SimpleCoordinate,
 		owner: PersonEntity,
-		options: Partial<FactoryBuildingEntityOptions>,
+		options: FactoryBuildingEntityOptions,
 	) {
 		super(id, location, {
 			baseDepth: 1,
@@ -104,10 +104,14 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 			baseWidth: 1,
 			roofHeight: 1,
 		});
-		this.options = { ...defaultFactoryBuildingEntityOptions, ...options };
+
+		this.options = options;
 
 		this.owner = owner;
 		this.inventory = new Inventory(this.options.maxStackSpace);
+
+		this.setBlueprint(this.options.blueprint);
+		this.attemptStartBlueprint();
 
 		this.$attach.on((game) => {
 			this.$$progress.attach(game);
@@ -153,7 +157,7 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 		});
 	}
 
-	public setBlueprint(blueprint: Blueprint | null) {
+	private setBlueprint(blueprint: Blueprint | null) {
 		if (this.isBusy()) {
 			throw new Error('Cannot change blueprint while buiding is busy');
 		}

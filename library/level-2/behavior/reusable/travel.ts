@@ -1,17 +1,8 @@
-import {
-	type EventedPromise,
-	type PersonEntity,
-	type EntityI,
-	type Game,
-} from '../../../level-1/mod.ts';
+import { type EntityI, type Game, type PersonEntity } from '../../../level-1/mod.ts';
 
-export function walkEntityToEntity(
-	game: Game,
-	entity: PersonEntity,
-	destination: EntityI,
-): EventedPromise {
+export async function walkEntityToEntity(game: Game, entity: PersonEntity, destination: EntityI) {
 	const tile = game.terrain.getTileEqualToLocation(destination.$$location.get());
-	return entity.walkToTile(tile);
+	await entity.walkToTile(tile);
 }
 
 export function getEntitiesReachableByEntity<F>(game: Game, entity: PersonEntity): EntityI[] {

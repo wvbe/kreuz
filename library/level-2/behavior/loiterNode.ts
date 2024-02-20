@@ -1,5 +1,4 @@
 import {
-	EventedPromise,
 	Random,
 	ExecutionNode,
 	SelectorNode,
@@ -14,7 +13,7 @@ export const loiterNode = new SelectorNode<EntityBlackboard>(
 	new SequenceNode(
 		new ExecutionNode('Wander', ({ game, entity }) => {
 			if ((entity.needs.find((need) => need.id === 'energy')?.get() || 0) < 0.2) {
-				return EventedPromise.reject();
+				throw new Error(`${entity} is too tired to wander around`);
 			}
 			entity.$status.set('Wandering around…');
 			const start = game.terrain.getTileEqualToLocation(entity.$$location.get());

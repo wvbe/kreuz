@@ -9,7 +9,6 @@ export * from './behavior/types.ts';
 // Miscellaneous utilities:
 export { Collection } from './classes/Collection.ts';
 export { Event } from './classes/Event.ts';
-export { EventedPromise } from './classes/EventedPromise.ts';
 export { EventedValue } from './classes/EventedValue.ts';
 export { EventedNumericValue } from './classes/EventedNumericValue.ts';
 export { Path } from './classes/Path.ts';
@@ -24,7 +23,10 @@ export { TestDriver } from './drivers/TestDriver.ts';
 // Entities:
 export * from './drivers/types.ts';
 export { ChurchBuildingEntity } from './entities/entity.building.church.ts';
-export { FactoryBuildingEntity } from './entities/entity.building.factory.ts';
+export {
+	FactoryBuildingEntity,
+	type FactoryBuildingEntityOptions,
+} from './entities/entity.building.factory.ts';
 export { MarketBuildingEntity } from './entities/entity.building.market.ts';
 export { PersonEntity } from './entities/entity.person.ts';
 export { HeroPersonEntity } from './entities/entity.person.hero.ts';

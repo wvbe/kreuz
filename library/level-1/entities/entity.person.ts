@@ -1,14 +1,11 @@
 import { EntityBlackboard, type BehaviorTreeNodeI } from '../behavior/types.ts';
 import { Event } from '../classes/Event.ts';
-import { EventedPromise } from '../classes/EventedPromise.ts';
 import { EventedValue, type SaveEventedValueJson } from '../classes/EventedValue.ts';
 import { Path } from '../classes/Path.ts';
-import { SaveRegistryItemJson } from '../classes/Registry.ts';
-import { PersonNeedId, PERSON_NEEDS } from '../constants/needs.ts';
-import type Game from '../Game.ts';
+import { PERSON_NEEDS, PersonNeedId } from '../constants/needs.ts';
 import { Inventory, type SaveInventoryJson } from '../inventory/Inventory.ts';
 import { SaveJsonContext } from '../types-savedgame.ts';
-import { type CallbackFn, type CoordinateI, type TileI, type SimpleCoordinate } from '../types.ts';
+import { type CallbackFn, type CoordinateI, type SimpleCoordinate, type TileI } from '../types.ts';
 import { Entity, type SaveEntityJson } from './entity.ts';
 import { Need, type SaveNeedJson } from './Need.ts';
 
@@ -82,8 +79,8 @@ export class PersonEntity extends Entity {
 	public readonly $stepEnd = new Event<[CoordinateI]>(`${this.constructor.name} $stepEnd`);
 
 	/**
-	 * The behavior tree root node for this entity. Calling `.evaluate()` on it will return an
-	 * {@link EventedPromise} of whatever it is that this entity should be doing.
+	 * The behavior tree root node for this entity. Calling `.evaluate()` on it will return a
+	 * promise of whatever it is that this entity should be doing.
 	 */
 	public readonly $behavior = new EventedValue<PersonEntityBehavior | null>(
 		null,
@@ -202,7 +199,7 @@ export class PersonEntity extends Entity {
 	 * Returns a promise that resolves when the path is completed, or rejects when another path
 	 * interrupts our current before the destination was reached.
 	 */
-	public walkToTile(destination: TileI): EventedPromise {
+	public async walkToTile(destination: TileI): Promise<void> {
 		const terrain = destination.terrain;
 		if (!terrain) {
 			throw new Error(`Entity "${this.id}" is trying to path in a detached coordinate`);
@@ -219,8 +216,7 @@ export class PersonEntity extends Entity {
 		// this is not a feature yet, we can use it regardless:
 		const start = terrain.getTileEqualToLocation(this.$$location.get());
 		const path = new Path(terrain, { closest: true }).findPathBetween(start, destination);
-
-		return this.walkAlongPath(path);
+		await this.walkAlongPath(path);
 	}
 
 	/**
@@ -228,13 +224,15 @@ export class PersonEntity extends Entity {
 	 * when interrupted.
 	 *
 	 * Very similar to .walkToTile, but more appropriate if the path is already computed.
+	 *
+	 * @note Appears to have some duplicate code, this may need to be revised
 	 */
-	public walkAlongPath(path: TileI[]): EventedPromise {
+	public async walkAlongPath(path: TileI[]): Promise<void> {
 		// @TODO add some safety checks on the path maybe.
 		// Emitting this event may prompt the promises of other walkOnTile tasks to reject.
-
-		if (!path.length) {
-			return EventedPromise.resolve();
+		const nextTileInPath = path.shift();
+		if (!nextTileInPath) {
+			return;
 		}
 
 		this.$pathStart.emit();
@@ -256,11 +254,17 @@ export class PersonEntity extends Entity {
 			unlisten();
 		});
 
-		const promise = new EventedPromise(this.$pathEnd, this.$pathStart);
-		const next = path.shift();
-		if (next) {
-			this.#animateTo(next);
-		}
+		const promise = new Promise<void>((resolve, reject) => {
+			const stopListeningForFinish = this.$pathEnd.once(() => {
+				stopListeningForInterrupt();
+				resolve();
+			});
+			const stopListeningForInterrupt = this.$pathStart.once(() => {
+				stopListeningForFinish();
+				reject();
+			});
+		});
+		this.#animateTo(nextTileInPath);
 		return promise;
 	}
 

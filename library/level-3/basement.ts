@@ -41,13 +41,12 @@ const demo: Demo = (driver) => {
 		terrain.getTileClosestToXy(3, 3).toArray(),
 		headOfState,
 		{
+			blueprint: blueprints.getWaterFromWell,
 			maxWorkers: 0,
 			maxStackSpace: 1,
 		},
 	);
 	game.entities.add(well);
-
-	well.setBlueprint(blueprints.getWaterFromWell);
 
 	return { driver, game };
 };

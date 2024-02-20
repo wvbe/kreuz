@@ -1,8 +1,9 @@
-import { type TileI } from '@lib';
+import { type TileI, type EntityI } from '@lib';
 import React, { FC, PropsWithChildren, useMemo } from 'react';
+
 import { useGameContext } from '../context/GameContext.tsx';
 import { setSelectedEntity } from '../hooks/useSelectedEntity.ts';
-import { EntityI, PersonEntity } from '../../library/level-1/mod.ts';
+
 import { EntityBadge } from '../entities/EntityBadge.tsx';
 
 const MapTileContextMenuItem: FC<

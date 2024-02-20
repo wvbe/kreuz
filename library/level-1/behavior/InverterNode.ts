@@ -1,9 +1,7 @@
-import { EventedPromise } from '../classes/EventedPromise.ts';
 import { type BehaviorTreeNodeI } from './types.ts';
 
 /**
- * Will execute a bit of code and return an {@link EventedPromise} that is either running (`.isBusy`),
- * succeeded (`isResolved`) or failed (`isRejected`)
+ * Inverts the success/fail signal of the behavior tree node that it wraps.
  *
  * Control flow nodes like {@link SequenceNode} and {@link SelectorNode} will propagate these
  * results in different ways to make the behavior tree complete.
@@ -19,14 +17,12 @@ export class InverterNode<B extends Record<string, unknown> = Record<string, nev
 		this.children = [node];
 	}
 
-	public evaluate(blackboard: B, _provenance?: number[]): EventedPromise {
-		const result = this.children[0].evaluate(blackboard, _provenance);
-		if (result.isRejected) {
-			return EventedPromise.resolve();
+	public async evaluate(blackboard: B, _provenance?: number[]): Promise<void> {
+		try {
+			await this.children[0].evaluate(blackboard, _provenance);
+		} catch (_) {
+			return;
 		}
-		if (result.isResolved) {
-			return EventedPromise.reject();
-		}
-		return result;
+		throw new Error(`A behavior that was expected to fail, succeeded`);
 	}
 }

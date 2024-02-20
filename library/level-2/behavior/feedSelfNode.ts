@@ -1,18 +1,18 @@
 import {
-	EventedPromise,
-	type Inventory,
-	type MaterialState,
+	EntityBlackboard,
 	ExecutionNode,
 	InverterNode,
 	SelectorNode,
 	SequenceNode,
-	EntityBlackboard,
+	type Inventory,
+	type MaterialState,
 } from '../../level-1/mod.ts';
 import {
-	createBuyFromMarketSequence,
 	DesirabilityScoreFn,
-} from './reusable/createBuyFromMarketBehavior.ts';
-import { createWaitBehavior } from './reusable/createWaitBehavior.ts';
+	createBuyFromMarketSequence,
+} from './reusable/nodes/createBuyFromMarketBehavior.ts';
+import { createWaitBehavior } from './reusable/nodes/createWaitBehavior.ts';
+import { consumeFromInventoryForNeed } from './reusable/primitives/consumeFromInventoryForNeed.ts';
 
 const filterEdibleMaterial = ({ material }: MaterialState) =>
 	material.nutrition && !material.toxicity;
@@ -38,12 +38,13 @@ const scoreFoodDesirability: DesirabilityScoreFn = (entity, _market, material) =
  */
 export const feedSelf = new SequenceNode<EntityBlackboard>(
 	new ExecutionNode('Hungry?', ({ entity }) => {
-		// @TODO replace with Needs/moods
 		const need = entity.needs.find((n) => n.id === 'food');
 		if (!need) {
-			return EventedPromise.reject();
+			throw new Error(`For some reason, ${entity} is unable to feel hungry`);
 		}
-		return need.get() < 0.2 ? EventedPromise.resolve() : EventedPromise.reject();
+		if (need.get() > 0.2) {
+			throw new Error(`${entity} isn't feeling hungry`);
+		}
 	}),
 	new SelectorNode(
 		new SequenceNode(
@@ -51,30 +52,28 @@ export const feedSelf = new SequenceNode<EntityBlackboard>(
 				new ExecutionNode('Has no food?', ({ entity }) => {
 					const hasSupplies = !!entity.inventory.getAvailableItems().filter(filterEdibleMaterial)
 						.length;
-					return hasSupplies ? EventedPromise.resolve() : EventedPromise.reject();
+					if (!hasSupplies) {
+						throw new Error(`${entity} does not have any edibles on hand`);
+					}
 				}),
 			),
-			createBuyFromMarketSequence(scoreFoodDesirability),
+			createBuyFromMarketSequence(
+				(vendor) => vendor.type === 'market-stall',
+				scoreFoodDesirability,
+			),
 		),
 		new SequenceNode(
-			new ExecutionNode('Eat from inventory?', ({ entity }) => {
+			new ExecutionNode('Eat from inventory?', async ({ entity }) => {
 				const state = getMostEdibleStateFromInventory(entity.inventory);
 				if (!state) {
-					return EventedPromise.reject();
+					throw new Error(`${entity} does not have any edibles on hand`);
 				}
-				entity.$status.set(`Muching on ${state.material}`);
-				entity.inventory.change(state.material, -1);
-				const need = entity.needs.find((n) => n.id === 'food');
-				if (!need) {
-					throw new Error('Expected entity to have a need for food');
-				}
-				need.set(need.get() + state.material.nutrition);
-				return EventedPromise.resolve();
+
+				await consumeFromInventoryForNeed(consumeFromInventoryForNeed.EAT, entity, state.material);
 			}),
 			createWaitBehavior(500, 3000),
 			new ExecutionNode('Unset status', ({ entity }) => {
 				entity.$status.set(null);
-				return EventedPromise.resolve();
 			}),
 		),
 	),

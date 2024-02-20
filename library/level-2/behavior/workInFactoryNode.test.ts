@@ -43,10 +43,11 @@ describe('BT: workInFactory', () => {
 		game.terrain.getTileClosestToXy(5, 5).toArray(),
 		headOfState,
 		{
+			blueprint: beeKeeping,
 			maxWorkers: 1,
+			maxStackSpace: 8,
 		},
 	);
-	factory.setBlueprint(beeKeeping);
 	game.entities.add(entity, factory);
 
 	entity.$pathStart.on(pathStart);

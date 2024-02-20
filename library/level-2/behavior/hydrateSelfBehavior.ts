@@ -60,7 +60,7 @@ export const hydrateSelfBehavior = new SequenceNode<EntityBlackboard>(
 				}),
 			),
 			createBuyFromMarketSequence(
-				(vendor) =>
+				(vendor): vendor is FactoryBuildingEntity =>
 					vendor.type === 'factory' &&
 					(vendor as FactoryBuildingEntity).$blueprint.get() === getWaterFromWell,
 				scoreFluidDesirability,

@@ -147,7 +147,7 @@ export class PersonEntity extends Entity {
 				behaviorLoopEnabled = false;
 				doBehaviourLoop();
 			});
-			const doBehaviourLoop = () => {
+			const doBehaviourLoop = async () => {
 				if (behaviorLoopEnabled) {
 					throw new Error('You should not start two behavior loops at once');
 				}
@@ -156,13 +156,15 @@ export class PersonEntity extends Entity {
 					return;
 				}
 				behaviorLoopEnabled = true;
-				const b = behavior.evaluate({ game, entity: this });
-
-				// The following means that the entity will retry the behavior tree again in the same
-				// frame if it fails entirely. This is probably not what you want, since it can lead
-				// to max call stack size exceeeded errors -- but simply waiting to retry again
-				// is not a great fix either. Instead the behavior tree should be fixed.
-				b.then($behaviorEndedEmit, $behaviorEndedEmit);
+				try {
+					await behavior.evaluate({ game, entity: this });
+				} catch (_) {
+					// The following means that the entity will retry the behavior tree again in the same
+					// frame if it fails entirely. This is probably not what you want, since it can lead
+					// to max call stack size exceeeded errors -- but simply waiting to retry again
+					// is not a great fix either. Instead the behavior tree should be fixed.
+				}
+				$behaviorEndedEmit();
 
 				// However, should you need it, here is a 1000 time retry timeout:
 				// b.then($behaviorEndedEmit, () => {

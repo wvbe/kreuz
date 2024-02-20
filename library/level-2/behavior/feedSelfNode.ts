@@ -1,3 +1,4 @@
+import { MarketBuildingEntity } from '../../level-1/mod.ts';
 import {
 	EntityBlackboard,
 	ExecutionNode,
@@ -58,7 +59,7 @@ export const feedSelf = new SequenceNode<EntityBlackboard>(
 				}),
 			),
 			createBuyFromMarketSequence(
-				(vendor) => vendor.type === 'market-stall',
+				(vendor): vendor is MarketBuildingEntity => vendor.type === 'market-stall',
 				scoreFoodDesirability,
 			),
 		),

@@ -13,8 +13,9 @@ import {
 import { getEntitiesReachableByEntity, walkEntityToEntity } from '../travel.ts';
 import { createWaitBehavior } from './createWaitBehavior.ts';
 
+type VendorEntity = MarketBuildingEntity | FactoryBuildingEntity;
 export type DesirabilityRecord = {
-	market: MarketBuildingEntity;
+	market: VendorEntity;
 	material: Material;
 	score: number;
 };
@@ -30,14 +31,13 @@ export type DesirabilityRecord = {
  */
 export type DesirabilityScoreFn = (
 	entity: PersonEntity,
-	// I am lazy, so union this shit
-	market: MarketBuildingEntity | FactoryBuildingEntity,
+	market: VendorEntity,
 	material: Material,
 	available: number,
 ) => number;
 
 export function createBuyFromMarketSequence(
-	sellerFilter: (entity: EntityI) => boolean,
+	sellerFilter: (entity: EntityI) => entity is VendorEntity,
 	createDesirabilityScore: DesirabilityScoreFn,
 ) {
 	return new SequenceNode<EntityBlackboard>(

@@ -12,6 +12,7 @@ import {
 	EntityBlackboard,
 } from '../../level-1/mod.ts';
 import { getWaterFromWell } from '../blueprints.ts';
+import { consumeFromInventoryForNeed } from './reusable/consumeFromInventoryForNeed.ts';
 import { DesirabilityScoreFn } from './reusable/createBuyFromMarketBehavior.ts';
 import { createWaitBehavior } from './reusable/createWaitBehavior.ts';
 import { getEntitiesReachableByEntity, walkEntityToEntity } from './reusable/travel.ts';
@@ -161,14 +162,11 @@ export const hydrateSelfBehavior = new SequenceNode<EntityBlackboard>(
 				if (!state) {
 					return EventedPromise.reject();
 				}
-				entity.$status.set(`Drinking ${state.material}`);
-				entity.inventory.change(state.material, -1);
-				const need = entity.needs.find((n) => n.id === 'water');
-				if (!need) {
-					throw new Error('Expected entity to have a need for water');
-				}
-				need.set(need.get() + state.material.fluid);
-				return EventedPromise.resolve();
+				return consumeFromInventoryForNeed(
+					consumeFromInventoryForNeed.DRINK,
+					entity,
+					state.material,
+				);
 			}),
 			createWaitBehavior(500, 3000),
 			new ExecutionNode('Unset status', ({ entity }) => {

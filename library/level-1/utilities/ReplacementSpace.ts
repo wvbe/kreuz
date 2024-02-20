@@ -1,3 +1,5 @@
+import type { TokenizedText } from '../../../ui/components/atoms/TokenizedText.tsx';
+
 export function token(bucket: string | number | symbol, item: { id: string }): string {
 	return `#{${String(bucket)}:${item.id}}`;
 }
@@ -20,6 +22,12 @@ export type ReplacementSpaceResult<BucketsGeneric extends Record<string, { id: s
 	  ]
 >;
 
+/**
+ * A registry that can be used find tokens of different kinds, to be replaced with different stuff.
+ *
+ * For example, {@link TokenizedText &lt;TokenizedText/&gt;} uses an instance of `ReplacementSpace` to render
+ * clickable links instead of the mention of an entity.
+ */
 export class ReplacementSpace<BucketsGeneric extends Record<string, { id: string }>> {
 	#buckets: BucketFunctions<BucketsGeneric>;
 

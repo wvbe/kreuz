@@ -1,6 +1,15 @@
 import { type TileI, Random } from '@lib';
-import React, { type FunctionComponent, useMemo } from 'react';
+import React, {
+	type FunctionComponent,
+	useMemo,
+	useContext,
+	useCallback,
+	MouseEventHandler,
+} from 'react';
 import Color from 'color';
+import { useContextMenu } from '../components/createContextMenu.tsx';
+import { MapTileContextMenu } from './MapTileContextMenu.tsx';
+import { useMapTileContextMenu } from './mapTileContextMenu.ts';
 
 // <palette>
 // 	<color name='dry-grass-patches-1' rgb='A09E55' r='160' g='158' b='84' />
@@ -20,6 +29,16 @@ export const MapTile: FunctionComponent<{ zoom: number; tile: TileI }> = ({ tile
 				.saturate(Random.between(-0.2, 0.2, tile.toString(), 'saturate')),
 		[],
 	);
+
+	const contextMenu = useMapTileContextMenu();
+
+	const onRmb = useCallback<MouseEventHandler<SVGPolygonElement>>(
+		(event) => {
+			contextMenu.open(event, { tile });
+		},
+		[contextMenu],
+	);
+
 	if (!tile.isLand()) {
 		return null;
 	}
@@ -29,5 +48,5 @@ export const MapTile: FunctionComponent<{ zoom: number; tile: TileI }> = ({ tile
 		.map((coord) => `${(tile.x + coord.x) * zoom},${(tile.y + coord.y) * zoom}`)
 		.join(' ');
 
-	return <polygon points={points} fill={green.toString()} />;
+	return <polygon points={points} fill={green.toString()} onContextMenu={onRmb} />;
 };

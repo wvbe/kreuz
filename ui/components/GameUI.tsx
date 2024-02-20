@@ -3,11 +3,11 @@ import React, { FunctionComponent, useCallback } from 'react';
 import { useGameContext } from '../context/GameContext.tsx';
 import { SelectedEntityDetails } from '../entities/EntityDetails.tsx';
 import { EntityList } from '../entities/EntityList.tsx';
+import { MaterialList } from '../inventory/MaterialList.tsx';
 import { MapTerrain } from '../map/MapTerrain.tsx';
 import { MapViewport } from '../map/MapViewport.tsx';
 import { BlueprintList } from './BlueprintList.tsx';
 import { Clock } from './Clock.tsx';
-import { MaterialList } from '../inventory/MaterialList.tsx';
 import { ProductionList } from './ProductionList.tsx';
 
 export const GameUI: FunctionComponent = () => {

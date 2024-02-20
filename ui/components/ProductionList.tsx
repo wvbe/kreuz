@@ -5,7 +5,8 @@ import { CollapsibleWindow } from './atoms/CollapsibleWindow.tsx';
 import { PopOnUpdateSpan } from './atoms/PopOnUpdateSpan.tsx';
 import { Cell, Row, Table } from './atoms/Table.tsx';
 import { useGameContext } from '../context/GameContext.tsx';
-import { LineGraph } from './LineGraph.tsx';
+// import { LineGraph } from './LineGraph.tsx';
+
 function getTotalDelta(entities: FactoryBuildingEntity[]) {
 	return entities.reduce((total, entity) => (total += entity.$$progress.delta), 0);
 }
@@ -67,16 +68,17 @@ export const ProductionList: FunctionComponent = () => {
 		));
 	}, [entitiesByBlueprint]);
 
-	const subscriptions = useMemo(
-		() =>
-			Object.values(entitiesByBlueprint).map((entities) => {
-				return () => getTotalDelta(entities);
-			}),
-		[entitiesByBlueprint],
-	);
+	// const subscriptions = useMemo(
+	// 	() =>
+	// 		Object.values(entitiesByBlueprint).map((entities) => {
+	// 			return () => getTotalDelta(entities);
+	// 		}),
+	// 	[entitiesByBlueprint],
+	// );
+
 	return (
 		<>
-			<LineGraph subscriptions={subscriptions} />
+			{/* <LineGraph subscriptions={subscriptions} /> */}
 			<CollapsibleWindow label={`World production panel`}>
 				<Table>{products}</Table>
 			</CollapsibleWindow>

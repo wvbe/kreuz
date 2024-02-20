@@ -1,8 +1,9 @@
 import { Collection, EntityI, type Terrain } from '@lib';
-import React, { FunctionComponent, useMemo } from 'react';
+import React, { FunctionComponent, useCallback, useMemo, useState } from 'react';
 import { MapEntity } from './MapEntity.tsx';
 import { MapTile } from './MapTile.tsx';
 import { MapTerrainOutline } from './MapTerrainOutline.tsx';
+import { MapTileContextMenuHost } from './mapTileContextMenu.ts';
 
 const MARGIN = 25;
 
@@ -58,19 +59,22 @@ export const MapTerrain: FunctionComponent<{ terrain: Terrain; entities: Collect
 				position: 'absolute',
 				top: MARGIN,
 				left: MARGIN,
+				zIndex: 0,
 			} as React.CSSProperties,
 		];
 	}, []);
 
 	return (
-		<div className="map-terrain" style={terrainCss}>
-			<svg {...svgProps}>
-				<g className="tiles">{tiles}</g>
-				<g className="outline">
-					<MapTerrainOutline terrain={terrain} />
-				</g>
-			</svg>
-			<div style={overlayCss}>{entities2}</div>
+		<div className="map-terrain" style={terrainCss} data-context-menu-role="canvas">
+			<MapTileContextMenuHost>
+				<svg {...svgProps}>
+					<g className="tiles">{tiles}</g>
+					<g className="outline">
+						<MapTerrainOutline terrain={terrain} />
+					</g>
+				</svg>
+				<div style={overlayCss}>{entities2}</div>
+			</MapTileContextMenuHost>
 		</div>
 	);
 };

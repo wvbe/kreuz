@@ -11,7 +11,9 @@
 @import url('./map/MapTile.css');
 @import url('./components/atoms/Table.css');
 @import url('./components/BehaviorTree.css');
+@import url('./components/createContextMenu.css');
 @import url('./map/MapEntity.css');
+@import url('./map/MapTileContextMenu.css');
 /* @import url('./components/EntityList.css'); */
 
 :root {

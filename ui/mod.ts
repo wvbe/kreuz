@@ -4,3 +4,4 @@ export { GameContext } from './context/GameContext.tsx';
 export { DriverContext } from './context/DriverContext.tsx';
 export { useGeneratedGame } from './hooks/useGeneratedGame.ts';
 export { useEventedValue } from './hooks/useEventedValue.ts';
+export { useSelectedEntity } from './hooks/useSelectedEntity.tsx';

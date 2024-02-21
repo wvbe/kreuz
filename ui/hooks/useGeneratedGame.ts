@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 export function useGeneratedGame(driver: DriverI): null | Game {
 	const [game, setGame] = useState<null | Game>(null);
 	useEffect(() => {
-		const t = setTimeout(async () => {
+		console.log('Go generate game in 10ms');
+		const timeout = setTimeout(async () => {
 			const { game } = await createGame(driver);
 			await driver.start();
 			(self as any).driver = driver;
@@ -12,7 +13,7 @@ export function useGeneratedGame(driver: DriverI): null | Game {
 		}, 10);
 
 		return () => {
-			clearTimeout(t);
+			clearTimeout(timeout);
 			void driver.detach();
 		};
 	}, []);

@@ -5,14 +5,14 @@ import {
 	type PersonEntity,
 } from '@lib';
 import React, { FunctionComponent, useMemo } from 'react';
-import { useSelectedEntity } from '../hooks/useSelectedEntity.ts';
+import { useSelectedEntity } from '../hooks/useSelectedEntity.tsx';
 import { EntityBadge } from './EntityBadge.tsx';
 import { FactoryBuildingEntityDetails } from './FactoryBuildingEntityDetails.tsx';
 import { MarketBuildingEntityDetails } from './MarketBuildingEntityDetails.tsx';
 import { PersonEntityDetails } from './PersonEntityDetails.tsx';
 import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow.tsx';
 
-export const EntityDetails: FunctionComponent<{ entity?: EntityI }> = ({ entity }) => {
+export const EntityDetails: FunctionComponent<{ entity?: EntityI | null }> = ({ entity }) => {
 	if (!entity) {
 		return null;
 	}
@@ -36,5 +36,5 @@ export const EntityDetails: FunctionComponent<{ entity?: EntityI }> = ({ entity 
 
 export const SelectedEntityDetails: FunctionComponent = () => {
 	const selectedEntity = useSelectedEntity();
-	return <EntityDetails entity={selectedEntity || undefined} />;
+	return <EntityDetails entity={selectedEntity.current} />;
 };

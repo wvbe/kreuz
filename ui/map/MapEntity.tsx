@@ -6,10 +6,10 @@ import React, {
 	MouseEventHandler,
 	useCallback,
 } from 'react';
-import { useEventedValue } from '../hooks/useEventedValue.ts';
-import { setSelectedEntity, useIsSelectedEntity } from '../hooks/useSelectedEntity.ts';
-import { useMapTileContextMenu } from './mapTileContextMenu.ts';
 import { useGameContext } from '../context/GameContext.tsx';
+import { useEventedValue } from '../hooks/useEventedValue.ts';
+import { useSelectedEntity } from '../hooks/useSelectedEntity.tsx';
+import { useMapTileContextMenu } from './mapTileContextMenu.ts';
 
 export const MapEntity: FunctionComponent<
 	{ entity: EntityI; zoom: number } & DetailedHTMLProps<
@@ -17,7 +17,8 @@ export const MapEntity: FunctionComponent<
 		HTMLDivElement
 	>
 > = ({ entity, zoom, ...rest }) => {
-	const isSelected = useIsSelectedEntity(entity);
+	const selectedEntity = useSelectedEntity();
+	const isSelected = selectedEntity.current === entity;
 	const contextMenu = useMapTileContextMenu();
 	const game = useGameContext();
 	const onRmb = useCallback<MouseEventHandler<HTMLDivElement>>(
@@ -34,7 +35,7 @@ export const MapEntity: FunctionComponent<
 			className={`meta--emoji-symbols map-entity map-entity--${entity.type} ${
 				isSelected ? `map-entity--selected` : ''
 			}`}
-			onClick={() => setSelectedEntity(entity)}
+			onClick={() => selectedEntity.set(entity)}
 			onContextMenu={onRmb}
 			style={{ top: `${y * zoom}px`, left: `${x * zoom}px` }}
 			{...rest}

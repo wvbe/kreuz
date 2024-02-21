@@ -1,14 +1,15 @@
 import { type EntityI } from '@lib';
-import React, { type FunctionComponent, useCallback } from 'react';
+import React, { useCallback, type FunctionComponent } from 'react';
 
-import { setSelectedEntity } from '../hooks/useSelectedEntity.ts';
+import { useSelectedEntity } from '../hooks/useSelectedEntity.tsx';
 
 export const EntityLink: FunctionComponent<{ entity: EntityI }> = ({ entity }) => {
+	const selectedEntity = useSelectedEntity();
 	const onClick = useCallback(
 		(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
 			event.preventDefault();
 			event.stopPropagation();
-			setSelectedEntity(entity);
+			selectedEntity.set(entity);
 		},
 		[entity],
 	);

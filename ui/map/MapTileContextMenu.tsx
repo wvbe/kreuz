@@ -1,8 +1,8 @@
-import { type TileI, type EntityI } from '@lib';
+import { type EntityI, type TileI } from '@lib';
 import React, { FC, PropsWithChildren, useMemo } from 'react';
 
 import { useGameContext } from '../context/GameContext.tsx';
-import { setSelectedEntity } from '../hooks/useSelectedEntity.ts';
+import { useSelectedEntity } from '../hooks/useSelectedEntity.tsx';
 
 import { EntityBadge } from '../entities/EntityBadge.tsx';
 
@@ -28,6 +28,7 @@ const MapTileContextMenuItem: FC<
 };
 export const MapTileContextMenu: FC<{ tile: TileI; entity: EntityI }> = ({ tile }) => {
 	const game = useGameContext();
+	const selectedEntity = useSelectedEntity();
 
 	const tileEntities = game.entities.filter((entity) =>
 		// ['factory', 'market-stall', 'church', 'settlement'].includes(entity.type) &&
@@ -39,7 +40,7 @@ export const MapTileContextMenu: FC<{ tile: TileI; entity: EntityI }> = ({ tile 
 				{tile.x},{tile.y}
 			</MapTileContextMenuItem>
 			{tileEntities.map((entity) => (
-				<MapTileContextMenuItem key={entity.id} onClick={() => setSelectedEntity(entity)}>
+				<MapTileContextMenuItem key={entity.id} onClick={() => selectedEntity.set(entity)}>
 					<EntityBadge entity={entity} />
 				</MapTileContextMenuItem>
 			))}

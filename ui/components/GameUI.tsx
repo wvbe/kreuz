@@ -9,11 +9,12 @@ import { MapViewport } from '../map/MapViewport.tsx';
 import { BlueprintList } from './BlueprintList.tsx';
 import { Clock } from './Clock.tsx';
 import { ProductionList } from './ProductionList.tsx';
+import { SelectedEntityContextProvider } from '../hooks/useSelectedEntity.tsx';
 
 export const GameUI: FunctionComponent = () => {
 	const game = useGameContext();
 	return (
-		<>
+		<SelectedEntityContextProvider>
 			<div className="game-ui">
 				<div className="game-ui__clock">
 					<Clock />
@@ -48,6 +49,6 @@ export const GameUI: FunctionComponent = () => {
 					<MapTerrain terrain={game.terrain} entities={game.entities} />
 				</MapViewport>
 			</div>
-		</>
+		</SelectedEntityContextProvider>
 	);
 };

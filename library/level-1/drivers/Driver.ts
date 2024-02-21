@@ -39,10 +39,7 @@ export class Driver extends Attachable<[Game]> implements DriverI {
 			throw new Error('Animation already started');
 		}
 		await this.$$animating.set(true);
-		await new Promise<void>(async (resolve) => {
-			this.$pause.once(() => resolve());
-			await this.$resume.emit();
-		});
+		await this.$resume.emit();
 	}
 
 	public async stop() {

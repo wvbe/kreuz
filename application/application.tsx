@@ -1,10 +1,9 @@
+import { DriverContext, GameContext, GameUI, ReplacementSpaceContext, useGeneratedGame } from '@ui';
 import React, { type FunctionComponent } from 'react';
 import { createRoot } from 'react-dom';
-import { useGeneratedGame, GameUI } from '../ui/mod.ts';
-import { AlephDriver } from './driver.ts';
-import { GameContext, DriverContext, ReplacementSpaceContext } from '@ui';
+import { BrowserDriver } from './driver.ts';
 
-const driver = new AlephDriver();
+const driver = new BrowserDriver();
 
 const Application: FunctionComponent = () => {
 	const game = useGeneratedGame(driver);

@@ -1,7 +1,6 @@
 import { Driver, EntityI, PersonEntity, type DriverI, type Game } from '@lib';
-import { setSelectedEntity } from './hooks/useSelectedEntity.ts';
 
-export class AlephDriver extends Driver implements DriverI {
+export class BrowserDriver extends Driver implements DriverI {
 	game: Game | null = null;
 	gameSpeed = 4;
 	lastUpdate: number = Date.now();
@@ -83,9 +82,5 @@ export class AlephDriver extends Driver implements DriverI {
 		);
 
 		return this;
-	}
-
-	setSelectedEntity(entity: EntityI | null) {
-		setSelectedEntity(entity);
 	}
 }

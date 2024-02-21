@@ -238,7 +238,7 @@ export class Inventory {
 	 *
 	 * @TODO Keep upper limit in mind? Hm.
 	 */
-	public change(material: Material, delta: number, skipEvent?: boolean) {
+	public async change(material: Material, delta: number, skipEvent?: boolean) {
 		if (delta === 0) {
 			return;
 		}
@@ -246,7 +246,7 @@ export class Inventory {
 		if (value < 0) {
 			throw new Error(`Not possible to have less than 0 ${material} in inventory`);
 		}
-		this.set(material, value, skipEvent);
+		await this.set(material, value, skipEvent);
 	}
 
 	/**
@@ -254,14 +254,15 @@ export class Inventory {
 	 *
 	 * You can choose to (not) emit an update once.
 	 */
-	public changeMultiple(states: MaterialState[], skipEvent?: boolean) {
+	public async changeMultiple(states: MaterialState[], skipEvent?: boolean) {
 		let index = 0;
 		for (const { material, quantity } of states) {
-			this.change(material, quantity, ++index === states.length ? skipEvent : true);
+			// @TODO Promise.all?
+			await this.change(material, quantity, ++index === states.length ? skipEvent : true);
 		}
 	}
 
-	public set(material: Material, quantity: number, skipEvent?: boolean) {
+	public async set(material: Material, quantity: number, skipEvent?: boolean) {
 		if (quantity < 0) {
 			throw new Error(`Cannot have a negative amount of ${material}`);
 		}
@@ -272,7 +273,7 @@ export class Inventory {
 			}
 			this.items.splice(stateIndex, 1);
 			if (!skipEvent) {
-				this.$change.emit();
+				await this.$change.emit();
 			}
 			return;
 		}
@@ -287,7 +288,7 @@ export class Inventory {
 			this.items[stateIndex].quantity = quantity;
 		}
 		if (!skipEvent) {
-			this.$change.emit();
+			await this.$change.emit();
 		}
 	}
 
@@ -345,14 +346,17 @@ export class Inventory {
 		};
 	}
 
-	public overwriteFromSaveJson(context: SaveJsonContext, save: SaveInventoryJson) {
+	public async overwriteFromSaveJson(
+		context: SaveJsonContext,
+		save: SaveInventoryJson,
+	): Promise<void> {
 		if (this.capacity !== save.capacity) {
 			throw new Error(
 				`Cannot overwrite an existing inventory with a saved inventory of a different size.`,
 			);
 		}
 		this.items.splice(0, this.items.length);
-		this.changeMultiple(
+		await this.changeMultiple(
 			save.items.map(({ material, quantity }) => ({
 				material: context.materials.item(material, true),
 				quantity,

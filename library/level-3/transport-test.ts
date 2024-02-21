@@ -17,7 +17,7 @@ import { DEFAULT_ASSETS, materials } from '../level-2/mod.ts';
 import { blueprints, behavior } from '../level-2/mod.ts';
 import { Demo } from './types.ts';
 
-const demo: Demo = (driver) => {
+const demo: Demo = async (driver) => {
 	const terrain = generateGridTerrainFromAscii(`
 		XXXXXXXXXXXX
 		XXXXXXXXXXXX
@@ -28,7 +28,7 @@ const demo: Demo = (driver) => {
 		XXXXXXXXXXXX
 	`);
 	const game = new Game('1', terrain, DEFAULT_ASSETS);
-	driver.attach(game);
+	await driver.attach(game);
 
 	const farm = new FactoryBuildingEntity(
 		'farm',
@@ -40,7 +40,7 @@ const demo: Demo = (driver) => {
 			maxStackSpace: 6,
 		},
 	);
-	farm.inventory.set(materials.wheat, 99);
+	await farm.inventory.set(materials.wheat, 99);
 
 	const mill = new FactoryBuildingEntity(
 		'mill',
@@ -53,15 +53,15 @@ const demo: Demo = (driver) => {
 		},
 	);
 
-	game.entities.add(farm, mill);
+	await game.entities.add(farm, mill);
 
 	for (let i = 0; i < 5; i++) {
 		const entity = new PersonEntity(`person-${i}`, terrain.getTileClosestToXy(0, 0).toArray(), {
 			gender: 'm',
 			firstName: 'Melanie',
 		});
-		game.entities.add(entity);
-		entity.$behavior.set(behavior.civvyBehavior);
+		await game.entities.add(entity);
+		await entity.$behavior.set(behavior.civvyBehavior);
 	}
 
 	return { driver, game };

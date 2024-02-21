@@ -11,7 +11,7 @@ function mermaidPieChart(label: string, data: { [key: string]: number }) {
 	);
 }
 
-export function generateFamilyTree(seed: number, dateMax: number) {
+export async function generateFamilyTree(seed: number, dateMax: number) {
 	const TIME = new TimeLine();
 	let seedIncrement = seed;
 	const events: string[] = [];
@@ -212,7 +212,7 @@ export function generateFamilyTree(seed: number, dateMax: number) {
 			});
 	});
 
-	TIME.steps(dateMax);
+	await TIME.steps(dateMax);
 
 	return {
 		log: events,

@@ -26,7 +26,7 @@ import {
 } from '../level-2/mod.ts';
 import { Demo } from './types.ts';
 
-const demo: Demo = (driver) => {
+const demo: Demo = async (driver) => {
 	const terrain = generateGridTerrainFromAscii(`
 		XXXXXXXXXXXXXXX
 		XXXXXXXXXXXXXXX
@@ -43,7 +43,7 @@ const demo: Demo = (driver) => {
 	`);
 
 	const game = new Game('1', terrain, DEFAULT_ASSETS);
-	driver.attach(game);
+	await driver.attach(game);
 
 	const entity = new PersonEntity(
 		'person-0',
@@ -55,7 +55,7 @@ const demo: Demo = (driver) => {
 			.toArray(),
 		{ gender: 'f', firstName: 'Test' },
 	);
-	entity.wallet.set(500);
+	await entity.wallet.set(500);
 
 	const church = new ChurchBuildingEntity('church', terrain.getTileClosestToXy(3, 3).toArray());
 
@@ -76,7 +76,7 @@ const demo: Demo = (driver) => {
 		materials.eggs,
 		headOfState,
 	);
-	marketStall.inventory.change(materials.eggs, 30);
+	await marketStall.inventory.change(materials.eggs, 30);
 
 	const factory = new FactoryBuildingEntity(
 		'factory',
@@ -89,9 +89,9 @@ const demo: Demo = (driver) => {
 		},
 	);
 
-	game.entities.add(entity, church, settlement, marketStall, factory);
+	await game.entities.add(entity, church, settlement, marketStall, factory);
 
-	entity.$behavior.set(behavior.civvyBehavior);
+	await entity.$behavior.set(behavior.civvyBehavior);
 
 	return { driver, game };
 };

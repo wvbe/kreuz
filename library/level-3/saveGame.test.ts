@@ -1,23 +1,23 @@
-import { describe, expect, it, run } from 'tincan';
+import { describe, expect, it, run, beforeAll } from 'tincan';
 
 import { TestDriver, Game } from '../level-1/mod.ts';
 import createGeneratorDemo from './generator.ts';
 import { DEFAULT_ASSETS } from '@lib';
 
-describe('Save game', () => {
-	const { game } = createGeneratorDemo(new TestDriver());
+describe('Loading the initial game', async () => {
+	let game_original: Game, game_loaded: Game;
+	beforeAll(async () => {
+		game_original = (await createGeneratorDemo(new TestDriver())).game;
+		game_loaded = await Game.fromSaveJson(DEFAULT_ASSETS, game_original.toSaveJson());
+	});
 
-	describe('Loading the initial game', async () => {
-		const json = game.toSaveJson();
-		const game2 = Game.fromSaveJson(DEFAULT_ASSETS, json);
-		// expect(game2).toEqual(game);
-		describe('Equal entities', () => {
-			it('Has the same amount of entities', () => {
-				expect(game2.entities.length).toBe(game.entities.length);
-			});
-			game.entities.forEach((entity, i) =>
-				it(`Entity "${entity.label}"`, () => expect(game2.entities.get(i)).toEqual(entity)),
-			);
+	it('Has the same amount of entities', () => {
+		expect(game_loaded.entities.length).toBe(game_original.entities.length);
+	});
+
+	it('Every entity is the same', () => {
+		game_original.entities.forEach((entity, i) => {
+			expect(game_loaded.entities.get(i)).toEqual(entity);
 		});
 	});
 });

@@ -10,11 +10,11 @@ export const Clock: FunctionComponent = () => {
 	const game = useGameContext();
 	const time = useEventedValue(game.time);
 	const isAnimating = useEventedValue(driver.$$animating);
-	const pause = useCallback(() => {
-		driver.stop();
+	const pause = useCallback(async () => {
+		await driver.stop();
 	}, []);
-	const resume = useCallback(() => {
-		driver.start();
+	const resume = useCallback(async () => {
+		await driver.start();
 	}, []);
 	return (
 		<div>

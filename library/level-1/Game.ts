@@ -43,20 +43,10 @@ export default class Game {
 	constructor(seed: SeedI, terrain: Terrain, assets: GameAssets) {
 		this.seed = seed;
 		this.terrain = terrain;
-
-		this.entities.$add.on((added) =>
-			added.forEach((entity) => {
-				entity.attach(this);
-			}),
-		);
-
 		this.assets = assets;
 
-		this.entities.$remove.on((removed) =>
-			removed.forEach((entity) => {
-				entity.detach();
-			}),
-		);
+		this.entities.$add.on((added) => Promise.all(added.map((entity) => entity.attach(this))));
+		this.entities.$remove.on((removed) => Promise.all(removed.map((entity) => entity.detach())));
 	}
 
 	/**
@@ -66,12 +56,12 @@ export default class Game {
 	 *
 	 * Normally called by the driver, or from a unit test.
 	 */
-	public start() {
-		this.$resume.emit();
+	public async start() {
+		await this.$resume.emit();
 	}
 
-	public stop() {
-		this.$pause.emit();
+	public async stop() {
+		await this.$pause.emit();
 	}
 
 	/**
@@ -88,9 +78,11 @@ export default class Game {
 			seed: this.seed,
 		};
 	}
-	public static fromSaveJson(assets: GameAssets, save: SavedGameJson): Game {
+	public static async fromSaveJson(assets: GameAssets, save: SavedGameJson): Promise<Game> {
 		const game = new Game(save.seed, Terrain.fromSaveJson(save.terrain), assets);
-		game.entities.add(...save.entities.map((entity) => castSaveJsonToEntity(assets, entity)));
+		await game.entities.add(
+			...(await Promise.all(save.entities.map((entity) => castSaveJsonToEntity(assets, entity)))),
+		);
 		return game;
 	}
 }

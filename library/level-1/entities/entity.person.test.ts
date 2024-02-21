@@ -25,26 +25,29 @@ describe('PersonEntity', () => {
 			gender: 'm',
 			needs: {},
 		});
-		entity.$behavior.set(hydrateSelfBehavior);
+		await entity.$behavior.set(hydrateSelfBehavior);
 		expect(entity.toSaveJson(DEFAULT_ASSETS).behavior).toEqual({
 			current: 'bt-17',
 			label: 'PersonEntity $behavior',
 		});
 	});
 	it(`round-trip`, async () => {
-		function makeEntity() {
+		async function makeEntity() {
 			const entity = new PersonEntity('guy', [0, 0, Infinity], {
 				firstName: 'Dude',
 				gender: 'm',
 				needs: {},
 			});
-			entity.$behavior.set(hydrateSelfBehavior);
+			await entity.$behavior.set(hydrateSelfBehavior);
 			return entity;
 		}
 
 		expect(
-			PersonEntity.fromSaveJson(DEFAULT_ASSETS, makeEntity().toSaveJson(DEFAULT_ASSETS)),
-		).toEqual(makeEntity());
+			await PersonEntity.fromSaveJson(
+				DEFAULT_ASSETS,
+				(await makeEntity()).toSaveJson(DEFAULT_ASSETS),
+			),
+		).toEqual(await makeEntity());
 	});
 });
 

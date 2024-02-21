@@ -32,7 +32,7 @@ export class MarketBuildingEntity extends BuildingEntity implements EntityI {
 		});
 		this.material = material;
 		this.owner = owner;
-		this.$status.set(`Sells ${this.material} for 💰${this.material.value} apiece`, true);
+		void this.$status.set(`Sells ${this.material} for 💰${this.material.value} apiece`, true);
 	}
 
 	public get name() {
@@ -52,18 +52,18 @@ export class MarketBuildingEntity extends BuildingEntity implements EntityI {
 		};
 	}
 
-	public static fromSaveJson(
+	public static async fromSaveJson(
 		context: SaveJsonContext,
 		save: SaveMarketBuildingEntityJson,
-	): MarketBuildingEntity {
+	): Promise<MarketBuildingEntity> {
 		const { id, location, material, inventory, owner } = save;
 		const inst = new MarketBuildingEntity(
 			id,
 			location,
 			material,
-			PersonEntity.fromSaveJson(context, owner),
+			await PersonEntity.fromSaveJson(context, owner),
 		);
-		inst.inventory.overwriteFromSaveJson(context, inventory);
+		await inst.inventory.overwriteFromSaveJson(context, inventory);
 		return inst;
 	}
 }

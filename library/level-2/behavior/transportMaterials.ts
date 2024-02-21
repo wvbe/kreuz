@@ -122,9 +122,9 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 	}),
 	new ExecutionNode<
 		EntityBlackboard & { tradeOrder: TradeOrder; from: TradeEntityI; to: TradeEntityI }
-	>('Walk to supplier', ({ game, entity, from }) => {
-		entity.$status.set(`Going to pick up materials from ${from}`);
-		return walkEntityToEntity(game, entity, from);
+	>('Walk to supplier', async ({ game, entity, from }) => {
+		await entity.$status.set(`Going to pick up materials from ${from}`);
+		await walkEntityToEntity(game, entity, from);
 	}),
 	new ExecutionNode<
 		EntityBlackboard & { tradeOrder: TradeOrder; from: TradeEntityI; to: TradeEntityI }
@@ -140,20 +140,20 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 	}),
 	new ExecutionNode<
 		EntityBlackboard & { tradeOrder: TradeOrder; from: TradeEntityI; to: TradeEntityI }
-	>('Walk to deliver', ({ game, entity, to }) => {
-		entity.$status.set(`Delivering materials to ${to}`);
-		return walkEntityToEntity(game, entity, to);
+	>('Walk to deliver', async ({ game, entity, to }) => {
+		await entity.$status.set(`Delivering materials to ${to}`);
+		await walkEntityToEntity(game, entity, to);
 	}),
 	new ExecutionNode<
 		EntityBlackboard & { tradeOrder: TradeOrder; from: TradeEntityI; to: TradeEntityI }
-	>('Unload goods', ({ entity, tradeOrder }) => {
-		entity.inventory.changeMultiple(
+	>('Unload goods', async ({ entity, tradeOrder }) => {
+		await entity.inventory.changeMultiple(
 			tradeOrder.stacks1.map(({ quantity, material }) => ({
 				quantity: -quantity,
 				material,
 			})),
 		);
-		tradeOrder.inventory2.changeMultiple(tradeOrder.stacks1);
+		await tradeOrder.inventory2.changeMultiple(tradeOrder.stacks1);
 		tradeOrder.inventory2.cancelReservation(tradeOrder);
 	}),
 );

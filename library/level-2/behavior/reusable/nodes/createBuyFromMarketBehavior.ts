@@ -67,12 +67,12 @@ export function createBuyFromMarketSequence(
 		}),
 		new ExecutionNode<EntityBlackboard & { deal?: DesirabilityRecord }>(
 			'Walk to vendor',
-			({ game, entity, deal }) => {
+			async ({ game, entity, deal }) => {
 				if (!deal) {
 					throw new Error(`There isn't a deal to be made`);
 				}
-				entity.$status.set(`Walking to ${deal.market}`);
-				return walkEntityToEntity(game, entity, deal.market);
+				await entity.$status.set(`Walking to ${deal.market}`);
+				await walkEntityToEntity(game, entity, deal.market);
 			},
 		),
 		new ExecutionNode<EntityBlackboard & { deal?: DesirabilityRecord }>(
@@ -81,7 +81,7 @@ export function createBuyFromMarketSequence(
 				if (!deal) {
 					throw new Error(`There isn't a deal to be made`);
 				}
-				entity.$status.set('Buying food');
+				await entity.$status.set('Buying food');
 
 				const buyAmount = Math.min(
 					// Don't buy more than what is being sold:
@@ -127,7 +127,7 @@ export function createBuyFromMarketSequence(
 					throw new Error(`The buyer doesn't have enough money`);
 				}
 
-				tradeOrder.makeItHappen(game.time.now);
+				await tradeOrder.makeItHappen(game.time.now);
 			},
 		),
 		createWaitBehavior(1000, 3000),

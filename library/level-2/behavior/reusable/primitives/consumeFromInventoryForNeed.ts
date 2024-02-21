@@ -10,18 +10,18 @@ type ConsumptionType = {
  * @todo
  * Make the need be fulfilled over a short amount of time, instead of instantaneously
  */
-export function consumeFromInventoryForNeed(
+export async function consumeFromInventoryForNeed(
 	config: ConsumptionType,
 	entity: PersonEntity,
 	material: Material,
-) {
-	entity.$status.set(config.createStatus(material));
-	entity.inventory.change(material, -1);
+): Promise<void> {
+	await entity.$status.set(config.createStatus(material));
+	await entity.inventory.change(material, -1);
 	const need = entity.needs.find((n) => n.id === config.needId);
 	if (!need) {
 		throw new Error(`Expected entity to need ${config.needId}, but they don't`);
 	}
-	need.set(need.get() + (material[config.materialProperty] as number));
+	await need.set(need.get() + (material[config.materialProperty] as number));
 }
 
 consumeFromInventoryForNeed.DRINK = {

@@ -68,8 +68,8 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 			toJson(context, current) {
 				return current ? current.toSaveJson(context) : null;
 			},
-			fromJson(context, saved) {
-				return saved ? Blueprint.fromSaveJson(context, saved as SaveBlueprintJson) : null;
+			async fromJson(context, saved) {
+				return saved ? await Blueprint.fromSaveJson(context, saved as SaveBlueprintJson) : null;
 			},
 		},
 	);
@@ -110,22 +110,25 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 		this.owner = owner;
 		this.inventory = new Inventory(this.options.maxStackSpace);
 
-		this.setBlueprint(this.options.blueprint);
-		this.attemptStartBlueprint();
+		void this.setBlueprint(this.options.blueprint).then(() => {
+			void this.attemptStartBlueprint();
+		});
 
-		this.$attach.on((game) => {
-			this.$$progress.attach(game);
-			this.$detach.once(() => this.$$progress.detach());
+		this.$attach.on(async (game) => {
+			await this.$$progress.attach(game);
+			this.$detach.once(async () => {
+				await this.$$progress.detach();
+			});
 
 			// See if production can be started if the blueprint changes:
 			this.$detach.once(this.$blueprint.on(() => this.attemptStartBlueprint()));
 
 			// See if production is sped up/slowed down if the worker occupancy changes:
 			this.$detach.once(
-				this.$workers.$change.on(() => {
+				this.$workers.$change.on(async () => {
 					if (this.isBusy() || this.$blueprint.get()?.hasAllIngredients(this.inventory)) {
 						// Must already be busy or have the ingredients to start
-						this.setProgressDelta();
+						await this.setProgressDelta();
 					}
 				}),
 			);
@@ -135,34 +138,35 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 			// blueprint products cannot be placed.
 			this.$detach.once(
 				this.inventory.$change.on(
-					() => this.#avoidRespondingToOwnInventoryChange || this.attemptStartBlueprint(),
+					async () =>
+						this.#avoidRespondingToOwnInventoryChange || (await this.attemptStartBlueprint()),
 				),
 			);
 
 			// When production progress completes, restart again
 			this.$detach.once(
-				this.$$progress.onBetween(1, Infinity, () => {
+				this.$$progress.onBetween(1, Infinity, async () => {
 					const blueprint = this.$blueprint.get();
 					if (!blueprint) {
 						// Indicative of a bug somewhere!
 						throw new Error('Blueprint is somehow unset while the cycle is completing');
 					}
-					this.inventory.changeMultiple(blueprint.products);
-					this.$$progress.set(0);
-					if (!this.attemptStartBlueprint()) {
-						this.$$progress.setDelta(0);
+					await this.inventory.changeMultiple(blueprint.products);
+					await this.$$progress.set(0);
+					if (!(await this.attemptStartBlueprint())) {
+						await this.$$progress.setDelta(0);
 					}
 				}),
 			);
 		});
 	}
 
-	private setBlueprint(blueprint: Blueprint | null) {
+	private async setBlueprint(blueprint: Blueprint | null) {
 		if (this.isBusy()) {
 			throw new Error('Cannot change blueprint while buiding is busy');
 		}
 		// @TODO chagne blueprint to something else, without unsetting it first?
-		this.$blueprint.set(blueprint);
+		await this.$blueprint.set(blueprint);
 	}
 
 	/**
@@ -174,7 +178,7 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 	 * @TODO Should avoid setProgressDelta for its side-effect, because it is more expensive
 	 *       than it has to be.
 	 */
-	private setProgressDelta() {
+	private async setProgressDelta() {
 		const blueprint = this.$blueprint.get();
 		if (!blueprint) {
 			// Programmer error, you should have avoided calling this method:
@@ -183,9 +187,9 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 		const delta = 1 / blueprint.options.fullTimeEquivalent;
 		if (blueprint.options.workersRequired <= 0) {
 			// If the blueprint does not require workers, process at 1x full speed
-			this.$$progress.setDelta(delta);
+			await this.$$progress.setDelta(delta);
 		} else {
-			this.$$progress.setDelta(
+			await this.$$progress.setDelta(
 				Math.floor(this.$workers.length / blueprint.options.workersRequired) * delta,
 			);
 		}
@@ -213,7 +217,7 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 	 *
 	 * Returns a boolean on wether the blueprint if we now started or not.
 	 */
-	private attemptStartBlueprint(): boolean {
+	private async attemptStartBlueprint(): Promise<boolean> {
 		if (this.isBusy()) {
 			// Cannot start it now. The updated blueprint will be picked up on the next
 			// production cycle. --> @TODO
@@ -222,27 +226,27 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 
 		const blueprint = this.$blueprint.get();
 		if (!blueprint) {
-			this.$status.set('Waiting for instructions…');
+			await this.$status.set('Waiting for instructions…');
 			return false;
 		}
 		if (this.$workers.length < blueprint.options.workersRequired) {
-			this.$status.set('Waiting for enough workers…');
+			await this.$status.set('Waiting for enough workers…');
 			return false;
 		}
 
 		if (!blueprint.hasAllIngredients(this.inventory)) {
-			this.$status.set('Waiting for the required materials…');
+			await this.$status.set('Waiting for the required materials…');
 			return false;
 		}
 		if (!this.inventory.isEverythingAllocatable(blueprint.products)) {
-			this.$status.set('Waiting to clear space for products…');
+			await this.$status.set('Waiting to clear space for products…');
 			return false;
 		}
 
-		this.$status.set('Working…');
+		await this.$status.set('Working…');
 
 		this.#avoidRespondingToOwnInventoryChange = true;
-		this.inventory.changeMultiple(
+		await this.inventory.changeMultiple(
 			blueprint.ingredients.map(({ material, quantity }) => ({ material, quantity: -quantity })),
 		);
 		this.#avoidRespondingToOwnInventoryChange = false;
@@ -250,8 +254,8 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 		// Both setting the progress to something else, or changing the delta, will kick off some
 		// timers on ProgressingNumericValue -- meaning the factory is busy again.
 		// @TODO dedupe with the other places where $$progress or its delta are set
-		this.$$progress.set(0);
-		this.setProgressDelta();
+		await this.$$progress.set(0);
+		await this.setProgressDelta();
 
 		return true;
 	}
@@ -265,20 +269,22 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 			blueprint: this.$blueprint.toSaveJson(context),
 		};
 	}
-	public static fromSaveJson(
+	public static async fromSaveJson(
 		context: SaveJsonContext,
 		save: SaveFactoryBuildingEntityJson,
-	): FactoryBuildingEntity {
+	): Promise<FactoryBuildingEntity> {
 		const { id, location, options, inventory, owner, blueprint, status } = save;
 		const inst = new FactoryBuildingEntity(
 			id,
 			location,
-			PersonEntity.fromSaveJson(context, owner),
+			await PersonEntity.fromSaveJson(context, owner),
 			options,
 		);
-		inst.inventory.overwriteFromSaveJson(context, inventory);
-		inst.$blueprint.overwriteFromSaveJson(context, blueprint);
-		inst.$status.overwriteFromSaveJson(context, status);
+		await Promise.all([
+			inst.inventory.overwriteFromSaveJson(context, inventory),
+			inst.$blueprint.overwriteFromSaveJson(context, blueprint),
+			inst.$status.overwriteFromSaveJson(context, status),
+		]);
 		return inst;
 	}
 }

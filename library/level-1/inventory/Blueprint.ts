@@ -50,15 +50,15 @@ export class Blueprint {
 	 *
 	 * @deprecated Please consider method docs.
 	 */
-	public transferIngredients(inventoryFrom: Inventory, inventoryTo: Inventory) {
+	public async transferIngredients(inventoryFrom: Inventory, inventoryTo: Inventory) {
 		for (const { material, quantity } of this.ingredients) {
 			const demand =
 				Math.min(quantity, inventoryFrom.availableOf(material)) - inventoryTo.availableOf(material);
 			if (demand <= 0) {
 				continue;
 			}
-			inventoryFrom.change(material, -demand);
-			inventoryTo.change(material, demand);
+			await inventoryFrom.change(material, -demand);
+			await inventoryTo.change(material, demand);
 		}
 	}
 
@@ -90,8 +90,10 @@ export class Blueprint {
 		};
 	}
 
-	// @TODO Registry
-	public static fromSaveJson(context: SaveJsonContext, save: SaveBlueprintJson) {
+	public static async fromSaveJson(
+		context: SaveJsonContext,
+		save: SaveBlueprintJson,
+	): Promise<Blueprint> {
 		return new Blueprint(
 			save.name,
 			save.ingredients.map(({ material, quantity }) => ({

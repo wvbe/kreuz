@@ -10,7 +10,7 @@ export type SaveEventedValueJson = {
 
 type SerializationOptions<T> = {
 	toJson: (context: SaveJsonContext, value: T) => JsonValue;
-	fromJson: (context: SaveJsonContext, json: JsonValue) => T;
+	fromJson: (context: SaveJsonContext, json: JsonValue) => Promise<T>;
 };
 
 export class EventedValue<T> extends Event<[T]> {
@@ -28,7 +28,7 @@ export class EventedValue<T> extends Event<[T]> {
 			toJson(_context, value) {
 				return value as JsonValue;
 			},
-			fromJson(_context, json) {
+			async fromJson(_context, json) {
 				return json as T;
 			},
 		};
@@ -44,21 +44,21 @@ export class EventedValue<T> extends Event<[T]> {
 	/**
 	 * Set the current value, and probably emit an event too
 	 */
-	public set(value: T, skipUpdate?: boolean) {
+	public async set(value: T, skipUpdate?: boolean) {
 		if (value === this.current) {
 			return;
 		}
 		this.current = value;
 		if (!skipUpdate) {
-			this.emit();
+			await this.emit();
 		}
 	}
 
 	/**
 	 * Emit that there was an update
 	 */
-	public emit() {
-		super.emit(this.current);
+	public async emit() {
+		await super.emit(this.current);
 	}
 
 	public toSaveJson(context: SaveJsonContext): SaveEventedValueJson {
@@ -68,7 +68,10 @@ export class EventedValue<T> extends Event<[T]> {
 		};
 	}
 
-	public overwriteFromSaveJson(context: SaveJsonContext, save: SaveEventedValueJson) {
-		this.set(this.#serializationOptions.fromJson(context, save.current), true);
+	public async overwriteFromSaveJson(
+		context: SaveJsonContext,
+		save: SaveEventedValueJson,
+	): Promise<void> {
+		await this.set(await this.#serializationOptions.fromJson(context, save.current), true);
 	}
 }

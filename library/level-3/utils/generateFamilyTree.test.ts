@@ -2,10 +2,10 @@ import { expect, it, describe, run } from 'tincan';
 import { generateFamilyTree } from './generateFamilyTree.ts';
 
 describe('generateFamilyTree', () => {
-	let result: ReturnType<typeof generateFamilyTree>;
+	let result: ReturnType<typeof generateFamilyTree> extends Promise<infer P> ? P : never;
 
-	expect(() => {
-		result = generateFamilyTree(420, 100);
+	expect(async () => {
+		result = await generateFamilyTree(420, 100);
 	}).not.toThrow();
 
 	it('.makeData()', () =>

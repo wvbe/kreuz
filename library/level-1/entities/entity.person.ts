@@ -86,7 +86,7 @@ export class PersonEntity extends Entity {
 		null,
 		`${this.constructor.name} $behavior`,
 		{
-			fromJson: (context, id) => context.behaviorNodes.itemFromSaveJson(id as string),
+			fromJson: async (context, id) => context.behaviorNodes.itemFromSaveJson(id as string),
 			toJson: (context, node) => context.behaviorNodes.itemToSaveJson(node),
 		},
 	);
@@ -125,20 +125,23 @@ export class PersonEntity extends Entity {
 		super(id, location);
 
 		const { needs, ...passport } = options;
-		this.needs.forEach((need) => need.set(needs?.[need.id] || 1, true));
+		void Promise.all(this.needs.map((need) => need.set(needs?.[need.id] || 1, true)));
+
 		this.passport = passport;
 
 		// Movement handling
-		this.$stepEnd.on((loc) => {
-			this.$$location.set(loc);
+		this.$stepEnd.on(async (loc) => {
+			await this.$$location.set(loc);
 		});
 
 		// Register need into game event loop
-		this.$attach.on((game) => {
-			this.needs.forEach((need) => {
-				need.attach(game);
-				this.$detach.once(() => need.detach());
-			});
+		this.$attach.on(async (game) => {
+			await Promise.all(
+				this.needs.map(async (need) => {
+					this.$detach.once(() => need.detach());
+					await need.attach(game);
+				}),
+			);
 
 			let behaviorLoopEnabled = false;
 			const $behaviorEnded = new Event('behavior ended');
@@ -237,16 +240,16 @@ export class PersonEntity extends Entity {
 			return;
 		}
 
-		this.$pathStart.emit();
+		await this.$pathStart.emit();
 
-		const unlisten = this.$stepEnd.on(() => {
+		const unlisten = this.$stepEnd.on(async () => {
 			const nextStep = path.shift();
 			if (!nextStep) {
 				unlisten();
 				unlistenNewPath();
-				this.$pathEnd.emit();
+				await this.$pathEnd.emit();
 			} else {
-				this.#animateTo(nextStep);
+				await this.#animateTo(nextStep);
 			}
 		});
 
@@ -266,20 +269,20 @@ export class PersonEntity extends Entity {
 				reject();
 			});
 		});
-		this.#animateTo(nextTileInPath);
+		await this.#animateTo(nextTileInPath);
 		return promise;
 	}
 
 	/**
 	 * Move entity directly to a coordinate. Does not consider accessibility or closeness.
 	 */
-	#animateTo(coordinate: CoordinateI) {
+	async #animateTo(coordinate: CoordinateI) {
 		if (coordinate.hasNaN()) {
 			// @TODO remove at some point?
 			throw new Error('This should never happen I suppose');
 		}
-		const done = () => this.$stepEnd.emit(coordinate);
-		this.$stepStart.emit(coordinate, this.distanceTo(coordinate) / this.walkSpeed, done);
+		const done = async () => await this.$stepEnd.emit(coordinate);
+		await this.$stepStart.emit(coordinate, this.distanceTo(coordinate) / this.walkSpeed, done);
 	}
 
 	public toSaveJson(context: SaveJsonContext): SavePersonEntityJson {
@@ -293,16 +296,19 @@ export class PersonEntity extends Entity {
 		};
 	}
 
-	public static fromSaveJson(context: SaveJsonContext, save: SavePersonEntityJson) {
+	public static async fromSaveJson(
+		context: SaveJsonContext,
+		save: SavePersonEntityJson,
+	): Promise<PersonEntity> {
 		const { id, location, passport, needs, behavior, inventory, wallet, status } = save;
-		const inst = new PersonEntity(id, location, {
-			...passport,
-			// needs: needs.map((need) => Need.fromSaveJson(need)),
-		});
-		inst.$behavior.overwriteFromSaveJson(context, behavior);
-		inst.$status.overwriteFromSaveJson(context, status);
-		inst.inventory.overwriteFromSaveJson(context, inventory);
-		inst.wallet.overwriteFromSaveJson(context, wallet);
+		const inst = new PersonEntity(id, location, passport);
+		// @TODO restore needs from save JSON
+		await Promise.all([
+			inst.$behavior.overwriteFromSaveJson(context, behavior),
+			inst.$status.overwriteFromSaveJson(context, status),
+			inst.inventory.overwriteFromSaveJson(context, inventory),
+			inst.wallet.overwriteFromSaveJson(context, wallet),
+		]);
 		return inst;
 	}
 }

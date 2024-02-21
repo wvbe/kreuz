@@ -21,15 +21,15 @@ export class TestDriver extends Driver implements DriverI {
 		this.options = options;
 	}
 
-	public attach(game: Game): this {
-		super.attach(game);
+	public async attach(game: Game): Promise<this> {
+		await super.attach(game);
 
 		this.$detach.once(
-			this.$resume.on(() => {
+			this.$resume.on(async () => {
 				while (this.$$animating.get() && game.time.hasNextEvent()) {
-					game.time.jump();
+					await game.time.jump();
 				}
-				this.stop();
+				await this.stop();
 			}),
 		);
 

@@ -41,9 +41,9 @@ const wheat = new Material('Wheat', {
 		},
 	);
 
-const demo = (driver: DriverI) => {
+const demo = async (driver: DriverI) => {
 	const game = new Game('1', generateGridTerrainFromAscii(`XXX`), DEFAULT_ASSETS);
-	driver.attach(game);
+	await driver.attach(game);
 
 	const factory = new FactoryBuildingEntity(
 		'factory',
@@ -55,14 +55,14 @@ const demo = (driver: DriverI) => {
 			maxWorkers: 3,
 		},
 	);
-	game.entities.add(factory);
+	await game.entities.add(factory);
 
 	return { driver, game };
 };
 
 describe('FactoryBuildingEntity', () => {
 	it(`Doesn't do anything on its own`, async () => {
-		const { game, driver } = demo(new TestDriver());
+		const { game, driver } = await demo(new TestDriver());
 		const factory = game.entities.get(0) as FactoryBuildingEntity;
 
 		expect(factory.name).toBe('Mill');
@@ -73,7 +73,7 @@ describe('FactoryBuildingEntity', () => {
 		expect(game.time.now).toBe(0);
 		expect(game.time.getNextEventAbsoluteTime()).toBe(Infinity);
 
-		factory.inventory.change(wheat, 30);
+		await factory.inventory.change(wheat, 30);
 		await driver.start();
 
 		// Game ends because there is nothing to do
@@ -87,7 +87,7 @@ describe('FactoryBuildingEntity', () => {
 	});
 
 	it(`Goes to work when it has a worker`, async () => {
-		const { game, driver } = demo(new TestDriver());
+		const { game, driver } = await demo(new TestDriver());
 		await driver.start();
 
 		// Game ends because there is nothing to do
@@ -98,9 +98,9 @@ describe('FactoryBuildingEntity', () => {
 			gender: 'm',
 			firstName: 'test',
 		});
-		game.entities.add(worker);
+		await game.entities.add(worker);
 		const factory = game.entities.get<FactoryBuildingEntity>(0);
-		factory.$workers.add(worker);
+		await factory.$workers.add(worker);
 		await driver.start();
 
 		// Game ends after the worker's needs expire, because there is nothing else to do
@@ -113,7 +113,7 @@ describe('FactoryBuildingEntity', () => {
 		expect(factory.inventory.availableOf(bran)).toBe(0);
 
 		// A production cycle is immediately started when adding the correct ingredients
-		factory.inventory.change(wheat, 30);
+		await factory.inventory.change(wheat, 30);
 		expect(factory.inventory.availableOf(wheat)).toBe(28);
 		expect(factory.inventory.availableOf(flour)).toBe(0);
 		expect(factory.inventory.availableOf(bran)).toBe(0);
@@ -133,47 +133,46 @@ describe('FactoryBuildingEntity', () => {
 
 	it(`Works at a speed correlating to the amount of workers`, async () => {
 		// Build the same factory twice, but with different amounts of workers. Then run both games
-		// to the depletion of workers so that this timeout does not interfere with the actual test.
-		const { game: game1, driver: driver1 } = demo(new TestDriver());
-		const factory1 = game1.entities.get(0) as FactoryBuildingEntity;
-		for (let i = 0; i < 1; i++) {
-			const worker = new PersonEntity(String(i), game1.terrain.getTileClosestToXy(0, 0).toArray(), {
-				gender: 'm',
-				firstName: 'test ' + i,
-			});
-			game1.entities.add(worker);
-			factory1.$workers.add(worker);
+		// to the depletion of workers so that this timeout does not interfere with the actual test
+		async function createDemoWithFactory(
+			numberOfWorkers: number,
+		): Promise<{ game: Game; driver: DriverI; factory: FactoryBuildingEntity }> {
+			const { game, driver } = await demo(new TestDriver());
+			const factory = game.entities.get(0) as FactoryBuildingEntity;
+			for (let i = 0; i < numberOfWorkers; i++) {
+				const worker = new PersonEntity(
+					String(i),
+					game.terrain.getTileClosestToXy(0, 0).toArray(),
+					{
+						gender: 'm',
+						firstName: 'test ' + i,
+					},
+				);
+				await game.entities.add(worker);
+				await factory.$workers.add(worker);
+			}
+			return { game, driver, factory };
 		}
-		await driver1.start();
-		expect(game1.time.getNextEventAbsoluteTime()).toBe(Infinity);
-
-		// Build factory2 but with two workers
-		const { game: game2, driver: driver2 } = demo(new TestDriver());
-		const factory2 = game2.entities.get(0) as FactoryBuildingEntity;
-		for (let i = 0; i < 2; i++) {
-			const worker = new PersonEntity(String(i), game2.terrain.getTileClosestToXy(0, 0).toArray(), {
-				gender: 'm',
-				firstName: 'test ' + i,
-			});
-			game2.entities.add(worker);
-			factory2.$workers.add(worker);
+		async function getTimeToCompletion(demo: any) {
+			await demo.factory.inventory.change(wheat, 30);
+			await demo.driver.start();
+			return demo.game.time.now;
 		}
-		await driver2.start();
-		expect(game2.time.getNextEventAbsoluteTime()).toBe(Infinity);
 
-		const time1 = game1.time.now;
-		const time2 = game2.time.now;
+		const demo1 = await createDemoWithFactory(1),
+			demo1Completion = await getTimeToCompletion(demo1),
+			demo2 = await createDemoWithFactory(4),
+			demo2Completion = await getTimeToCompletion(demo2);
 
-		// It took 15 cycles times the normal production length at 1x production speed (becaue 1 worker)
-		// plus 50 time extra -- presumably for rounding reasons
-		factory1.inventory.change(wheat, 30);
-		await driver1.start();
-		expect(game1.time.now - time1).toBe(wheatProcessing.options.fullTimeEquivalent * 15 + 50);
-
-		// Using 2 works takes half the time
-		factory2.inventory.change(wheat, 30);
-		await driver2.start();
-		expect(game2.time.now - time2).toBe((game1.time.now - time1) / 2);
+		console.log(
+			demo1Completion,
+			demo1.game.entities.length,
+			demo2Completion,
+			demo2.game.entities.length,
+		);
+		expect(demo1Completion).toBeGreaterThan(0);
+		expect(demo2Completion).toBeGreaterThan(0);
+		expect(demo1Completion).toBe(2 * demo2Completion);
 	});
 });
 

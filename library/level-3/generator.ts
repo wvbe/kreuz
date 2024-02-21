@@ -30,27 +30,29 @@ const FOODS = Object.values(materials).filter(
 	(material) => material.nutrition > 0 && !material.toxicity,
 );
 
-function generateRandomInventories(game: Game) {
+async function generateRandomInventories(game: Game) {
 	const possibleRandomTools = [...TOOLS, null, null, null];
 	const possibleRandomFoods = [...FOODS, null, null, null];
-	game.entities
-		.filter<PersonEntity>((e) => e instanceof PersonEntity)
-		.forEach((entity, i) => {
-			const randomTool = Random.fromArray(possibleRandomTools, entity.id, 'free-tool', i);
-			if (randomTool) {
-				entity.inventory.set(randomTool, 1);
-			}
-			const randomFood = Random.fromArray(possibleRandomFoods, entity.id, 'free-food', i);
-			if (randomFood) {
-				entity.inventory.set(
-					randomFood,
-					Math.floor(Random.between(1, 5, entity.id, 'free-food-quantity', i)),
-				);
-			}
-		});
+	await Promise.all(
+		game.entities
+			.filter<PersonEntity>((e) => e instanceof PersonEntity)
+			.map(async (entity, i) => {
+				const randomTool = Random.fromArray(possibleRandomTools, entity.id, 'free-tool', i);
+				if (randomTool) {
+					await entity.inventory.set(randomTool, 1);
+				}
+				const randomFood = Random.fromArray(possibleRandomFoods, entity.id, 'free-food', i);
+				if (randomFood) {
+					await entity.inventory.set(
+						randomFood,
+						Math.floor(Random.between(1, 5, entity.id, 'free-food-quantity', i)),
+					);
+				}
+			}),
+	);
 }
 
-export function generateEntities(game: Game) {
+export async function generateEntities(game: Game) {
 	const walkableTiles = game.terrain.tiles.filter((c) => c.isLand());
 	if (!walkableTiles.length) {
 		throw new Error('The terrain does not contain any walkable tiles!');
@@ -68,16 +70,17 @@ export function generateEntities(game: Game) {
 			gender,
 			firstName,
 		});
-		person.wallet.set(Random.between(20, 500, id, 'munnie'));
-		game.entities.add(person);
-
-		person.$behavior.set(behavior.civvyBehavior);
+		await Promise.all([
+			person.wallet.set(Random.between(20, 500, id, 'munnie')),
+			game.entities.add(person),
+			person.$behavior.set(behavior.civvyBehavior),
+		]);
 	}
 
 	for (let i = 0; i < Random.between(3, 6, game.seed, 'settlements'); i++) {
 		const id = `${game.seed}-settlement-${i}`;
 		const tile = Random.fromArray(walkableTiles, id);
-		game.entities.add(
+		await game.entities.add(
 			new SettlementEntity(id, tile.toArray(), {
 				name: getRandomSettlementName([id]),
 				areaSize: Random.between(0.3, 0.6, game.seed, 'setsize', i),
@@ -97,13 +100,23 @@ export function generateEntities(game: Game) {
 			maxWorkers: 3 * blueprint.options.workersRequired,
 			maxStackSpace: 8,
 		});
-		blueprint.ingredients.forEach(({ material }) =>
-			factory.inventory.set(material, Math.round(material.stack * Random.between(0.2, 1, id))),
+		await Promise.all(
+			blueprint.ingredients.map(async ({ material }) => {
+				await factory.inventory.set(
+					material,
+					Math.round(material.stack * Random.between(0.2, 1, id)),
+				);
+			}),
 		);
-		blueprint.products.forEach(({ material }) =>
-			factory.inventory.set(material, Math.round(material.stack * Random.between(0.2, 1, id))),
-		);
-		game.entities.add(factory);
+		await Promise.all([
+			...blueprint.products.map(async ({ material }) => {
+				await factory.inventory.set(
+					material,
+					Math.round(material.stack * Random.between(0.2, 1, id)),
+				);
+			}),
+			game.entities.add(factory),
+		]);
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 	}
 
@@ -112,25 +125,25 @@ export function generateEntities(game: Game) {
 		const tile = Random.fromArray(walkableTiles, id);
 		const material = Random.fromArray(FOODS, id, '-mat');
 		const market = new MarketBuildingEntity(id, tile.toArray(), material, headOfState);
-		market.inventory.set(material, Math.round(material.stack * Random.between(1, 4, id)));
-		game.entities.add(market);
+		await market.inventory.set(material, Math.round(material.stack * Random.between(1, 4, id)));
+		await game.entities.add(market);
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 	}
 
 	for (let i = 0; i < Random.between(2, 4, game.seed, 'churches'); i++) {
 		const id = `${game.seed}-church-${i}`;
 		const tile = Random.fromArray(walkableTiles, id);
-		game.entities.add(new ChurchBuildingEntity(id, tile.toArray()));
+		await game.entities.add(new ChurchBuildingEntity(id, tile.toArray()));
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 	}
 }
 
-const demo: Demo = (driver) => {
+const demo: Demo = async (driver) => {
 	const game = new Game(1, generateDualMeshTerrain(1, 40, 1), DEFAULT_ASSETS);
-	driver.attach(game);
+	await driver.attach(game);
 
-	generateEntities(game);
-	generateRandomInventories(game);
+	await generateEntities(game);
+	await generateRandomInventories(game);
 
 	return { driver, game };
 };

@@ -11,11 +11,11 @@ let ticker = 0;
 
 export const loiterNode = new SelectorNode<EntityBlackboard>(
 	new SequenceNode(
-		new ExecutionNode('Wander', ({ game, entity }) => {
+		new ExecutionNode('Wander', async ({ game, entity }) => {
 			if ((entity.needs.find((need) => need.id === 'energy')?.get() || 0) < 0.2) {
 				throw new Error(`${entity} is too tired to wander around`);
 			}
-			entity.$status.set('Wandering around…');
+			await entity.$status.set('Wandering around…');
 			const start = game.terrain.getTileEqualToLocation(entity.$$location.get());
 			const destination = Random.fromArray(
 				[start, ...game.terrain.selectClosestTiles(start, 5)],
@@ -23,14 +23,14 @@ export const loiterNode = new SelectorNode<EntityBlackboard>(
 				'loiter walk',
 				++ticker,
 			);
-			return entity.walkToTile(destination);
+			await entity.walkToTile(destination);
 		}),
-		new ExecutionNode('Pause', ({ game, entity }) => {
-			return game.time.wait(Random.between(1000, 3000, entity.id, 'loiter wait', ++ticker));
+		new ExecutionNode('Pause', async ({ game, entity }) => {
+			await game.time.wait(Random.between(1000, 3000, entity.id, 'loiter wait', ++ticker));
 		}),
 	),
-	new ExecutionNode('Wait', ({ game, entity }) => {
-		entity.$status.set(null);
-		return game.time.wait(Random.between(1000, 3000, entity.id, 'loiter wait', ++ticker));
+	new ExecutionNode('Wait', async ({ game, entity }) => {
+		await entity.$status.set(null);
+		await game.time.wait(Random.between(1000, 3000, entity.id, 'loiter wait', ++ticker));
 	}),
 );

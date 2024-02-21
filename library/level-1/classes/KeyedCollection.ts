@@ -15,7 +15,7 @@ export class KeyedCollection<
 		this.#itemKey = itemKey;
 	}
 
-	#associateKey(item: ItemGeneric) {
+	#associateKey(item: ItemGeneric): void {
 		const key = item[this.#itemKey];
 		if (this.#keyMap.has(key)) {
 			throw new Error(`Cannot associate a key "${key}" that is already occupied`);
@@ -23,7 +23,7 @@ export class KeyedCollection<
 		this.#keyMap.set(key, item);
 	}
 
-	#unassociateKey(item: ItemGeneric) {
+	#unassociateKey(item: ItemGeneric): void {
 		const key = item[this.#itemKey];
 		if (!this.#keyMap.has(key)) {
 			throw new Error(`Cannot unassociate a key "${key}" that is not occupied`);
@@ -38,7 +38,7 @@ export class KeyedCollection<
 	 * - If items that were removed from the collection, a list of them is emitted as $remove
 	 * - If either occurred, both lists (added and removed) are emitted as the $change event
 	 */
-	public change(addItems: ItemGeneric[], removeItems: ItemGeneric[]) {
+	public async change(addItems: ItemGeneric[], removeItems: ItemGeneric[]) {
 		// Method is a fork of Collection#change, but with added #associateKey and #unassociateKEy calls
 		this.list.push(...addItems);
 		addItems.forEach((item) => {
@@ -54,13 +54,13 @@ export class KeyedCollection<
 			return true;
 		});
 		if (addItems.length) {
-			this.$add.emit(addItems);
+			await this.$add.emit(addItems);
 		}
 		if (wasActuallyRemoved.length) {
-			this.$remove.emit(wasActuallyRemoved);
+			await this.$remove.emit(wasActuallyRemoved);
 		}
 		if (addItems.length || wasActuallyRemoved.length) {
-			this.$change.emit(addItems, wasActuallyRemoved);
+			await this.$change.emit(addItems, wasActuallyRemoved);
 		}
 	}
 	public getByKey(key: ItemGeneric[KeyGeneric]): ItemGeneric | null {

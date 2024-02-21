@@ -1,12 +1,17 @@
-import { describe, run, expect, it } from 'tincan';
+import { beforeAll, describe, expect, it, run } from 'tincan';
 
 import createBasementDemo from './basement.ts';
 
-import { type PersonEntity, TestDriver } from '../level-1/mod.ts';
+import { DriverI, Game, TestDriver, type PersonEntity } from '../level-1/mod.ts';
 
-describe('"The basement"', () => {
-	const { driver, game } = createBasementDemo(new TestDriver());
-	const melanie = game.entities.get(0) as unknown as PersonEntity;
+describe('"The basement"', async () => {
+	let game: Game, driver: DriverI, melanie: PersonEntity;
+	beforeAll(async () => {
+		const demo = await createBasementDemo(new TestDriver());
+		game = demo.game;
+		driver = demo.driver;
+		melanie = game.entities.get(0);
+	});
 
 	it('Riane is called Riane, and she has needs', () => {
 		expect(melanie.name).toBe('Melanie');

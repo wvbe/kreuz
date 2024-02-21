@@ -30,23 +30,23 @@ export const tinIngot = new Material('Tin ingot', {
 	);
 
 describe('Blueprint', () => {
-	it('.transferIngredients()', () => {
+	it('.transferIngredients()', async () => {
 		const source = new Inventory();
-		source.change(tinIngot, 10);
-		source.change(copperIngot, 10);
+		await source.change(tinIngot, 10);
+		await source.change(copperIngot, 10);
 		const destination = new Inventory();
 		expect(source.availableOf(tinIngot)).toBe(10);
 		expect(destination.availableOf(tinIngot)).toBe(0);
-		bronzeIngotProduction.transferIngredients(source, destination);
+		await bronzeIngotProduction.transferIngredients(source, destination);
 		expect(source.availableOf(tinIngot)).toBe(9.88);
 		expect(destination.availableOf(tinIngot)).toBe(0.12);
 	});
 
-	it('.hasAllIngredients()', () => {
+	it('.hasAllIngredients()', async () => {
 		const source = new Inventory();
-		source.change(tinIngot, 10);
+		await source.change(tinIngot, 10);
 		expect(bronzeIngotProduction.hasAllIngredients(source)).toBeFalsy();
-		source.change(copperIngot, 10);
+		await source.change(copperIngot, 10);
 		expect(bronzeIngotProduction.hasAllIngredients(source)).toBeTruthy();
 	});
 });

@@ -132,7 +132,7 @@ export class TradeOrder {
 		throw new Error(`This inventory is not party to the trade order`);
 	}
 
-	public makeItHappen(time: number): void {
+	public async makeItHappen(time: number): Promise<void> {
 		const failReasons = this.findFailReasons();
 		if (failReasons.length) {
 			throw new Error(`Deal invalid:\n\t${failReasons.join('\n\t')}`);
@@ -156,8 +156,7 @@ export class TradeOrder {
 
 		this.timeFinalised = time;
 
-		owner1.$log.add(this);
-		owner2.$log.add(this);
+		await Promise.all([owner1.$log.add(this), owner2.$log.add(this)]);
 	}
 
 	public getSummary(): string {

@@ -16,7 +16,7 @@ import { headOfState } from '../level-2/heroes.ts';
 import { blueprints, DEFAULT_ASSETS } from '../level-2/mod.ts';
 import { Demo } from './types.ts';
 
-const demo: Demo = (driver) => {
+const demo: Demo = async (driver) => {
 	const terrain = generateGridTerrainFromAscii(`
 		XXXXXXXXXXXX
 		XXXXXXXXXXXX
@@ -28,13 +28,13 @@ const demo: Demo = (driver) => {
 	`);
 
 	const game = new Game('1', terrain, DEFAULT_ASSETS);
-	driver.attach(game);
+	await driver.attach(game);
 
 	const entity = new PersonEntity('1', terrain.getTileClosestToXy(0, 0).toArray(), {
 		gender: 'm',
 		firstName: 'Melanie',
 	});
-	game.entities.add(entity);
+	await game.entities.add(entity);
 
 	const well = new FactoryBuildingEntity(
 		'2',
@@ -46,7 +46,7 @@ const demo: Demo = (driver) => {
 			maxStackSpace: 1,
 		},
 	);
-	game.entities.add(well);
+	await game.entities.add(well);
 
 	return { driver, game };
 };

@@ -31,14 +31,14 @@ function createTradeOrderForCargo(
 }
 
 const godInventory = new Inventory();
-godInventory.change(test1, Infinity);
-godInventory.change(test2, Infinity);
+await godInventory.change(test1, Infinity);
+await godInventory.change(test2, Infinity);
 
 describe('Inventory', () => {
-	it('.availableOf()', () => {
+	it('.availableOf()', async () => {
 		const inventory = new Inventory();
-		inventory.set(test1, 100);
-		inventory.set(test2, 420);
+		await inventory.set(test1, 100);
+		await inventory.set(test2, 420);
 		expect(inventory.availableOf(test1)).toBe(100);
 		expect(inventory.availableOf(test2)).toBe(420);
 	});
@@ -55,9 +55,9 @@ describe('Inventory', () => {
 		expect(inventory.availableOf(test1)).toBe(0);
 		expect(inventory.allocatableTo(test1)).toBe(25);
 	});
-	it('.reservedOutgoingOf()', () => {
+	it('.reservedOutgoingOf()', async () => {
 		const inventory = new Inventory(1);
-		inventory.set(test1, 15);
+		await inventory.set(test1, 15);
 		const tradeOrder = createTradeOrderForCargo(
 			inventory,
 			[{ material: test1, quantity: 10 }],
@@ -91,10 +91,10 @@ describe('Inventory', () => {
 			{ material: test2, quantity: 1 },
 		]);
 	});
-	it('.getStacks()', () => {
+	it('.getStacks()', async () => {
 		const inventory = new Inventory();
-		inventory.set(test1, 10);
-		inventory.set(test2, 100);
+		await inventory.set(test1, 10);
+		await inventory.set(test2, 100);
 		expect(inventory.getStacks()).toEqual([
 			{ material: test1, quantity: 10 },
 			{ material: test2, quantity: 33 },
@@ -103,19 +103,19 @@ describe('Inventory', () => {
 			{ material: test2, quantity: 1 },
 		]);
 	});
-	it('.getStacks() with a single item stack size', () => {
+	it('.getStacks() with a single item stack size', async () => {
 		const test3 = new Material('barley', { symbol: '𐂏', stackSize: 1 });
 		const inventory = new Inventory();
-		inventory.set(test3, 1);
+		await inventory.set(test3, 1);
 		expect(inventory.getStacks()).toEqual([{ material: test3, quantity: 1 }]);
 	});
-	it('.getUsedStackSpace()', () => {
+	it('.getUsedStackSpace()', async () => {
 		const inventory = new Inventory();
-		inventory.set(test1, 10);
-		inventory.set(test2, 100);
+		await inventory.set(test1, 10);
+		await inventory.set(test2, 100);
 		expect(inventory.getUsedStackSpace()).toBe(5);
 	});
-	it('.isEverythingAllocatable()', () => {
+	it('.isEverythingAllocatable()', async () => {
 		const inventory = new Inventory(2);
 		expect(
 			inventory.isEverythingAllocatable([
@@ -124,7 +124,7 @@ describe('Inventory', () => {
 				{ material: test2, quantity: 23 },
 			]),
 		).toBeTruthy();
-		inventory.change(test1, 1);
+		await inventory.change(test1, 1);
 		expect(
 			inventory.isEverythingAllocatable([
 				{ material: test1, quantity: 25 },
@@ -133,7 +133,7 @@ describe('Inventory', () => {
 			]),
 		).toBeFalsy();
 	});
-	it('.isEverythingAllocatable() with reservation', () => {
+	it('.isEverythingAllocatable() with reservation', async () => {
 		const inventory = new Inventory(2);
 		const tradeOrder = createTradeOrderForCargo(
 			godInventory,
@@ -149,7 +149,7 @@ describe('Inventory', () => {
 				{ material: test2, quantity: 23 },
 			]),
 		).toBeTruthy();
-		inventory.change(test1, 1);
+		await inventory.change(test1, 1);
 		expect(
 			inventory.isEverythingAllocatable([
 				{ material: test1, quantity: 25 },
@@ -158,22 +158,26 @@ describe('Inventory', () => {
 			]),
 		).toBeFalsy();
 	});
-	it('.set()', () => {
+	it('.set()', async () => {
 		const inventory = new Inventory(2);
-		inventory.set(test2, 33);
+		await inventory.set(test2, 33);
 		expect(inventory.availableOf(test2)).toBe(33);
 
-		expect(() => inventory.set(test1, -1)).toThrow(`Cannot have a negative amount of 🌾 wheat`);
-		expect(() => inventory.set(test1, 26)).toThrow(`Not enough stack space for 26x 🌾 wheat`);
+		expect(await inventory.set(test1, -1).catch((e) => e.message)).toEqual(
+			`Cannot have a negative amount of 🌾 wheat`,
+		);
+		expect(await inventory.set(test1, 26).catch((e) => e.message)).toEqual(
+			`Not enough stack space for 26x 🌾 wheat`,
+		);
 
-		inventory.change(test2, -33);
+		await inventory.change(test2, -33);
 		expect(inventory.availableOf(test2)).toBe(0);
 	});
-	it('.changeMultiple()', () => {
+	it('.changeMultiple()', async () => {
 		const inventory = new Inventory(2);
 		const cb = mock.fn();
 		inventory.$change.on(cb);
-		inventory.changeMultiple([
+		await inventory.changeMultiple([
 			{ material: test1, quantity: 1 },
 			{ material: test2, quantity: 1 },
 		]);
@@ -182,11 +186,13 @@ describe('Inventory', () => {
 });
 
 describe('Issues', () => {
-	it('.set() does not allow setting to beyond half the available space', () => {
+	it('.set() does not allow setting to beyond half the available space', async () => {
 		// Reproduction case is to fill the inventory with an item half-way, and then add one more:
 		const inventory = new Inventory(2);
-		inventory.set(test2, 33);
-		expect(() => inventory.set(test2, 34)).not.toThrow();
+		await inventory.set(test2, 33);
+		expect(async () => {
+			await inventory.set(test2, 34);
+		}).not.toThrow();
 		expect(inventory.availableOf(test2)).toBe(34);
 	});
 });

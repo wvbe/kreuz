@@ -26,10 +26,10 @@ export class ChurchBuildingEntity extends BuildingEntity implements EntityI {
 		return '💒';
 	}
 
-	public static fromSaveJson(
+	public static async fromSaveJson(
 		_context: SaveJsonContext,
 		save: SaveChurchBuildingEntityJson,
-	): ChurchBuildingEntity {
+	): Promise<ChurchBuildingEntity> {
 		const { id, location } = save;
 		const inst = new ChurchBuildingEntity(id, location);
 		return inst;

@@ -15,12 +15,14 @@ export interface AttachableI<Context extends unknown[] = Game[]> {
  */
 export class Attachable<Context extends unknown[] = Game[]> {
 	protected $attach = new Event<Context>(`${this.constructor.name} $attach`);
-	public attach(...context: Context) {
-		this.$attach.emit(...context);
+	public async attach(...context: Context): Promise<this> {
+		await this.$attach.emit(...context);
+		return this;
 	}
 
 	protected $detach = new Event(`${this.constructor.name} $detach`);
-	public detach() {
-		this.$detach.emit();
+	public async detach(): Promise<this> {
+		await this.$detach.emit();
+		return this;
 	}
 }

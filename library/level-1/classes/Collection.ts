@@ -7,12 +7,12 @@ export class Collection<ItemGeneric> {
 	public readonly $remove = new Event<[ItemGeneric[]]>('Collection $remove');
 	public readonly $change = new Event<[ItemGeneric[], ItemGeneric[]]>('Collection $change');
 
-	public add(...items: ItemGeneric[]) {
-		this.change(items, []);
+	public async add(...items: ItemGeneric[]) {
+		await this.change(items, []);
 	}
 
-	public remove(...items: ItemGeneric[]) {
-		this.change([], items);
+	public async remove(...items: ItemGeneric[]) {
+		await this.change([], items);
 	}
 
 	/**
@@ -22,7 +22,7 @@ export class Collection<ItemGeneric> {
 	 * - If items that were removed from the collection, a list of them is emitted as $remove
 	 * - If either occurred, both lists (added and removed) are emitted as the $change event
 	 */
-	public change(addItems: ItemGeneric[], removeItems: ItemGeneric[]) {
+	public async change(addItems: ItemGeneric[], removeItems: ItemGeneric[]) {
 		this.list.push(...addItems);
 		const wasActuallyRemoved = removeItems.filter((item) => {
 			const index = this.list.indexOf(item);
@@ -33,13 +33,13 @@ export class Collection<ItemGeneric> {
 			return true;
 		});
 		if (addItems.length) {
-			this.$add.emit(addItems);
+			await this.$add.emit(addItems);
 		}
 		if (wasActuallyRemoved.length) {
-			this.$remove.emit(wasActuallyRemoved);
+			await this.$remove.emit(wasActuallyRemoved);
 		}
 		if (addItems.length || wasActuallyRemoved.length) {
-			this.$change.emit(addItems, wasActuallyRemoved);
+			await this.$change.emit(addItems, wasActuallyRemoved);
 		}
 	}
 

@@ -54,12 +54,12 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 	 * implement AttachableI:
 	 */
 	protected $attach = new Event<[Game]>(`${this.constructor.name} $attach`);
-	public attach(game: Game) {
-		this.$attach.emit(game);
+	public async attach(game: Game) {
+		await this.$attach.emit(game);
 	}
 	protected $detach = new Event(`${this.constructor.name} $detach`);
-	public detach() {
-		this.$detach.emit();
+	public async detach() {
+		await this.$detach.emit();
 	}
 
 	/*
@@ -122,13 +122,13 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 				}
 				const lastTime = game.time.now;
 
-				const cancelTimeout = game.time.setTimeout(() => {
+				const cancelTimeout = game.time.setTimeout(async () => {
 					const timePassed = game.time.now - lastTime;
 					if (this.#delta !== 0) {
 						setTimeout(granularity / this.#delta);
 					}
 					if (timePassed > 0) {
-						this.applyDeltaForTimePassed(timePassed);
+						await this.applyDeltaForTimePassed(timePassed);
 					}
 					// Apply decay _after_ setting new timeout, so that an event listener can unset the
 					// timeout again if the value is zero
@@ -185,8 +185,8 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 	 *
 	 * Will trigger an update event.
 	 */
-	private applyDeltaForTimePassed(timePassed: number, skipUpdate?: boolean): void {
-		this.set(this.current + this.#delta * timePassed, skipUpdate);
+	private async applyDeltaForTimePassed(timePassed: number, skipUpdate?: boolean): Promise<void> {
+		await this.set(this.current + this.#delta * timePassed, skipUpdate);
 	}
 
 	/**
@@ -194,17 +194,17 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 	 *
 	 * Will also restrict value to within the min/max bounds (this.#min, this.#max)
 	 */
-	public set(value: number, skipUpdate?: boolean) {
-		return super.set(Math.min(this.#max, Math.max(this.#min, value)), skipUpdate);
+	public async set(value: number, skipUpdate?: boolean): Promise<void> {
+		await super.set(Math.min(this.#max, Math.max(this.#min, value)), skipUpdate);
 	}
 
-	public setDelta(newDelta: number): void {
+	public async setDelta(newDelta: number): Promise<void> {
 		const oldDelta = this.#delta;
 		if (oldDelta === newDelta) {
 			return;
 		}
 		this.#delta = newDelta;
-		this.$recalibrate.emit(oldDelta);
+		await this.$recalibrate.emit(oldDelta);
 	}
 
 	public toSaveJson(context: SaveJsonContext): SaveProgressingNumericValueJson {

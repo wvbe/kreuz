@@ -23,7 +23,7 @@ export class TimeLine extends EventedValue<number> {
 	 * albeit execute timers in between. This avoids the case where time is not updated yet and setTimeout
 	 * of 1 frame thinks time progression is 0.
 	 */
-	public step(): void {
+	public async step(): Promise<void> {
 		const frame = this.now + 1;
 
 		this.current = frame;
@@ -32,16 +32,16 @@ export class TimeLine extends EventedValue<number> {
 			timers.shift()?.();
 		}
 		this.#timers.delete(frame);
-		this.emit();
+		await this.emit();
 	}
 
 	/**
 	 * Take many steps in quick succession.
 	 */
-	public steps(much: number): void {
+	public async steps(much: number): Promise<void> {
 		let remaining = much;
 		while (remaining-- > 0) {
-			this.step();
+			await this.step();
 		}
 	}
 
@@ -66,12 +66,12 @@ export class TimeLine extends EventedValue<number> {
 	 *
 	 * By default it would skip to the next point in time with a registered timer, and trigger it.
 	 */
-	public jump(next = this.getNextEventAbsoluteTime()): void {
+	public async jump(next = this.getNextEventAbsoluteTime()): Promise<void> {
 		if (!next || next === Infinity) {
 			throw new Error(`There is no next event to jump to`);
 		}
-		this.set(next - 1, true);
-		this.step();
+		await this.set(next - 1, true);
+		await this.step();
 	}
 
 	/**

@@ -49,12 +49,12 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 	}),
 	new ExecutionNode<EntityBlackboard & { factory: FactoryBuildingEntity }>(
 		'Walk',
-		({ game, entity, factory }) => {
+		async ({ game, entity, factory }) => {
 			if (!factory) {
 				throw new Error(`Theres no factory to go to`);
 			}
-			entity.$status.set(`Going to ${factory} for work`);
-			return walkEntityToEntity(game, entity, factory);
+			await entity.$status.set(`Going to ${factory} for work`);
+			await walkEntityToEntity(game, entity, factory);
 		},
 	),
 	new ExecutionNode<EntityBlackboard & { factory: FactoryBuildingEntity }>(
@@ -66,12 +66,12 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 					// Aww shucks, somebody else took our spot before we could make it to the factory!
 					throw new Error(`The job was already taken by somebody else when ${entity} arrived`);
 				}
-				factory.$workers.add(entity);
-				entity.$$location.once(() => {
-					factory.$workers.remove(entity);
+				await factory.$workers.add(entity);
+				entity.$$location.once(async () => {
+					await factory.$workers.remove(entity);
 				});
 			}
-			entity.$status.set(`Working in ${factory}`);
+			await entity.$status.set(`Working in ${factory}`);
 
 			// Finish job when one work cycle completes
 			await new Promise<void>((resolve) => {
@@ -79,7 +79,7 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 			});
 		},
 	),
-	new ExecutionNode('Unset status', ({ entity }) => {
-		entity.$status.set(null);
+	new ExecutionNode('Unset status', async ({ entity }) => {
+		await entity.$status.set(null);
 	}),
 );

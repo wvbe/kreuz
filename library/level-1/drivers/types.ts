@@ -15,15 +15,6 @@ export interface DriverI extends Attachable {
 	 */
 	$resume: Event<[]>;
 	/**
-	 * Associate a game with this driver, meaning that you'll probably want to set a lot
-	 * of event handlers.
-	 */
-	// attach(game: Game): this;
-	/**
-	 * Remove any association between the game and this driver.
-	 */
-	// detach(): void;
-	/**
 	 * Start the concept of time, and any events or animation following it.
 	 *
 	 * Returns a promise that resolves when the animation ends.

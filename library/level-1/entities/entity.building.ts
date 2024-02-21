@@ -27,10 +27,10 @@ export class BuildingEntity extends Entity implements EntityI {
 		this.parameters = parameters;
 	}
 
-	public static fromSaveJson(
+	public static async fromSaveJson(
 		_context: SaveJsonContext,
 		_save: SaveBuildingEntityJson,
-	): BuildingEntity {
+	): Promise<BuildingEntity> {
 		// This is an abstract method that'll never be implemented
 		// The extending class should've implemented it instead
 		throw new Error('Not implemented');

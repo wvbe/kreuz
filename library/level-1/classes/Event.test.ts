@@ -3,14 +3,14 @@ import { CallbackFn } from '../types.ts';
 import { Event } from './Event.ts';
 
 describe('Event', () => {
-	it('.on()', () => {
+	it('.on()', async () => {
 		const event = new Event('test');
 		const cb = mock.fn();
 		event.on(cb);
 		expect(cb).toHaveBeenCalledTimes(0);
-		event.emit();
+		await event.emit();
 		expect(cb).toHaveBeenCalledTimes(1);
-		event.emit();
+		await event.emit();
 		expect(cb).toHaveBeenCalledTimes(2);
 
 		expect(() => event.on(null as unknown as CallbackFn)).toThrow();
@@ -26,14 +26,14 @@ describe('Event', () => {
 		expect(() => destroyer()).toThrow(/memory leak/i);
 	});
 
-	it('.once()', () => {
+	it('.once()', async () => {
 		const event = new Event('test');
 		const cb = mock.fn();
 		event.once(cb);
 		expect(cb).toHaveBeenCalledTimes(0);
-		event.emit();
+		await event.emit();
 		expect(cb).toHaveBeenCalledTimes(1);
-		event.emit();
+		await event.emit();
 		expect(cb).toHaveBeenCalledTimes(1);
 
 		expect(() => event.once(null as unknown as CallbackFn)).toThrow();
@@ -58,7 +58,7 @@ describe('Event', () => {
 		expect(event.$$$listeners).toBe(0);
 	});
 
-	it('static .onAny', () => {
+	it('static .onAny', async () => {
 		const event1 = new Event('test 1');
 		const event2 = new Event('test 2');
 		const cb = mock.fn();
@@ -67,10 +67,10 @@ describe('Event', () => {
 		expect(event1.$$$listeners).toBe(1);
 		expect(event2.$$$listeners).toBe(1);
 
-		event1.emit();
+		await event1.emit();
 		expect(cb).toHaveBeenCalledTimes(1);
 
-		event2.emit();
+		await event2.emit();
 		expect(cb).toHaveBeenCalledTimes(2);
 
 		destroyer();
@@ -78,7 +78,7 @@ describe('Event', () => {
 		expect(event2.$$$listeners).toBe(0);
 	});
 
-	it('static .onceFirst', () => {
+	it('static .onceFirst', async () => {
 		const event1 = new Event('test 1');
 		const event2 = new Event('test 2');
 		const cb1 = mock.fn();
@@ -92,14 +92,14 @@ describe('Event', () => {
 		expect(event1.$$$listeners).toBe(1);
 		expect(event2.$$$listeners).toBe(1);
 
-		event1.emit();
+		await event1.emit();
 
 		expect(cb1).toHaveBeenCalledTimes(0);
 		expect(cb2).toHaveBeenCalledTimes(1);
 		expect(event1.$$$listeners).toBe(0);
 		expect(event2.$$$listeners).toBe(0);
 
-		event2.emit();
+		await event2.emit();
 		expect(cb2).toHaveBeenCalledTimes(1);
 
 		expect(() => destroyer2()).toThrow(/memory leak/i);
@@ -107,7 +107,7 @@ describe('Event', () => {
 });
 
 describe('Fixed issues', () => {
-	it('.once() does not fire if other onces are registered', () => {
+	it('.once() does not fire if other onces are registered', async () => {
 		const event = new Event('test');
 		const cb = mock.fn();
 		event.once(() => {
@@ -115,7 +115,7 @@ describe('Fixed issues', () => {
 		});
 		event.once(cb);
 		expect(cb).toHaveBeenCalledTimes(0);
-		event.emit();
+		await event.emit();
 		expect(cb).toHaveBeenCalledTimes(1);
 	});
 });

@@ -73,8 +73,8 @@ export const feedSelf = new SequenceNode<EntityBlackboard>(
 				await consumeFromInventoryForNeed(consumeFromInventoryForNeed.EAT, entity, state.material);
 			}),
 			createWaitBehavior(500, 3000),
-			new ExecutionNode('Unset status', ({ entity }) => {
-				entity.$status.set(null);
+			new ExecutionNode('Unset status', async ({ entity }) => {
+				await entity.$status.set(null);
 			}),
 		),
 	),

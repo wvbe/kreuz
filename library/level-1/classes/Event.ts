@@ -63,9 +63,9 @@ export class Event<Args extends unknown[] = []> {
 				})#once to be a function, received ${callback}`,
 			);
 		}
-		const run = (...args: Args) => {
-			callback(...args);
+		const run = async (...args: Args) => {
 			cancel();
+			await callback(...args);
 		};
 		this.#callbacks.push(run);
 		const cancel = () => {
@@ -81,14 +81,14 @@ export class Event<Args extends unknown[] = []> {
 	/**
 	 * Trigger all callbacks that were waiting for this event.
 	 */
-	public emit(...args: Args): void {
+	public async emit(...args: Args): Promise<void> {
 		// Create a new array from callbacks so that the loop is not affected
 		// while once-ers change the true callbacks list by reference.
 		//
 		// Use a `for` loop to have one less useless line of stack tracing
 		const callbacks = this.#callbacks.slice();
 		for (let i = 0; i < callbacks.length; i++) {
-			callbacks[i](...args);
+			await callbacks[i](...args);
 		}
 	}
 

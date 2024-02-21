@@ -6,14 +6,14 @@ export class AlephDriver extends Driver implements DriverI {
 	gameSpeed = 4;
 	lastUpdate: number = Date.now();
 
-	private animate(game: Game) {
+	private async animate(game: Game) {
 		if (!this.$$animating.get()) {
 			return;
 		}
 
 		const now = Date.now();
 		const delta = now - this.lastUpdate;
-		game.time.steps(delta * this.gameSpeed);
+		await game.time.steps(delta * this.gameSpeed);
 		this.lastUpdate = now;
 		requestAnimationFrame(this.animate.bind(this, game));
 	}
@@ -23,34 +23,34 @@ export class AlephDriver extends Driver implements DriverI {
 		return super.start();
 	}
 
-	public attach(game: Game): this {
+	public async attach(game: Game): Promise<this> {
 		this.game = game;
-		super.attach(game);
+		await super.attach(game);
 
-		const onFocus = () => {
+		const onFocus = async () => {
 			if (this.$$animating.get()) {
 				return;
 			}
-			this.start();
+			await this.start();
 		};
 		self.addEventListener('focus', onFocus);
 		this.$detach.once(() => self.removeEventListener('focus', onFocus));
 
-		const onBlur = () => {
+		const onBlur = async () => {
 			if (!this.$$animating.get()) {
 				return;
 			}
-			this.stop();
+			await this.stop();
 		};
 		self.addEventListener('blur', onBlur);
 		this.$detach.once(() => self.removeEventListener('blue', onBlur));
 
 		this.$detach.once(
-			this.$resume.on(() => {
-				this.animate(game);
+			this.$resume.on(async () => {
+				await this.animate(game);
 
-				return () => {
-					this.stop();
+				return async () => {
+					await this.stop();
 				};
 			}),
 		);

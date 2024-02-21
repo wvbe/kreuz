@@ -15,7 +15,7 @@ import {
 import { PersonEntity, type SavePersonEntityJson } from './entity.person.ts';
 import { type SaveSettlementEntityJson, SettlementEntity } from './entity.settlement.ts';
 
-export function castSaveJsonToEntity(
+export async function castSaveJsonToEntity(
 	context: SaveJsonContext,
 	save:
 		| SaveSettlementEntityJson

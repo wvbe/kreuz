@@ -1,21 +1,19 @@
-import { describe, expect, it, run } from 'tincan';
+import { describe, expect, it, run, beforeAll } from 'tincan';
 
 import {
 	FactoryBuildingEntity,
 	PersonEntity,
 	SettlementEntity,
 	TestDriver,
+	Game,
 } from '../level-1/mod.ts';
 import createGeneratorDemo from './generator.ts';
 
-describe('Default generator', () => {
-	const { game } = createGeneratorDemo(new TestDriver());
-	// game.time.steps(1_050_000);
-
-	// it('The game never finishes', () => {
-	// 	expect(game.time.getNextEventAbsoluteTime()).toBeTruthy();
-	// 	expect(game.time.getNextEventAbsoluteTime()).not.toBe(Infinity);
-	// });
+describe('Default generator', async () => {
+	let game: Game;
+	beforeAll(async () => {
+		game = (await createGeneratorDemo(new TestDriver())).game;
+	});
 
 	it('Has several entities of various types', () => {
 		expect(game.entities.filter((e) => e instanceof PersonEntity).length).toBeGreaterThanOrEqual(
@@ -28,8 +26,6 @@ describe('Default generator', () => {
 			game.entities.filter((e) => e instanceof FactoryBuildingEntity).length,
 		).toBeGreaterThanOrEqual(6);
 	});
-
-	// game.stop();
 });
 
 run();

@@ -35,13 +35,13 @@ describe('TradeOrder', () => {
 				TradeFailReason.NO_SPACE_2,
 			]);
 		});
-		it('no fails at all', () => {
+		it('no fails at all', async () => {
 			const owner1 = new PersonEntity('a', [0, 0, Infinity], { gender: 'm', firstName: 'test A' });
 			const owner2 = new PersonEntity('b', [0, 0, Infinity], { gender: 'm', firstName: 'test B' });
-			owner1.wallet.set(51);
-			owner1.inventory.change(material1, 10);
-			owner2.wallet.set(51);
-			owner2.inventory.change(material2, 10);
+			await owner1.wallet.set(51);
+			await owner1.inventory.change(material1, 10);
+			await owner2.wallet.set(51);
+			await owner2.inventory.change(material2, 10);
 			const order = new TradeOrder(
 				{
 					owner: owner1,
@@ -59,15 +59,15 @@ describe('TradeOrder', () => {
 			expect(order.findFailReasons().map(([reason]) => reason)).toEqual([]);
 		});
 	});
-	it('.makeItHappen()', () => {
+	it('.makeItHappen()', async () => {
 		const owner1 = new PersonEntity('a', [0, 0, Infinity], { gender: 'm', firstName: 'test A' });
 		const owner2 = new PersonEntity('b', [0, 0, Infinity], { gender: 'm', firstName: 'test B' });
 		owner1.wallet.set(50);
-		owner1.inventory.change(material1, 10);
-		owner1.inventory.change(material2, 10);
+		await owner1.inventory.change(material1, 10);
+		await owner1.inventory.change(material2, 10);
 		owner2.wallet.set(50);
-		owner2.inventory.change(material1, 10);
-		owner2.inventory.change(material2, 10);
+		await owner2.inventory.change(material1, 10);
+		await owner2.inventory.change(material2, 10);
 		const order = new TradeOrder(
 			{
 				owner: owner1,
@@ -89,7 +89,7 @@ describe('TradeOrder', () => {
 			},
 		);
 
-		order.makeItHappen(0);
+		await order.makeItHappen(0);
 
 		expect(owner1.wallet.get()).toBe(42);
 		expect(owner2.wallet.get()).toBe(58);

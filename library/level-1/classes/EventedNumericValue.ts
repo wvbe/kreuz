@@ -125,16 +125,16 @@ export class EventedNumericValue extends EventedValue<number> {
 		return this.#boundaryInfo.filter((range) => valueInRange(this.current, range));
 	}
 
-	public set(value: number, skipUpdate?: boolean) {
+	public async set(value: number, skipUpdate?: boolean) {
 		const last = this.current;
-		super.set(value, skipUpdate);
+		await super.set(value, skipUpdate);
 		if (skipUpdate) {
 			return;
 		}
 
 		const ranges = this.getCurrentRanges().filter((range) => !valueInRange(last, range));
 		for (let i = 0; i < ranges.length; i++) {
-			ranges[i].event.emit();
+			await ranges[i].event.emit();
 		}
 	}
 	public toSaveJson(context: SaveJsonContext): SaveEventedNumericValueJson {

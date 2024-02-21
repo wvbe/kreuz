@@ -17,7 +17,9 @@ export class Driver extends Attachable<[Game]> implements DriverI {
 		this.$attach.on((game) => {
 			this.$detach.once(
 				// Whenever the driver starts/stops animating, start/stop the game too.
-				this.$resume.on(() => game.start()),
+				this.$resume.on(async () => {
+					await game.start();
+				}),
 			);
 
 			// Whenever the driver detaches, destroy the game.
@@ -32,22 +34,22 @@ export class Driver extends Attachable<[Game]> implements DriverI {
 	 * @TODO should not return a promise, more like return destroyer
 	 * @TODO invent .run() in case you want a promise-based async?
 	 */
-	public start(): Promise<void> {
+	public async start(): Promise<void> {
 		if (this.$$animating.get()) {
 			throw new Error('Animation already started');
 		}
-		this.$$animating.set(true);
-		return new Promise((resolve) => {
+		await this.$$animating.set(true);
+		await new Promise<void>(async (resolve) => {
 			this.$pause.once(() => resolve());
-			this.$resume.emit();
+			await this.$resume.emit();
 		});
 	}
 
-	public stop() {
+	public async stop() {
 		if (!this.$$animating.get()) {
 			throw new Error('Animation not started');
 		}
-		this.$$animating.set(false);
-		this.$pause.emit();
+		await this.$$animating.set(false);
+		await this.$pause.emit();
 	}
 }

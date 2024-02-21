@@ -22,7 +22,7 @@ export class SettlementEntity extends Entity implements EntityI {
 		super(id, location);
 		this.parameters = parameters;
 
-		this.$status.set(`Town of ${Math.round(this.parameters.areaSize * 1000)} souls.`, true);
+		void this.$status.set(`Town of ${Math.round(this.parameters.areaSize * 1000)} souls.`, true);
 	}
 
 	public get name(): string {
@@ -40,7 +40,10 @@ export class SettlementEntity extends Entity implements EntityI {
 		};
 	}
 
-	public static fromSaveJson(context: SaveJsonContext, save: SaveSettlementEntityJson) {
+	public static async fromSaveJson(
+		context: SaveJsonContext,
+		save: SaveSettlementEntityJson,
+	): Promise<SettlementEntity> {
 		const { id, location, options } = save;
 		const inst = new SettlementEntity(id, location, options);
 		return inst;

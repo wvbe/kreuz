@@ -1,13 +1,13 @@
-import { MarketBuildingEntity } from '../../level-1/mod.ts';
 import {
 	EntityBlackboard,
 	ExecutionNode,
 	InverterNode,
+	MarketBuildingEntity,
 	SelectorNode,
 	SequenceNode,
 	type Inventory,
 	type MaterialState,
-} from '../../level-1/mod.ts';
+} from '@lib/core';
 import {
 	DesirabilityScoreFn,
 	createBuyFromMarketSequence,

@@ -1,4 +1,4 @@
-import { type EntityI, type Game, type PersonEntity } from '../../../level-1/mod.ts';
+import { type EntityI, type Game, type PersonEntity } from '@lib/core';
 
 export async function walkEntityToEntity(game: Game, entity: PersonEntity, destination: EntityI) {
 	const tile = game.terrain.getTileEqualToLocation(destination.$$location.get());

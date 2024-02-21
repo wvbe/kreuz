@@ -1,15 +1,15 @@
-import { Material } from '../level-1/mod.ts';
-import { Blueprint } from '../level-1/mod.ts';
 import {
+	Blueprint,
+	Material,
+	Registry,
 	type BehaviorTreeNodeI,
 	type EntityBlackboard,
-	Registry,
 	type GameAssets,
-} from '../level-1/mod.ts';
+} from '@lib/core';
 
 import * as bt from './behavior.ts';
-import * as materials from './materials.ts';
 import * as blueprints from './blueprints.ts';
+import * as materials from './materials.ts';
 
 /**
  * The default assets passed to most if not all game instances.

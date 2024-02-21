@@ -11,10 +11,11 @@
  *   deno run -A --inspect-brk demo.ts ./level-3/factories.ts
  */
 
-import { TestDriver } from './mod.ts';
+import { Demo, TestDriver } from './mod.ts';
 
-const demo = await import(self.Deno.args[0]);
-const { driver, game } = demo.default(new TestDriver());
+const demo: Demo = await import(self.Deno.args[0]);
+const { driver, game } = await demo.default(new TestDriver());
+console.log(game.time.now);
 try {
 	await driver.start();
 	console.log('-----------------------');
@@ -28,5 +29,5 @@ console.group('TIME');
 console.log(game.time.now);
 console.groupEnd();
 console.group('GAME');
-console.dir(game, { depth: 10 });
+// console.dir(game, { depth: 10 });
 console.groupEnd();

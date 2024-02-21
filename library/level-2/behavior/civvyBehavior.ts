@@ -1,4 +1,5 @@
-import { EntityBlackboard, RandomSelectorNode } from '../../level-1/mod.ts';
+import { EntityBlackboard, RandomSelectorNode } from '@lib/core';
+
 import { feedSelf } from './feedSelfNode.ts';
 import { hydrateSelfBehavior } from './hydrateSelfBehavior.ts';
 import { loiterNode } from './loiterNode.ts';

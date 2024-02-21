@@ -1,13 +1,14 @@
 import {
+	EntityBlackboard,
 	ExecutionNode,
-	type FactoryBuildingEntity,
 	SequenceNode,
+	TradeEntityI,
+	TradeOrder,
+	type FactoryBuildingEntity,
 	type MarketBuildingEntity,
 	type Material,
-	TradeOrder,
-	TradeEntityI,
-	EntityBlackboard,
-} from '../../level-1/mod.ts';
+} from '@lib/core';
+
 import { walkEntityToEntity } from './reusable/travel.ts';
 
 type Demand = {

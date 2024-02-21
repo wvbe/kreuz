@@ -1,4 +1,4 @@
-import { Random, TimeLine } from '../../level-1/mod.ts';
+import { Random, TimeLine } from '@lib/core';
 
 type Sexuality = 'hetero' | 'homo' | 'bi';
 // type TraditionalGender = 'm' | 'f';

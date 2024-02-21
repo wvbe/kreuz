@@ -6,7 +6,7 @@ import { describe, expect, it, run } from 'tincan';
 import { PersonEntity } from './entity.person.ts';
 
 import { hydrateSelfBehavior } from '../../level-2/behavior/hydrateSelfBehavior.ts';
-import { DEFAULT_ASSETS } from '../../level-2/mod.ts';
+import { DEFAULT_ASSETS } from '@lib/assets';
 describe('PersonEntity', () => {
 	it(`save without behavior`, async () => {
 		const entity = new PersonEntity('guy', [0, 0, Infinity], {

@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it, run } from 'tincan';
 
 import createBasementDemo from './basement.ts';
 
-import { DriverI, Game, TestDriver, type PersonEntity } from '../level-1/mod.ts';
+import { DriverI, Game, TestDriver, type PersonEntity } from '@lib/core';
 
 describe('"The basement"', async () => {
 	let game: Game, driver: DriverI, melanie: PersonEntity;

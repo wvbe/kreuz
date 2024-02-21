@@ -3,7 +3,7 @@ import {
 	ExecutionNode,
 	SequenceNode,
 	EntityBlackboard,
-} from '../../level-1/mod.ts';
+} from '@lib/core';
 import { getEntitiesReachableByEntity, walkEntityToEntity } from './reusable/travel.ts';
 
 export const workInFactory = new SequenceNode<EntityBlackboard>(

@@ -10,7 +10,7 @@ import {
 	PersonEntity,
 	Random,
 	SettlementEntity,
-} from '../level-1/mod.ts';
+} from '@lib/core';
 import { headOfState } from '../level-2/heroes.ts';
 import {
 	DEFAULT_ASSETS,
@@ -20,7 +20,7 @@ import {
 	blueprints,
 	materials,
 	getRandomSettlementName,
-} from '../level-2/mod.ts';
+} from '@lib/assets';
 import { Demo } from './types.ts';
 import { generateDualMeshTerrain } from './utils/generateDualMeshTerrain.ts';
 

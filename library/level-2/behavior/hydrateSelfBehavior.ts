@@ -7,7 +7,8 @@ import {
 	type FactoryBuildingEntity,
 	type Inventory,
 	type MaterialState,
-} from '../../level-1/mod.ts';
+} from '@lib/core';
+
 import { getWaterFromWell } from '../blueprints.ts';
 import {
 	DesirabilityScoreFn,
@@ -15,6 +16,7 @@ import {
 } from './reusable/nodes/createBuyFromMarketBehavior.ts';
 import { createWaitBehavior } from './reusable/nodes/createWaitBehavior.ts';
 import { consumeFromInventoryForNeed } from './reusable/primitives/consumeFromInventoryForNeed.ts';
+
 const filterDrinkableMaterial = ({ material }: MaterialState) =>
 	material.fluid && !material.toxicity;
 

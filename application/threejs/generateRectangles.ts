@@ -1,4 +1,4 @@
-import { Random, SeedI } from '../../level-1/mod.ts';
+import { Random, SeedI } from '@lib';
 
 type Options = {
 	minimumBuildingLength: number;

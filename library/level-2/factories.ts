@@ -1,4 +1,4 @@
-import { FactoryBuildingEntityOptions } from '../level-1/mod.ts';
+import { FactoryBuildingEntityOptions } from '@lib/core';
 import * as blueprints from './blueprints.ts';
 
 export const WHEAT_FARM: FactoryBuildingEntityOptions = {

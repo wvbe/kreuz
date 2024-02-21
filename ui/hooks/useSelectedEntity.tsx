@@ -1,17 +1,15 @@
-import { EntityI, EventedValue } from '@lib';
+import { EntityI } from '@lib';
 import * as React from 'react';
 import {
 	Dispatch,
 	FC,
+	PropsWithChildren,
 	SetStateAction,
 	createContext,
 	useContext,
 	useMemo,
 	useState,
-	PropsWithChildren,
 } from 'react';
-
-export const SELECTED_ENTITY = new EventedValue<EntityI | null>(null, 'The selected entity');
 
 type SelectedEntityContext = {
 	current: EntityI | null;

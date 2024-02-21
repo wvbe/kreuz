@@ -1,10 +1,4 @@
-import {
-	Random,
-	ExecutionNode,
-	SelectorNode,
-	SequenceNode,
-	EntityBlackboard,
-} from '../../level-1/mod.ts';
+import { Random, ExecutionNode, SelectorNode, SequenceNode, EntityBlackboard } from '@lib/core';
 
 // Some "entropy" lolz0r
 let ticker = 0;

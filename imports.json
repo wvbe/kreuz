@@ -1,7 +1,11 @@
 {
 	"imports": {
 		"@lib": "./library/mod.ts",
+		"@lib/core": "./library/level-1/mod.ts",
+		"@lib/assets": "./library/level-2/mod.ts",
+		"@lib/demos": "./library/level-3/mod.ts",
 		"@ui": "./ui/mod.ts",
+
 		"seedrandom": "./vendor/seedrandom.js",
 		"poisson-disk-sampling": "https://raw.githubusercontent.com/wvbe/poisson-disk-sampling/deno-rc.1/mod.ts",
 		"@redblobgames/dual-mesh": "https://raw.githubusercontent.com/wvbe/dual-mesh/deno-rc.2/mod.ts",

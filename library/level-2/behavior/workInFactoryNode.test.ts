@@ -1,7 +1,4 @@
 import { beforeAll, describe, expect, it, mock, run } from 'tincan';
-import { loiterNode } from './loiterNode.ts';
-import { beeKeeping } from '../blueprints.ts';
-import { honey } from '../materials.ts';
 import {
 	TestDriver,
 	FactoryBuildingEntity,
@@ -9,7 +6,11 @@ import {
 	Game,
 	generateGridTerrainFromAscii,
 	SelectorNode,
-} from '../../level-1/mod.ts';
+} from '@lib/core';
+
+import { loiterNode } from './loiterNode.ts';
+import { beeKeeping } from '../blueprints.ts';
+import { honey } from '../materials.ts';
 import { workInFactory } from './workInFactoryNode.ts';
 import { headOfState } from '../heroes.ts';
 import { DEFAULT_ASSETS } from '../DEFAULT_ASSETS.ts';

@@ -6,15 +6,10 @@
  * The expected outcome is a short-running game that ends the timeloop amicably because there is
  * no further events planned.
  */
-import {
-	FactoryBuildingEntity,
-	Game,
-	generateGridTerrainFromAscii,
-	PersonEntity,
-} from '../level-1/mod.ts';
+import { FactoryBuildingEntity, Game, generateGridTerrainFromAscii, PersonEntity } from '@lib/core';
 import { headOfState } from '../level-2/heroes.ts';
-import { DEFAULT_ASSETS, materials } from '../level-2/mod.ts';
-import { blueprints, behavior } from '../level-2/mod.ts';
+import { DEFAULT_ASSETS, materials } from '@lib/assets';
+import { blueprints, behavior } from '@lib/assets';
 import { Demo } from './types.ts';
 
 const demo: Demo = async (driver) => {

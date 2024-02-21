@@ -1,4 +1,4 @@
-import { Material } from '../../level-1/mod.ts';
+import { Material } from '@lib/core';
 
 export const hammer = new Material('Hammer', {
 	symbol: '🔨',

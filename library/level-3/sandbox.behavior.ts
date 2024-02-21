@@ -15,7 +15,7 @@ import {
 	Random,
 	MarketBuildingEntity,
 	SettlementEntity,
-} from '../level-1/mod.ts';
+} from '@lib/core';
 import { headOfState } from '../level-2/heroes.ts';
 import {
 	blueprints,
@@ -23,7 +23,7 @@ import {
 	getRandomSettlementName,
 	DEFAULT_ASSETS,
 	materials,
-} from '../level-2/mod.ts';
+} from '@lib/assets';
 import { Demo } from './types.ts';
 
 const demo: Demo = async (driver) => {

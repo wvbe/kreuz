@@ -13,7 +13,7 @@ async function buildJavascriptFiles(): Promise<string> {
 		plugins: [
 			...denoPlugins({
 				loader: 'portable',
-				importMapURL: import.meta.resolve('../imports.json'),
+				importMapURL: import.meta.resolve('../../imports.json'),
 			}),
 		],
 		entryPoints: [import.meta.resolve('./application.tsx')],
@@ -36,7 +36,7 @@ async function buildCssFile(): Promise<string> {
 		.use(postcssImport())
 		.use(
 			postcssInlineBase64({
-				baseDir: fromFileUrl(import.meta.resolve('../')),
+				baseDir: fromFileUrl(import.meta.resolve('./')),
 			}),
 		)
 		.use(postcssMinify())

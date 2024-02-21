@@ -1,6 +1,6 @@
 import { describe, expect, it, run, beforeAll } from 'tincan';
 
-import { TestDriver, Game } from '../level-1/mod.ts';
+import { TestDriver, Game } from '@lib/core';
 import createGeneratorDemo from './generator.ts';
 import { DEFAULT_ASSETS } from '@lib';
 

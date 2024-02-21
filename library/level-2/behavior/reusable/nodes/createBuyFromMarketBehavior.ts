@@ -1,14 +1,14 @@
-import { EntityI } from '../../../../level-1/mod.ts';
 import {
+	EntityBlackboard,
+	EntityI,
+	ExecutionNode,
+	SequenceNode,
 	TradeOrder,
 	type FactoryBuildingEntity,
 	type MarketBuildingEntity,
-	type PersonEntity,
 	type Material,
-	ExecutionNode,
-	SequenceNode,
-	EntityBlackboard,
-} from '../../../../level-1/mod.ts';
+	type PersonEntity,
+} from '@lib/core';
 
 import { getEntitiesReachableByEntity, walkEntityToEntity } from '../travel.ts';
 import { createWaitBehavior } from './createWaitBehavior.ts';

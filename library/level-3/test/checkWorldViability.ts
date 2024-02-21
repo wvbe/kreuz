@@ -1,4 +1,4 @@
-import { type Game, type FactoryBuildingEntity } from '../../level-1/mod.ts';
+import { type Game, type FactoryBuildingEntity } from '@lib/core';
 
 type Result = {
 	type: 'error' | 'warning';

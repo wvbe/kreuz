@@ -1,4 +1,4 @@
-import { Material, PersonEntity, PersonNeedId } from '../../../../level-1/mod.ts';
+import { Material, PersonEntity, PersonNeedId } from '@lib/core';
 
 type ConsumptionType = {
 	createStatus(material: Material): string;

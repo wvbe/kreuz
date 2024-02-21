@@ -1,4 +1,4 @@
-import { Material } from '../../level-1/mod.ts';
+import { Material } from '@lib/core';
 
 // A grassy plant whose seed is a worldwide staple food.
 export const wheat = new Material('Wheat', {

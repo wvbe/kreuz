@@ -1,4 +1,4 @@
-import { Blueprint } from '../../level-1/mod.ts';
+import { Blueprint } from '@lib/core';
 import * as materials from '../materials.ts';
 
 export const ironIngotProduction = new Blueprint(

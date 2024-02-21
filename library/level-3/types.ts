@@ -1,4 +1,4 @@
-import { type Game, type DriverI } from '../level-1/mod.ts';
+import { type Game, type DriverI } from '@lib/core';
 
 export type Demo<D extends DriverI = DriverI> = (driver: DriverI) => Promise<{
 	driver: D;

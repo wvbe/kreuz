@@ -83,13 +83,10 @@ export class Event<Args extends unknown[] = []> {
 	 */
 	public async emit(...args: Args): Promise<void> {
 		// Create a new array from callbacks so that the loop is not affected
-		// while once-ers change the true callbacks list by reference.
-		//
-		// Use a `for` loop to have one less useless line of stack tracing
+		// while once-ers change the true callbacks list by reference:
 		const callbacks = this.#callbacks.slice();
-		for (let i = 0; i < callbacks.length; i++) {
-			await callbacks[i](...args);
-		}
+		// Do not care in which order the callbacks finish:
+		await Promise.all(callbacks.map((cb) => cb(...args)));
 	}
 
 	/**
@@ -132,10 +129,10 @@ export class Event<Args extends unknown[] = []> {
 				}
 			}
 		};
-		const cb = () => {
-			callback();
+		const cb = async () => {
 			destroy();
 			isAlreadyDestroyed = true;
+			await callback();
 		};
 		events.forEach((event, index) => {
 			destroyers.push(

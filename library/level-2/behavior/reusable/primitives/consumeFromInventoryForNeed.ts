@@ -1,4 +1,4 @@
-import { Material, PersonEntity, PersonNeedId } from '@lib/core';
+import { BehaviorError, Material, PersonEntity, PersonNeedId } from '@lib/core';
 
 type ConsumptionType = {
 	createStatus(material: Material): string;
@@ -19,7 +19,7 @@ export async function consumeFromInventoryForNeed(
 	await entity.inventory.change(material, -1);
 	const need = entity.needs.find((n) => n.id === config.needId);
 	if (!need) {
-		throw new Error(`Expected entity to need ${config.needId}, but they don't`);
+		throw new BehaviorError(`Expected entity to need ${config.needId}, but they don't`);
 	}
 	await need.set(need.get() + (material[config.materialProperty] as number));
 }

@@ -8,10 +8,10 @@ import { EntityLink } from '../entities/EntityLink.tsx';
 export const FactoryBuildingEntityDetails: FunctionComponent<{ entity: FactoryBuildingEntity }> = ({
 	entity,
 }) => {
-	const workers = useEventData<[PersonEntity[], PersonEntity[]], Collection<PersonEntity>>(
+	const workers = useEventData<[PersonEntity[], PersonEntity[]], PersonEntity[]>(
 		entity.$workers.$change,
-		entity.$workers,
-		() => entity.$workers,
+		entity.$workers.slice(),
+		() => entity.$workers.slice(),
 	);
 	const blueprint = useEventedValue(entity.$blueprint);
 	const progress = useEventedValue(entity.$$progress);

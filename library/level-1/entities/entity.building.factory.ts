@@ -1,3 +1,4 @@
+import { JsonValue } from 'https://deno.land/std@0.185.0/json/common.ts';
 import Game from '../Game.ts';
 import { Collection } from '../classes/Collection.ts';
 import { EventedValue, type SaveEventedValueJson } from '../classes/EventedValue.ts';
@@ -15,10 +16,16 @@ export type SaveFactoryBuildingEntityJson = SaveBuildingEntityJson & {
 	options: FactoryBuildingEntityOptions;
 	inventory: SaveInventoryJson;
 	owner: SavePersonEntityJson;
-	blueprint: SaveEventedValueJson;
+	blueprint: SaveEventedValueJson<JsonValue | string>;
 };
 
 export type FactoryBuildingEntityOptions = {
+	/**
+	 * Not used by a factory instance, but may be used in a build menu or other. A one-sentence
+	 * description of what this type of factory does.
+	 */
+	description?: string;
+
 	/**
 	 * The type of production work that goes on in this factory.
 	 */
@@ -36,7 +43,7 @@ export type FactoryBuildingEntityOptions = {
 };
 
 export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
-	public readonly type = 'factory';
+	public type = 'factory';
 
 	/**
 	 * A bag of goodies owned by this factory. It will add and subtract items as it works through
@@ -65,12 +72,19 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 		null,
 		`${this.constructor.name} $blueprint`,
 		{
-			toJson(context, current) {
-				return current ? current.toSaveJson(context) : null;
-			},
-			async fromJson(context, saved) {
-				return saved ? await Blueprint.fromSaveJson(context, saved as SaveBlueprintJson) : null;
-			},
+			toJson: (context, current) =>
+				current
+					? // Return a registry reference if it exists, or serialize the JSON object for that blueprint
+					  context.blueprints.key(current, false) || current.toSaveJson(context)
+					: null,
+			fromJson: async (context, saved) =>
+				saved
+					? typeof saved === 'string'
+						? // Load from registry if the saved value was a (string) key
+						  context.blueprints.item(saved as string)
+						: // Create a blueprint from JSON otherwise
+						  Blueprint.fromSaveJson(context, saved as SaveBlueprintJson)
+					: null,
 		},
 	);
 
@@ -116,6 +130,7 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 
 		this.$attach.on(async (game) => {
 			await this.$$progress.attach(game);
+
 			this.$detach.once(async () => {
 				await this.$$progress.detach();
 			});
@@ -128,22 +143,24 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 				this.$workers.$change.on(async () => {
 					if (this.isBusy() || this.$blueprint.get()?.hasAllIngredients(this.inventory)) {
 						// Must already be busy or have the ingredients to start
-						await this.setProgressDelta();
+						// Void, do not await, setting the progress delta and its follow-up listeners
+						void this.setProgressDelta();
 					}
 				}),
 			);
 
 			// See if production can be restarted if the inventory changes:
-			// @TODO handle the case where the inventory is changed in sucha  way that the
+			// @TODO handle the case where the inventory is changed in such a way that the
 			// blueprint products cannot be placed.
 			this.$detach.once(
 				this.inventory.$change.on(
 					async () =>
-						this.#avoidRespondingToOwnInventoryChange || (await this.attemptStartBlueprint()),
+						// Void, do not await, setting starting a new blueprint and its follow-up listeners
+						this.#avoidRespondingToOwnInventoryChange || void this.attemptStartBlueprint(),
 				),
 			);
 
-			// When production progress completes, restart again
+			// When production progress completes, restart again, or stop altogether
 			this.$detach.once(
 				this.$$progress.onBetween(1, Infinity, async () => {
 					const blueprint = this.$blueprint.get();
@@ -269,17 +286,13 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 			blueprint: this.$blueprint.toSaveJson(context),
 		};
 	}
+
 	public static async fromSaveJson(
 		context: SaveJsonContext,
 		save: SaveFactoryBuildingEntityJson,
 	): Promise<FactoryBuildingEntity> {
 		const { id, location, options, inventory, owner, blueprint, status } = save;
-		const inst = new FactoryBuildingEntity(
-			id,
-			location,
-			await PersonEntity.fromSaveJson(context, owner),
-			options,
-		);
+		const inst = new this(id, location, await PersonEntity.fromSaveJson(context, owner), options);
 		await Promise.all([
 			inst.inventory.overwriteFromSaveJson(context, inventory),
 			inst.$blueprint.overwriteFromSaveJson(context, blueprint),

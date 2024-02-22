@@ -12,6 +12,7 @@ import {
 
 import { getEntitiesReachableByEntity, walkEntityToEntity } from '../travel.ts';
 import { createWaitBehavior } from './createWaitBehavior.ts';
+import { BehaviorError } from '@lib/core';
 
 type VendorEntity = MarketBuildingEntity | FactoryBuildingEntity;
 export type DesirabilityRecord = {
@@ -61,7 +62,7 @@ export function createBuyFromMarketSequence(
 				.shift();
 
 			if (!mostDesirableDeal) {
-				throw new Error(`There wasn't an attractive deal to be made`);
+				throw new BehaviorError(`There wasn't an attractive deal to be made`);
 			}
 			Object.assign(blackboard, { deal: mostDesirableDeal });
 		}),
@@ -69,7 +70,7 @@ export function createBuyFromMarketSequence(
 			'Walk to vendor',
 			async ({ game, entity, deal }) => {
 				if (!deal) {
-					throw new Error(`There isn't a deal to be made`);
+					throw new BehaviorError(`There isn't a deal to be made`);
 				}
 				await entity.$status.set(`Walking to ${deal.market}`);
 				await walkEntityToEntity(game, entity, deal.market);
@@ -79,7 +80,7 @@ export function createBuyFromMarketSequence(
 			'Buy any food',
 			async ({ entity, deal, game }) => {
 				if (!deal) {
-					throw new Error(`There isn't a deal to be made`);
+					throw new BehaviorError(`There isn't a deal to be made`);
 				}
 				await entity.$status.set('Buying food');
 
@@ -121,10 +122,10 @@ export function createBuyFromMarketSequence(
 					},
 				);
 				if (deal.market.inventory.availableOf(deal.material) < 1) {
-					throw new Error(`The required ${deal.material} isn't available at the market`);
+					throw new BehaviorError(`The required ${deal.material} isn't available at the market`);
 				}
 				if (entity.wallet.get() < deal.material.value) {
-					throw new Error(`The buyer doesn't have enough money`);
+					throw new BehaviorError(`The buyer doesn't have enough money`);
 				}
 
 				await tradeOrder.makeItHappen(game.time.now);

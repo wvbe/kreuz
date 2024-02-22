@@ -3,8 +3,8 @@ import { Event } from './Event.ts';
 import Game from '../Game.ts';
 import { SaveJsonContext } from '../types-savedgame.ts';
 
-export type SaveEventedValueJson = {
-	current: JsonValue;
+export type SaveEventedValueJson<As extends JsonValue = JsonValue> = {
+	current: As;
 	label: string;
 };
 

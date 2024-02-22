@@ -1,3 +1,4 @@
+import { BehaviorError } from './BehaviorError.ts';
 import { type BehaviorTreeNodeI } from './types.ts';
 
 /**
@@ -20,7 +21,10 @@ export class InverterNode<B extends Record<string, unknown> = Record<string, nev
 	public async evaluate(blackboard: B, _provenance?: number[]): Promise<void> {
 		try {
 			await this.children[0].evaluate(blackboard, _provenance);
-		} catch (_) {
+		} catch (error: Error | BehaviorError | unknown) {
+			if ((error as BehaviorError)?.type !== 'behavior') {
+				throw error;
+			}
 			return;
 		}
 		throw new Error(`A behavior that was expected to fail, succeeded`);

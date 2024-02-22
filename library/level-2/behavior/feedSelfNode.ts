@@ -7,6 +7,7 @@ import {
 	SequenceNode,
 	type Inventory,
 	type MaterialState,
+  BehaviorError,
 } from '@lib/core';
 import {
 	DesirabilityScoreFn,
@@ -41,10 +42,10 @@ export const feedSelf = new SequenceNode<EntityBlackboard>(
 	new ExecutionNode('Hungry?', ({ entity }) => {
 		const need = entity.needs.find((n) => n.id === 'food');
 		if (!need) {
-			throw new Error(`For some reason, ${entity} is unable to feel hungry`);
+			throw new BehaviorError(`For some reason, ${entity} is unable to feel hungry`);
 		}
 		if (need.get() > 0.2) {
-			throw new Error(`${entity} isn't feeling hungry`);
+			throw new BehaviorError(`${entity} isn't feeling hungry`);
 		}
 	}),
 	new SelectorNode(
@@ -54,7 +55,7 @@ export const feedSelf = new SequenceNode<EntityBlackboard>(
 					const hasSupplies = !!entity.inventory.getAvailableItems().filter(filterEdibleMaterial)
 						.length;
 					if (!hasSupplies) {
-						throw new Error(`${entity} does not have any edibles on hand`);
+						throw new BehaviorError(`${entity} does not have any edibles on hand`);
 					}
 				}),
 			),
@@ -67,7 +68,7 @@ export const feedSelf = new SequenceNode<EntityBlackboard>(
 			new ExecutionNode('Eat from inventory?', async ({ entity }) => {
 				const state = getMostEdibleStateFromInventory(entity.inventory);
 				if (!state) {
-					throw new Error(`${entity} does not have any edibles on hand`);
+					throw new BehaviorError(`${entity} does not have any edibles on hand`);
 				}
 
 				await consumeFromInventoryForNeed(consumeFromInventoryForNeed.EAT, entity, state.material);

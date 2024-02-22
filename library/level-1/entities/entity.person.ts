@@ -1,3 +1,4 @@
+import { BehaviorError } from '../behavior/BehaviorError.ts';
 import { EntityBlackboard, type BehaviorTreeNodeI } from '../behavior/types.ts';
 import { Event } from '../classes/Event.ts';
 import { EventedValue, type SaveEventedValueJson } from '../classes/EventedValue.ts';
@@ -161,13 +162,16 @@ export class PersonEntity extends Entity {
 				behaviorLoopEnabled = true;
 				try {
 					await behavior.evaluate({ game, entity: this });
-				} catch (_) {
+				} catch (error: Error | BehaviorError | unknown) {
+					if ((error as BehaviorError)?.type !== 'behavior') {
+						throw error;
+					}
 					// The following means that the entity will retry the behavior tree again in the same
 					// frame if it fails entirely. This is probably not what you want, since it can lead
 					// to max call stack size exceeeded errors -- but simply waiting to retry again
 					// is not a great fix either. Instead the behavior tree should be fixed.
 				}
-				$behaviorEndedEmit();
+				await $behaviorEndedEmit();
 
 				// However, should you need it, here is a 1000 time retry timeout:
 				// b.then($behaviorEndedEmit, () => {
@@ -176,12 +180,12 @@ export class PersonEntity extends Entity {
 			};
 			doBehaviourLoop();
 			this.$detach.once(
-				this.$behavior.on(() => {
+				this.$behavior.on(async () => {
 					if (behaviorLoopEnabled) {
 						// @TODO Cancel the previous behavior if there was one
 						return;
 					}
-					doBehaviourLoop();
+					await doBehaviourLoop();
 				}),
 			);
 

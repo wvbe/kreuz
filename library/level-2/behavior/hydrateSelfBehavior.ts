@@ -7,6 +7,7 @@ import {
 	type FactoryBuildingEntity,
 	type Inventory,
 	type MaterialState,
+	BehaviorError,
 } from '@lib/core';
 
 import { getWaterFromWell } from '../blueprints.ts';
@@ -44,10 +45,10 @@ export const hydrateSelfBehavior = new SequenceNode<EntityBlackboard>(
 		// @TODO replace with Needs/moods
 		const need = entity.needs.find((n) => n.id === 'water');
 		if (!need) {
-			throw new Error(`For some reason, ${entity} is unable to feel thirsty`);
+			throw new BehaviorError(`For some reason, ${entity} is unable to feel thirsty`);
 		}
 		if (need.get() > 0.2) {
-			throw new Error(`${entity} isn't thirsty enough`);
+			throw new BehaviorError(`${entity} isn't thirsty enough`);
 		}
 	}),
 	new SelectorNode(
@@ -57,7 +58,7 @@ export const hydrateSelfBehavior = new SequenceNode<EntityBlackboard>(
 					const hasSupplies = !!entity.inventory.getAvailableItems().filter(filterDrinkableMaterial)
 						.length;
 					if (!hasSupplies) {
-						throw new Error(`${entity} does not have any drinks on hand`);
+						throw new BehaviorError(`${entity} does not have any drinks on hand`);
 					}
 				}),
 			),
@@ -72,7 +73,7 @@ export const hydrateSelfBehavior = new SequenceNode<EntityBlackboard>(
 			new ExecutionNode('Drink from inventory?', async ({ entity }) => {
 				const state = getMostDrinkableStateFromInventory(entity.inventory);
 				if (!state) {
-					throw new Error(`${entity} does not have any drinks on hand`);
+					throw new BehaviorError(`${entity} does not have any drinks on hand`);
 				}
 				await consumeFromInventoryForNeed(
 					consumeFromInventoryForNeed.DRINK,

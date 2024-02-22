@@ -7,6 +7,7 @@ import {
 	type FactoryBuildingEntity,
 	type MarketBuildingEntity,
 	type Material,
+	BehaviorError,
 } from '@lib/core';
 
 import { walkEntityToEntity } from './reusable/travel.ts';
@@ -27,7 +28,7 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 		const { game, entity } = blackboard;
 
 		if (entity.inventory.getUsedStackSpace() >= entity.inventory.capacity) {
-			throw new Error(`${entity} cannot carry any more.`);
+			throw new BehaviorError(`${entity} cannot carry any more.`);
 		}
 
 		// @TODO Use a more refined measure than just transferring exactly one whole stack
@@ -93,7 +94,7 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 			.shift();
 
 		if (!supplyDemand) {
-			throw new Error(`There are no hauling jobs to do`);
+			throw new BehaviorError(`There are no hauling jobs to do`);
 		}
 
 		const tradeOrder = new TradeOrder(

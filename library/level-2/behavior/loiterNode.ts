@@ -1,4 +1,11 @@
-import { Random, ExecutionNode, SelectorNode, SequenceNode, EntityBlackboard } from '@lib/core';
+import {
+	Random,
+	ExecutionNode,
+	SelectorNode,
+	SequenceNode,
+	EntityBlackboard,
+	BehaviorError,
+} from '@lib/core';
 
 // Some "entropy" lolz0r
 let ticker = 0;
@@ -7,7 +14,7 @@ export const loiterNode = new SelectorNode<EntityBlackboard>(
 	new SequenceNode(
 		new ExecutionNode('Wander', async ({ game, entity }) => {
 			if ((entity.needs.find((need) => need.id === 'energy')?.get() || 0) < 0.2) {
-				throw new Error(`${entity} is too tired to wander around`);
+				throw new BehaviorError(`${entity} is too tired to wander around`);
 			}
 			await entity.$status.set('Wandering around…');
 			const start = game.terrain.getTileEqualToLocation(entity.$$location.get());

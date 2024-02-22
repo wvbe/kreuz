@@ -1,3 +1,4 @@
+import { BehaviorError } from './BehaviorError.ts';
 import { type BehaviorTreeNodeI } from './types.ts';
 
 /**
@@ -21,7 +22,7 @@ export class SequenceNode<B extends Record<string, unknown> = Record<string, nev
 			const child = this.children[index++];
 			if (!child) {
 				// return prom.resolve();
-				throw new Error('No child nodes to sequence from');
+				throw new BehaviorError('No child nodes to sequence from');
 			}
 			await child.evaluate(blackboard, provenance);
 			await next();

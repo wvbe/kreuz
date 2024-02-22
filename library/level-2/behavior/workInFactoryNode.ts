@@ -3,6 +3,7 @@ import {
 	ExecutionNode,
 	SequenceNode,
 	EntityBlackboard,
+	BehaviorError,
 } from '@lib/core';
 import { getEntitiesReachableByEntity, walkEntityToEntity } from './reusable/travel.ts';
 
@@ -36,7 +37,7 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 			}))
 			.sort((a, b) => a.distance - b.distance);
 		if (!factories.length) {
-			throw new Error(`There are no factories in need for workers`);
+			throw new BehaviorError(`There are no factories in need for workers`);
 		}
 
 		// @TODO
@@ -51,7 +52,7 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 		'Walk',
 		async ({ game, entity, factory }) => {
 			if (!factory) {
-				throw new Error(`Theres no factory to go to`);
+				throw new BehaviorError(`Theres no factory to go to`);
 			}
 			await entity.$status.set(`Going to ${factory} for work`);
 			await walkEntityToEntity(game, entity, factory);
@@ -64,7 +65,9 @@ export const workInFactory = new SequenceNode<EntityBlackboard>(
 			if (!factory.$workers.includes(entity)) {
 				if (factory.$workers.length >= factory.options.maxWorkers) {
 					// Aww shucks, somebody else took our spot before we could make it to the factory!
-					throw new Error(`The job was already taken by somebody else when ${entity} arrived`);
+					throw new BehaviorError(
+						`The job was already taken by somebody else when ${entity} arrived`,
+					);
 				}
 				await factory.$workers.add(entity);
 				entity.$$location.once(async () => {

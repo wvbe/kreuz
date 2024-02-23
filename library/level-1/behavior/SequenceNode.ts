@@ -3,7 +3,7 @@ import { type BehaviorTreeNodeI } from './types.ts';
 
 /**
  * Will return RUNNING or FAIL as soon as any of its children runs or fails.
- * Needs all of its children to SUCCEED for itself to succeed.
+ * When a child fails, stops completely. Needs all of its children to SUCCEED for itself to succeed.
  */
 export class SequenceNode<B extends Record<string, unknown> = Record<string, never>>
 	implements BehaviorTreeNodeI<B>

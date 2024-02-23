@@ -11,17 +11,3 @@ export const growWheat = new Blueprint(
 		buildingName: 'Wheat farm',
 	},
 );
-
-export const wheatProcessing = new Blueprint(
-	'Grinding wheat',
-	[{ material: materials.wheat, quantity: 2 }],
-	[
-		{ material: materials.flour, quantity: 1 },
-		{ material: materials.bran, quantity: 1 },
-	],
-	{
-		workersRequired: 1,
-		fullTimeEquivalent: 5000,
-		buildingName: 'Mill',
-	},
-);

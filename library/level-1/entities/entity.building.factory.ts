@@ -103,6 +103,10 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 	}
 
 	public get icon() {
+		const blueprint = this.$blueprint.get();
+		if (blueprint) {
+			return blueprint.products.map(({ material }) => material.symbol).join('+');
+		}
 		return '🏭';
 	}
 
@@ -293,11 +297,9 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 	): Promise<FactoryBuildingEntity> {
 		const { id, location, options, inventory, owner, blueprint, status } = save;
 		const inst = new this(id, location, await PersonEntity.fromSaveJson(context, owner), options);
-		await Promise.all([
-			inst.inventory.overwriteFromSaveJson(context, inventory),
-			inst.$blueprint.overwriteFromSaveJson(context, blueprint),
-			inst.$status.overwriteFromSaveJson(context, status),
-		]);
+		await inst.inventory.overwriteFromSaveJson(context, inventory);
+		await inst.$blueprint.overwriteFromSaveJson(context, blueprint);
+		await inst.$status.overwriteFromSaveJson(context, status);
 		return inst;
 	}
 }

@@ -4,6 +4,7 @@ import { createLoiterBehavior } from './reusable/nodes/createLoiterBehavior.ts';
 import { transportMaterial } from './transportMaterials.ts';
 import { workInFactory } from './workInFactoryNode.ts';
 import { createConsumeBehavior } from './reusable/nodes/createConsumeBehavior.ts';
+import { JobSelectorNode } from '../../level-1/behavior/JobSelectorNode.ts';
 
 let i = 0;
 
@@ -12,6 +13,6 @@ export const civilianBehavior = new RandomSelectorNode<EntityBlackboard>(
 	createConsumeBehavior(createConsumeBehavior.EAT),
 	createConsumeBehavior(createConsumeBehavior.DRINK),
 	transportMaterial,
-	workInFactory,
+	new JobSelectorNode(),
 	createLoiterBehavior(),
 );

@@ -91,10 +91,12 @@ export function createConsumeBehavior(config: ConsumptionType) {
 						);
 					}
 
+					console.log(
+						`${entity} to consume ${material}, has ${entity.inventory.availableOf(material)}`,
+					);
 					await entity.$status.set(config.statusFormatter(material));
 					await entity.inventory.change(material, -1);
 					await need.set(need.get() + (material[config.fulfillingMaterialProperty] as number));
-					console.log('DONE CONSUMED THIS');
 				}),
 				createWaitBehavior(500, 3000),
 				new ExecutionNode('Unset status', async ({ entity }) => {
@@ -105,10 +107,13 @@ export function createConsumeBehavior(config: ConsumptionType) {
 	);
 }
 
+/**
+ * Preset configuration for finding something to drink, and drinking it
+ */
 createConsumeBehavior.DRINK = {
 	fulfilledNeedId: 'water',
 	fulfillingMaterialProperty: 'fluid',
-	statusFormatter: (material) => `Drinking ${material}`,
+	statusFormatter: (material) => `Sipping on ${material}`,
 	materialFilter({ material }) {
 		return material.fluid && !material.toxicity;
 	},
@@ -116,11 +121,18 @@ createConsumeBehavior.DRINK = {
 		if (quantity <= 1 || entity.wallet.get() < material.value) {
 			return 0;
 		}
+		// @TODO weigh in distance to seller, if seller is not the same as entity
 		return material.fluid / material.value;
 	},
 } as ConsumptionType;
 
+/**
+ * Preset configuration for finding something to eat, and eating it
+ */
 createConsumeBehavior.EAT = {
+	fulfilledNeedId: 'food',
+	fulfillingMaterialProperty: 'nutrition',
+	statusFormatter: (material) => `Munching on ${material}`,
 	materialFilter({ material }) {
 		return material.nutrition && !material.toxicity;
 	},
@@ -128,9 +140,7 @@ createConsumeBehavior.EAT = {
 		if (quantity <= 1 || entity.wallet.get() < material.value) {
 			return 0;
 		}
+		// @TODO weigh in distance to seller, if seller is not the same as entity
 		return material.nutrition / material.value;
 	},
-	statusFormatter: (material) => `Eating ${material}`,
-	fulfilledNeedId: 'food',
-	fulfillingMaterialProperty: 'nutrition',
 } as ConsumptionType;

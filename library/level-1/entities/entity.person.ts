@@ -126,7 +126,10 @@ export class PersonEntity extends Entity {
 		super(id, location);
 
 		const { needs, ...passport } = options;
-		void Promise.all(this.needs.map((need) => need.set(needs?.[need.id] || 1, true)));
+
+		for (const need of this.needs) {
+			need.set(needs?.[need.id] || 1, true);
+		}
 
 		this.passport = passport;
 
@@ -137,12 +140,10 @@ export class PersonEntity extends Entity {
 
 		// Register need into game event loop
 		this.$attach.on(async (game) => {
-			await Promise.all(
-				this.needs.map(async (need) => {
-					this.$detach.once(() => need.detach());
-					await need.attach(game);
-				}),
-			);
+			for (const need of this.needs) {
+				this.$detach.once(() => need.detach());
+				await need.attach(game);
+			}
 
 			let behaviorLoopEnabled = false;
 			const $behaviorEnded = new Event('behavior ended');
@@ -307,12 +308,10 @@ export class PersonEntity extends Entity {
 		const { id, location, passport, needs, behavior, inventory, wallet, status } = save;
 		const inst = new PersonEntity(id, location, passport);
 		// @TODO restore needs from save JSON
-		await Promise.all([
-			inst.$behavior.overwriteFromSaveJson(context, behavior),
-			inst.$status.overwriteFromSaveJson(context, status),
-			inst.inventory.overwriteFromSaveJson(context, inventory),
-			inst.wallet.overwriteFromSaveJson(context, wallet),
-		]);
+		await inst.$behavior.overwriteFromSaveJson(context, behavior);
+		await inst.$status.overwriteFromSaveJson(context, status);
+		await inst.inventory.overwriteFromSaveJson(context, inventory);
+		await inst.wallet.overwriteFromSaveJson(context, wallet);
 		return inst;
 	}
 }

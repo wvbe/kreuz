@@ -6,7 +6,7 @@ export const milling = new Blueprint(
 	[{ material: materials.wheat, quantity: 3 }],
 	[
 		{ material: materials.flour, quantity: 1 },
-		{ material: materials.flour, quantity: 2 },
+		{ material: materials.bran, quantity: 2 },
 	],
 	{
 		workersRequired: 1,

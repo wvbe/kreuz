@@ -155,8 +155,8 @@ export class TradeOrder {
 		inventory2.changeMultiple(transfer2);
 
 		this.timeFinalised = time;
-
-		await Promise.all([owner1.$log.add(this), owner2.$log.add(this)]);
+		await owner1.$log.add(this);
+		await owner2.$log.add(this);
 	}
 
 	public getSummary(): string {

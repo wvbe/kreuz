@@ -120,11 +120,11 @@ createConsumeBehavior.DRINK = {
 	materialFilter({ material }) {
 		return material.fluid && !material.toxicity;
 	},
-	materialDesirabilityScore(entity, seller, material, quantity) {
+	materialDesirabilityScore(entity, vendor, material, quantity) {
 		if (quantity <= 1 || entity.wallet.get() < material.value) {
 			return 0;
 		}
-		// @TODO weigh in distance to seller, if seller is not the same as entity
+		// @TODO weigh in distance to vendor, if vendor is not the same as entity
 		return material.fluid / material.value;
 	},
 } as ConsumptionType;
@@ -139,11 +139,11 @@ createConsumeBehavior.EAT = {
 	materialFilter({ material }) {
 		return material.nutrition && !material.toxicity;
 	},
-	materialDesirabilityScore(entity, seller, material, quantity) {
+	materialDesirabilityScore(entity, vendor, material, quantity) {
 		if (quantity <= 1 || entity.wallet.get() < material.value) {
 			return 0;
 		}
-		// @TODO weigh in distance to seller, if seller is not the same as entity
+		// @TODO weigh in distance to vendor, if vendor is not the same as entity
 		return material.nutrition / material.value;
 	},
 } as ConsumptionType;

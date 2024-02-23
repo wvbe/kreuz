@@ -24,7 +24,7 @@ type VendorEntity = MarketBuildingEntity | FactoryBuildingEntity;
  * Leaves a `deal` of type {@link DesirabilityRecord} onto the blackbloard.
  */
 export function createBuyFromMarketBehavior(
-	sellerFilter: (entity: EntityI) => entity is VendorEntity,
+	vendorFilter: (entity: EntityI) => entity is VendorEntity,
 	createDesirabilityScore: DesirabilityScoreFn,
 ) {
 	return new SequenceNode<EntityBlackboard>(
@@ -32,7 +32,7 @@ export function createBuyFromMarketBehavior(
 			const { game, entity } = blackboard;
 			const mostDesirableDeal = getMostDesirableItem(
 				entity,
-				getEntitiesReachableByEntity(game, entity).filter(sellerFilter),
+				getEntitiesReachableByEntity(game, entity).filter(vendorFilter),
 				createDesirabilityScore,
 			);
 

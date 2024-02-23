@@ -172,7 +172,7 @@ export class PersonEntity extends Entity {
 					// to max call stack size exceeeded errors -- but simply waiting to retry again
 					// is not a great fix either. Instead the behavior tree should be fixed.
 				}
-				await $behaviorEndedEmit();
+				void $behaviorEndedEmit();
 
 				// However, should you need it, here is a 1000 time retry timeout:
 				// b.then($behaviorEndedEmit, () => {

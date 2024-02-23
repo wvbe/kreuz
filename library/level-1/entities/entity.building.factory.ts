@@ -139,11 +139,27 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 				new JobVacancy(
 					this.options.maxWorkers,
 					({ entity }) => {
-						const maximumDistanceWillingToTravel = 14;
-						const distanceToJob = entity.$$location
-							.get()
-							.euclideanDistanceTo(this.$$location.get());
-						return distanceToJob / maximumDistanceWillingToTravel;
+						let VAL = 1;
+
+						const maximumDistanceWillingToTravel = 14,
+							distanceToJob = entity.$$location.get().euclideanDistanceTo(this.$$location.get()),
+							// 1 = very close job, 0 = infinitely far
+							distanceMultiplier = Math.max(
+								0,
+								(maximumDistanceWillingToTravel - distanceToJob) / maximumDistanceWillingToTravel,
+							);
+
+						VAL *= distanceMultiplier;
+
+						if (distanceMultiplier > 0) {
+							if (!this.$blueprint.get()?.hasAllIngredients(this.inventory)) {
+								// Not enough ingredients in inventory to start another production cycle
+								VAL *= 0;
+								return 0;
+							}
+						}
+
+						return VAL;
 					},
 					(blackboard) => this.assignJobToEntity(blackboard),
 				),
@@ -239,9 +255,6 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 		await entity.walkToTile(tile);
 
 		await this.$workers.add(entity);
-		entity.$$location.once(async () => {
-			await this.$workers.remove(entity);
-		});
 
 		await entity.$status.set(`Working in ${this}`);
 
@@ -250,6 +263,9 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 			this.$$progress.onceAbove(1, () => resolve(), true);
 		});
 
+		// entity.$$location.once(async () => {
+		await this.$workers.remove(entity);
+		// });
 		await entity.$status.set(null);
 	}
 

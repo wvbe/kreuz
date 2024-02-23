@@ -4,11 +4,11 @@ import { type MaterialState } from '../inventory/types.ts';
 
 export enum TradeFailReason {
 	NO_MONEY_1 = 'Buyer has no money',
-	NO_MONEY_2 = 'Seller has no money',
+	NO_MONEY_2 = 'Vendor has no money',
 	NO_MATERIAL_1 = 'Buyer has no materials',
-	NO_MATERIAL_2 = 'Seller has no materials',
+	NO_MATERIAL_2 = 'Vendor has no materials',
 	NO_SPACE_1 = 'Buyer has no available space',
-	NO_SPACE_2 = 'Seller has no available space',
+	NO_SPACE_2 = 'Vendor has no available space',
 }
 
 type TradeFailReasonMessage = [TradeFailReason, ...any];

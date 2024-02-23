@@ -56,7 +56,7 @@ export default class Game {
 		});
 		this.entities.$remove.on(async (removed) => {
 			for (const entity of removed) {
-				await entity.detach(this);
+				await entity.detach();
 			}
 		});
 	}

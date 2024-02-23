@@ -1,9 +1,10 @@
-import { Material } from '@lib/core';
+import { Material, TradeOrder } from '@lib/core';
 import { PersonEntity, MarketBuildingEntity, FactoryBuildingEntity } from '@lib/core';
 
-type VendorEntity = MarketBuildingEntity | FactoryBuildingEntity | PersonEntity;
+type VendorEntity = MarketBuildingEntity | FactoryBuildingEntity;
 
 export type DesirabilityRecord = {
+	// @todo rename to "vendor"
 	market: VendorEntity;
 	material: Material;
 	score: number;
@@ -20,17 +21,20 @@ export type DesirabilityRecord = {
  */
 export type DesirabilityScoreFn = (
 	entity: PersonEntity,
-	seller: VendorEntity | null,
+	vendor: VendorEntity | null,
 	material: Material,
 	available: number,
 ) => number;
 
+/**
+ * @todo Probably re-type this to match {@link TradeOrder} (eg. {@link TradeOrderConstructorParam})
+ */
 export function getMostDesirableItem(
 	entity: PersonEntity,
-	sellers: VendorEntity[],
+	vendors: VendorEntity[],
 	createDesirabilityScore: DesirabilityScoreFn,
 ) {
-	return sellers
+	return vendors
 		.reduce<DesirabilityRecord[]>(
 			(records, market) =>
 				records.concat(

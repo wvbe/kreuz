@@ -23,6 +23,10 @@ type SupplyDemand = Demand & {
 	distance: number;
 };
 
+/**
+ * @TODO
+ * Rewrite to use the job board
+ */
 export const transportMaterial = new SequenceNode<EntityBlackboard>(
 	new ExecutionNode('Have cargo space?', (blackboard) => {
 		const { game, entity } = blackboard;
@@ -117,7 +121,11 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 			},
 		);
 
-		Object.assign(blackboard, { tradeOrder, from: supplyDemand.supplier, to: supplyDemand.entity });
+		Object.assign(blackboard, {
+			tradeOrder,
+			from: supplyDemand.supplier,
+			to: supplyDemand.entity,
+		});
 
 		supplyDemand.supplier.inventory.makeReservation(tradeOrder);
 		supplyDemand.entity.inventory.makeReservation(tradeOrder);

@@ -19,7 +19,11 @@ export const FactoryBuildingEntityDetails: FunctionComponent<{ entity: FactoryBu
 	return (
 		<article className="entity-details">
 			<p>
-				Workers: {workers.length} out of {entity.options.maxWorkers}
+				Workers: {workers.length} out of{' '}
+				{!blueprint || blueprint.options.workersRequired === entity.options.maxWorkers
+					? entity.options.maxWorkers
+					: `${blueprint.options.workersRequired}-${entity.options.maxWorkers}`}
+				{blueprint && workers.length < blueprint.options.workersRequired ? ' (penalized)' : null}
 			</p>
 			{workers.length ? (
 				<ul>

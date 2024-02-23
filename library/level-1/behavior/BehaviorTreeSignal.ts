@@ -1,5 +1,5 @@
-export class BehaviorError {
-	public readonly type = 'behavior';
+export class BehaviorTreeSignal {
+	public readonly type = 'fail';
 	public readonly message: string;
 	constructor(message: string) {
 		this.message = message;

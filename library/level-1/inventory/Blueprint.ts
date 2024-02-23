@@ -12,8 +12,14 @@ export type SaveBlueprintJson = {
 type BlueprintOptions = {
 	fullTimeEquivalent: number;
 	buildingName: string;
+
+	/**
+	 * The amount of workers necessary to achieve nominal work speed.
+	 * - If the amount of workers is lower, the work speed is proportionally lower, then a penalty of 70% is deducted.
+	 * - A factory may have more workers than necessary for a blueprint. So long as at least 1 blueprints minimum
+	 *   required workers is achieved, every additional blueprint that can be ran parallel does not receive a penalty.
+	 */
 	workersRequired: number;
-	// buildingCompatibility: string[];
 };
 
 const defaultBlueprintOptions: BlueprintOptions = {

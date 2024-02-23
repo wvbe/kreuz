@@ -1,4 +1,4 @@
-import { BehaviorError } from '../behavior/BehaviorError.ts';
+import { BehaviorTreeSignal } from '../behavior/BehaviorTreeSignal.ts';
 import { EntityBlackboard, type BehaviorTreeNodeI } from '../behavior/types.ts';
 import { Event } from '../classes/Event.ts';
 import { EventedValue, type SaveEventedValueJson } from '../classes/EventedValue.ts';
@@ -163,8 +163,8 @@ export class PersonEntity extends Entity {
 				behaviorLoopEnabled = true;
 				try {
 					await behavior.evaluate({ game, entity: this });
-				} catch (error: Error | BehaviorError | unknown) {
-					if ((error as BehaviorError)?.type !== 'behavior') {
+				} catch (error: Error | BehaviorTreeSignal | unknown) {
+					if ((error as BehaviorTreeSignal)?.type !== 'fail') {
 						throw error;
 					}
 					// The following means that the entity will retry the behavior tree again in the same
@@ -212,7 +212,7 @@ export class PersonEntity extends Entity {
 	public async walkToTile(destination: TileI): Promise<void> {
 		const terrain = destination.terrain;
 		if (!terrain) {
-			throw new Error(`Entity "${this.id}" is trying to path in a detached coordinate`);
+			throw new Error(`Entity "${this.id}" is trying to path to a detached coordinate`);
 		}
 
 		// Its _possible_ that an entity lives on a tile that has so much elevation that

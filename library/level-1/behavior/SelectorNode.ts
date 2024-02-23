@@ -1,4 +1,4 @@
-import { BehaviorError } from './BehaviorError.ts';
+import { BehaviorTreeSignal } from './BehaviorTreeSignal.ts';
 import { type BehaviorTreeNodeI } from './types.ts';
 
 /**
@@ -23,12 +23,12 @@ export class SelectorNode<B extends Record<string, unknown> = Record<string, nev
 			const child = this.children[index++];
 			if (!child) {
 				// return prom.reject();
-				throw new BehaviorError('No child nodes to choose from');
+				throw new BehaviorTreeSignal('No child nodes to choose from');
 			}
 			try {
 				await child.evaluate(blackboard, provenance);
-			} catch (error: Error | BehaviorError | unknown) {
-				if ((error as BehaviorError)?.type !== 'behavior') {
+			} catch (error: Error | BehaviorTreeSignal | unknown) {
+				if ((error as BehaviorTreeSignal)?.type !== 'fail') {
 					throw error;
 				}
 				await next();

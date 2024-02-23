@@ -11,7 +11,7 @@ import {
 import { createLoiterBehavior } from './reusable/nodes/createLoiterBehavior.ts';
 import { beeKeeping } from '../blueprints.ts';
 import { honey } from '../materials.ts';
-import { workInFactory } from './workInFactoryNode.ts';
+import { workInFactory } from './reusable/nodes/createJobWorkBehavior.ts';
 import { headOfState } from '../heroes.ts';
 import { DEFAULT_ASSETS } from '../DEFAULT_ASSETS.ts';
 

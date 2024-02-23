@@ -1,19 +1,20 @@
 import {
-	EntityBlackboard,
-	EntityI,
+	BehaviorTreeSignal,
 	ExecutionNode,
 	SequenceNode,
 	TradeOrder,
+	type EntityBlackboard,
+	type EntityI,
 	type FactoryBuildingEntity,
 	type MarketBuildingEntity,
-	type Material,
-	type PersonEntity,
 } from '@lib/core';
-
+import {
+	getMostDesirableItem,
+	type DesirabilityRecord,
+	type DesirabilityScoreFn,
+} from '../primitives/getMostDesirableItem.ts';
 import { getEntitiesReachableByEntity, walkEntityToEntity } from '../travel.ts';
 import { createWaitBehavior } from './createWaitBehavior.ts';
-import { BehaviorError } from '@lib/core';
-import { getMostDesirableItem } from '../primitives/getMostDesirableItem.ts';
 
 type VendorEntity = MarketBuildingEntity | FactoryBuildingEntity;
 
@@ -36,7 +37,7 @@ export function createBuyFromMarketBehavior(
 			);
 
 			if (!mostDesirableDeal) {
-				throw new BehaviorError(`There wasn't an attractive deal to be made`);
+				throw new BehaviorTreeSignal(`There wasn't an attractive deal to be made`);
 			}
 			Object.assign(blackboard, { deal: mostDesirableDeal });
 		}),
@@ -44,7 +45,7 @@ export function createBuyFromMarketBehavior(
 			'Walk to vendor',
 			async ({ game, entity, deal }) => {
 				if (!deal) {
-					throw new BehaviorError(`There isn't a deal to be made`);
+					throw new BehaviorTreeSignal(`There isn't a deal to be made`);
 				}
 				await entity.$status.set(`Walking to ${deal.market}`);
 				await walkEntityToEntity(game, entity, deal.market);
@@ -54,7 +55,7 @@ export function createBuyFromMarketBehavior(
 			'Buy any food',
 			async ({ entity, deal, game }) => {
 				if (!deal) {
-					throw new BehaviorError(`There isn't a deal to be made`);
+					throw new BehaviorTreeSignal(`There isn't a deal to be made`);
 				}
 				await entity.$status.set('Buying food');
 
@@ -96,10 +97,12 @@ export function createBuyFromMarketBehavior(
 					},
 				);
 				if (deal.market.inventory.availableOf(deal.material) < 1) {
-					throw new BehaviorError(`The required ${deal.material} isn't available at the market`);
+					throw new BehaviorTreeSignal(
+						`The required ${deal.material} isn't available at the market`,
+					);
 				}
 				if (entity.wallet.get() < deal.material.value) {
-					throw new BehaviorError(`The buyer doesn't have enough money`);
+					throw new BehaviorTreeSignal(`The buyer doesn't have enough money`);
 				}
 
 				await tradeOrder.makeItHappen(game.time.now);

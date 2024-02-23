@@ -4,7 +4,7 @@ export { InverterNode } from './behavior/InverterNode.ts';
 export { RandomSelectorNode } from './behavior/RandomSelectorNode.ts';
 export { SelectorNode } from './behavior/SelectorNode.ts';
 export { SequenceNode } from './behavior/SequenceNode.ts';
-export { BehaviorError } from './behavior/BehaviorError.ts';
+export { BehaviorTreeSignal } from './behavior/BehaviorTreeSignal.ts';
 export * from './behavior/types.ts';
 
 // Miscellaneous utilities:

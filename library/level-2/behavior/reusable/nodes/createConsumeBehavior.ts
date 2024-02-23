@@ -1,5 +1,5 @@
 import {
-	BehaviorError,
+	BehaviorTreeSignal,
 	EntityBlackboard,
 	ExecutionNode,
 	InverterNode,
@@ -49,10 +49,10 @@ export function createConsumeBehavior(config: ConsumptionType) {
 		new ExecutionNode('Have a craving??', ({ entity }) => {
 			const need = entity.needs.find((n) => n.id === 'food');
 			if (!need) {
-				throw new BehaviorError(`For some reason, ${entity} is unable to crave this`);
+				throw new BehaviorTreeSignal(`For some reason, ${entity} is unable to crave this`);
 			}
 			if (need.get() > 0.2) {
-				throw new BehaviorError(`${entity} isn't feeling it`);
+				throw new BehaviorTreeSignal(`${entity} isn't feeling it`);
 			}
 		}),
 		new SelectorNode(
@@ -61,7 +61,9 @@ export function createConsumeBehavior(config: ConsumptionType) {
 				new InverterNode(
 					new ExecutionNode('Has nothing to satisfy this craving?', ({ entity }) => {
 						if (!entity.inventory.getAvailableItems().some(config.materialFilter)) {
-							throw new BehaviorError(`${entity} does not have any satisfactory items on hand`);
+							throw new BehaviorTreeSignal(
+								`${entity} does not have any satisfactory items on hand`,
+							);
 						}
 					}),
 				),
@@ -81,19 +83,20 @@ export function createConsumeBehavior(config: ConsumptionType) {
 						? deal.material
 						: getMostDesirableItem(entity, [entity], config.materialDesirabilityScore)?.material;
 					if (!material) {
-						throw new BehaviorError(`${entity} does not have any edibles on hand`);
+						throw new BehaviorTreeSignal(`${entity} does not have any edibles on hand`);
 					}
 
 					const need = entity.needs.find((n) => n.id === config.fulfilledNeedId);
 					if (!need) {
-						throw new BehaviorError(
+						throw new BehaviorTreeSignal(
 							`Expected entity to need ${config.fulfilledNeedId}, but they don't`,
 						);
 					}
 
-					console.log(
-						`${entity} to consume ${material}, has ${entity.inventory.availableOf(material)}`,
-					);
+					// console.log(
+					// 	`${entity} to consume ${material}, has ${entity.inventory.availableOf(material)}`,
+					// );
+
 					await entity.$status.set(config.statusFormatter(material));
 					await entity.inventory.change(material, -1);
 					await need.set(need.get() + (material[config.fulfillingMaterialProperty] as number));

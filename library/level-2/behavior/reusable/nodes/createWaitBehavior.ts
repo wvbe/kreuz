@@ -10,8 +10,9 @@ export function createWaitBehavior(
 		if (statusUpdate !== undefined) {
 			await entity.$status.set(statusUpdate);
 		}
-		await game.time.wait(
+		const timeout = Math.round(
 			Random.between(lowerBounary, upperBoundary, entity.id, 'wait bt', ++ticker),
 		);
+		await game.time.wait(timeout);
 	});
 }

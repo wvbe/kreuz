@@ -2,6 +2,7 @@ import { EntityI } from '../entities/types.ts';
 import { PersonEntity } from '../entities/entity.person.ts';
 import { EventedNumericValue } from '../classes/EventedNumericValue.ts';
 import { BehaviorTreeNodeI, EntityBlackboard } from './types.ts';
+import { black } from 'https://deno.land/std@0.106.0/fmt/colors.ts';
 
 /**
  * A function that scores how desirable a job is for a person:
@@ -24,30 +25,25 @@ export class JobVacancy {
 	 */
 	public readonly calculateDesirability: JobVacancyDesirabilityFn;
 
-	#executionNode: BehaviorTreeNodeI<EntityBlackboard>;
+	#performJob: (blackboard: EntityBlackboard) => Promise<void>;
 
 	public constructor(
 		vacancies: number,
 		calculateDesirability: JobVacancyDesirabilityFn,
-		executionNode: BehaviorTreeNodeI<EntityBlackboard>,
+		performJob: (blackboard: EntityBlackboard) => Promise<void>,
 	) {
 		this.$vacancies.set(vacancies, true);
 		this.calculateDesirability = calculateDesirability;
-		this.#executionNode = executionNode;
+		this.#performJob = performJob;
 	}
 
-	public assignJob(blackboard: EntityBlackboard) {
+	public async doJob(blackboard: EntityBlackboard) {
 		const vacancies = this.$vacancies.get();
 		if (vacancies < 1) {
 			throw new Error('Cannot take a job that is already forgiven');
 		}
-		// @TODO start job on entity
-		this.$vacancies.set(vacancies - 1);
-		// @TODO clean up the whole JobVacancy instance when?
-	}
-
-	public addVacancy() {
-		const vacancies = this.$vacancies.get();
-		this.$vacancies.set(vacancies + 1);
+		await this.$vacancies.set(vacancies - 1);
+		await this.#performJob(blackboard);
+		await this.$vacancies.set(vacancies + 1);
 	}
 }

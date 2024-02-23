@@ -11,6 +11,8 @@ import { BuildingEntity, type SaveBuildingEntityJson } from './entity.building.t
 import { SavePersonEntityJson } from './entity.person.ts';
 import { PersonEntity } from './entity.person.ts';
 import { type EntityI } from './types.ts';
+import { JobVacancy } from '../behavior/JobVacancy.ts';
+import { EntityBlackboard } from '../behavior/types.ts';
 
 export type SaveFactoryBuildingEntityJson = SaveBuildingEntityJson & {
 	options: FactoryBuildingEntityOptions;
@@ -133,6 +135,20 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 		});
 
 		this.$attach.on(async (game) => {
+			game.jobs.add(
+				new JobVacancy(
+					this.options.maxWorkers,
+					({ entity }) => {
+						const maximumDistanceWillingToTravel = 14;
+						const distanceToJob = entity.$$location
+							.get()
+							.euclideanDistanceTo(this.$$location.get());
+						return distanceToJob / maximumDistanceWillingToTravel;
+					},
+					(blackboard) => this.assignJobToEntity(blackboard),
+				),
+			);
+
 			await this.$$progress.attach(game);
 
 			this.$detach.once(async () => {
@@ -210,10 +226,31 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 			// If the blueprint does not require workers, process at 1x full speed
 			await this.$$progress.setDelta(delta);
 		} else {
+			const penaltyModifier = this.$workers.length < blueprint.options.workersRequired ? 0.3 : 1;
 			await this.$$progress.setDelta(
-				Math.floor(this.$workers.length / blueprint.options.workersRequired) * delta,
+				(this.$workers.length / blueprint.options.workersRequired) * delta * penaltyModifier,
 			);
 		}
+	}
+
+	private async assignJobToEntity({ game, entity }: EntityBlackboard) {
+		await entity.$status.set(`Going to ${this} for work`);
+		const tile = game.terrain.getTileEqualToLocation(this.$$location.get());
+		await entity.walkToTile(tile);
+
+		await this.$workers.add(entity);
+		entity.$$location.once(async () => {
+			await this.$workers.remove(entity);
+		});
+
+		await entity.$status.set(`Working in ${this}`);
+
+		// Finish job when one work cycle completes
+		await new Promise<void>((resolve) => {
+			this.$$progress.onceAbove(1, () => resolve(), true);
+		});
+
+		await entity.$status.set(null);
 	}
 
 	private isBusy() {
@@ -250,10 +287,10 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 			await this.$status.set('Waiting for instructions…');
 			return false;
 		}
-		if (this.$workers.length < blueprint.options.workersRequired) {
-			await this.$status.set('Waiting for enough workers…');
-			return false;
-		}
+		// if (this.$workers.length < blueprint.options.workersRequired) {
+		// 	await this.$status.set('Waiting for enough workers…');
+		// 	return false;
+		// }
 
 		if (!blueprint.hasAllIngredients(this.inventory)) {
 			await this.$status.set('Waiting for the required materials…');

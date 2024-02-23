@@ -1,4 +1,4 @@
-import { BehaviorError } from './BehaviorError.ts';
+import { BehaviorTreeSignal } from './BehaviorTreeSignal.ts';
 import { type BehaviorTreeNodeI } from './types.ts';
 
 /**
@@ -21,12 +21,12 @@ export class InverterNode<B extends Record<string, unknown> = Record<string, nev
 	public async evaluate(blackboard: B, _provenance?: number[]): Promise<void> {
 		try {
 			await this.children[0].evaluate(blackboard, _provenance);
-		} catch (error: Error | BehaviorError | unknown) {
-			if ((error as BehaviorError)?.type !== 'behavior') {
+		} catch (error: Error | BehaviorTreeSignal | unknown) {
+			if ((error as BehaviorTreeSignal)?.type !== 'fail') {
 				throw error;
 			}
 			return;
 		}
-		throw new BehaviorError(`A behavior that was expected to fail, succeeded`);
+		throw new BehaviorTreeSignal(`A behavior that was expected to fail, succeeded`);
 	}
 }

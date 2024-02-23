@@ -5,19 +5,18 @@ import seedrandom from 'seedrandom';
 
 import { type SeedI } from '../types.ts';
 
-export class Random {
+class ExpensiveRandom {
 	/**
 	 * Returns a random decimal number between 0 and 1.
 	 */
 	static float(...seed: SeedI[]): number {
 		return seedrandom(seed.join('/')).double();
 	}
-
 	/**
 	 * Returns a random number between your min and max.
 	 */
 	static between(min: number, max: number, ...seed: SeedI[]): number {
-		return min + (max - min) * Random.float(...seed);
+		return min + (max - min) * this.float(...seed);
 	}
 
 	/**
@@ -53,7 +52,7 @@ export class Random {
 	): [number, number][] {
 		let i = 0;
 		const poisson = new Poisson({ shape: [width, height], minDistance }, () =>
-			Random.float(...seed, ++i),
+			this.float(...seed, ++i),
 		);
 		return poisson.fill() as [number, number][];
 	}
@@ -90,3 +89,13 @@ export class Random {
 		return num;
 	}
 }
+
+class FastRandom extends ExpensiveRandom {
+	static float(..._seed: SeedI[]): number {
+		return Math.random();
+	}
+	static boolean(seed: SeedI[], probabilityForTrue = 0.5): boolean {
+		return this.float(...seed) <= probabilityForTrue;
+	}
+}
+export const Random = FastRandom;

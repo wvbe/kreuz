@@ -1,4 +1,6 @@
+import { JobVacancy } from './behavior/JobVacancy.ts';
 import { EntityBlackboard } from './behavior/types.ts';
+import { Collection } from './classes/Collection.ts';
 import { Event } from './classes/Event.ts';
 import { KeyedCollection } from './classes/KeyedCollection.ts';
 import { Registry } from './classes/Registry.ts';
@@ -27,6 +29,8 @@ export default class Game {
 	public readonly seed: SeedI;
 
 	public readonly assets: GameAssets;
+
+	public readonly jobs = new Collection<JobVacancy>();
 
 	/*
 	 * EVENTS

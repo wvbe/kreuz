@@ -8,7 +8,7 @@ import {
 	SelectorNode,
 } from '@lib/core';
 
-import { loiterNode } from './loiterNode.ts';
+import { createLoiterBehavior } from './reusable/nodes/createLoiterBehavior.ts';
 import { beeKeeping } from '../blueprints.ts';
 import { honey } from '../materials.ts';
 import { workInFactory } from './workInFactoryNode.ts';
@@ -55,9 +55,9 @@ describe('BT: workInFactory', async () => {
 		await new TestDriver().attach(game);
 		await game.entities.add(entity, factory);
 
-		// Wrap workInFactory in a selector node together with loiterNode, so that we will not end up
+		// Wrap workInFactory in a selector node together with createLoiterBehavior(), so that we will not end up
 		// in a max-call-stack-exceeded scenario when there is no available factory.
-		await entity.$behavior.set(new SelectorNode(workInFactory, loiterNode));
+		await entity.$behavior.set(new SelectorNode(workInFactory, createLoiterBehavior()));
 	});
 
 	it('t=5.000 Walked to factory', async () => {

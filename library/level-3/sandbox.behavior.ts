@@ -91,7 +91,7 @@ const demo: Demo = async (driver) => {
 
 	await game.entities.add(entity, church, settlement, marketStall, factory);
 
-	await entity.$behavior.set(behavior.civvyBehavior);
+	await entity.$behavior.set(behavior.civilianBehavior);
 
 	return { driver, game };
 };

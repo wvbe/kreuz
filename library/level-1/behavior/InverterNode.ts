@@ -27,6 +27,6 @@ export class InverterNode<B extends Record<string, unknown> = Record<string, nev
 			}
 			return;
 		}
-		throw new Error(`A behavior that was expected to fail, succeeded`);
+		throw new BehaviorError(`A behavior that was expected to fail, succeeded`);
 	}
 }

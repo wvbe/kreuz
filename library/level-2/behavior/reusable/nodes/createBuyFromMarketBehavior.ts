@@ -13,53 +13,27 @@ import {
 import { getEntitiesReachableByEntity, walkEntityToEntity } from '../travel.ts';
 import { createWaitBehavior } from './createWaitBehavior.ts';
 import { BehaviorError } from '@lib/core';
+import { getMostDesirableItem } from '../primitives/getMostDesirableItem.ts';
 
 type VendorEntity = MarketBuildingEntity | FactoryBuildingEntity;
-export type DesirabilityRecord = {
-	market: VendorEntity;
-	material: Material;
-	score: number;
-};
 
 /**
- * A function with which the attractiveness of a purchase is evaluated. AMongst others, you could
- * use this to weigh several factors:
- * - How nutritious is an item?
- * - What does it cost, and can the entity affort it?
- * - How far away is it?
+ * Makes the entity select an attractive deal, go there and make the purchase.
  *
- * Return zero to not consider this purchase at all.
+ * Leaves a `deal` of type {@link DesirabilityRecord} onto the blackbloard.
  */
-export type DesirabilityScoreFn = (
-	entity: PersonEntity,
-	market: VendorEntity,
-	material: Material,
-	available: number,
-) => number;
-
-export function createBuyFromMarketSequence(
+export function createBuyFromMarketBehavior(
 	sellerFilter: (entity: EntityI) => entity is VendorEntity,
 	createDesirabilityScore: DesirabilityScoreFn,
 ) {
 	return new SequenceNode<EntityBlackboard>(
 		new ExecutionNode('Find a deal', (blackboard) => {
 			const { game, entity } = blackboard;
-			const mostDesirableDeal = getEntitiesReachableByEntity(game, entity)
-				.filter(sellerFilter)
-				.reduce<DesirabilityRecord[]>(
-					(records, market) =>
-						records.concat(
-							market.inventory.getAvailableItems().map(({ material, quantity }) => ({
-								market,
-								material,
-								score: createDesirabilityScore(entity, market, material, quantity),
-							})),
-						),
-					[],
-				)
-				.filter((desirability) => desirability.score > 0)
-				.sort((a, b) => a.score - b.score)
-				.shift();
+			const mostDesirableDeal = getMostDesirableItem(
+				entity,
+				getEntitiesReachableByEntity(game, entity).filter(sellerFilter),
+				createDesirabilityScore,
+			);
 
 			if (!mostDesirableDeal) {
 				throw new BehaviorError(`There wasn't an attractive deal to be made`);

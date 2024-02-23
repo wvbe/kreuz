@@ -5,7 +5,13 @@ export interface BehaviorTreeNodeI<
 	BlackboardGeneric extends Record<string, unknown> = Record<string, never>,
 > {
 	type: string;
-	evaluate(blackboard: BlackboardGeneric, provenance?: number[]): void | Promise<void>;
+	evaluate(
+		blackboard: BlackboardGeneric,
+		/**
+		 * @todo probably deprecate "provenance"
+		 */
+		provenance?: number[],
+	): void | Promise<void>;
 	label?: string;
 	children?: BehaviorTreeNodeI<BlackboardGeneric>[];
 }

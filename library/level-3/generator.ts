@@ -73,7 +73,7 @@ export async function generateEntities(game: Game) {
 		await Promise.all([
 			person.wallet.set(Random.between(20, 500, id, 'munnie')),
 			game.entities.add(person),
-			person.$behavior.set(behavior.civvyBehavior),
+			person.$behavior.set(behavior.civilianBehavior),
 		]);
 	}
 

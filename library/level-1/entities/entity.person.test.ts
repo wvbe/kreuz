@@ -5,8 +5,11 @@
 import { describe, expect, it, run } from 'tincan';
 import { PersonEntity } from './entity.person.ts';
 
-import { hydrateSelfBehavior } from '../../level-2/behavior/hydrateSelfBehavior.ts';
 import { DEFAULT_ASSETS } from '@lib/assets';
+import { createConsumeBehavior } from '../../level-2/behavior/reusable/nodes/createConsumeBehavior.ts';
+
+const hydrateSelfBehavior = createConsumeBehavior(createConsumeBehavior.DRINK);
+
 describe('PersonEntity', () => {
 	it(`save without behavior`, async () => {
 		const entity = new PersonEntity('guy', [0, 0, Infinity], {

@@ -2,9 +2,9 @@ import { beforeAll, describe, expect, it, mock, run } from 'tincan';
 import { Game, PersonEntity, TestDriver, generateGridTerrainFromAscii } from '@lib/core';
 
 import { DEFAULT_ASSETS } from '../DEFAULT_ASSETS.ts';
-import { loiterNode } from './loiterNode.ts';
+import { createLoiterBehavior } from './reusable/nodes/createLoiterBehavior.ts';
 
-describe('BT: loiterNode', async () => {
+describe('BT: createLoiterBehavior()', async () => {
 	const game = new Game(
 			'1',
 			generateGridTerrainFromAscii(`
@@ -33,7 +33,7 @@ describe('BT: loiterNode', async () => {
 	beforeAll(async () => {
 		await new TestDriver().attach(game);
 		await game.entities.add(entity);
-		await entity.$behavior.set(loiterNode);
+		await entity.$behavior.set(createLoiterBehavior());
 	});
 
 	it('t=500.000', async () => {

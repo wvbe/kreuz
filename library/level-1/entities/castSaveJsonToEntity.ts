@@ -4,6 +4,7 @@ import {
 	ChurchBuildingEntity,
 	type SaveChurchBuildingEntityJson,
 } from './entity.building.church.ts';
+import { ConstructionSiteEntity } from './entity.building.construction.ts';
 import {
 	FactoryBuildingEntity,
 	type SaveFactoryBuildingEntityJson,
@@ -35,6 +36,8 @@ export async function castSaveJsonToEntity(
 			return FactoryBuildingEntity.fromSaveJson(context, save as SaveFactoryBuildingEntityJson);
 		case 'market-stall':
 			return MarketBuildingEntity.fromSaveJson(context, save as SaveMarketBuildingEntityJson);
+		case 'construction-site':
+			return ConstructionSiteEntity.fromSaveJson(context, save as SaveFactoryBuildingEntityJson);
 	}
 	throw new Error(`Unsupported entity type "${save.type}" for save JSON`);
 }

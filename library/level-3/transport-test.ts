@@ -56,7 +56,7 @@ const demo: Demo = async (driver) => {
 			firstName: 'Melanie',
 		});
 		await game.entities.add(entity);
-		await entity.$behavior.set(behavior.civvyBehavior);
+		await entity.$behavior.set(behavior.civilianBehavior);
 	}
 
 	return { driver, game };

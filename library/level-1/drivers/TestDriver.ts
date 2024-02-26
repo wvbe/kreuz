@@ -30,6 +30,7 @@ export class TestDriver extends Driver implements DriverI {
 					await game.time.jump();
 				}
 				await this.stop();
+				await this.$end.emit();
 			}),
 		);
 

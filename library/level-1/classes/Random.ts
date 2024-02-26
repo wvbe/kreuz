@@ -98,4 +98,4 @@ class FastRandom extends ExpensiveRandom {
 		return this.float(...seed) <= probabilityForTrue;
 	}
 }
-export const Random = FastRandom;
+export const Random = ExpensiveRandom;

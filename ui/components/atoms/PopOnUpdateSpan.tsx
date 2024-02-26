@@ -60,7 +60,14 @@ export const PopOnUpdateSpan: FunctionComponent<
 	);
 	return (
 		<span {...rest} style={{ position: 'relative', padding: '0 3px' }} ref={setElementRef}>
-			<span style={{ position: 'relative', zIndex: 1 }}>{children}</span>
+			<span
+				style={{
+					position: 'relative',
+					zIndex: 1,
+				}}
+			>
+				{children}
+			</span>
 		</span>
 	);
 };

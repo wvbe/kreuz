@@ -31,7 +31,7 @@ let identifier = 0;
 	behaviorNode.children?.forEach((child) => recurse(registry, child));
 })(DEFAULT_ASSETS.behaviorNodes, {
 	children: Object.values(bt),
-} as BehaviorTreeNodeI<Record<string, unknown>>);
+} as unknown as BehaviorTreeNodeI<EntityBlackboard>);
 
 Object.entries(materials as Record<string, Material>).forEach(([key, item]) =>
 	DEFAULT_ASSETS.materials.set(key, item),

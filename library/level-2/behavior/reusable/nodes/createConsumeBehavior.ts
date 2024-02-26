@@ -13,9 +13,10 @@ import {
 } from '@lib/core';
 import { createBuyFromMarketBehavior } from './createBuyFromMarketBehavior.ts';
 import { createWaitBehavior } from './createWaitBehavior.ts';
-import { getMostDesirableItem } from '../primitives/getMostDesirableItem.ts';
-import { DesirabilityScoreFn } from '../primitives/getMostDesirableItem.ts';
-import { DesirabilityRecord } from '../primitives/getMostDesirableItem.ts';
+import { selectMostDesirableItemFromVendors } from '../primitives/selectMostDesirableItemFromVendors.ts';
+import { selectMostDesirableItemFromInventory } from '../primitives/selectMostDesirableItemFromInventory.ts';
+import { VendorPurchaseScorer } from '../primitives/types.ts';
+import { DesirabilityRecord } from '../primitives/types.ts';
 
 type ConsumptionType = {
 	/**
@@ -25,7 +26,7 @@ type ConsumptionType = {
 	/**
 	 * A function that, from all the candidate materials, selects the one that is most desirable.
 	 */
-	materialDesirabilityScore: DesirabilityScoreFn;
+	materialDesirabilityScore: VendorPurchaseScorer;
 	/**
 	 * A function that generates a status for the moment that the entity gets to satisfying their need.
 	 */
@@ -81,7 +82,8 @@ export function createConsumeBehavior(config: ConsumptionType) {
 					// already owns.
 					const material = deal
 						? deal.material
-						: getMostDesirableItem(entity, [entity], config.materialDesirabilityScore)?.material;
+						: selectMostDesirableItemFromInventory(entity, config.materialDesirabilityScore)
+								?.material;
 					if (!material) {
 						throw new BehaviorTreeSignal(`${entity} does not have any edibles on hand`);
 					}

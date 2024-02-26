@@ -1,4 +1,4 @@
-import { Driver, EntityI, PersonEntity, type DriverI, type Game } from '@lib';
+import { Driver, PersonEntity, type DriverI, type Game } from '@lib';
 
 export class BrowserDriver extends Driver implements DriverI {
 	game: Game | null = null;
@@ -9,6 +9,10 @@ export class BrowserDriver extends Driver implements DriverI {
 		if (!this.$$animating.get()) {
 			return;
 		}
+		if (!game.time.hasNextEvent()) {
+			await this.$end.emit();
+			return;
+		}
 
 		const now = Date.now();
 		const delta = now - this.lastUpdate;
@@ -17,9 +21,9 @@ export class BrowserDriver extends Driver implements DriverI {
 		requestAnimationFrame(this.animate.bind(this, game));
 	}
 
-	public start() {
+	public async start(): Promise<void> {
 		this.lastUpdate = Date.now();
-		return super.start();
+		await super.start();
 	}
 
 	public async attach(game: Game): Promise<this> {
@@ -47,10 +51,6 @@ export class BrowserDriver extends Driver implements DriverI {
 		this.$detach.once(
 			this.$resume.on(async () => {
 				await this.animate(game);
-
-				return async () => {
-					await this.stop();
-				};
 			}),
 		);
 
@@ -62,7 +62,12 @@ export class BrowserDriver extends Driver implements DriverI {
 
 		this.$detach.once(
 			this.$pause.on(() => {
-				self.document.title = '🛑 Kreuz';
+				self.document.title = '⏸️ Kreuz';
+			}),
+		);
+		this.$detach.once(
+			this.$end.on(() => {
+				self.document.title = '⏹️ Kreuz';
 			}),
 		);
 

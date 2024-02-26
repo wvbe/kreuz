@@ -14,7 +14,7 @@ export const TokenizedText: FunctionComponent<{ text: string }> = ({ text }) => 
 				if (!item) {
 					return token;
 				}
-				return <EntityLink entity={item} />;
+				return <EntityLink key={i} entity={item} />;
 			}),
 		[space, text],
 	);

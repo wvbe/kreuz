@@ -1,4 +1,10 @@
-import React, { FunctionComponent, HtmlHTMLAttributes, ReactElement, useState } from 'react';
+import React, {
+	FunctionComponent,
+	HtmlHTMLAttributes,
+	ReactElement,
+	useCallback,
+	useState,
+} from 'react';
 
 export const CollapsibleWindow: FunctionComponent<
 	{
@@ -8,16 +14,13 @@ export const CollapsibleWindow: FunctionComponent<
 > = ({ label, children, initiallyOpened, ...rest }) => {
 	const [isCollapsed, setIsCollapsed] = useState(!initiallyOpened);
 
+	const toggleCollapse = useCallback(() => {
+		setIsCollapsed((isCollapsed) => !isCollapsed);
+	}, [isCollapsed]);
+
 	return (
 		<aside className="collapsible-window" {...rest}>
-			<header
-				onClick={() => {
-					setIsCollapsed((isCollapsed) => !isCollapsed);
-				}}
-			>
-				{label}
-			</header>
-
+			<header onClick={toggleCollapse}>{label}</header>
 			{!isCollapsed && <div>{children}</div>}
 		</aside>
 	);

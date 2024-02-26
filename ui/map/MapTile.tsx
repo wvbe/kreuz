@@ -1,15 +1,7 @@
-import { type TileI, Random } from '@lib';
-import React, {
-	type FunctionComponent,
-	useMemo,
-	useContext,
-	useCallback,
-	MouseEventHandler,
-} from 'react';
+import { Random, type TileI } from '@lib';
 import Color from 'color';
-import { useContextMenu } from '../components/createContextMenu.tsx';
-import { MapTileContextMenu } from './MapTileContextMenu.tsx';
-import { useMapTileContextMenu } from './mapTileContextMenu.ts';
+import React, { MouseEventHandler, useCallback, useMemo, type FunctionComponent } from 'react';
+import { useMapTileContextMenu } from './MAP_TILE_CONTEXT_MENU.ts';
 
 // <palette>
 // 	<color name='dry-grass-patches-1' rgb='A09E55' r='160' g='158' b='84' />

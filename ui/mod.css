@@ -1,4 +1,4 @@
-@import url('./styles/meta.css');
+@import url('./style/meta.css');
 
 @import url('./components/GameUI.css');
 @import url('./components/atoms/FillBar.css');
@@ -14,10 +14,18 @@
 @import url('./components/createContextMenu.css');
 @import url('./map/MapEntity.css');
 @import url('./map/MapTileContextMenu.css');
+@import url('./application/GameClock.css');
+@import url('./application/GameMap.css');
+@import url('./application/GamePanels.css');
+@import url('./application/GameNavigation.css');
 /* @import url('./components/EntityList.css'); */
 
 :root {
 	--line-height: 18px;
+	--border-radius-medium: 6px;
+
+	--panel-background-color: rgba(255, 255, 255, 0.5);
+	--panel-backdrop-filter: blur(20px);
 }
 
 body {

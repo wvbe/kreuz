@@ -17,7 +17,7 @@ const demo: Demo = await import(self.Deno.args[0]);
 const { driver, game } = await demo.default(new TestDriver());
 console.log(game.time.now);
 try {
-	await driver.start();
+	await driver.startUntilStop();
 	console.log('-----------------------');
 } catch (e: unknown) {
 	console.log('-----------------------');

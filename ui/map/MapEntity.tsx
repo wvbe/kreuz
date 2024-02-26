@@ -9,7 +9,7 @@ import React, {
 import { useGameContext } from '../context/GameContext.tsx';
 import { useEventedValue } from '../hooks/useEventedValue.ts';
 import { useSelectedEntity } from '../hooks/useSelectedEntity.tsx';
-import { useMapTileContextMenu } from './mapTileContextMenu.ts';
+import { useMapTileContextMenu } from './MAP_TILE_CONTEXT_MENU.ts';
 
 export const MapEntity: FunctionComponent<
 	{ entity: EntityI; zoom: number } & DetailedHTMLProps<

@@ -17,11 +17,18 @@ export interface DriverI extends Attachable {
 	/**
 	 * Start the concept of time, and any events or animation following it.
 	 *
-	 * Returns a promise that resolves when the animation ends.
+	 * Returns a promise that resolves when the "start" handlers have finished.
 	 */
 	start(): Promise<void>;
+
 	/**
-	 * Stop the animation loop, the opposite of startAnimationLoop(). Will also fire the opposite event.
+	 * Stop the animation loop. Returns a promise that resolves when all the "stop"-handlers have
+	 * finished.
 	 */
-	stop(): void;
+	stop(): Promise<void>;
+
+	/**
+	 * Same as {@link DriverI.start}, but does not resolve until the game finishes.
+	 */
+	startUntilStop(): Promise<void>;
 }

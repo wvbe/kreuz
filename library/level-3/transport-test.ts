@@ -42,7 +42,7 @@ const demo: Demo = async (driver) => {
 		terrain.getTileClosestToXy(8, 3).toArray(),
 		headOfState,
 		{
-			blueprint: blueprints.wheatProcessing,
+			blueprint: blueprints.milling,
 			maxWorkers: 1,
 			maxStackSpace: 6,
 		},

@@ -21,7 +21,7 @@ describe('"The basement"', async () => {
 	});
 
 	it('The game finishes by itself', async () => {
-		expect(await driver.start()).toBeUndefined();
+		expect(await driver.startUntilStop()).toBeUndefined();
 
 		expect(game.time.getNextEventAbsoluteTime()).toBe(Infinity);
 	});

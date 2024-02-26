@@ -1,15 +1,16 @@
 .collapsible-window {
-	border: 1px solid var(--legacy-color-medium-grey);
-	border-radius: var(--border-radius-medium);
-	/* & + & {
-		border-top: none;
-	} */
-	background-color: white;
+	display: flex;
+	flex-direction: column;
+
 	border: 1px solid #999;
+	border-radius: var(--border-radius-medium);
+	background-color: var(--panel-background-color);
+	backdrop-filter: var(--panel-backdrop-filter);
 }
 .collapsible-window > header {
+	flex: 0 0 auto;
 	margin: 3px;
-	background-color: #aaaaff;
+	backdrop-filter: blur(20px);
 	cursor: pointer;
 	display: flex;
 	flex-direction: row;
@@ -24,7 +25,7 @@
 }
 
 .collapsible-window > header:hover {
-	background-color: #7a7ae9;
+	background-color: #7a7ae933;
 }
 .collapsible-window > header > * + * {
 	margin-left: 3px;
@@ -35,6 +36,8 @@
 }
 
 .collapsible-window > div {
+	flex: 1 1 auto;
+	overflow: auto;
 	margin: 3px;
 }
 .collapsible-window > div > :not(section) + * {

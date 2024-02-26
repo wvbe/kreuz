@@ -36,7 +36,7 @@ export const EntityList: FunctionComponent<{
 	);
 
 	return (
-		<CollapsibleWindow label={label}>
+		<CollapsibleWindow label={label} initiallyOpened>
 			<Table>{items}</Table>
 		</CollapsibleWindow>
 	);

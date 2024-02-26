@@ -10,6 +10,7 @@ export class Driver extends Attachable<[Game]> implements DriverI {
 	public readonly $resume = new Event('Driver $resume');
 
 	public readonly $pause = new Event('Driver $pause');
+	public readonly $end = new Event('Driver $end');
 
 	public constructor() {
 		super();
@@ -42,11 +43,18 @@ export class Driver extends Attachable<[Game]> implements DriverI {
 		await this.$resume.emit();
 	}
 
-	public async stop() {
+	public async stop(): Promise<void> {
 		if (!this.$$animating.get()) {
 			throw new Error('Animation not started');
 		}
 		await this.$$animating.set(false);
 		await this.$pause.emit();
+	}
+
+	public async startUntilStop(): Promise<void> {
+		return new Promise<void>(async (res) => {
+			this.$end.once(res);
+			await this.start();
+		});
 	}
 }

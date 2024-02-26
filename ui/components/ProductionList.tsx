@@ -25,7 +25,7 @@ const ProductionSummary: FunctionComponent<{
 		[entities],
 	);
 	const hoursPerCycle = totalDelta * 1000 * 24;
-	return (
+	return (	
 		<Row>
 			<Cell>{blueprint.name}</Cell>
 			<Cell>

@@ -8,13 +8,11 @@ import {
 	type FactoryBuildingEntity,
 	type MarketBuildingEntity,
 } from '@lib/core';
-import {
-	getMostDesirableItem,
-	type DesirabilityRecord,
-	type DesirabilityScoreFn,
-} from '../primitives/getMostDesirableItem.ts';
+import { selectMostDesirableItemFromVendors } from '../primitives/selectMostDesirableItemFromVendors.ts';
 import { getEntitiesReachableByEntity, walkEntityToEntity } from '../travel.ts';
 import { createWaitBehavior } from './createWaitBehavior.ts';
+import { VendorPurchaseScorer } from '../primitives/types.ts';
+import { DesirabilityRecord } from '../primitives/types.ts';
 
 type VendorEntity = MarketBuildingEntity | FactoryBuildingEntity;
 
@@ -25,12 +23,12 @@ type VendorEntity = MarketBuildingEntity | FactoryBuildingEntity;
  */
 export function createBuyFromMarketBehavior(
 	vendorFilter: (entity: EntityI) => entity is VendorEntity,
-	createDesirabilityScore: DesirabilityScoreFn,
+	createDesirabilityScore: VendorPurchaseScorer,
 ) {
 	return new SequenceNode<EntityBlackboard>(
 		new ExecutionNode('Find a deal', (blackboard) => {
 			const { game, entity } = blackboard;
-			const mostDesirableDeal = getMostDesirableItem(
+			const mostDesirableDeal = selectMostDesirableItemFromVendors(
 				entity,
 				getEntitiesReachableByEntity(game, entity).filter(vendorFilter),
 				createDesirabilityScore,
@@ -41,7 +39,7 @@ export function createBuyFromMarketBehavior(
 			}
 			Object.assign(blackboard, { deal: mostDesirableDeal });
 		}),
-		new ExecutionNode<EntityBlackboard & { deal?: DesirabilityRecord }>(
+		new ExecutionNode<EntityBlackboard & { deal?: DesirabilityRecord<true> }>(
 			'Walk to vendor',
 			async ({ game, entity, deal }) => {
 				if (!deal) {
@@ -51,7 +49,7 @@ export function createBuyFromMarketBehavior(
 				await walkEntityToEntity(game, entity, deal.market);
 			},
 		),
-		new ExecutionNode<EntityBlackboard & { deal?: DesirabilityRecord }>(
+		new ExecutionNode<EntityBlackboard & { deal?: DesirabilityRecord<true> }>(
 			'Buy any food',
 			async ({ entity, deal, game }) => {
 				if (!deal) {

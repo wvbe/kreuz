@@ -192,7 +192,7 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 				this.inventory.$change.on(
 					async () =>
 						// Void, do not await, setting starting a new blueprint and its follow-up listeners
-						this.#avoidRespondingToOwnInventoryChange || void this.attemptStartBlueprint(),
+						this.#avoidRespondingToOwnInventoryChange || (await this.attemptStartBlueprint()),
 				),
 			);
 
@@ -303,10 +303,10 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 			await this.$status.set('Waiting for instructions…');
 			return false;
 		}
-		// if (this.$workers.length < blueprint.options.workersRequired) {
-		// 	await this.$status.set('Waiting for enough workers…');
-		// 	return false;
-		// }
+		if (!this.$workers.length) {
+			await this.$status.set('No workers present…');
+			return false;
+		}
 
 		if (!blueprint.hasAllIngredients(this.inventory)) {
 			await this.$status.set('Waiting for the required materials…');

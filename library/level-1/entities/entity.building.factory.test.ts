@@ -67,14 +67,14 @@ describe('FactoryBuildingEntity', () => {
 
 		expect(factory.name).toBe('Mill');
 
-		await driver.start();
+		await driver.startUntilStop();
 
 		// Game ends because there is nothing to do
 		expect(game.time.now).toBe(0);
 		expect(game.time.getNextEventAbsoluteTime()).toBe(Infinity);
 
 		await factory.inventory.change(wheat, 30);
-		await driver.start();
+		await driver.startUntilStop();
 
 		// Game ends because there is nothing to do
 		expect(game.time.now).toBe(0);
@@ -88,7 +88,7 @@ describe('FactoryBuildingEntity', () => {
 
 	it(`Goes to work when it has a worker`, async () => {
 		const { game, driver } = await demo(new TestDriver());
-		await driver.start();
+		await driver.startUntilStop();
 
 		// Game ends because there is nothing to do
 		expect(game.time.now).toBe(0);
@@ -101,7 +101,7 @@ describe('FactoryBuildingEntity', () => {
 		await game.entities.add(worker);
 		const factory = game.entities.get<FactoryBuildingEntity>(0);
 		await factory.$workers.add(worker);
-		await driver.start();
+		await driver.startUntilStop();
 
 		// Game ends after the worker's needs expire, because there is nothing else to do
 		expect(game.time.now).toBeGreaterThan(0);
@@ -119,7 +119,10 @@ describe('FactoryBuildingEntity', () => {
 		expect(factory.inventory.availableOf(bran)).toBe(0);
 		expect(game.time.getNextEventAbsoluteTime()).not.toBe(Infinity);
 
-		await driver.start();
+		const lastGameTimeNow = game.time.now;
+		await driver.startUntilStop();
+		console.log(game.time.now);
+		expect(game.time.now).toBeGreaterThan(lastGameTimeNow);
 
 		// Now production has started, and finished 15 times
 		expect(factory.inventory.availableOf(wheat)).toBe(0);
@@ -155,7 +158,7 @@ describe('FactoryBuildingEntity', () => {
 		}
 		async function getTimeToCompletion(demo: any) {
 			await demo.factory.inventory.change(wheat, 30);
-			await demo.driver.start();
+			await demo.driver.startUntilStop();
 			return demo.game.time.now;
 		}
 

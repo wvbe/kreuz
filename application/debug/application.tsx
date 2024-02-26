@@ -1,7 +1,8 @@
-import { DriverContext, GameContext, GameUI, ReplacementSpaceContext, useGeneratedGame } from '@ui';
 import React, { type FunctionComponent } from 'react';
 import { createRoot } from 'react-dom';
-import { BrowserDriver } from './driver.ts';
+
+import { GameInterface, useGeneratedGame } from '@ui';
+import { BrowserDriver } from './BrowserDriver.ts';
 
 const driver = new BrowserDriver();
 
@@ -12,15 +13,7 @@ const Application: FunctionComponent = () => {
 		return <p>Please wait…</p>;
 	}
 
-	return (
-		<DriverContext driver={driver}>
-			<GameContext game={game}>
-				<ReplacementSpaceContext>
-					<GameUI />
-				</ReplacementSpaceContext>
-			</GameContext>
-		</DriverContext>
-	);
+	return <GameInterface game={game} driver={driver} />;
 };
 
 createRoot(self.document.getElementById('root')).render(<Application />);

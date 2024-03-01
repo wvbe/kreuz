@@ -20,14 +20,14 @@ export function useCollection<T>(collection: Collection<T>) {
  * Contrary to {@link useEventData}, the returned value is not an array but only the value that is
  * actually being evented.
  */
-export function useEventedValue<T = void, O = T>(
+export function useEventedValue<T = void, OutputGeneric = T>(
 	eventedValue: EventedValue<T>,
-	transform: (value: T) => O = noTransformSingle,
-): O {
-	const values = useEventData<[T], [O]>(
+	transform: (value: T) => OutputGeneric = noTransformSingle,
+): OutputGeneric {
+	const values = useEventData<[T], [OutputGeneric]>(
 		eventedValue,
 		[transform(eventedValue.get())],
-		useCallback((value: T): [O] => [transform(value)], [transform]),
+		useCallback((value: T): [OutputGeneric] => [transform(value)], [transform]),
 	);
 	return values[0];
 }
@@ -43,12 +43,15 @@ function noTransformMultiple<T extends unknown[], O = T>(...value: T): O {
  *
  * @deprecated clumsy naming/solving the wrong problem.
  */
-export function useEventData<T extends unknown[] = never[], O = T>(
-	eventedValue: Event<T>,
-	initial: O,
-	transform: (...value: T) => O = noTransformMultiple,
-): O {
-	const [value, setValue] = useState<O>(initial);
+export function useEventData<
+	EventArgsGeneric extends unknown[] = never[],
+	OutputGeneric = EventArgsGeneric,
+>(
+	eventedValue: Event<EventArgsGeneric>,
+	initial: OutputGeneric,
+	transform: (...value: EventArgsGeneric) => OutputGeneric = noTransformMultiple,
+): OutputGeneric {
+	const [value, setValue] = useState<OutputGeneric>(initial);
 
 	useEffect(() => {
 		setValue(initial);

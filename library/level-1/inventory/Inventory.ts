@@ -5,9 +5,10 @@
 
 import { Event } from '../classes/Event.ts';
 import { TradeOrder } from '../classes/TradeOrder.ts';
+import { Blueprint } from '../entities/types.ts';
+import { SaveJsonContext } from '../types-savedgame.ts';
 import { Material } from './Material.ts';
 import { type MaterialState } from './types.ts';
-import { SaveJsonContext } from '../types-savedgame.ts';
 
 function getRequiredStackSpace(cargo: MaterialState[]) {
 	return cargo.reduce<number>(
@@ -39,7 +40,7 @@ export class Inventory {
 	 * inventory, so that the inventory does not end up with a negative amount of material, or an
 	 * amount greater than the capacity.
 	 */
-	private readonly reservations = new Map<TradeOrder, MaterialState[]>();
+	private readonly reservations = new Map<TradeOrder | Blueprint, MaterialState[]>();
 
 	/**
 	 * The event that the inventory contents changes -- such as new items being added, removed,
@@ -296,12 +297,24 @@ export class Inventory {
 	 * Associate with a trade order so that when this trade order completes there will not be
 	 * an excess or shortage of required materials.
 	 */
-	public makeReservation(tradeOrder: TradeOrder) {
-		if (this.reservations.get(tradeOrder)) {
-			// Programmer error
-			throw new Error('A reservation for this trade order already exists');
-		}
+	public makeReservationFromTradeOrder(tradeOrder: TradeOrder) {
 		const exchanged = tradeOrder.getCargoExchangedToInventory(this);
+		this.makeReservation(tradeOrder, exchanged);
+	}
+
+	/**
+	 * Make inventory reservations for the described exchange;
+	 *
+	 * - If an item in the exchange has a positive value, the inventory will make a space reservation
+	 *  so there will be available space when the goods rrive
+	 * - If an item has a negative value, and the inventory has enough of these items in stock,
+	 *   that amount of item will be reserved ie. not given away to something else.
+	 */
+	public makeReservation(key: TradeOrder | Blueprint, exchanged: MaterialState[]) {
+		if (this.reservations.get(key)) {
+			// Programmer error
+			throw new Error('A reservation for already exists for this key');
+		}
 		const added = exchanged.filter(({ quantity }) => quantity > 0);
 		if (!this.isEverythingAllocatable(added)) {
 			// Its not really fair to throw maybe? Might change this.
@@ -312,14 +325,13 @@ export class Inventory {
 			// Its not really fair to throw maybe? Might change this.
 			throw new Error('Not enough available material to make a reservation');
 		}
-		//
-		this.reservations.set(tradeOrder, exchanged);
+		this.reservations.set(key, exchanged);
 	}
 
 	/**
 	 * Remove the reservation without transferring the items for it.
 	 */
-	public cancelReservation(tradeOrder: TradeOrder) {
+	public cancelReservation(tradeOrder: TradeOrder | Blueprint) {
 		if (!this.reservations.get(tradeOrder)) {
 			// Programmer error
 			throw new Error('No such reservation');

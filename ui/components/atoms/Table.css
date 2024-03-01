@@ -2,7 +2,7 @@ tr.clickable {
 	cursor: pointer;
 }
 tr.clickable:hover {
-	background-color: rgba(239, 243, 20, 0.425);
+	background-color: var(--color-hover);
 }
 
 table {

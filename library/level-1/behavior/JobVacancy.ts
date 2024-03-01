@@ -3,6 +3,8 @@ import { PersonEntity } from '../entities/entity.person.ts';
 import { EventedNumericValue } from '../classes/EventedNumericValue.ts';
 import { BehaviorTreeNodeI, EntityBlackboard } from './types.ts';
 import { black } from 'https://deno.land/std@0.106.0/fmt/colors.ts';
+import { VendorEntity } from '../../level-2/behavior/reusable/primitives/types.ts';
+import { FactoryBuildingEntity } from '@lib/core';
 
 /**
  * A function that scores how desirable a job is for a person:
@@ -11,39 +13,59 @@ import { black } from 'https://deno.land/std@0.106.0/fmt/colors.ts';
  */
 type JobVacancyDesirabilityFn = (blackboard: EntityBlackboard) => number;
 
-export class JobVacancy {
-	/**
-	 * The amount of people that can work this job here.
-	 * @TODO Posibly this does not need to be an evented value
-	 */
-	public $vacancies = new EventedNumericValue(0, 'JobVacancy.$vacancies');
-
+type JobVacancyOptions = {
 	/**
 	 * A function that scores how desirable a job is for a person:
 	 *   0 = Not attractive at all or impossible. This worker will never take the job.
 	 *   1 = Totally attractive, it is the first job this worker would take
 	 */
-	public readonly calculateDesirability: JobVacancyDesirabilityFn;
+	score: JobVacancyDesirabilityFn;
+	/**
+	 * The amount of people that can work this job here.
+	 */
+	vacancies: number;
 
-	#performJob: (blackboard: EntityBlackboard) => Promise<void>;
+	/**
+	 * Useful for cosmetic reasons, but not used in any of the actual computation (???)
+	 */
+	employer: EntityI;
+};
+export class JobVacancy {
+	#onAssign: (blackboard: EntityBlackboard) => Promise<void>;
+	public vacancies: number;
+
+	#options: JobVacancyOptions;
 
 	public constructor(
-		vacancies: number,
-		calculateDesirability: JobVacancyDesirabilityFn,
-		performJob: (blackboard: EntityBlackboard) => Promise<void>,
+		onAssign: (blackboard: EntityBlackboard) => Promise<void>,
+		options: JobVacancyOptions,
 	) {
-		this.$vacancies.set(vacancies, true);
-		this.calculateDesirability = calculateDesirability;
-		this.#performJob = performJob;
+		this.#onAssign = onAssign;
+		this.#options = options;
+		this.vacancies = options.vacancies || 1;
+	}
+
+	public score(blackboard: EntityBlackboard) {
+		return this.#options.score(blackboard);
 	}
 
 	public async doJob(blackboard: EntityBlackboard) {
-		const vacancies = this.$vacancies.get();
-		if (vacancies < 1) {
+		if (this.vacancies < 1) {
 			throw new Error('Cannot take a job that is already forgiven');
 		}
-		await this.$vacancies.set(vacancies - 1);
-		await this.#performJob(blackboard);
-		await this.$vacancies.set(vacancies + 1);
+		this.vacancies--;
+		await this.#onAssign(blackboard);
+		this.vacancies++;
+	}
+
+	public get label() {
+		const employer = this.#options.employer;
+		if (!employer) {
+			return 'Unknown job';
+		}
+		if ((employer as FactoryBuildingEntity).$blueprint) {
+			return `${employer}, ${(employer as FactoryBuildingEntity).$blueprint.get()?.name}`;
+		}
+		return `${employer}`;
 	}
 }

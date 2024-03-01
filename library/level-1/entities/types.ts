@@ -12,6 +12,10 @@ export interface EntityI extends AttachableI {
 	 *
 	 * For example:
 	 *   "guard"
+	 *
+	 * @deprecated This any all other entity types _should_ over time be replaced by an ECS system.
+	 * Checking against an entity type then becomes unnecessary. This is a large refactoring, not
+	 * planned for any time soon.
 	 */
 	type: string;
 

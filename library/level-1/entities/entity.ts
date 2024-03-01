@@ -24,9 +24,6 @@ export class Entity extends Attachable<[Game]> implements EntityI {
 
 	public $$location: EventedValue<CoordinateI>;
 
-	/**
-	 * Used for generating a save
-	 */
 	public type = 'entity';
 
 	public readonly $status = new EventedValue<string | null>(
@@ -59,11 +56,11 @@ export class Entity extends Attachable<[Game]> implements EntityI {
 		return `${this.icon} ${this.name}`;
 	}
 
-	public distanceTo(otehr: CoordinateI | EntityI) {
-		if ((otehr as EntityI).$$location) {
-			return this.$$location.get().euclideanDistanceTo((otehr as EntityI).$$location.get());
+	public distanceTo(other: CoordinateI | EntityI) {
+		if ((other as EntityI).$$location) {
+			return this.$$location.get().euclideanDistanceTo((other as EntityI).$$location.get());
 		} else {
-			return this.$$location.get().euclideanDistanceTo(otehr as CoordinateI);
+			return this.$$location.get().euclideanDistanceTo(other as CoordinateI);
 		}
 	}
 

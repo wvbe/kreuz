@@ -50,7 +50,7 @@ describe('Inventory', () => {
 			inventory,
 			[],
 		);
-		inventory.makeReservation(tradeOrder);
+		inventory.makeReservationFromTradeOrder(tradeOrder);
 		expect(inventory.reservedIncomingOf(test1)).toBe(10);
 		expect(inventory.availableOf(test1)).toBe(0);
 		expect(inventory.allocatableTo(test1)).toBe(25);
@@ -64,7 +64,7 @@ describe('Inventory', () => {
 			godInventory,
 			[],
 		);
-		inventory.makeReservation(tradeOrder);
+		inventory.makeReservationFromTradeOrder(tradeOrder);
 		expect(inventory.reservedOutgoingOf(test1)).toBe(10);
 		expect(inventory.availableOf(test1)).toBe(5);
 		expect(inventory.allocatableTo(test1)).toBe(25);
@@ -75,7 +75,7 @@ describe('Inventory', () => {
 			{ material: test1, quantity: 99 },
 			{ material: test2, quantity: 99 },
 		]);
-		inventory.makeReservation(
+		inventory.makeReservationFromTradeOrder(
 			createTradeOrderForCargo(
 				godInventory,
 				[
@@ -141,7 +141,7 @@ describe('Inventory', () => {
 			inventory,
 			[],
 		);
-		inventory.makeReservation(tradeOrder);
+		inventory.makeReservationFromTradeOrder(tradeOrder);
 		expect(
 			inventory.isEverythingAllocatable([
 				{ material: test1, quantity: 25 },

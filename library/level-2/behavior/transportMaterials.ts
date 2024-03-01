@@ -127,8 +127,12 @@ export const transportMaterial = new SequenceNode<EntityBlackboard>(
 			to: supplyDemand.entity,
 		});
 
-		supplyDemand.supplier.inventory.makeReservation(tradeOrder);
-		supplyDemand.entity.inventory.makeReservation(tradeOrder);
+		try {
+			supplyDemand.supplier.inventory.makeReservationFromTradeOrder(tradeOrder);
+			supplyDemand.entity.inventory.makeReservationFromTradeOrder(tradeOrder);
+		} catch (_e: unknown) {
+			throw new BehaviorTreeSignal('Could not free up the necessary inventory space');
+		}
 	}),
 	new ExecutionNode<
 		EntityBlackboard & { tradeOrder: TradeOrder; from: TradeEntityI; to: TradeEntityI }

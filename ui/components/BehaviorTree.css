@@ -17,7 +17,7 @@
 }
 
 .behavior-tree-node__label--sequence {
-	background-color: lightyellow;
+	background-color: var(--color-hover);
 }
 .behavior-tree-node__label--selector {
 	background-color: lightblue;

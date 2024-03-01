@@ -18,14 +18,14 @@ const ProductionSummary: FunctionComponent<{
 	const [totalDelta, setTotalDelta] = useState(getTotalDelta(entities));
 	useEffect(
 		() =>
-			Event.onAny<[number]>(
+			Event.onAny(
 				() => setTotalDelta(getTotalDelta(entities)),
 				entities.map((factory) => factory.$$progress.$recalibrate),
 			),
 		[entities],
 	);
 	const hoursPerCycle = totalDelta * 1000 * 24;
-	return (	
+	return (
 		<Row>
 			<Cell>{blueprint.name}</Cell>
 			<Cell>
@@ -79,7 +79,7 @@ export const ProductionList: FunctionComponent = () => {
 	return (
 		<>
 			{/* <LineGraph subscriptions={subscriptions} /> */}
-			<CollapsibleWindow label={`World production panel`}>
+			<CollapsibleWindow label={`World production panel`} initiallyOpened>
 				<Table>{products}</Table>
 			</CollapsibleWindow>
 		</>

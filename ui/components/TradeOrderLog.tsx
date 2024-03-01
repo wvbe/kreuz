@@ -14,11 +14,15 @@ export const TradeOrderLog: FunctionComponent<{
 	return (
 		<CollapsibleWindow label="Trade orders" initiallyOpened>
 			<Table>
-				{items.map((trade, i) => (
-					<p>
-						<TokenizedText text={trade.getSummaryForOwner(entity)} />
-					</p>
-				))}
+				{items.length ? (
+					items.map((trade, i) => (
+						<p>
+							<TokenizedText text={trade.getSummaryForOwner(entity)} />
+						</p>
+					))
+				) : (
+					<p>No trades yet</p>
+				)}
 			</Table>
 		</CollapsibleWindow>
 	);

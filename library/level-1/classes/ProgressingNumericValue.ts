@@ -78,7 +78,7 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 	 * The value that is passed along signifies wether or not extra compensation is expected for
 	 * the time elapsed in the cancelled timeout -- or more precisely at which decay rate.
 	 */
-	public readonly $recalibrate = new Event<[number]>(`${this.constructor.name} $recalibrate`);
+	public readonly $recalibrate = new Event(`${this.constructor.name} $recalibrate`);
 
 	public readonly label: string;
 
@@ -204,7 +204,7 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 			return;
 		}
 		this.#delta = newDelta;
-		await this.$recalibrate.emit(oldDelta);
+		await this.$recalibrate.emit();
 	}
 
 	public toSaveJson(context: SaveJsonContext): SaveProgressingNumericValueJson {

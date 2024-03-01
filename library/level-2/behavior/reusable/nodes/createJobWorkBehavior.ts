@@ -1,20 +1,12 @@
-import {
-	type FactoryBuildingEntity,
-	ExecutionNode,
-	SequenceNode,
-	EntityBlackboard,
-	BehaviorTreeSignal,
-} from '@lib/core';
-import { getEntitiesReachableByEntity, walkEntityToEntity } from '../travel.ts';
-import { black } from 'https://deno.land/std@0.106.0/fmt/colors.ts';
+import { BehaviorTreeSignal, EntityBlackboard, ExecutionNode } from '@lib/core';
 
 export function createJobWorkBehavior() {
 	return new ExecutionNode<EntityBlackboard>('Do the work', async (blackboard) => {
 		const job = blackboard.game.jobs
-			.filter((job) => job.$vacancies.get() > 0)
+			.filter((job) => job.vacancies > 0)
 			.map((job) => ({
 				vacancy: job,
-				desirability: job.calculateDesirability(blackboard),
+				desirability: job.score(blackboard),
 			}))
 			.filter(({ desirability }) => desirability > 0)
 			.sort((a, b) => a.desirability - b.desirability)

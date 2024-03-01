@@ -1,16 +1,12 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC, PropsWithChildren, useCallback } from 'react';
 import { useNavigation } from '../hooks/useNavigation.ts';
-import {
-	ROUTE_ENTITIES_FACTORIES,
-	ROUTE_ENTITIES_MARKETS,
-	ROUTE_ENTITIES_PEOPLE,
-} from '../routes/ROUTES.ts';
 
-const GameNavigationButton: FC<{
+export const GameNavigationButton: FC<{
 	symbol: string;
 	path: string;
 	params?: Record<string, string>;
-}> = ({ symbol, path, params }) => {
+	tooltip?: string;
+}> = ({ symbol, path, params, tooltip }) => {
 	const navigate = useNavigation();
 	const onClick = useCallback(
 		(event) => {
@@ -21,17 +17,11 @@ const GameNavigationButton: FC<{
 		[path, params],
 	);
 	return (
-		<a onClick={onClick} className="game-navigation-button">
+		<a onClick={onClick} className="game-navigation-button" title={tooltip}>
 			{symbol}
 		</a>
 	);
 };
-export const GameNavigation: FC = () => {
-	return (
-		<div>
-			<GameNavigationButton symbol="🙋" path={ROUTE_ENTITIES_PEOPLE} />
-			<GameNavigationButton symbol="🏭" path={ROUTE_ENTITIES_FACTORIES} />
-			<GameNavigationButton symbol="🏪" path={ROUTE_ENTITIES_MARKETS} />
-		</div>
-	);
+export const GameNavigation: FC<PropsWithChildren> = ({ children }) => {
+	return <div>{children}</div>;
 };

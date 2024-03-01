@@ -20,3 +20,6 @@
 .game-navigation-button:first-child {
 	margin-top: 0;
 }
+.game-navigation-button:hover {
+	background-color: var(--color-hover);
+}

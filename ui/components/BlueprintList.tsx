@@ -27,7 +27,7 @@ export const BlueprintList: FunctionComponent = () => {
 		[],
 	);
 	return (
-		<CollapsibleWindow label={`Blueprints`}>
+		<CollapsibleWindow label={`Blueprints`} initiallyOpened>
 			<Table>{items}</Table>
 		</CollapsibleWindow>
 	);

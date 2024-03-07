@@ -40,22 +40,25 @@ function canStartNewBlueprintCycle(factory: FactoryBuildingEntity, blueprint: Bl
 	return true;
 }
 
-function isBlueprintCycleBusy(factory: FactoryBuildingEntity) {
+/**
+ * Tells wether or not a factory is already working on a blueprint production cycle, or not.
+ */
+function isBlueprintCycleBusy(factory: FactoryBuildingEntity): boolean {
 	const isBusy = !!(factory.$blueprint.get() && factory.$$progress.delta > 0);
 	return isBusy;
 }
 
+function stopBlueprintCycle(factory: FactoryBuildingEntity) {
+	if (isBlueprintCycleBusy(factory)) {
+		factory.inventory.cancelReservation(factory);
+	}
+	factory.$$progress.set(0);
+	factory.$$progress.setDelta(0);
+	void factory.$status.set('Idle…');
+}
+
 export function attachSystem(factory: FactoryBuildingEntity) {
 	let ignoreInventoryChanges = false;
-
-	function stopBlueprintCycle(factory: FactoryBuildingEntity) {
-		if (isBlueprintCycleBusy(factory)) {
-			factory.inventory.cancelReservation(factory);
-		}
-		factory.$$progress.set(0);
-		factory.$$progress.setDelta(0);
-		void factory.$status.set('Idle…');
-	}
 
 	function startNewBlueprintCycle(factory: FactoryBuildingEntity, blueprint: Blueprint) {
 		if (isBlueprintCycleBusy(factory)) {
@@ -109,6 +112,8 @@ export function attachSystem(factory: FactoryBuildingEntity) {
 			const delta = getDelta(blueprint!, factory.$workers.length);
 			if (delta > 0) {
 				factory.$$progress.setDelta(delta);
+			} else {
+				stopBlueprintCycle(factory);
 			}
 			return;
 		}

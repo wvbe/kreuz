@@ -1,6 +1,6 @@
 import { Attachable } from '../classes/Attachable.ts';
-import { type Event } from '../classes/Event.ts';
-import { type EventedValue } from '../classes/EventedValue.ts';
+import { type Event } from '../events/Event.ts';
+import { type EventedValue } from '../events/EventedValue.ts';
 import type Game from '../Game.ts';
 
 export interface DriverI extends Attachable {

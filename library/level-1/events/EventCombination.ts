@@ -1,11 +1,14 @@
 import { type CallbackFn, type DestroyerFn } from '../types.ts';
 import { Event } from './Event.ts';
+import { EventEmitterI } from './types.ts';
 
-export class EventCombination extends Event<any[]> {
+export class EventCombination implements EventEmitterI<[]> {
 	#events: Event<any[]>[];
 
+	protected readonly label: string;
+
 	public constructor(label: string, events: Event<any[]>[]) {
-		super(label);
+		this.label = label;
 		this.#events = events;
 	}
 
@@ -35,15 +38,6 @@ export class EventCombination extends Event<any[]> {
 				destroyers[i]();
 			}
 		};
-	}
-
-	/**
-	 * Trigger all callbacks that were waiting for this event.
-	 */
-	public async emit(...args: any[]): Promise<void> {
-		for (const event of this.#events) {
-			await event.emit(...args);
-		}
 	}
 
 	/**

@@ -1,22 +1,27 @@
 import { Blueprint } from '@lib';
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, MouseEventHandler } from 'react';
 import { InventoryBag } from '../inventory/InventoryUI.tsx';
 import { Cell, Row, Table } from './atoms/Table.tsx';
 
-export const BlueprintBadge: FunctionComponent<{ blueprint: Blueprint | null }> = ({
-	blueprint,
-}) => {
+export const BlueprintBadge: FunctionComponent<{
+	blueprint: Blueprint | null;
+	onClick?: MouseEventHandler<HTMLTableRowElement>;
+}> = ({ blueprint, onClick }) => {
 	if (!blueprint) {
 		return null;
 	}
 	return (
 		<Table>
-			<Row>
+			<Row onClick={onClick}>
 				<Cell>
-					<InventoryBag stacks={blueprint.ingredients} />
+					{blueprint.ingredients.length ? (
+						<InventoryBag stacks={blueprint.ingredients} />
+					) : (
+						<i>None</i>
+					)}
 				</Cell>
 				<Cell style={{ textAlign: 'center' }}>
-					{(blueprint.options.fullTimeEquivalent / 1000).toFixed(1)}
+					{(blueprint.options.fullTimeEquivalent / 1000).toFixed(1)} hours
 					<br />
 					<svg xmlns="http://www.w3.org/2000/svg" width="80" height="29">
 						<path d="m0,0h80v29H0" fill="none" />

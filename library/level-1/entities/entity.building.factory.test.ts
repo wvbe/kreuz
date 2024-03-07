@@ -8,7 +8,7 @@ import Game from '../Game.ts';
 import { Blueprint } from '../inventory/Blueprint.ts';
 import { Material } from '../inventory/Material.ts';
 import { type DriverI } from '../mod.ts';
-import { generateGridTerrainFromAscii } from '../terrain/utils.ts';
+import { generateGridTerrainFromAscii } from '../../test/generateGridTerrainFromAscii.ts';
 import { FactoryBuildingEntity } from './entity.building.factory.ts';
 import { PersonEntity } from './entity.person.ts';
 import { headOfState } from '../../level-2/heroes.ts';
@@ -121,7 +121,6 @@ describe('FactoryBuildingEntity', () => {
 
 		const lastGameTimeNow = game.time.now;
 		await driver.startUntilStop();
-		console.log(game.time.now);
 		expect(game.time.now).toBeGreaterThan(lastGameTimeNow);
 
 		// Now production has started, and finished 15 times
@@ -167,12 +166,6 @@ describe('FactoryBuildingEntity', () => {
 			demo2 = await createDemoWithFactory(4),
 			demo2Completion = await getTimeToCompletion(demo2);
 
-		console.log(
-			demo1Completion,
-			demo1.game.entities.length,
-			demo2Completion,
-			demo2.game.entities.length,
-		);
 		expect(demo1Completion).toBeGreaterThan(0);
 		expect(demo2Completion).toBeGreaterThan(0);
 		expect(demo1Completion).toBe(2 * demo2Completion);

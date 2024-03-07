@@ -1,8 +1,8 @@
 import { JsonValue } from 'https://deno.land/std@0.185.0/json/common.ts';
 import Game from '../Game.ts';
-import { Collection } from '../classes/Collection.ts';
-import { EventedValue, type SaveEventedValueJson } from '../classes/EventedValue.ts';
-import { ProgressingNumericValue } from '../classes/ProgressingNumericValue.ts';
+import { Collection } from '../events/Collection.ts';
+import { EventedValue, type SaveEventedValueJson } from '../events/EventedValue.ts';
+import { ProgressingNumericValue } from '../events/ProgressingNumericValue.ts';
 import { Blueprint, type SaveBlueprintJson } from '../inventory/Blueprint.ts';
 import { Inventory, type SaveInventoryJson } from '../inventory/Inventory.ts';
 import { SaveJsonContext } from '../types-savedgame.ts';
@@ -177,7 +177,12 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 		});
 	}
 
-	private async assignJobToEntity({ game, entity }: EntityBlackboard) {
+	/**
+	 * Make an entity go be a worker for this factory.
+	 *
+	 * @note relies on game time passing by.
+	 */
+	public async assignJobToEntity({ game, entity }: EntityBlackboard) {
 		await entity.$status.set(`Going to ${this} for work`);
 		const tile = game.terrain.getTileEqualToLocation(this.$$location.get());
 		await entity.walkToTile(tile);
@@ -191,9 +196,7 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 			this.$$progress.onceAbove(1, () => resolve(), true);
 		});
 
-		// entity.$$location.once(async () => {
 		await this.$workers.remove(entity);
-		// });
 		await entity.$status.set(null);
 	}
 

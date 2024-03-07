@@ -62,4 +62,7 @@ export class Registry<ItemGeneric> {
 	public set(key: string, item: ItemGeneric) {
 		return this.#map.set(key, item);
 	}
+	public list(): ItemGeneric[] {
+		return Array.from(this.#map.values());
+	}
 }

@@ -1,10 +1,11 @@
 import { type CallbackFn, type DestroyerFn } from '../types.ts';
+import { type EventI } from './types.ts';
 
 const MSG_MEMORY_LEAK = `You've called the destroyer of an event listener that was already destroyed, this may indicate a memory leak`;
 /**
  * A Kreuz event emitter/listener. Always remember to unset your listeners at some point.
  */
-export class Event<Args extends unknown[] = []> {
+export class Event<Args extends unknown[] = []> implements EventI<Args> {
 	#callbacks: CallbackFn<Args>[] = [];
 
 	protected label: string;
@@ -153,7 +154,7 @@ export class Event<Args extends unknown[] = []> {
 	/**
 	 * Remove all listeners to this event.
 	 */
-	public clear() {
+	public clear(): void {
 		this.#callbacks = [];
 	}
 }

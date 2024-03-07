@@ -1,9 +1,9 @@
 import { type AttachableI } from '../classes/Attachable.ts';
-import { Event } from '../classes/Event.ts';
+import { Event } from './Event.ts';
 import {
 	EventedNumericValue,
 	type SaveEventedNumericValueJson,
-} from '../classes/EventedNumericValue.ts';
+} from './EventedNumericValue.ts';
 import type Game from '../Game.ts';
 import { SaveJsonContext } from '../types-savedgame.ts';
 import { type DestroyerFn } from '../types.ts';

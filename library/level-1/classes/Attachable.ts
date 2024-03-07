@@ -1,5 +1,5 @@
 import type Game from '../Game.ts';
-import { Event } from './Event.ts';
+import { Event } from '../events/Event.ts';
 
 export interface AttachableI<Context extends unknown[] = Game[]> {
 	attach(...context: Context): void;

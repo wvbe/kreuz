@@ -1,7 +1,7 @@
 import { BehaviorTreeSignal } from '../behavior/BehaviorTreeSignal.ts';
 import { EntityBlackboard, type BehaviorTreeNodeI } from '../behavior/types.ts';
-import { Event } from '../classes/Event.ts';
-import { EventedValue, type SaveEventedValueJson } from '../classes/EventedValue.ts';
+import { Event } from '../events/Event.ts';
+import { EventedValue, type SaveEventedValueJson } from '../events/EventedValue.ts';
 import { Path } from '../classes/Path.ts';
 import { PERSON_NEEDS, PersonNeedId } from '../constants/needs.ts';
 import { Inventory, type SaveInventoryJson } from '../inventory/Inventory.ts';
@@ -198,6 +198,7 @@ export class PersonEntity extends Entity {
 	public get name(): string {
 		return this.passport.firstName;
 	}
+
 	public get icon(): string {
 		return this.passport.gender === 'm' ? '👨' : '👩';
 	}
@@ -274,7 +275,10 @@ export class PersonEntity extends Entity {
 				reject();
 			});
 		});
+
+		// Take the first step to kick off this event chain;
 		await this.#animateTo(nextTileInPath);
+
 		return promise;
 	}
 

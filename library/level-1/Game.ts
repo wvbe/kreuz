@@ -1,8 +1,8 @@
 import { JobVacancy } from './behavior/JobVacancy.ts';
 import { EntityBlackboard } from './behavior/types.ts';
-import { Collection } from './classes/Collection.ts';
-import { Event } from './classes/Event.ts';
-import { KeyedCollection } from './classes/KeyedCollection.ts';
+import { Collection } from './events/Collection.ts';
+import { Event } from './events/Event.ts';
+import { KeyedCollection } from './events/KeyedCollection.ts';
 import { Registry } from './classes/Registry.ts';
 import { TimeLine } from './classes/TimeLine.ts';
 import { castSaveJsonToEntity } from './entities/castSaveJsonToEntity.ts';

@@ -63,7 +63,7 @@ export const MapTerrainOutline: FunctionComponent<{
 							<polyline
 								points={points.map((coord) => `${coord.x * zoom},${coord.y * zoom}`).join(' ')}
 								stroke={'black'}
-								strokeWidth={4}
+								strokeWidth={3}
 								fill="none"
 								strokeLinejoin="round"
 								strokeLinecap="round"

@@ -4,30 +4,29 @@ import { DestroyerFn } from '../types.ts';
 import { Driver } from './Driver.ts';
 import { DriverI } from './types.ts';
 
-type TestDriverOptions = {
-	delayBetweenJumps: number;
-};
-
 /**
  * A driver without a visible DOM or ThreeJS world. Probably only useful for testing.
  *
- * Will progress time as fast as it can. Synchronously, if you haven't set the `delayBetweenJumps` option.
+ * Will progress time as fast as it can.
  */
 export class TestDriver extends Driver implements DriverI {
-	options: TestDriverOptions;
+	private game: Game | null = null;
 
-	constructor(options: TestDriverOptions = { delayBetweenJumps: 0 }) {
+	constructor() {
 		super();
-		this.options = options;
 	}
 
 	public async attach(game: Game): Promise<this> {
+		if (this.game) {
+			throw new Error('Driver is already attached to a game');
+		}
+		this.game = game;
 		await super.attach(game);
 
 		this.$detach.once(
 			this.$resume.on(async () => {
 				while (this.$$animating.get() && game.time.hasNextEvent()) {
-					await game.time.jump();
+					await game.time.step();
 				}
 				await this.stop();
 				await this.$end.emit();

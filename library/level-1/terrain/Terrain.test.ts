@@ -1,6 +1,6 @@
 import { expect, it, describe, run } from 'tincan';
 import { Terrain } from './Terrain.ts';
-import { generateGridTerrainFromAscii } from '../terrain/utils.ts';
+import { generateGridTerrainFromAscii } from '../../test/generateGridTerrainFromAscii.ts';
 
 describe('Terrain', () => {
 	it('Save/load round-robins to an equal object', () => {

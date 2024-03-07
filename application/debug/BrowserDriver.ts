@@ -27,6 +27,9 @@ export class BrowserDriver extends Driver implements DriverI {
 	}
 
 	public async attach(game: Game): Promise<this> {
+		if (this.game) {
+			throw new Error('Driver is already attached to a game');
+		}
 		this.game = game;
 		await super.attach(game);
 

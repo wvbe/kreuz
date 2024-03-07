@@ -35,7 +35,7 @@ export class Terrain {
 	public getTileEqualToLocation(location: CoordinateI, lax?: boolean) {
 		const tile = this.#tiles.find((tile) => location.equals(tile)) || null;
 		if (!tile && !lax) {
-			throw new Error(`No time matches coordinate ${location} exactly`);
+			throw new Error(`No tile matches coordinate ${location} exactly`);
 		}
 		return tile;
 	}

@@ -1,5 +1,5 @@
-import { SquareTile } from './SquareTile.ts';
-import { Terrain } from './Terrain.ts';
+import { SquareTile } from '../level-1/terrain/SquareTile.ts';
+import { Terrain } from '../level-1/terrain/Terrain.ts';
 
 const adjacency = [
 	[-1, 0],

@@ -1,6 +1,6 @@
 import { type SavePersonEntityJson } from './entities/entity.person.ts';
 import { type SaveSettlementEntityJson } from './entities/entity.settlement.ts';
-import { type SaveEventedValueJson } from './classes/EventedValue.ts';
+import { type SaveEventedValueJson } from './events/EventedValue.ts';
 import { type SaveTerrainJson } from './terrain/Terrain.ts';
 import type Game from './Game.ts';
 import { GameAssets } from './Game.ts';

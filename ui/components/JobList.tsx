@@ -5,7 +5,7 @@ import { useCollection, useEventData } from '../hooks/useEventedValue.ts';
 import { CollapsibleWindow } from './atoms/CollapsibleWindow.tsx';
 import { Cell, Row, Table } from './atoms/Table.tsx';
 import { TokenizedText } from './atoms/TokenizedText.tsx';
-import { EventCombination } from '../../library/level-1/classes/EventCombination.ts';
+import { EventCombination } from '../../library/level-1/events/EventCombination.ts';
 // import { LineGraph } from './LineGraph.tsx';
 
 export function useCombinedEventCollection<T>(

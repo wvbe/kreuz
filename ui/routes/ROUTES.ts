@@ -7,8 +7,8 @@ export const ROUTE_ENTITIES_FACTORIES = '/factories/*';
 export const ROUTE_ENTITIES_FACTORIES_DETAILS = '/factories/:entityId';
 export const ROUTE_ENTITIES_MARKETS = '/market-places/*';
 export const ROUTE_ENTITIES_MARKETS_DETAILS = '/market-places/:entityId';
-export const ROUTE_PRODUCTION = '/production';
+export const ROUTE_PRODUCTION = '/production/*';
 export const ROUTE_MATERIALS = '/materials';
-export const ROUTE_BLUEPRINTS = '/blueprints';
+export const ROUTE_PRODUCTION_DETAILS = '/production/:blueprintId';
 
 export { generatePath } from 'react-router-dom';

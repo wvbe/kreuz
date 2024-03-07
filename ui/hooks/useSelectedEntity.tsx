@@ -21,7 +21,7 @@ import { useNavigation } from './useNavigation.ts';
 
 type SelectedEntityContext = {
 	current: EntityI | null;
-	set: Dispatch<SetStateAction<EntityI | null>>;
+	set: (entity: EntityI | null) => void;
 };
 
 const Context = createContext<SelectedEntityContext>({

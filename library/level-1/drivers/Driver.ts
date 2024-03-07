@@ -1,6 +1,6 @@
 import { Attachable } from '../classes/Attachable.ts';
-import { Event } from '../classes/Event.ts';
-import { EventedValue } from '../classes/EventedValue.ts';
+import { Event } from '../events/Event.ts';
+import { EventedValue } from '../events/EventedValue.ts';
 import Game from '../Game.ts';
 import { DriverI } from './types.ts';
 

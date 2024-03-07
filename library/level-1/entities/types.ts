@@ -1,6 +1,6 @@
 import { type AttachableI } from '../classes/Attachable.ts';
-import { Collection } from '../classes/Collection.ts';
-import { type EventedValue } from '../classes/EventedValue.ts';
+import { Collection } from '../events/Collection.ts';
+import { type EventedValue } from '../events/EventedValue.ts';
 import { TradeOrder } from '../classes/TradeOrder.ts';
 import { type SaveEntityJson } from './entity.ts';
 import { type CoordinateI } from '../types.ts';

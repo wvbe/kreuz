@@ -1,5 +1,5 @@
 import { expect, it, describe, run } from 'tincan';
-import { generateGridTerrainFromAscii } from '../terrain/utils.ts';
+import { generateGridTerrainFromAscii } from '../../test/generateGridTerrainFromAscii.ts';
 import { Path } from './Path.ts';
 
 describe('Path', () => {

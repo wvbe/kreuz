@@ -3,9 +3,8 @@
  * https://github.com/wvbe/experimental-factory-game/blob/master/src/classes/Inventory.ts
  */
 
-import { Event } from '../classes/Event.ts';
+import { Event } from '../events/Event.ts';
 import { TradeOrder } from '../classes/TradeOrder.ts';
-import { Blueprint } from '../entities/types.ts';
 import { SaveJsonContext } from '../types-savedgame.ts';
 import { Material } from './Material.ts';
 import { type MaterialState } from './types.ts';
@@ -40,7 +39,7 @@ export class Inventory {
 	 * inventory, so that the inventory does not end up with a negative amount of material, or an
 	 * amount greater than the capacity.
 	 */
-	private readonly reservations = new Map<TradeOrder | Blueprint, MaterialState[]>();
+	private readonly reservations = new Map<any, MaterialState[]>();
 
 	/**
 	 * The event that the inventory contents changes -- such as new items being added, removed,
@@ -310,7 +309,7 @@ export class Inventory {
 	 * - If an item has a negative value, and the inventory has enough of these items in stock,
 	 *   that amount of item will be reserved ie. not given away to something else.
 	 */
-	public makeReservation(key: TradeOrder | Blueprint, exchanged: MaterialState[]) {
+	public makeReservation(key: any, exchanged: MaterialState[]) {
 		if (this.reservations.get(key)) {
 			// Programmer error
 			throw new Error('A reservation for already exists for this key');
@@ -331,7 +330,7 @@ export class Inventory {
 	/**
 	 * Remove the reservation without transferring the items for it.
 	 */
-	public cancelReservation(tradeOrder: TradeOrder | Blueprint) {
+	public cancelReservation(tradeOrder: any) {
 		if (!this.reservations.get(tradeOrder)) {
 			// Programmer error
 			throw new Error('No such reservation');

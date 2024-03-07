@@ -1,6 +1,6 @@
 import { EntityI } from '../entities/types.ts';
 import { PersonEntity } from '../entities/entity.person.ts';
-import { EventedNumericValue } from '../classes/EventedNumericValue.ts';
+import { EventedNumericValue } from '../events/EventedNumericValue.ts';
 import { BehaviorTreeNodeI, EntityBlackboard } from './types.ts';
 import { black } from 'https://deno.land/std@0.106.0/fmt/colors.ts';
 import { VendorEntity } from '../../level-2/behavior/reusable/primitives/types.ts';

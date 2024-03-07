@@ -8,10 +8,10 @@ export { BehaviorTreeSignal } from './behavior/BehaviorTreeSignal.ts';
 export * from './behavior/types.ts';
 
 // Miscellaneous utilities:
-export { Collection } from './classes/Collection.ts';
-export { Event } from './classes/Event.ts';
-export { EventedValue } from './classes/EventedValue.ts';
-export { EventedNumericValue } from './classes/EventedNumericValue.ts';
+export { Collection } from './events/Collection.ts';
+export { Event } from './events/Event.ts';
+export { EventedValue } from './events/EventedValue.ts';
+export { EventedNumericValue } from './events/EventedNumericValue.ts';
 export { Path } from './classes/Path.ts';
 export { Random } from './classes/Random.ts';
 export { TimeLine } from './classes/TimeLine.ts';
@@ -49,7 +49,7 @@ export { DualMeshTile } from './terrain/DualMeshTile.ts';
 export { SquareTile } from './terrain/SquareTile.ts';
 export { Terrain } from './terrain/Terrain.ts';
 export { Tile } from './terrain/Tile.ts';
-export * from './terrain/utils.ts';
+export * from '../test/generateGridTerrainFromAscii.ts';
 
 // Constants:
 export * from './constants/needs.ts';

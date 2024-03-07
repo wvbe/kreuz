@@ -23,6 +23,8 @@ import {
 } from '@lib/assets';
 import { Demo } from './types.ts';
 import { generateDualMeshTerrain } from './utils/generateDualMeshTerrain.ts';
+import { generateEmptyGame } from '@test';
+import { growWheat } from '../level-2/blueprints.ts';
 
 const TOOLS = [materials.axe, materials.hammer, materials.pickaxe, materials.woodsaw];
 

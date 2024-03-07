@@ -1,11 +1,13 @@
-import { Blueprint, EntityI, Event, FactoryBuildingEntity, Game } from '@lib';
-import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
+import { Blueprint, Event, FactoryBuildingEntity } from '@lib';
+import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
+import { useGameContext } from '../context/GameContext.tsx';
 import { useCollection } from '../hooks/useEventedValue.ts';
+import { useNavigation } from '../hooks/useNavigation.ts';
+import { ROUTE_PRODUCTION_DETAILS } from '../routes/ROUTES.ts';
+import { Badge } from './atoms/Badge.tsx';
 import { CollapsibleWindow } from './atoms/CollapsibleWindow.tsx';
 import { PopOnUpdateSpan } from './atoms/PopOnUpdateSpan.tsx';
 import { Cell, Row, Table } from './atoms/Table.tsx';
-import { useGameContext } from '../context/GameContext.tsx';
-// import { LineGraph } from './LineGraph.tsx';
 
 function getTotalDelta(entities: FactoryBuildingEntity[]) {
 	return entities.reduce((total, entity) => (total += entity.$$progress.delta), 0);
@@ -15,6 +17,8 @@ const ProductionSummary: FunctionComponent<{
 	blueprint: Blueprint;
 	entities: FactoryBuildingEntity[];
 }> = ({ blueprint, entities }) => {
+	const navigate = useNavigation();
+	const game = useGameContext();
 	const [totalDelta, setTotalDelta] = useState(getTotalDelta(entities));
 	useEffect(
 		() =>
@@ -24,15 +28,28 @@ const ProductionSummary: FunctionComponent<{
 			),
 		[entities],
 	);
+	const onClick = useCallback(
+		() =>
+			navigate(ROUTE_PRODUCTION_DETAILS, {
+				blueprintId: game.assets.blueprints.key(blueprint),
+			}),
+		[],
+	);
 	const hoursPerCycle = totalDelta * 1000 * 24;
 	return (
-		<Row>
-			<Cell>{blueprint.name}</Cell>
+		<Row onClick={onClick}>
 			<Cell>
-				<PopOnUpdateSpan>{`${
-					hoursPerCycle === Infinity ? '∞' : hoursPerCycle.toFixed(1)
-				}/day`}</PopOnUpdateSpan>
+				<Badge
+					title={blueprint.name}
+					subtitle={
+						<PopOnUpdateSpan>{`${
+							hoursPerCycle === Infinity ? '∞' : hoursPerCycle.toFixed(1)
+						}/day`}</PopOnUpdateSpan>
+					}
+					icon={blueprint.products[0]?.material.symbol}
+				/>
 			</Cell>
+			<Cell>{entities.length} factories</Cell>
 		</Row>
 	);
 };
@@ -40,41 +57,29 @@ const ProductionSummary: FunctionComponent<{
 export const ProductionList: FunctionComponent = () => {
 	const game = useGameContext();
 	const entities = useCollection(game.entities);
-	const entitiesByBlueprint = useMemo(() => {
-		const entitiesByBlueprint: Record<string, FactoryBuildingEntity[]> = {};
-		entities
-			.filter((e): e is FactoryBuildingEntity => e.type === 'factory')
-			.forEach((factory) => {
-				const blueprintName = factory.$blueprint.get()?.name;
-				if (!blueprintName) {
-					return;
-				}
-				if (!entitiesByBlueprint[blueprintName]) {
-					entitiesByBlueprint[blueprintName] = [];
-				}
-				entitiesByBlueprint[blueprintName].push(factory);
-			});
-
-		return entitiesByBlueprint;
-	}, [entities]);
+	const entitiesByBlueprint = useMemo(
+		() =>
+			game.assets.blueprints
+				.list()
+				.reduce<Record<string, FactoryBuildingEntity[]>>((entitiesByBlueprint, blueprint) => {
+					const key = game.assets.blueprints.key(blueprint);
+					entitiesByBlueprint[key] = game.entities.filter(
+						(entity) => (entity as FactoryBuildingEntity).$blueprint?.get() === blueprint,
+					);
+					return entitiesByBlueprint;
+				}, {}),
+		[entities],
+	);
 
 	const products = useMemo(() => {
-		return Object.values(entitiesByBlueprint).map((entities, i) => (
+		return Object.entries(entitiesByBlueprint).map(([key, entities], i) => (
 			<ProductionSummary
 				key={i}
-				blueprint={entities[0].$blueprint.get() as Blueprint}
+				blueprint={game.assets.blueprints.item(key)!}
 				entities={entities}
 			/>
 		));
 	}, [entitiesByBlueprint]);
-
-	// const subscriptions = useMemo(
-	// 	() =>
-	// 		Object.values(entitiesByBlueprint).map((entities) => {
-	// 			return () => getTotalDelta(entities);
-	// 		}),
-	// 	[entitiesByBlueprint],
-	// );
 
 	return (
 		<>

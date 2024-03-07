@@ -1,7 +1,7 @@
 import {
 	ProgressingNumericValue,
 	type SaveProgressingNumericValueJson,
-} from '../classes/ProgressingNumericValue.ts';
+} from '../events/ProgressingNumericValue.ts';
 import { PersonNeedId } from '../constants/needs.ts';
 import { SaveJsonContext } from '../types-savedgame.ts';
 

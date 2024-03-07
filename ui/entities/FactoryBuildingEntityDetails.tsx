@@ -5,6 +5,9 @@ import { FillBar } from '../components/atoms/FillBar.tsx';
 import { InventoryUI } from '../inventory/InventoryUI.tsx';
 import { BlueprintBadge } from '../components/BlueprintBadge.tsx';
 import { EntityLink } from '../entities/EntityLink.tsx';
+import { ROUTE_PRODUCTION_DETAILS } from '../routes/ROUTES.ts';
+import { useNavigation } from '../hooks/useNavigation.ts';
+import { useGameContext } from '../context/GameContext.tsx';
 export const FactoryBuildingEntityDetails: FunctionComponent<{ entity: FactoryBuildingEntity }> = ({
 	entity,
 }) => {
@@ -15,6 +18,8 @@ export const FactoryBuildingEntityDetails: FunctionComponent<{ entity: FactoryBu
 	);
 	const blueprint = useEventedValue(entity.$blueprint);
 	const progress = useEventedValue(entity.$$progress);
+	const navigate = useNavigation();
+	const game = useGameContext();
 
 	return (
 		<article className="entity-details">
@@ -43,7 +48,12 @@ export const FactoryBuildingEntityDetails: FunctionComponent<{ entity: FactoryBu
 			) : (
 				<p>No blueprint</p>
 			)}
-			<BlueprintBadge blueprint={blueprint} />
+			<BlueprintBadge
+				blueprint={blueprint}
+				onClick={() =>
+					navigate(ROUTE_PRODUCTION_DETAILS, { blueprintId: game.assets.blueprints.key(blueprint) })
+				}
+			/>
 			<InventoryUI inventory={entity.inventory} />
 		</article>
 	);

@@ -122,17 +122,17 @@ export function createConsumeBehavior(config: ConsumptionType) {
  */
 createConsumeBehavior.DRINK = {
 	fulfilledNeedId: 'water',
-	fulfillingMaterialProperty: 'fluid',
+	fulfillingMaterialProperty: 'hydration',
 	statusFormatter: (material) => `Sipping on ${material}`,
 	materialFilter({ material }) {
-		return material.fluid && !material.toxicity;
+		return material.hydration && !material.toxicity;
 	},
 	materialDesirabilityScore(entity, vendor, material, quantity) {
 		if (quantity <= 1 || entity.wallet.get() < material.value) {
 			return 0;
 		}
 		// @TODO weigh in distance to vendor, if vendor is not the same as entity
-		return material.fluid / material.value;
+		return material.hydration / material.value;
 	},
 } as ConsumptionType;
 

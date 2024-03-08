@@ -41,9 +41,10 @@ export const PERSON_NEEDS: Array<{
 		label: '💤',
 		decay: -1 / 500_000,
 		moods: [
+			{ upUntil: 1 / 100, label: 'dead tired' },
 			{ upUntil: 5 / 100, label: 'passing out' },
 			{ upUntil: 15 / 100, label: 'very tired' },
-			{ upUntil: 30 / 100, label: "lil' energyy" },
+			{ upUntil: 30 / 100, label: "lil' energy" },
 			{ upUntil: 75 / 100, label: null },
 			{ upUntil: 90 / 100, label: 'rested' },
 			{ upUntil: Infinity, label: 'rejuvenated' },
@@ -54,6 +55,7 @@ export const PERSON_NEEDS: Array<{
 		label: '🛁',
 		decay: -1 / 750_000,
 		moods: [
+			{ upUntil: 1 / 100, label: 'smells like a dead body' },
 			{ upUntil: 20 / 100, label: 'filthy' },
 			{ upUntil: 33 / 100, label: 'uncomfortable' },
 			{ upUntil: 60 / 100, label: null },
@@ -66,6 +68,7 @@ export const PERSON_NEEDS: Array<{
 		label: '🙏',
 		decay: -1 / 1_000_000,
 		moods: [
+			{ upUntil: 1 / 100, label: 'dead inside' },
 			{ upUntil: 20 / 100, label: 'existential dread' },
 			{ upUntil: 33 / 100, label: 'depressed' },
 			{ upUntil: 60 / 100, label: 'plagued by guilt' },

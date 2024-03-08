@@ -11,6 +11,10 @@ import React, {
 export const PopOnUpdateSpan: FunctionComponent<
 	DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement>
 > = ({ children, ...rest }) => {
+	// This component is effectively disabled because it eats browser rendering performance
+	return <span>{children}</span>;
+
+	//
 	const clicks = useRef(0);
 	const element = useRef<HTMLSpanElement | null>(null);
 	const last = useRef<ReactNode | null>(null);

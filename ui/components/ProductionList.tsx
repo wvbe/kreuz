@@ -1,4 +1,4 @@
-import { Blueprint, Event, FactoryBuildingEntity } from '@lib';
+import { Blueprint, EntityI, Event, FactoryBuildingEntity } from '@lib';
 import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useGameContext } from '../context/GameContext.tsx';
 import { useCollection } from '../hooks/useEventedValue.ts';
@@ -13,6 +13,9 @@ function getTotalDelta(entities: FactoryBuildingEntity[]) {
 	return entities.reduce((total, entity) => (total += entity.$$progress.delta), 0);
 }
 
+function getTotalWorkers(entities: FactoryBuildingEntity[]): number {
+	return entities.reduce((total, factory) => total + factory.$workers.length, 0);
+}
 const ProductionSummary: FunctionComponent<{
 	blueprint: Blueprint;
 	entities: FactoryBuildingEntity[];
@@ -28,13 +31,25 @@ const ProductionSummary: FunctionComponent<{
 			),
 		[entities],
 	);
-	const onClick = useCallback(
-		() =>
-			navigate(ROUTE_PRODUCTION_DETAILS, {
-				blueprintId: game.assets.blueprints.key(blueprint),
-			}),
-		[],
-	);
+	const onClick = useCallback((event) => {
+		event.preventDefault();
+		event.stopPropagation();
+		navigate(ROUTE_PRODUCTION_DETAILS, {
+			blueprintId: game.assets.blueprints.key(blueprint),
+		});
+	}, []);
+
+	const [workerCount, setWorkerCount] = useState(getTotalWorkers(entities));
+	useEffect(() => {
+		const destroyers = entities.map((factory) => {
+			return factory.$workers.$change.on(() => {
+				setWorkerCount(getTotalWorkers(entities));
+			});
+		});
+		return () => {
+			destroyers.forEach((d) => d());
+		};
+	}, [entities]);
 	const hoursPerCycle = totalDelta * 1000 * 24;
 	return (
 		<Row onClick={onClick}>
@@ -42,14 +57,22 @@ const ProductionSummary: FunctionComponent<{
 				<Badge
 					title={blueprint.name}
 					subtitle={
-						<PopOnUpdateSpan>{`${
-							hoursPerCycle === Infinity ? '∞' : hoursPerCycle.toFixed(1)
-						}/day`}</PopOnUpdateSpan>
+						<>
+							Producing{' '}
+							<PopOnUpdateSpan>{`${
+								hoursPerCycle === Infinity ? '∞' : hoursPerCycle.toFixed(1)
+							}/day`}</PopOnUpdateSpan>
+						</>
 					}
 					icon={blueprint.products[0]?.material.symbol}
 				/>
 			</Cell>
-			<Cell>{entities.length} factories</Cell>
+			<Cell>
+				<PopOnUpdateSpan>{entities.length} factories</PopOnUpdateSpan>
+			</Cell>
+			<Cell>
+				<PopOnUpdateSpan>{workerCount} workers</PopOnUpdateSpan>
+			</Cell>
 		</Row>
 	);
 };

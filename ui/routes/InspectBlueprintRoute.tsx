@@ -25,7 +25,7 @@ export const InspectBlueprintRoute: FunctionComponent = () => {
 		<>
 			<CollapsibleWindow label={`Details panel`} initiallyOpened>
 				<Badge
-					icon={'🗺️'}
+					icon={blueprint.products[0].material.symbol}
 					title={blueprint.name}
 					subtitle={`${(blueprint.options.fullTimeEquivalent / 1000).toFixed(
 						1,

@@ -27,7 +27,7 @@ export class Material {
 	/**
 	 * The amount of "water" need that is fulfilled by consuming one of these.
 	 */
-	public readonly fluid: number;
+	public readonly hydration: number;
 
 	/**
 	 * The amount of "health" need that is _penalized_ by consuming one of these.
@@ -43,14 +43,14 @@ export class Material {
 			stackSize,
 			value,
 			nutrition,
-			fluid,
+			hydration,
 			toxicity,
 		}: {
 			symbol: string;
 			stackSize: number;
 			value?: number;
 			nutrition?: number;
-			fluid?: number;
+			hydration?: number;
 			toxicity?: number;
 		},
 	) {
@@ -59,7 +59,7 @@ export class Material {
 		this.symbol = symbol;
 		this.value = value || 0;
 		this.nutrition = nutrition || 0;
-		this.fluid = fluid || 0;
+		this.hydration = hydration || 0;
 		this.toxicity = toxicity || 0;
 	}
 

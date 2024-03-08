@@ -50,9 +50,13 @@ export const FactoryBuildingEntityDetails: FunctionComponent<{ entity: FactoryBu
 			)}
 			<BlueprintBadge
 				blueprint={blueprint}
-				onClick={() =>
-					navigate(ROUTE_PRODUCTION_DETAILS, { blueprintId: game.assets.blueprints.key(blueprint) })
-				}
+				onClick={(event) => {
+					event.preventDefault();
+					event.stopPropagation();
+					navigate(ROUTE_PRODUCTION_DETAILS, {
+						blueprintId: game.assets.blueprints.key(blueprint),
+					});
+				}}
 			/>
 			<InventoryUI inventory={entity.inventory} />
 		</article>

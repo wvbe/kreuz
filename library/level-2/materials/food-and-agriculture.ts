@@ -4,12 +4,14 @@ import { Material } from '@lib/core';
 export const wheat = new Material('Wheat', {
 	symbol: 'WH',
 	stackSize: 100,
+	value: 0.1,
 });
 
 // Wheat, but punched into a powder
 export const flour = new Material('Flour', {
 	symbol: '🌸',
 	stackSize: 100,
+	value: 0.2,
 });
 
 export const bread = new Material('Bread', {
@@ -39,7 +41,7 @@ export const milk = new Material('Milk', {
 	stackSize: 24,
 
 	value: 1.6,
-	fluid: 0.3,
+	hydration: 0.3,
 });
 
 export const butter = new Material('Butter', {
@@ -63,7 +65,7 @@ export const freshWater = new Material('Fresh water', {
 	stackSize: 100,
 
 	value: 0.3,
-	fluid: 0.5,
+	hydration: 0.5,
 });
 
 export const saltWater = new Material('Salt water', {
@@ -71,6 +73,6 @@ export const saltWater = new Material('Salt water', {
 	stackSize: 100,
 
 	value: 0.1,
-	fluid: 0.5,
+	hydration: 0.5,
 	toxicity: 0.25,
 });

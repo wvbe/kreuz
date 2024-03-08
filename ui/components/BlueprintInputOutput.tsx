@@ -3,7 +3,7 @@ import React, { FunctionComponent, MouseEventHandler } from 'react';
 import { InventoryBag } from '../inventory/InventoryUI.tsx';
 import { Cell, Row, Table } from './atoms/Table.tsx';
 
-export const BlueprintBadge: FunctionComponent<{
+export const BlueprintInputOutput: FunctionComponent<{
 	blueprint: Blueprint | null;
 	onClick?: MouseEventHandler<HTMLTableRowElement>;
 }> = ({ blueprint, onClick }) => {
@@ -13,7 +13,7 @@ export const BlueprintBadge: FunctionComponent<{
 	return (
 		<Table>
 			<Row onClick={onClick}>
-				<Cell>
+				<Cell style={{ border: '1px solid #999999', borderRadius: '6px' }}>
 					{blueprint.ingredients.length ? (
 						<InventoryBag stacks={blueprint.ingredients} />
 					) : (
@@ -28,7 +28,7 @@ export const BlueprintBadge: FunctionComponent<{
 						<path d="m61,15H11v-1h49m0-2 9,2.5-9,2.5" />
 					</svg>
 				</Cell>
-				<Cell>
+				<Cell style={{ border: '1px solid #999999', borderRadius: '6px' }}>
 					<InventoryBag stacks={blueprint.products} />
 				</Cell>
 			</Row>

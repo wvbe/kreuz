@@ -1,7 +1,24 @@
 import { FactoryBuildingEntity } from '@lib/core';
 import { Blueprint } from '../inventory/Blueprint.ts';
-import { blue } from 'https://deno.land/std@0.106.0/fmt/colors.ts';
+import { EntityI } from '@lib';
 
+/**
+ * Checks if an entity can work on a blueprint.
+ * @param entity - The entity to check.
+ * @returns Returns true if the entity can work on a blueprint, false otherwise.
+ */
+export function canEntityWorkOnBlueprint(entity: EntityI) {
+	return entity.type === 'person';
+}
+
+/**
+ * Calculates the delta value for a given blueprint and worker amount.
+ * The delta value represents the speed at which the blueprint should be processed.
+ *
+ * @param blueprint - The blueprint for which to calculate the delta.
+ * @param workerAmount - The number of workers available for the blueprint.
+ * @returns The calculated delta value.
+ */
 function getDelta(blueprint: Blueprint, workerAmount: number) {
 	let delta = 1 / blueprint.options.fullTimeEquivalent;
 
@@ -21,6 +38,12 @@ function getDelta(blueprint: Blueprint, workerAmount: number) {
 	return delta;
 }
 
+/**
+ * Checks if a new blueprint cycle can be started in the given factory building entity.
+ * @param factory - The factory building entity.
+ * @param blueprint - The blueprint to be produced.
+ * @returns A boolean indicating whether a new blueprint cycle can be started.
+ */
 function canStartNewBlueprintCycle(factory: FactoryBuildingEntity, blueprint: Blueprint) {
 	if (!blueprint.hasAllIngredients(factory.inventory)) {
 		// Not all necessary ingredients are in inventory, so cannot start.

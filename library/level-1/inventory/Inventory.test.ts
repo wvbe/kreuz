@@ -128,8 +128,7 @@ describe('Inventory', () => {
 		expect(
 			inventory.isEverythingAllocatable([
 				{ material: test1, quantity: 25 },
-				{ material: test2, quantity: 10 },
-				{ material: test2, quantity: 23 },
+				{ material: test2, quantity: 1 },
 			]),
 		).toBeFalsy();
 	});
@@ -141,7 +140,7 @@ describe('Inventory', () => {
 			inventory,
 			[],
 		);
-		inventory.makeReservationFromTradeOrder(tradeOrder);
+		// If you ask before a reservation is made, all is cool
 		expect(
 			inventory.isEverythingAllocatable([
 				{ material: test1, quantity: 25 },
@@ -149,7 +148,10 @@ describe('Inventory', () => {
 				{ material: test2, quantity: 23 },
 			]),
 		).toBeTruthy();
-		await inventory.change(test1, 1);
+
+		// If you ask after a reservation is made, the reserved items are "in the way" of what
+		// you're trying to allocate
+		inventory.makeReservationFromTradeOrder(tradeOrder);
 		expect(
 			inventory.isEverythingAllocatable([
 				{ material: test1, quantity: 25 },

@@ -9,11 +9,24 @@ import { SaveJsonContext } from '../types-savedgame.ts';
 import { Material } from './Material.ts';
 import { type MaterialState } from './types.ts';
 
-function getRequiredStackSpace(cargo: MaterialState[]) {
+function getRequiredStackSpace(cargo: MaterialState[]): number {
 	return cargo.reduce<number>(
 		(amount, { material, quantity }) => amount + Math.ceil(quantity / material.stack),
 		0,
 	);
+}
+function getCombinedStacks(cargos: MaterialState[][]): MaterialState[] {
+	return cargos
+		.reduce((flat, states) => [...flat, ...states], [])
+		.reduce((totals, { material, quantity }) => {
+			const existing = totals.find((t) => t.material === material);
+			if (existing) {
+				existing.quantity += quantity;
+			} else {
+				totals.push({ quantity, material });
+			}
+			return totals;
+		}, [] as MaterialState[]);
 }
 
 export type SaveInventoryJson = {
@@ -168,25 +181,18 @@ export class Inventory {
 			return true;
 		}
 
-		const combined = cargo.reduce(
-			(totals, { material, quantity }) => {
-				const existing = totals.find((t) => t.material === material);
-				if (existing) {
-					existing.quantity += quantity;
-				} else {
-					totals.push({ quantity, material });
-				}
-				return totals;
-			},
-			// Clone each object from getAvailableItems so we don't change the inventory by reference
-			// from within the reducer 😬
-			[
-				...this.getAvailableItems(),
+		return (
+			getRequiredStackSpace([
+				...getCombinedStacks([
+					// Assuming the cargo is merged with the "available" stacks, not with the stack
+					// reserves;
+					cargo,
+					this.getAvailableItems(),
+				]),
 				...this.getReservedIncomingItems(),
 				...this.getReservedOutgoingItems(),
-			].map((state) => ({ ...state })),
+			]) <= this.capacity
 		);
-		return getRequiredStackSpace(combined) <= this.capacity;
 	}
 
 	/**

@@ -11,7 +11,7 @@ const EntityLocationPhrase: FunctionComponent<{ location: EventedValue<Coordinat
 	location,
 }) => {
 	const { x, y } = useEventedValue(location);
-	return <PopOnUpdateSpan>{`Lat:${y.toFixed(2)} Lng:${x.toFixed(2)}`}</PopOnUpdateSpan>;
+	return <PopOnUpdateSpan>{`(${y.toFixed(2)}, ${x.toFixed(2)})`}</PopOnUpdateSpan>;
 };
 
 export const EntityList: FunctionComponent<{

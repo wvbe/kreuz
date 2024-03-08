@@ -9,6 +9,8 @@ describe('Loading the initial game', async () => {
 	beforeAll(async () => {
 		game_original = (await createGeneratorDemo(new TestDriver())).game;
 		game_loaded = await Game.fromSaveJson(DEFAULT_ASSETS, game_original.toSaveJson());
+
+		await new TestDriver().attach(game_loaded);
 	});
 
 	it('Has the same amount of entities', () => {

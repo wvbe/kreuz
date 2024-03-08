@@ -13,7 +13,7 @@ import { PersonEntity } from './entity.person.ts';
 import { type EntityI } from './types.ts';
 import { JobVacancy } from '../behavior/JobVacancy.ts';
 import { EntityBlackboard } from '../behavior/types.ts';
-import { attachSystem } from '../systems/blueprintProduction.ts';
+import * as blueprintProduction from '../systems/blueprintProduction.ts';
 
 export type SaveFactoryBuildingEntityJson = SaveBuildingEntityJson & {
 	options: FactoryBuildingEntityOptions;
@@ -172,7 +172,7 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 			this.$detach.once(async () => {
 				await this.$$progress.detach();
 			});
-			attachSystem(this);
+			blueprintProduction.attachSystem(this);
 			this.$blueprint.set(this.options.blueprint);
 		});
 	}

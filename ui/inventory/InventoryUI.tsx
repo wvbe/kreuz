@@ -9,7 +9,7 @@ export const InventoryBag: FunctionComponent<{ stacks: MaterialState[]; capacity
 	capacity,
 }) => (
 	<div className="inventory">
-		<p>
+		<p style={{ margin: 0 }}>
 			<MoneyBag
 				value={stacks.reduce((total, stack) => total + stack.material.value * stack.quantity, 0)}
 			/>{' '}

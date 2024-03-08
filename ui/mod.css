@@ -2,7 +2,6 @@
 
 @import url('./components/GameUI.css');
 @import url('./components/atoms/FillBar.css');
-@import url('./entities/PersonEntityDetails.css');
 @import url('./inventory/InventoryUI.css');
 @import url('./inventory/InventoryStack.css');
 @import url('./components/atoms/Badge.css');

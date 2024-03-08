@@ -1,42 +1,33 @@
-import {
-	type EntityI,
-	type FactoryBuildingEntity,
-	type MarketBuildingEntity,
-	type PersonEntity,
-} from '@lib';
+import { type EntityI, type FactoryBuildingEntity } from '@lib';
 import React, { FunctionComponent, useMemo } from 'react';
-import { useSelectedEntity } from '../hooks/useSelectedEntity.tsx';
-import { EntityBadge } from './EntityBadge.tsx';
-import { FactoryBuildingEntityDetails } from './FactoryBuildingEntityDetails.tsx';
-import { MarketBuildingEntityDetails } from './MarketBuildingEntityDetails.tsx';
-import { PersonEntityDetails } from './PersonEntityDetails.tsx';
+import { GameNavigation, GameNavigationButton } from '../application/GameNavigation.tsx';
 import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow.tsx';
-import { GameNavigation } from '../application/GameNavigation.tsx';
-import { GameNavigationButton } from '../application/GameNavigation.tsx';
+import { useSelectedEntity } from '../hooks/useSelectedEntity.tsx';
 import {
 	ROUTE_ENTITIES_PEOPLE_JOBS_DETAILS,
 	ROUTE_ENTITIES_PEOPLE_TRADE_DETAILS,
 } from '../routes/ROUTES.ts';
+import { EntityBadge } from './EntityBadge.tsx';
+import { EntityBlueprintBadgeDetails } from './details/EntityBlueprintBadgeDetails.tsx';
+import { EntityBlueprintProgressDetails } from './details/EntityBlueprintProgressDetails.tsx';
+import { EntityInventoryDetails } from './details/EntityInventoryDetails.tsx';
+import { EntityNeedsDetails } from './details/EntityNeedsDetails.tsx';
+import { EntityWorkersDetails } from './details/EntityWorkersDetails.tsx';
 
 export const EntityDetails: FunctionComponent<{ entity?: EntityI | null }> = ({ entity }) => {
 	if (!entity) {
 		return null;
 	}
-	const extra = useMemo(() => {
-		if (entity.type === 'person') {
-			return <PersonEntityDetails entity={entity as PersonEntity} />;
-		} else if (entity.type === 'market-stall') {
-			return <MarketBuildingEntityDetails entity={entity as MarketBuildingEntity} />;
-		} else if (entity.type === 'factory') {
-			return <FactoryBuildingEntityDetails entity={entity as FactoryBuildingEntity} />;
-		}
-	}, [entity]);
 
 	return (
 		<>
 			<CollapsibleWindow label={`Details panel`} initiallyOpened>
 				<EntityBadge entity={entity} />
-				{extra}
+				<EntityBlueprintBadgeDetails entity={entity} />
+				<EntityNeedsDetails entity={entity} />
+				<EntityBlueprintProgressDetails entity={entity} />
+				<EntityWorkersDetails entity={entity} />
+				<EntityInventoryDetails entity={entity} />
 			</CollapsibleWindow>
 			{entity.type === 'person' ? (
 				<GameNavigation>

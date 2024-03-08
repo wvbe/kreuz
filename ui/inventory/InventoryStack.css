@@ -29,3 +29,8 @@
 	border-left: 1px solid darkgray;
 	font-size: 0.75em;
 }
+
+.inventory-stack:hover {
+	background-color: var(--color-hover);
+	cursor: pointer;
+}

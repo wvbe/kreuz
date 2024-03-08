@@ -1,8 +1,8 @@
-import { Driver, PersonEntity, type DriverI, type Game } from '@lib';
+import { Driver, PersonEntity, type DriverI, type Game, EntityI } from '@lib';
 
 export class BrowserDriver extends Driver implements DriverI {
 	game: Game | null = null;
-	gameSpeed = 4;
+	gameSpeed = 1;
 	lastUpdate: number = Date.now();
 
 	private async animate(game: Game) {
@@ -74,20 +74,24 @@ export class BrowserDriver extends Driver implements DriverI {
 			}),
 		);
 
+		const listenToPersonEntityMovement = (entities: EntityI[]) => {
+			entities
+				.filter((entity): entity is PersonEntity => entity instanceof PersonEntity)
+				.forEach((entity) => {
+					this.$detach.once(
+						entity.$stepStart.on((_destination, duration, done) => {
+							game.time.setTimeout(done, duration);
+						}),
+					);
+				});
+		};
 		// Whenever an entity starts to move, make sure that the "animation" ends at some point too.
 		this.$detach.once(
 			game.entities.$add.on((added) => {
-				added
-					.filter((entity): entity is PersonEntity => entity instanceof PersonEntity)
-					.forEach((entity) => {
-						this.$detach.once(
-							entity.$stepStart.on((_destination, duration, done) => {
-								game.time.setTimeout(done, duration);
-							}),
-						);
-					});
+				listenToPersonEntityMovement(added);
 			}),
 		);
+		listenToPersonEntityMovement(game.entities.slice());
 
 		return this;
 	}

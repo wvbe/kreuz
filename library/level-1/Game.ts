@@ -49,12 +49,10 @@ export default class Game {
 		this.terrain = terrain;
 		this.assets = assets;
 
-		this.entities.$add.on(async (added) => {
+		this.entities.$change.on(async (added, removed) => {
 			for (const entity of added) {
 				await entity.attach(this);
 			}
-		});
-		this.entities.$remove.on(async (removed) => {
 			for (const entity of removed) {
 				await entity.detach();
 			}

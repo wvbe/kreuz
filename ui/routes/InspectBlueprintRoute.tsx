@@ -8,7 +8,9 @@ import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow.tsx';
 import { InventoryBag } from '../inventory/InventoryUI.tsx';
 import { Badge } from '../components/atoms/Badge.tsx';
 import { GameNavigation, GameNavigationButton } from '../application/GameNavigation.tsx';
-import { BlueprintBadge } from '../components/BlueprintBadge.tsx';
+import { BlueprintInputOutput } from '../components/BlueprintInputOutput.tsx';
+import { useFactoriesWithBlueprint } from '../components/useFactoriesWithBlueprint.ts';
+import { EntityLink } from '../entities/EntityLink.tsx';
 
 export const InspectBlueprintRoute: FunctionComponent = () => {
 	const { blueprintId } = useParams<{ blueprintId: string }>();
@@ -17,6 +19,7 @@ export const InspectBlueprintRoute: FunctionComponent = () => {
 		() => (blueprintId ? game.assets.blueprints.item(blueprintId) : null),
 		[blueprintId],
 	);
+	const factories = useFactoriesWithBlueprint(blueprint);
 	if (!blueprint) {
 		return null;
 	}
@@ -31,24 +34,15 @@ export const InspectBlueprintRoute: FunctionComponent = () => {
 						1,
 					)} hours per production cycle`}
 				/>
-				<BlueprintBadge blueprint={blueprint} />
+				<BlueprintInputOutput blueprint={blueprint} />
+				<ul>
+					{factories.map((f) => (
+						<li key={f.id}>
+							<EntityLink entity={f} />
+						</li>
+					))}
+				</ul>
 			</CollapsibleWindow>
-			{/* {entity.type === 'person' ? (
-				<GameNavigation>
-					<GameNavigationButton
-						symbol="💰"
-						path={ROUTE_ENTITIES_PEOPLE_TRADE_DETAILS}
-						params={{ entityId: entity.id }}
-						tooltip="Trade"
-					/>
-					<GameNavigationButton
-						symbol="👔"
-						path={ROUTE_ENTITIES_PEOPLE_JOBS_DETAILS}
-						params={{ entityId: entity.id }}
-						tooltip="Jobs"
-					/>
-				</GameNavigation>
-			) : null} */}
 		</>
 	);
 };

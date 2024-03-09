@@ -9,8 +9,9 @@ import { SaveJsonContext } from '../types-savedgame.ts';
 import { type CallbackFn, type CoordinateI, type SimpleCoordinate, type TileI } from '../types.ts';
 import { Entity, type SaveEntityJson } from './entity.ts';
 import { Need, type SaveNeedJson } from './Need.ts';
+import * as behaviorTree from '../systems/behaviorTree.ts';
 
-type PersonEntityPassportOptions = {
+export type PersonEntityPassportOptions = {
 	gender: 'm' | 'f';
 	firstName: string;
 };
@@ -126,11 +127,6 @@ export class PersonEntity extends Entity {
 		super(id, location);
 
 		const { needs, ...passport } = options;
-
-		for (const need of this.needs) {
-			need.set(needs?.[need.id] || 1, true);
-		}
-
 		this.passport = passport;
 
 		// Movement handling
@@ -138,60 +134,22 @@ export class PersonEntity extends Entity {
 			await this.$$location.set(loc);
 		});
 
+		for (const need of this.needs) {
+			need.set(needs?.[need.id] || 1, true);
+		}
 		// Register need into game event loop
 		this.$attach.on(async (game) => {
 			for (const need of this.needs) {
 				this.$detach.once(() => need.detach());
 				await need.attach(game);
 			}
-
-			let behaviorLoopEnabled = false;
-			const $behaviorEnded = new Event('behavior ended');
-			const $behaviorEndedEmit = $behaviorEnded.emit.bind($behaviorEnded);
-			$behaviorEnded.on(() => {
-				behaviorLoopEnabled = false;
-				doBehaviourLoop();
-			});
-			const doBehaviourLoop = async () => {
-				if (behaviorLoopEnabled) {
-					throw new Error('You should not start two behavior loops at once');
-				}
-				const behavior = this.$behavior.get();
-				if (!behavior) {
-					return;
-				}
-				behaviorLoopEnabled = true;
-				try {
-					await behavior.evaluate({ game, entity: this });
-				} catch (error: Error | BehaviorTreeSignal | unknown) {
-					if ((error as BehaviorTreeSignal)?.type !== 'fail') {
-						throw error;
-					}
-					// The following means that the entity will retry the behavior tree again in the same
-					// frame if it fails entirely. This is probably not what you want, since it can lead
-					// to max call stack size exceeeded errors -- but simply waiting to retry again
-					// is not a great fix either. Instead the behavior tree should be fixed.
-				}
-				void $behaviorEndedEmit();
-
-				// However, should you need it, here is a 1000 time retry timeout:
-				// b.then($behaviorEndedEmit, () => {
-				// 	game.time.setTimeout($behaviorEndedEmit, 1000);
-				// });
-			};
-			doBehaviourLoop();
-			this.$detach.once(
-				this.$behavior.on(async () => {
-					if (behaviorLoopEnabled) {
-						// @TODO Cancel the previous behavior if there was one
-						return;
-					}
-					await doBehaviourLoop();
-				}),
-			);
-
 			// @TODO necessary?
 			// this.$detach.once(() => this.needs.forEach((need) => need.clear()));
+		});
+
+		// Register behavior tree system
+		this.$attach.on(async (game) => {
+			behaviorTree.attachSystem(game, this);
 		});
 	}
 

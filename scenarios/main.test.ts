@@ -1,12 +1,13 @@
 import { describe, expect, it, run, beforeAll } from 'tincan';
 
-import { FactoryBuildingEntity, PersonEntity, SettlementEntity, TestDriver, Game } from '@lib/core';
-import createGeneratorDemo from './generator.ts';
+import { FactoryBuildingEntity, PersonEntity, SettlementEntity, TestDriver, Game } from '@lib';
+import createGeneratorDemo from './main.ts';
 
 describe('Default generator', async () => {
 	let game: Game;
 	beforeAll(async () => {
-		game = (await createGeneratorDemo(new TestDriver())).game;
+		game = await createGeneratorDemo(new TestDriver());
+		// new TestDriver().attach(game);
 	});
 
 	it('Has several entities of various types', () => {

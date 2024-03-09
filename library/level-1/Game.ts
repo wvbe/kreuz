@@ -13,6 +13,7 @@ import { BehaviorTreeNodeI } from './mod.ts';
 import { Terrain } from './terrain/Terrain.ts';
 import { SavedGameJson } from './types-savedgame.ts';
 import { SeedI } from './types.ts';
+import { DriverI } from './drivers/types.ts';
 
 export type GameAssets = {
 	behaviorNodes: Registry<BehaviorTreeNodeI<EntityBlackboard>>;
@@ -44,7 +45,7 @@ export default class Game {
 	 * EVENTED VALUES
 	 */
 
-	constructor(seed: SeedI, terrain: Terrain, assets: GameAssets) {
+	constructor(driver: DriverI, seed: SeedI, terrain: Terrain, assets: GameAssets) {
 		this.seed = seed;
 		this.terrain = terrain;
 		this.assets = assets;
@@ -57,6 +58,8 @@ export default class Game {
 				await entity.detach();
 			}
 		});
+
+		driver.attach(this);
 	}
 
 	/**
@@ -88,8 +91,12 @@ export default class Game {
 			seed: this.seed,
 		};
 	}
-	public static async fromSaveJson(assets: GameAssets, save: SavedGameJson): Promise<Game> {
-		const game = new Game(save.seed, Terrain.fromSaveJson(save.terrain), assets);
+	public static async fromSaveJson(
+		driver: DriverI,
+		assets: GameAssets,
+		save: SavedGameJson,
+	): Promise<Game> {
+		const game = new Game(driver, save.seed, Terrain.fromSaveJson(save.terrain), assets);
 		await game.entities.add(
 			...(await Promise.all(save.entities.map((entity) => castSaveJsonToEntity(assets, entity)))),
 		);

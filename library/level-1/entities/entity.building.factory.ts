@@ -172,7 +172,10 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 			this.$detach.once(async () => {
 				await this.$$progress.detach();
 			});
+
+			// @TODO no need to perform attachSystem in $attach, because `game` is not required?
 			blueprintProduction.attachSystem(this);
+
 			this.$blueprint.set(this.options.blueprint);
 		});
 	}

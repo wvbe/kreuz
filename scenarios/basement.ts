@@ -6,12 +6,12 @@
  * The expected outcome is a short-running game that ends the timeloop amicably because there is
  * no further events planned.
  */
-import { FactoryBuildingEntity, Game, generateGridTerrainFromAscii, PersonEntity } from '@lib/core';
-import { headOfState } from '../level-2/heroes.ts';
 import { blueprints, DEFAULT_ASSETS } from '@lib/assets';
-import { Demo } from './types.ts';
+import { FactoryBuildingEntity, Game, generateGridTerrainFromAscii, PersonEntity } from '@lib/core';
+import { headOfState } from '../library/level-2/heroes/heroes.ts';
+import { DriverI } from '@lib';
 
-const demo: Demo = async (driver) => {
+export default async function (driver: DriverI) {
 	const terrain = generateGridTerrainFromAscii(`
 		XXXXXXXXXXXX
 		XXXXXXXXXXXX
@@ -22,13 +22,14 @@ const demo: Demo = async (driver) => {
 		XXXXXXXXXXXX
 	`);
 
-	const game = new Game('1', terrain, DEFAULT_ASSETS);
-	await driver.attach(game);
+	const game = new Game(driver, '1', terrain, DEFAULT_ASSETS);
 
 	const entity = new PersonEntity('1', terrain.getTileClosestToXy(0, 0).toArray(), {
 		gender: 'm',
 		firstName: 'Melanie',
 	});
+
+	entity.needs.find((need) => need.id === 'water')!.set(0.1);
 	await game.entities.add(entity);
 
 	const well = new FactoryBuildingEntity(
@@ -42,8 +43,5 @@ const demo: Demo = async (driver) => {
 		},
 	);
 	await game.entities.add(well);
-
-	return { driver, game };
-};
-
-export default demo;
+	return game;
+}

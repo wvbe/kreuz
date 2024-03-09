@@ -13,8 +13,8 @@ describe('generateFamilyTree', () => {
 			population: 254,
 			populationCumulative: 347,
 			couples: 57,
-			widowers: 23,
-			percentageHasChildren: 0.3543307086614173,
+			widowers: 21,
+			percentageHasChildren: 0.35826771653543305,
 		}));
 });
 

@@ -1,5 +1,5 @@
 import { FactoryBuildingEntityOptions } from '@lib/core';
-import * as blueprints from './blueprints.ts';
+import * as blueprints from '../blueprints.ts';
 
 export const WHEAT_FARM: FactoryBuildingEntityOptions = {
 	description: 'Grows wheat for feeding people and pets with',

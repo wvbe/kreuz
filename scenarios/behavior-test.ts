@@ -15,18 +15,15 @@ import {
 	Random,
 	MarketBuildingEntity,
 	SettlementEntity,
-} from '@lib/core';
-import { headOfState } from '../level-2/heroes.ts';
-import {
-	blueprints,
-	behavior,
-	getRandomSettlementName,
-	DEFAULT_ASSETS,
-	materials,
-} from '@lib/assets';
-import { Demo } from './types.ts';
+} from '@lib';
+import { headOfState } from '../library/level-2/heroes/heroes.ts';
+import { blueprints, behavior, DEFAULT_ASSETS, materials } from '@lib/assets';
+import { Demo } from '../library/level-3/types.ts';
 
-const demo: Demo = async (driver) => {
+import { generateSettlementName } from '../library/level-3/utils/generateSettlementName.ts';
+import { DriverI } from '@lib';
+
+export default async function (driver: DriverI) {
 	const terrain = generateGridTerrainFromAscii(`
 		XXXXXXXXXXXXXXX
 		XXXXXXXXXXXXXXX
@@ -42,7 +39,7 @@ const demo: Demo = async (driver) => {
 		XXXXXXXXXXXXXXX
 	`);
 
-	const game = new Game('1', terrain, DEFAULT_ASSETS);
+	const game = new Game(driver, '1', terrain, DEFAULT_ASSETS);
 	await driver.attach(game);
 
 	const entity = new PersonEntity(
@@ -63,7 +60,7 @@ const demo: Demo = async (driver) => {
 		'settlement',
 		terrain.getTileClosestToXy(13, 8).toArray(),
 		{
-			name: getRandomSettlementName(['settlement name']),
+			name: generateSettlementName(['settlement name']),
 			areaSize: 1,
 			minimumBuildingLength: 1,
 			scale: 1,
@@ -94,6 +91,4 @@ const demo: Demo = async (driver) => {
 	await entity.$behavior.set(behavior.civilianBehavior);
 
 	return { driver, game };
-};
-
-export default demo;
+}

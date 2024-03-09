@@ -78,11 +78,10 @@ export class BrowserDriver extends Driver implements DriverI {
 			entities
 				.filter((entity): entity is PersonEntity => entity instanceof PersonEntity)
 				.forEach((entity) => {
-					this.$detach.once(
-						entity.$stepStart.on((_destination, duration, done) => {
-							game.time.setTimeout(done, duration);
-						}),
-					);
+					const destroy = entity.$stepStart.on((_destination, duration, done) => {
+						game.time.setTimeout(done, duration);
+					});
+					this.$detach.once(destroy);
 				});
 		};
 		// Whenever an entity starts to move, make sure that the "animation" ends at some point too.

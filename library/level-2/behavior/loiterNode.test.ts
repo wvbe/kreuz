@@ -6,6 +6,7 @@ import { createLoiterBehavior } from './reusable/nodes/createLoiterBehavior.ts';
 
 describe('BT: createLoiterBehavior()', async () => {
 	const game = new Game(
+			new TestDriver(),
 			'1',
 			generateGridTerrainFromAscii(`
 				XXXXXXXXXXXXXXXXXXXXX
@@ -31,7 +32,6 @@ describe('BT: createLoiterBehavior()', async () => {
 	entity.$pathEnd.on(pathEnd);
 
 	beforeAll(async () => {
-		await new TestDriver().attach(game);
 		await game.entities.add(entity);
 		await entity.$behavior.set(createLoiterBehavior());
 	});

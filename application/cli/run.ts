@@ -11,10 +11,11 @@
  *   deno run -A --inspect-brk demo.ts ./level-3/factories.ts
  */
 
-import { Demo, TestDriver } from './mod.ts';
+import { Demo, TestDriver } from '../../library/mod.ts';
 
 const demo: Demo = await import(self.Deno.args[0]);
 const { driver, game } = await demo.default(new TestDriver());
+
 console.log(game.time.now);
 try {
 	await driver.startUntilStop();

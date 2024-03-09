@@ -10,12 +10,9 @@ export * as behavior from './behavior.ts';
  */
 export * as blueprints from './blueprints.ts';
 
-export * as heroes from './heroes.ts';
+export * as heroes from './heroes/heroes.ts';
 
 /**
  * @deprecated Prefer to get from its registry in {@link DEFAULT_ASSETS}.
  */
 export * as materials from './materials.ts';
-
-// Data & generators
-export * from './constants/names.ts';

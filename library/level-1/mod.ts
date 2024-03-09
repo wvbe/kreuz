@@ -29,7 +29,7 @@ export {
 	type FactoryBuildingEntityOptions,
 } from './entities/entity.building.factory.ts';
 export { MarketBuildingEntity } from './entities/entity.building.market.ts';
-export { PersonEntity } from './entities/entity.person.ts';
+export { PersonEntity, type PersonEntityPassportOptions } from './entities/entity.person.ts';
 export { HeroPersonEntity } from './entities/entity.person.hero.ts';
 export { SettlementEntity } from './entities/entity.settlement.ts';
 export { Entity } from './entities/entity.ts';
@@ -48,7 +48,6 @@ export { Coordinate } from './terrain/Coordinate.ts';
 export { DualMeshTile } from './terrain/DualMeshTile.ts';
 export { SquareTile } from './terrain/SquareTile.ts';
 export { Terrain } from './terrain/Terrain.ts';
-export { Tile } from './terrain/Tile.ts';
 export * from '../test/generateGridTerrainFromAscii.ts';
 
 // Constants:

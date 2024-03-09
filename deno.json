@@ -8,7 +8,7 @@
 	"tasks": {
 		"debug": "deno run --allow-all --inspect-brk",
 		"build": "deno run -A application/debug/build.ts _site/index.html",
-		"watch": "npx chokidar-cli \"library/**/*\" \"ui/**/*\" \"application/**/*\" -c \"deno task build\"",
+		"watch": "npx chokidar-cli \"library/**/*\" \"ui/**/*\" \"application/**/*\" \"scenarios/**/*\" -c \"deno task build\"",
 		"dev": "deno task build && deno task watch",
 		"bundle:deprecated": "deno bundle ./library/mod.ts bundle.js",
 		"test": "deno test",

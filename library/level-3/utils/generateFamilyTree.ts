@@ -3,14 +3,6 @@ import { Random, TimeLine } from '@lib/core';
 type Sexuality = 'hetero' | 'homo' | 'bi';
 // type TraditionalGender = 'm' | 'f';
 
-function mermaidPieChart(label: string, data: { [key: string]: number }) {
-	return (
-		['\npie title ' + label, ...Object.keys(data).map((key) => `"${key}" : ${data[key]}`)].join(
-			'\n    ',
-		) + '\n'
-	);
-}
-
 export async function generateFamilyTree(seed: number, dateMax: number) {
 	const TIME = new TimeLine();
 	let seedIncrement = seed;
@@ -76,6 +68,13 @@ export async function generateFamilyTree(seed: number, dateMax: number) {
 		public die() {
 			this.deathDate = TIME.now;
 			EVENT`${this} died at age ${this.age}`;
+		}
+		public chanceOfDying(): number {
+			if (this.age > 99) {
+				return 0.9;
+			}
+
+			return (this.age - 50) / 300;
 		}
 		partner?: Person;
 		isMarriedWith(person: Person) {
@@ -172,7 +171,7 @@ export async function generateFamilyTree(seed: number, dateMax: number) {
 	TIME.on(() => {
 		const populationAlive = PERSONS.filter((p) => p.alive);
 		populationAlive
-			.filter((p) => p.age > 99 || Random.boolean([++seedIncrement], (p.age - 50) / 300))
+			.filter((p) => Random.boolean([++seedIncrement], p.chanceOfDying()))
 			.forEach((p) => p.die());
 		if (populationAlive.length > 9999) {
 			return;
@@ -226,19 +225,6 @@ export async function generateFamilyTree(seed: number, dateMax: number) {
 				percentageHasChildren:
 					populationAlive.filter((p) => p.children.length).length / populationAlive.length,
 			};
-		},
-		makeMermaidPiechartOfAgeDistribution: () => {
-			const populationAlive = PERSONS.filter((p) => p.alive);
-			return mermaidPieChart(
-				'Age distribution',
-				[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].reduce((all, to, i, ages) => {
-					const from = i ? ages[i - 1] : 0;
-					return {
-						...all,
-						[`${from}-${to}`]: populationAlive.filter((p) => p.age >= from && p.age < to).length,
-					};
-				}, {}),
-			);
 		},
 	};
 }

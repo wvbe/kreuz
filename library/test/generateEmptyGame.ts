@@ -18,8 +18,5 @@ export async function generateEmptyGame(
 	ascii: string = defaultEmptyGameMap,
 	driver: DriverI = new TestDriver(),
 ) {
-	const game = new Game('1', generateGridTerrainFromAscii(ascii), DEFAULT_ASSETS);
-	await driver.attach(game);
-	// driver.start();
-	return game;
+	return new Game(driver, '1', generateGridTerrainFromAscii(ascii), DEFAULT_ASSETS);
 }

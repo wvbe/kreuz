@@ -7,13 +7,14 @@ import { DriverI, Game, TestDriver, type PersonEntity } from '@lib/core';
 describe('"The basement"', async () => {
 	let game: Game, driver: DriverI, melanie: PersonEntity;
 	beforeAll(async () => {
-		const demo = await createBasementDemo(new TestDriver());
-		game = demo.game;
-		driver = demo.driver;
+		game = await createBasementDemo(new TestDriver());
+		driver = new TestDriver();
 		melanie = game.entities.get(0);
+
+		driver.attach(game);
 	});
 
-	it('Riane is called Riane, and she has needs', () => {
+	it('Melanie is called Melanie, and she has needs', () => {
 		expect(melanie.name).toBe('Melanie');
 		melanie.needs.forEach((need) => {
 			expect(need.get()).toBeGreaterThan(0);
@@ -24,9 +25,10 @@ describe('"The basement"', async () => {
 		expect(await driver.startUntilStop()).toBeUndefined();
 
 		expect(game.time.getNextEventAbsoluteTime()).toBe(Infinity);
+		expect(game.time.now).toBeGreaterThan(0);
 	});
 
-	it("All of Riane's needs are depleted", () => {
+	it("All of Melanie's needs are depleted", () => {
 		melanie.needs.forEach((need) => {
 			expect(need.get()).toBe(0);
 		});

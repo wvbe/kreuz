@@ -4,27 +4,22 @@
 
 import {
 	ChurchBuildingEntity,
+	DEFAULT_ASSETS,
 	FactoryBuildingEntity,
 	Game,
 	MarketBuildingEntity,
 	PersonEntity,
 	Random,
 	SettlementEntity,
-} from '@lib/core';
-import { headOfState } from '../level-2/heroes.ts';
-import {
-	DEFAULT_ASSETS,
-	FIRST_NAMES_F,
-	FIRST_NAMES_M,
 	behavior,
 	blueprints,
 	materials,
-	getRandomSettlementName,
-} from '@lib/assets';
-import { Demo } from './types.ts';
-import { generateDualMeshTerrain } from './utils/generateDualMeshTerrain.ts';
-import { generateEmptyGame } from '@test';
-import { growWheat } from '../level-2/blueprints.ts';
+} from '@lib';
+import { headOfState } from '../library/level-2/heroes/heroes.ts';
+import { generateDualMeshTerrain } from '../library/level-3/utils/generateDualMeshTerrain.ts';
+import { generatePassport } from '../library/level-3/utils/generatePassport.ts';
+import { generateSettlementName } from '../library/level-3/utils/generateSettlementName.ts';
+import { DriverI } from '@lib';
 
 const TOOLS = [materials.axe, materials.hammer, materials.pickaxe, materials.woodsaw];
 
@@ -62,16 +57,11 @@ export async function generateEntities(game: Game) {
 
 	for (let i = 0; i < Random.between(36, 54, game.seed, 'guardamount'); i++) {
 		const id = `${game.seed}-person-${i}`;
-		const gender = Random.boolean([id, 'gender'], 0.5) ? 'm' : 'f';
-		const firstName = Random.fromArray(
-			gender === 'm' ? FIRST_NAMES_M : FIRST_NAMES_F,
+		const person = new PersonEntity(
 			id,
-			'gender',
+			Random.fromArray(walkableTiles, id).toArray(),
+			generatePassport([id]),
 		);
-		const person = new PersonEntity(id, Random.fromArray(walkableTiles, id).toArray(), {
-			gender,
-			firstName,
-		});
 		await Promise.all([
 			person.wallet.set(Random.between(20, 500, id, 'munnie')),
 			game.entities.add(person),
@@ -84,7 +74,7 @@ export async function generateEntities(game: Game) {
 		const tile = Random.fromArray(walkableTiles, id);
 		await game.entities.add(
 			new SettlementEntity(id, tile.toArray(), {
-				name: getRandomSettlementName([id]),
+				name: generateSettlementName([id]),
 				areaSize: Random.between(0.3, 0.6, game.seed, 'setsize', i),
 				minimumBuildingLength: 0.2,
 				scale: 0.5,
@@ -140,14 +130,9 @@ export async function generateEntities(game: Game) {
 	}
 }
 
-const demo: Demo = async (driver) => {
-	const game = new Game(1, generateDualMeshTerrain(1, 40, 1), DEFAULT_ASSETS);
-	await driver.attach(game);
-
+export default async function (driver: DriverI) {
+	const game = new Game(driver, 1, generateDualMeshTerrain(1, 40, 1), DEFAULT_ASSETS);
 	await generateEntities(game);
 	await generateRandomInventories(game);
-
-	return { driver, game };
-};
-
-export default demo;
+	return game;
+}

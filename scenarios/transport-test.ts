@@ -6,13 +6,12 @@
  * The expected outcome is a short-running game that ends the timeloop amicably because there is
  * no further events planned.
  */
+import { DriverI } from '@lib';
+import { behavior, blueprints, DEFAULT_ASSETS, materials } from '@lib/assets';
 import { FactoryBuildingEntity, Game, generateGridTerrainFromAscii, PersonEntity } from '@lib/core';
-import { headOfState } from '../level-2/heroes.ts';
-import { DEFAULT_ASSETS, materials } from '@lib/assets';
-import { blueprints, behavior } from '@lib/assets';
-import { Demo } from './types.ts';
+import { headOfState } from '../library/level-2/heroes/heroes.ts';
 
-const demo: Demo = async (driver) => {
+export default async function (driver: DriverI) {
 	const terrain = generateGridTerrainFromAscii(`
 		XXXXXXXXXXXX
 		XXXXXXXXXXXX
@@ -22,8 +21,7 @@ const demo: Demo = async (driver) => {
 		XXXXXXXXXXXX
 		XXXXXXXXXXXX
 	`);
-	const game = new Game('1', terrain, DEFAULT_ASSETS);
-	await driver.attach(game);
+	const game = new Game(driver, '1', terrain, DEFAULT_ASSETS);
 
 	const farm = new FactoryBuildingEntity(
 		'farm',
@@ -56,10 +54,9 @@ const demo: Demo = async (driver) => {
 			firstName: 'Melanie',
 		});
 		await game.entities.add(entity);
+
 		await entity.$behavior.set(behavior.civilianBehavior);
 	}
 
-	return { driver, game };
-};
-
-export default demo;
+	return game;
+}

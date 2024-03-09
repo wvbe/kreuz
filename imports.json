@@ -3,8 +3,9 @@
 		"@lib": "./library/mod.ts",
 		"@lib/core": "./library/level-1/mod.ts",
 		"@lib/assets": "./library/level-2/mod.ts",
-		"@lib/demos": "./library/level-3/mod.ts",
+		"@lib/generators": "./library/level-3/mod.ts",
 		"@test": "./library/test/mod.ts",
+		"@scenarios": "./scenarios/mod.ts",
 		"@ui": "./ui/mod.ts",
 
 		"seedrandom": "./vendor/seedrandom.js",

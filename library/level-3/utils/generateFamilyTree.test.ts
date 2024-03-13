@@ -1,5 +1,5 @@
 import { expect, it, describe, run } from 'tincan';
-import { generateFamilyTree } from './generateFamilyTree.ts';
+import { generateFamilyTree } from '@lib/generators';
 
 describe('generateFamilyTree', () => {
 	let result: ReturnType<typeof generateFamilyTree> extends Promise<infer P> ? P : never;

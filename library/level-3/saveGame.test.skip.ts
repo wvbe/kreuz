@@ -1,7 +1,6 @@
 import { describe, expect, it, run, beforeAll } from 'tincan';
 
-import { TestDriver, Game } from '@lib/core';
-import { DEFAULT_ASSETS } from '@lib/assets';
+import { TestDriver, Game, DEFAULT_ASSETS } from '@lib/assets';
 import createGeneratorDemo from '../../scenarios/main.ts';
 
 describe.skip('Loading the initial game', async () => {

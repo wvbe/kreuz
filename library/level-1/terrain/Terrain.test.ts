@@ -1,4 +1,4 @@
-import { expect, it, describe, run } from 'tincan';
+import { expect, it, describe, run } from '@test';
 import { Terrain } from './Terrain.ts';
 import { generateGridTerrainFromAscii } from '../../test/generateGridTerrainFromAscii.ts';
 

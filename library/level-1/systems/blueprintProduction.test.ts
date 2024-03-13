@@ -1,7 +1,7 @@
-import { describe, expect, it, run, generateEmptyGame } from '@test';
 import { FactoryBuildingEntity, PersonEntity } from '@lib';
+import { expect, generateEmptyGame } from '@test';
+import { createJobWorkBehavior } from '../../level-2/behavior/reusable/nodes/createJobWorkBehavior.ts';
 import { growWheat } from '../../level-2/blueprints.ts';
-import { beforeAll } from 'tincan';
 import { wheat } from '../../level-2/materials.ts';
 
 Deno.test('System: blueprintProduction', async (test) => {
@@ -17,7 +17,7 @@ Deno.test('System: blueprintProduction', async (test) => {
 	});
 	await game.entities.add(worker);
 	await game.entities.add(factory);
-	void factory.assignJobToEntity({ game, entity: worker });
+	await worker.$behavior.set(createJobWorkBehavior());
 
 	await test.step('Opening scenario', async (test) => {
 		await test.step('Time is zero', () => {
@@ -67,7 +67,7 @@ Deno.test('System: blueprintProduction', async (test) => {
 		});
 	});
 
-	await test.step('When the worker has been around long enough', async (test) => {
+	await test.step('When the worker has been around long enough for 1 production cycle', async (test) => {
 		await game.time.steps(16496);
 		await test.step('Time is at 20000', () => {
 			expect(game.time.now).toBe(20_000);
@@ -76,9 +76,19 @@ Deno.test('System: blueprintProduction', async (test) => {
 			expect(factory.inventory.availableOf(wheat)).toBe(1);
 		});
 		await test.step('Factory has stopped', () => {
-			expect(factory.$workers.length).toBe(0);
-			expect(factory.$$progress.delta).toBe(0);
-			expect(factory.$$progress.get()).toBe(0);
+			expect(factory.$workers.length).toBe(1);
+			expect(factory.$$progress.delta).toBeGreaterThan(0);
+			expect(factory.$$progress.get()).toBe(0.6900000000000004);
+		});
+	});
+
+	await test.step('When the worker has been around long enough for 1 production cycle', async (test) => {
+		await game.time.steps(10_000);
+		await test.step('Time is at 20000', () => {
+			expect(game.time.now).toBe(30_000);
+		});
+		await test.step('Factory produced another thing', () => {
+			expect(factory.inventory.availableOf(wheat)).toBe(2);
 		});
 	});
 });

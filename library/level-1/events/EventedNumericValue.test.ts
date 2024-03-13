@@ -1,4 +1,4 @@
-import { expect, it, describe, mock, run } from 'tincan';
+import { expect, it, describe, mock, run } from '@test';
 import { SaveJsonContext } from '../types-savedgame.ts';
 import { EventedNumericValue } from './EventedNumericValue.ts';
 

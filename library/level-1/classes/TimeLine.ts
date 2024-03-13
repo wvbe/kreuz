@@ -1,5 +1,5 @@
-import { SaveJsonContext, SaveTimeJson } from '../types-savedgame.ts';
-import { CallbackFn, DestroyerFn } from '../types.ts';
+import { type SaveJsonContext, type SaveTimeJson } from '../types-savedgame.ts';
+import { type CallbackFn, type DestroyerFn } from '../types.ts';
 import { EventedValue } from '../events/EventedValue.ts';
 
 export class TimeLine extends EventedValue<number> {

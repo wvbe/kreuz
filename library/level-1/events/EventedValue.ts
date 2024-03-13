@@ -1,7 +1,6 @@
-import { JsonValue } from 'https://deno.land/std@0.185.0/json/common.ts';
+import { type JsonValue } from 'https://deno.land/std@0.185.0/json/common.ts';
 import { Event } from './Event.ts';
-import Game from '../Game.ts';
-import { SaveJsonContext } from '../types-savedgame.ts';
+import { type SaveJsonContext } from '../types-savedgame.ts';
 
 export type SaveEventedValueJson<As extends JsonValue = JsonValue> = {
 	current: As;

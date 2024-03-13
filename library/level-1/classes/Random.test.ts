@@ -1,4 +1,4 @@
-import { expect, it, describe, run } from 'tincan';
+import { expect, it, describe, run } from '@test';
 import { Random } from './Random.ts';
 
 describe('Random', () => {

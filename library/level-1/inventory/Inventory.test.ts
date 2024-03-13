@@ -1,4 +1,4 @@
-import { describe, expect, it, mock, run } from 'tincan';
+import { describe, expect, it, mock, run } from '@test';
 import { TradeOrder } from '../classes/TradeOrder.ts';
 import { PersonEntity } from '../entities/entity.person.ts';
 import { Inventory } from './Inventory.ts';

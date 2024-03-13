@@ -1,4 +1,4 @@
-import { describe, expect, it, run } from 'tincan';
+import { describe, expect, it, run } from '@test';
 import { ReplacementSpace } from './ReplacementSpace.ts';
 
 it('replace', () => {

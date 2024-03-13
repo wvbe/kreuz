@@ -2,11 +2,8 @@
  * @TODO Decouple from level 2 and 3 APIs
  */
 
-import { describe, expect, it, run } from 'tincan';
-import { PersonEntity } from './entity.person.ts';
-
-import { DEFAULT_ASSETS } from '@lib/assets';
-import { createConsumeBehavior } from '../../level-2/behavior/reusable/nodes/createConsumeBehavior.ts';
+import { describe, expect, it, run } from '@test';
+import { PersonEntity, DEFAULT_ASSETS } from '@lib';
 
 const hydrateSelfBehavior = DEFAULT_ASSETS.behaviorNodes.item('bt-17');
 

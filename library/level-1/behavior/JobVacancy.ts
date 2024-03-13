@@ -4,7 +4,7 @@ import { EventedNumericValue } from '../events/EventedNumericValue.ts';
 import { BehaviorTreeNodeI, EntityBlackboard } from './types.ts';
 import { black } from 'https://deno.land/std@0.106.0/fmt/colors.ts';
 import { VendorEntity } from '../../level-2/behavior/reusable/primitives/types.ts';
-import { FactoryBuildingEntity } from '@lib/core';
+import { FactoryBuildingEntity } from '../entities/entity.building.factory.ts';
 
 /**
  * A function that scores how desirable a job is for a person:

@@ -1,4 +1,4 @@
-import { expect, it, describe, run, beforeAll } from 'tincan';
+import { expect, it, describe, run, beforeAll } from '@test';
 import { KeyedCollection } from './KeyedCollection.ts';
 
 describe('KeyedCollection', () => {

@@ -1,4 +1,4 @@
-import { expect, it, describe, run, mock } from 'tincan';
+import { expect, it, describe, run, mock } from '@test';
 import { Collection } from './Collection.ts';
 
 function createMocks<T>() {

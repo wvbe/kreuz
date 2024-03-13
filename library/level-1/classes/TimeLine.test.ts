@@ -1,4 +1,4 @@
-import { expect, it, describe, run, mock } from 'tincan';
+import { expect, it, describe, run, mock } from '@test';
 import { TimeLine } from './TimeLine.ts';
 
 function noop() {

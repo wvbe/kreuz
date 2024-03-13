@@ -1,4 +1,4 @@
-import { expect, it, describe, mock, run } from 'tincan';
+import { expect, it, describe, mock, run } from '@test';
 import { CallbackFn } from '../types.ts';
 import { Event } from './Event.ts';
 

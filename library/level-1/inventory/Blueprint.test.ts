@@ -1,4 +1,4 @@
-import { describe, expect, it, run } from 'tincan';
+import { describe, expect, it, run } from '@test';
 import { Blueprint } from './Blueprint.ts';
 import { Inventory } from './Inventory.ts';
 import { Material } from './Material.ts';

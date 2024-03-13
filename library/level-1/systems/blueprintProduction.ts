@@ -1,12 +1,20 @@
-import { EntityI, EventedValue, Inventory } from '@lib';
 import Game from '../Game.ts';
 import { Collection } from '../events/Collection.ts';
 import { ProgressingNumericValue } from '../events/ProgressingNumericValue.ts';
 import { Blueprint } from '../inventory/Blueprint.ts';
+import { FactoryBuildingEntityOptions } from '../entities/entity.building.factory.ts';
+import { JobVacancy } from '../behavior/JobVacancy.ts';
+import { TileI } from '../types.ts';
+import { EntityI } from '../entities/types.ts';
+import { Inventory } from '../inventory/Inventory.ts';
+import { EventedValue } from '../events/EventedValue.ts';
 
-type WorkerEntity = EntityI;
+type WorkerEntity = EntityI & {
+	walkToTile: (tile: TileI) => Promise<void>;
+};
 
 type ProductionEntity = EntityI & {
+	options: FactoryBuildingEntityOptions;
 	inventory: Inventory;
 	$workers: Collection<WorkerEntity>;
 	$blueprint: EventedValue<Blueprint | null>;
@@ -73,7 +81,32 @@ function isBlueprintCycleBusy(factory: ProductionEntity): boolean {
 	return isBusy;
 }
 
-export function attachSystemToEntity(game: Game, factory: ProductionEntity) {
+async function assignWorkerToFactory(game: Game, worker: WorkerEntity, factory: ProductionEntity) {
+	// ...
+	await worker.$status.set(`Going to ${factory} for work`);
+	const tile = game.terrain.getTileEqualToLocation(factory.$$location.get());
+	await worker.walkToTile(tile);
+
+	await factory.$workers.add(worker);
+
+	await worker.$status.set(`Working in ${factory}`);
+
+	// Finish job when the worker is removed from the worker list. factory happens
+	// when the factory is not productive for a while..
+	await new Promise<void>((resolve) => {
+		const unlisten = factory.$workers.$remove.on((removed) => {
+			if (!removed.includes(worker)) {
+				return;
+			}
+			unlisten();
+			resolve();
+		});
+	});
+
+	await worker.$status.set(null);
+}
+
+async function attachSystemToEntity(game: Game, factory: ProductionEntity) {
 	let ignoreInventoryChanges = false;
 	let hasReservation = false;
 
@@ -208,6 +241,55 @@ export function attachSystemToEntity(game: Game, factory: ProductionEntity) {
 		},
 		true,
 	);
+
+	factory.$blueprint.on((blueprint) => {
+		if (!blueprint || blueprint.options.workersRequired < 1) {
+			return;
+		}
+		const vacancy = new JobVacancy(
+			(blackboard) => assignWorkerToFactory(game, blackboard.entity, factory),
+			{
+				vacancies: factory.options.maxWorkers,
+				employer: factory,
+				score: ({ entity }) => {
+					let VAL = 1;
+
+					const maximumDistanceWillingToTravel = 14,
+						distanceToJob = entity.$$location.get().euclideanDistanceTo(factory.$$location.get()),
+						// 1 = very close job, 0 = infinitely far
+						distanceMultiplier = Math.max(
+							0,
+							(maximumDistanceWillingToTravel - distanceToJob) / maximumDistanceWillingToTravel,
+						);
+
+					VAL *= distanceMultiplier;
+
+					if (distanceMultiplier > 0) {
+						if (
+							!blueprint.hasAllIngredients(factory.inventory) ||
+							!factory.inventory.isEverythingAdditionallyAllocatable(blueprint.products)
+						) {
+							// Not enough ingredients in inventory to start another production cycle
+							// Or not enough space to stow the products
+							VAL *= 0.1;
+							return VAL;
+						}
+					}
+
+					return VAL;
+				},
+			},
+		);
+		game.jobs.add(vacancy);
+		factory.$blueprint.once(() => game.jobs.remove(vacancy));
+	});
+
+	// factory.$detach.once(async () => {
+	// 	await factory.$$progress.detach();
+	// });
+
+	await factory.$$progress.attach(game);
+	factory.$blueprint.set(factory.options.blueprint);
 }
 
 export async function attachSystem(game: Game) {

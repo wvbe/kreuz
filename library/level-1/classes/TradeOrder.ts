@@ -84,11 +84,11 @@ export class TradeOrder {
 				]),
 		);
 
-		if (!inventory1.isEverythingAllocatable(stacks2)) {
+		if (!inventory1.isEverythingAdditionallyAllocatable(stacks2)) {
 			reasons.push([TradeFailReason.NO_SPACE_1, owner1]);
 		}
 
-		if (!inventory2.isEverythingAllocatable(stacks1)) {
+		if (!inventory2.isEverythingAdditionallyAllocatable(stacks1)) {
 			reasons.push([TradeFailReason.NO_SPACE_2, owner2]);
 		}
 

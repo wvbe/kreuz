@@ -1,8 +1,6 @@
 import { EntityI, Need, PERSON_NEEDS, PersonEntity } from '@lib';
 import React, { FunctionComponent, useMemo } from 'react';
 
-import { InventoryUI } from '../../inventory/InventoryUI.tsx';
-import { TradeOrderLog } from '../../components/TradeOrderLog.tsx';
 import { FillBar } from '../../components/atoms/FillBar.tsx';
 import { useEventedValue } from '../../hooks/useEventedValue.ts';
 

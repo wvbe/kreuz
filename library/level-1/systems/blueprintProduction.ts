@@ -1,6 +1,7 @@
 import { FactoryBuildingEntity } from '@lib/core';
 import { Blueprint } from '../inventory/Blueprint.ts';
 import { EntityI } from '@lib';
+import Game from '../Game.ts';
 
 /**
  * Checks if an entity can work on a blueprint.
@@ -50,7 +51,7 @@ function canStartNewBlueprintCycle(factory: FactoryBuildingEntity, blueprint: Bl
 		return false;
 	}
 
-	if (!factory.inventory.isEverythingAllocatable(blueprint.products)) {
+	if (!factory.inventory.isEverythingAdditionallyAllocatable(blueprint.products)) {
 		// The products cannot be stowed, so cannot start.
 		return false;
 	}
@@ -71,24 +72,51 @@ function isBlueprintCycleBusy(factory: FactoryBuildingEntity): boolean {
 	return isBusy;
 }
 
-function stopBlueprintCycle(factory: FactoryBuildingEntity) {
-	if (isBlueprintCycleBusy(factory)) {
-		factory.inventory.cancelReservation(factory);
-	}
-	factory.$$progress.set(0);
-	factory.$$progress.setDelta(0);
-	void factory.$status.set('Idle…');
-}
-
-export function attachSystem(factory: FactoryBuildingEntity) {
+export function attachSystem(game: Game, factory: FactoryBuildingEntity) {
 	let ignoreInventoryChanges = false;
+	let hasReservation = false;
 
-	function startNewBlueprintCycle(factory: FactoryBuildingEntity, blueprint: Blueprint) {
-		if (isBlueprintCycleBusy(factory)) {
-			// This might happen when a healthy blueprint cycle restarts; its delta never resets
-			// to 0, ie.it is always busy
+	function canAllocateProducts() {
+		const blueprint = factory.$blueprint.get();
+		if (!blueprint) {
+			return false;
+		}
+		return (
+			hasReservation || factory.inventory.isEverythingAdditionallyAllocatable(blueprint.products)
+		);
+	}
+
+	function stopBlueprintCycle(factory: FactoryBuildingEntity, skipClearReservation = false) {
+		if (!skipClearReservation && isBlueprintCycleBusy(factory)) {
+			hasReservation = false;
 			factory.inventory.cancelReservation(factory);
 		}
+		factory.$$progress.set(0);
+		factory.$$progress.setDelta(0);
+		void factory.$status.set('Idle…');
+
+		// Workers wait around a little bit to see if theres no more work. After an hour of idleness, they go home.
+		if (!factory.$workers.length) {
+			return;
+		}
+		game.time.setTimeout(() => {
+			if (!isBlueprintCycleBusy(factory)) {
+				console.log('Remove all the workers');
+				factory.$workers.removeAll();
+			}
+		}, 1000);
+	}
+
+	function startNewBlueprintCycle(factory: FactoryBuildingEntity, blueprint: Blueprint) {
+		if (!canAllocateProducts()) {
+			throw new Error('New cycle shouldna been started, but it was');
+		}
+		// if (isBlueprintCycleBusy(factory)) {
+		// 	// This might happen when a healthy blueprint cycle restarts; its delta never resets
+		// 	// to 0, ie.it is always busy
+		// hasReservation = false;
+		// 	factory.inventory.cancelReservation(factory);
+		// }
 		const delta = getDelta(blueprint, factory.$workers.length);
 
 		ignoreInventoryChanges = true;
@@ -99,6 +127,7 @@ export function attachSystem(factory: FactoryBuildingEntity) {
 			.then(() => {
 				ignoreInventoryChanges = false;
 			});
+		hasReservation = true;
 		factory.inventory.makeReservation(factory, blueprint.products);
 		factory.$$progress.set(0);
 		factory.$$progress.setDelta(delta);
@@ -123,13 +152,18 @@ export function attachSystem(factory: FactoryBuildingEntity) {
 		}
 		const blueprint = factory.$blueprint.get();
 		if (!blueprint || !canStartNewBlueprintCycle(factory, blueprint)) {
-			return;
+			stopBlueprintCycle(factory);
+		} else {
+			startNewBlueprintCycle(factory, blueprint);
 		}
-		startNewBlueprintCycle(factory, blueprint);
 	});
 
 	factory.$workers.$change.on(() => {
 		const blueprint = factory.$blueprint.get();
+		if (!canAllocateProducts()) {
+			stopBlueprintCycle(factory);
+			return;
+		}
 		if (isBlueprintCycleBusy(factory)) {
 			// Cycle is already running, an inventory reservation should already have been made
 			const delta = getDelta(blueprint!, factory.$workers.length);
@@ -155,12 +189,19 @@ export function attachSystem(factory: FactoryBuildingEntity) {
 				throw new Error('Blueprint is somehow unset while the cycle is completing');
 			}
 
+			if (!canAllocateProducts()) {
+				stopBlueprintCycle(factory);
+				return;
+			}
+			// All products are allocatable, so the cycle is complete
 			ignoreInventoryChanges = true;
+			hasReservation = false;
+			factory.inventory.cancelReservation(factory);
 			void factory.inventory.changeMultiple(blueprint.products).then(() => {
 				ignoreInventoryChanges = false;
 			});
 			if (!canStartNewBlueprintCycle(factory, blueprint)) {
-				stopBlueprintCycle(factory);
+				stopBlueprintCycle(factory, true);
 			} else {
 				startNewBlueprintCycle(factory, blueprint);
 			}

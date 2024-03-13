@@ -1,6 +1,6 @@
 import { EntityI, FactoryBuildingEntity, PersonEntity } from '@lib';
 import React, { FunctionComponent } from 'react';
-import { useEventData } from '../../hooks/useEventedValue.ts';
+import { useMemoFromEvent } from '../../hooks/useEventedValue.ts';
 import { EntityLink } from '../EntityLink.tsx';
 
 export const EntityWorkersDetails: FunctionComponent<{ entity: EntityI }> = ({ entity }) => {
@@ -8,7 +8,7 @@ export const EntityWorkersDetails: FunctionComponent<{ entity: EntityI }> = ({ e
 	if (!$workers) {
 		return null;
 	}
-	const workers = useEventData<[PersonEntity[], PersonEntity[]], PersonEntity[]>(
+	const workers = useMemoFromEvent<[PersonEntity[], PersonEntity[]], PersonEntity[]>(
 		$workers.$change,
 		$workers.slice(),
 		() => $workers.slice(),

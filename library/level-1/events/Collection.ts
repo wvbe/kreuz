@@ -15,6 +15,10 @@ export class Collection<ItemGeneric> {
 		await this.change([], items);
 	}
 
+	public async removeAll() {
+		await this.remove(...this.list);
+	}
+
 	/**
 	 * Add and/or remove items, emitting an update only once when all is said and done.
 	 *

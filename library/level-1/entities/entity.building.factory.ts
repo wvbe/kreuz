@@ -153,10 +153,14 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 						VAL *= distanceMultiplier;
 
 						if (distanceMultiplier > 0) {
-							if (!blueprint.hasAllIngredients(this.inventory)) {
+							if (
+								!blueprint.hasAllIngredients(this.inventory) ||
+								!this.inventory.isEverythingAdditionallyAllocatable(blueprint.products)
+							) {
 								// Not enough ingredients in inventory to start another production cycle
-								VAL *= 0;
-								return 0;
+								// Or not enough space to stow the products
+								VAL *= 0.1;
+								return VAL;
 							}
 						}
 
@@ -174,7 +178,7 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 			});
 
 			// @TODO no need to perform attachSystem in $attach, because `game` is not required?
-			blueprintProduction.attachSystem(this);
+			blueprintProduction.attachSystem(game, this);
 
 			this.$blueprint.set(this.options.blueprint);
 		});
@@ -192,14 +196,23 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 
 		await this.$workers.add(entity);
 
+		console.log('Set the job');
 		await entity.$status.set(`Working in ${this}`);
 
-		// Finish job when one work cycle completes
+		// Finish job when the worker is removed from the worker list. This happens
+		// when the factory is not productive for a while..
 		await new Promise<void>((resolve) => {
-			this.$$progress.onceAbove(1, () => resolve(), true);
+			const unlisten = this.$workers.$remove.on((removed) => {
+				if (!removed.includes(entity)) {
+					return;
+				}
+				unlisten();
+				resolve();
+			});
 		});
 
-		await this.$workers.remove(entity);
+		console.log('Unset the statush!');
+
 		await entity.$status.set(null);
 	}
 

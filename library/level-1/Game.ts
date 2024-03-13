@@ -14,6 +14,7 @@ import { Terrain } from './terrain/Terrain.ts';
 import { SavedGameJson } from './types-savedgame.ts';
 import { SeedI } from './types.ts';
 import { DriverI } from './drivers/types.ts';
+import * as healthSystem from './systems/healthSystem.ts';
 
 export type GameAssets = {
 	behaviorNodes: Registry<BehaviorTreeNodeI<EntityBlackboard>>;
@@ -58,7 +59,7 @@ export default class Game {
 				await entity.detach();
 			}
 		});
-
+		healthSystem.attachSystem(this);
 		driver.attach(this);
 	}
 

@@ -1,7 +1,7 @@
 import { Blueprint, EntityI, FactoryBuildingEntity } from '@lib';
 import { useCallback } from 'react';
 import { useGameContext } from '../context/GameContext.tsx';
-import { useEventData } from '../hooks/useEventedValue.ts';
+import { useMemoFromEvent } from '../hooks/useEventedValue.ts';
 
 export function useFactoriesWithBlueprint(blueprint: Blueprint | null) {
 	const game = useGameContext();
@@ -19,5 +19,5 @@ export function useFactoriesWithBlueprint(blueprint: Blueprint | null) {
 	if (!blueprint) {
 		return [];
 	}
-	return useEventData(game.entities.$change, game.entities.filter(filter), transform);
+	return useMemoFromEvent(game.entities.$change, game.entities.filter(filter), transform);
 }

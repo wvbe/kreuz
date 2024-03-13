@@ -8,7 +8,7 @@ export const GameNavigationButton: FC<{
 	tooltip?: string;
 }> = ({ symbol, path, params, tooltip }) => {
 	const navigate = useNavigation();
-	const onClick = useCallback(
+	const onClick = useCallback<React.MouseEventHandler<HTMLAnchorElement>>(
 		(event) => {
 			event.preventDefault();
 			event.stopPropagation();
@@ -23,5 +23,5 @@ export const GameNavigationButton: FC<{
 	);
 };
 export const GameNavigation: FC<PropsWithChildren> = ({ children }) => {
-	return <div>{children}</div>;
+	return <nav>{children}</nav>;
 };

@@ -2,7 +2,7 @@ import { Driver, PersonEntity, type DriverI, type Game, EntityI } from '@lib';
 
 export class BrowserDriver extends Driver implements DriverI {
 	game: Game | null = null;
-	gameSpeed = 1;
+	gameSpeed = 10;
 	lastUpdate: number = Date.now();
 
 	private async animate(game: Game) {

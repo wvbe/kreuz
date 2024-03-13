@@ -13,6 +13,7 @@ import { EntityBlueprintProgressDetails } from './details/EntityBlueprintProgres
 import { EntityInventoryDetails } from './details/EntityInventoryDetails.tsx';
 import { EntityNeedsDetails } from './details/EntityNeedsDetails.tsx';
 import { EntityWorkersDetails } from './details/EntityWorkersDetails.tsx';
+import { EntityHealthDetails } from './details/EntityHealthDetails.tsx';
 
 export const EntityDetails: FunctionComponent<{ entity?: EntityI | null }> = ({ entity }) => {
 	if (!entity) {
@@ -24,6 +25,7 @@ export const EntityDetails: FunctionComponent<{ entity?: EntityI | null }> = ({ 
 			<CollapsibleWindow label={`Details panel`} initiallyOpened>
 				<EntityBadge entity={entity} />
 				<EntityBlueprintBadgeDetails entity={entity} />
+				<EntityHealthDetails entity={entity} />
 				<EntityNeedsDetails entity={entity} />
 				<EntityBlueprintProgressDetails entity={entity} />
 				<EntityWorkersDetails entity={entity} />

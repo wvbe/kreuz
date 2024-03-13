@@ -1,5 +1,5 @@
 import { type Game, type DriverI } from '@lib';
-import { main as createGame } from '@scenarios';
+import { factoryTest as createGame } from '@scenarios';
 import { useEffect, useState } from 'react';
 
 export function useGeneratedGame(driver: DriverI): null | Game {

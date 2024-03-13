@@ -118,7 +118,7 @@ describe('Inventory', () => {
 	it('.isEverythingAllocatable()', async () => {
 		const inventory = new Inventory(2);
 		expect(
-			inventory.isEverythingAllocatable([
+			inventory.isEverythingAdditionallyAllocatable([
 				{ material: test1, quantity: 25 },
 				{ material: test2, quantity: 10 },
 				{ material: test2, quantity: 23 },
@@ -126,7 +126,7 @@ describe('Inventory', () => {
 		).toBeTruthy();
 		await inventory.change(test1, 1);
 		expect(
-			inventory.isEverythingAllocatable([
+			inventory.isEverythingAdditionallyAllocatable([
 				{ material: test1, quantity: 25 },
 				{ material: test2, quantity: 1 },
 			]),
@@ -142,7 +142,7 @@ describe('Inventory', () => {
 		);
 		// If you ask before a reservation is made, all is cool
 		expect(
-			inventory.isEverythingAllocatable([
+			inventory.isEverythingAdditionallyAllocatable([
 				{ material: test1, quantity: 25 },
 				// { material: test2, quantity: 10 },
 				{ material: test2, quantity: 23 },
@@ -153,7 +153,7 @@ describe('Inventory', () => {
 		// you're trying to allocate
 		inventory.makeReservationFromTradeOrder(tradeOrder);
 		expect(
-			inventory.isEverythingAllocatable([
+			inventory.isEverythingAdditionallyAllocatable([
 				{ material: test1, quantity: 25 },
 				// { material: test2, quantity: 10 },
 				{ material: test2, quantity: 23 },

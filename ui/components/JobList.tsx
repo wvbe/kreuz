@@ -1,7 +1,7 @@
 import { Collection, EntityI, Event, PersonEntity } from '@lib';
 import React, { FunctionComponent, useCallback, useMemo } from 'react';
 import { useGameContext } from '../context/GameContext.tsx';
-import { useCollection, useEventData } from '../hooks/useEventedValue.ts';
+import { useCollection, useMemoFromEvent } from '../hooks/useEventedValue.ts';
 import { CollapsibleWindow } from './atoms/CollapsibleWindow.tsx';
 import { Cell, Row, Table } from './atoms/Table.tsx';
 import { TokenizedText } from './atoms/TokenizedText.tsx';
@@ -19,7 +19,7 @@ export function useCombinedEventCollection<T>(
 				: collection.$change,
 		[],
 	);
-	return useEventData<[T[], T[]], T[]>(
+	return useMemoFromEvent<[T[], T[]], T[]>(
 		combinedEvent,
 		collection.slice(),
 		useCallback(() => collection.slice(), [collection]),

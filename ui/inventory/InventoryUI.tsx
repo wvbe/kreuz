@@ -1,7 +1,7 @@
 import { EventedValue, Inventory, MaterialState } from '@lib';
 import React, { FunctionComponent, useCallback } from 'react';
 import { InventoryStack } from './InventoryStack.tsx';
-import { useEventData, useEventedValue } from '../hooks/useEventedValue.ts';
+import { useMemoFromEvent, useEventedValue } from '../hooks/useEventedValue.ts';
 import { PopOnUpdateSpan } from '../components/atoms/PopOnUpdateSpan.tsx';
 
 export const InventoryBag: FunctionComponent<{ stacks: MaterialState[]; capacity?: number }> = ({
@@ -54,7 +54,7 @@ export const InventoryUI: FunctionComponent<{
 	wallet?: EventedValue<number>;
 	inventory: Inventory;
 }> = ({ wallet, inventory }) => {
-	const stacks = useEventData(
+	const stacks = useMemoFromEvent(
 		inventory.$change,
 		inventory.getStacks(),
 		useCallback(() => inventory.getStacks(), [inventory]),

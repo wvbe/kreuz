@@ -172,27 +172,38 @@ export class Inventory {
 	}
 
 	/**
+	 * Returns `true` if the material can be stored on top of what is already stored of it.
+	 *
+	 * @deprecated Untested, unused
+	 */
+	public isAdditionallyAllocatableTo(material: Material, delta: number): boolean {
+		return (
+			this.allocatableTo(material) >=
+			this.availableOf(material) + this.reservedOutgoingOf(material) + delta
+		);
+	}
+	/**
 	 * Returns TRUE if the specified material/quantities fit in this inventory on top of the stuff
 	 * that is already there -- keeping in mind that one stack can be of only one material type, and
 	 * that some materials or available space has already been locked in for reservations.
 	 */
-	public isEverythingAllocatable(cargo: MaterialState[]) {
+	public isEverythingAdditionallyAllocatable(cargo: MaterialState[]): boolean {
 		if (this.capacity === Infinity) {
 			return true;
 		}
 
-		return (
-			getRequiredStackSpace([
-				...getCombinedStacks([
-					// Assuming the cargo is merged with the "available" stacks, not with the stack
-					// reserves;
-					cargo,
-					this.getAvailableItems(),
-				]),
-				...this.getReservedIncomingItems(),
-				...this.getReservedOutgoingItems(),
-			]) <= this.capacity
-		);
+		const requiredStackSpace = getRequiredStackSpace([
+			...getCombinedStacks([
+				// Assuming the cargo is merged with the "available" stacks, not with the stack
+				// reserves;
+				cargo,
+				this.getAvailableItems(),
+			]),
+			...this.getReservedIncomingItems(),
+			...this.getReservedOutgoingItems(),
+		]);
+
+		return requiredStackSpace <= this.capacity;
 	}
 
 	/**
@@ -321,7 +332,7 @@ export class Inventory {
 			throw new Error('A reservation for already exists for this key');
 		}
 		const added = exchanged.filter(({ quantity }) => quantity > 0);
-		if (!this.isEverythingAllocatable(added)) {
+		if (!this.isEverythingAdditionallyAllocatable(added)) {
 			// Its not really fair to throw maybe? Might change this.
 			throw new Error('Not enough available space to make a reservation');
 		}

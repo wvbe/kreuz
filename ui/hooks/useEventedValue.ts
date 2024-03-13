@@ -7,7 +7,7 @@ function noTransformSingle<T, O = T>(value: T): O {
 }
 
 export function useCollection<T>(collection: Collection<T>) {
-	return useEventData<[T[], T[]], T[]>(
+	return useMemoFromEvent<[T[], T[]], T[]>(
 		collection.$change,
 		collection.slice(),
 		useCallback(() => collection.slice(), [collection]),
@@ -17,14 +17,14 @@ export function useCollection<T>(collection: Collection<T>) {
 /**
  * Useful if you want to subscribe to the value controlled by EventedValue.
  *
- * Contrary to {@link useEventData}, the returned value is not an array but only the value that is
+ * Contrary to {@link useMemoFromEvent}, the returned value is not an array but only the value that is
  * actually being evented.
  */
 export function useEventedValue<T = void, OutputGeneric = T>(
 	eventedValue: EventedValue<T>,
 	transform: (value: T) => OutputGeneric = noTransformSingle,
 ): OutputGeneric {
-	const values = useEventData<[T], [OutputGeneric]>(
+	const values = useMemoFromEvent<[T], [OutputGeneric]>(
 		eventedValue,
 		[transform(eventedValue.get())],
 		useCallback((value: T): [OutputGeneric] => [transform(value)], [transform]),
@@ -43,7 +43,7 @@ function noTransformMultiple<T extends unknown[], O = T>(...value: T): O {
  *
  * @deprecated clumsy naming/solving the wrong problem.
  */
-export function useEventData<
+export function useMemoFromEvent<
 	EventArgsGeneric extends unknown[] = never[],
 	OutputGeneric = EventArgsGeneric,
 >(

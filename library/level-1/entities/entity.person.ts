@@ -10,6 +10,7 @@ import { type CallbackFn, type CoordinateI, type SimpleCoordinate, type TileI } 
 import { Entity, type SaveEntityJson } from './entity.ts';
 import { Need, type SaveNeedJson } from './Need.ts';
 import * as behaviorTree from '../systems/behaviorTree.ts';
+import { ProgressingNumericValue } from '../events/ProgressingNumericValue.ts';
 
 export type PersonEntityPassportOptions = {
 	gender: 'm' | 'f';
@@ -93,6 +94,11 @@ export class PersonEntity extends Entity {
 		},
 	);
 
+	public readonly $health = new ProgressingNumericValue(
+		1,
+		{ delta: 0, granularity: 0.01, min: 0, max: 1 },
+		'health',
+	);
 	/**
 	 * The kind of information that would show up in a passport -- but since this is a perfect world,
 	 * there is no discrimination based on this to speak of :)

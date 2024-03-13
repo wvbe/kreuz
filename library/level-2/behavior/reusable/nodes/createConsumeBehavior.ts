@@ -100,9 +100,6 @@ export function createConsumeBehavior(config: ConsumptionType) {
 						);
 					}
 
-					// console.log(
-					// 	`${entity} to consume ${material}, has ${entity.inventory.availableOf(material)}`,
-					// );
 
 					await entity.$status.set(config.statusFormatter(material));
 					await entity.inventory.change(material, -1);

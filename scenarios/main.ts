@@ -62,11 +62,9 @@ export async function generateEntities(game: Game) {
 			Random.fromArray(walkableTiles, id).toArray(),
 			generatePassport([id]),
 		);
-		await Promise.all([
-			person.wallet.set(Random.between(20, 500, id, 'munnie')),
-			game.entities.add(person),
-			person.$behavior.set(behavior.civilianBehavior),
-		]);
+		await person.wallet.set(Random.between(20, 500, id, 'munnie'));
+		await game.entities.add(person);
+		await person.$behavior.set(behavior.civilianBehavior);
 	}
 
 	for (let i = 0; i < Random.between(3, 6, game.seed, 'settlements'); i++) {

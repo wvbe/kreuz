@@ -177,9 +177,6 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 				await this.$$progress.detach();
 			});
 
-			// @TODO no need to perform attachSystem in $attach, because `game` is not required?
-			blueprintProduction.attachSystem(game, this);
-
 			this.$blueprint.set(this.options.blueprint);
 		});
 	}
@@ -196,7 +193,6 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 
 		await this.$workers.add(entity);
 
-		console.log('Set the job');
 		await entity.$status.set(`Working in ${this}`);
 
 		// Finish job when the worker is removed from the worker list. This happens
@@ -210,8 +206,6 @@ export class FactoryBuildingEntity extends BuildingEntity implements EntityI {
 				resolve();
 			});
 		});
-
-		console.log('Unset the statush!');
 
 		await entity.$status.set(null);
 	}

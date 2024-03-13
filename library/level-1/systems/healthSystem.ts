@@ -10,22 +10,8 @@ type HealthfulEntity = EntityI & {
 	needs: PersonEntity['needs'];
 };
 
-function attachSystemToEntity(game: Game, person: HealthfulEntity) {
+async function attachSystemToEntity(game: Game, person: HealthfulEntity) {
 	person.$health.attach(game);
-	person.needs.forEach((need) => {
-		need.onBelow(0.1, () => {
-			const delta = person.$health.delta - dyingSpeed;
-			person.$health.setDelta(delta);
-		});
-		need.onAbove(
-			0.1,
-			() => {
-				const delta = person.$health.delta + dyingSpeed;
-				person.$health.setDelta(delta);
-			},
-			true,
-		);
-	});
 	person.$health.onceBelow(
 		0,
 		() => {
@@ -34,15 +20,44 @@ function attachSystemToEntity(game: Game, person: HealthfulEntity) {
 		},
 		true,
 	);
+
+	for (const need of person.needs) {
+		await need.attach(game);
+		// A "need" starts being detrimental to ones health when it is less than 10% satisfied
+		need.onBelow(0.1, () => {
+			const delta = person.$health.delta - dyingSpeed;
+			person.$health.setDelta(delta);
+		});
+		// When the need is satisfied 10% or more again, the detrimental effect on health is removed.
+		// @TODO This is probably buggy for entities starting life with some needs set to less than
+		// 10%, but no detrimental health delta.
+		need.onAbove(
+			0.1,
+			() => {
+				const delta = person.$health.delta + dyingSpeed;
+				person.$health.setDelta(delta);
+			},
+			true,
+		);
+
+		// @TODO
+		// person.$detach.once(() => need.detach());
+
+		// @TODO necessary?
+		// person.$detach.once(() => this.needs.forEach((need) => need.clear()));
+	}
 }
+
 export async function attachSystem(game: Game) {
-	game.entities.$add.on((entities) => {
-		entities
-			.filter(
-				(entity): entity is HealthfulEntity =>
-					(entity as PersonEntity).$health instanceof ProgressingNumericValue &&
-					Array.isArray((entity as PersonEntity).needs),
-			)
-			.forEach((person) => attachSystemToEntity(game, person));
+	game.entities.$add.on(async (entities) => {
+		await Promise.all(
+			entities
+				.filter(
+					(entity): entity is HealthfulEntity =>
+						(entity as PersonEntity).$health instanceof ProgressingNumericValue &&
+						Array.isArray((entity as PersonEntity).needs),
+				)
+				.map((person) => attachSystemToEntity(game, person)),
+		);
 	});
 }

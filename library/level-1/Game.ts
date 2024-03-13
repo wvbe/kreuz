@@ -14,6 +14,8 @@ import { Terrain } from './terrain/Terrain.ts';
 import { SavedGameJson } from './types-savedgame.ts';
 import { SeedI } from './types.ts';
 import { DriverI } from './drivers/types.ts';
+import * as blueprintProduction from './systems/blueprintProduction.ts';
+import * as behaviorTree from './systems/behaviorTree.ts';
 import * as healthSystem from './systems/healthSystem.ts';
 
 export type GameAssets = {
@@ -59,6 +61,9 @@ export default class Game {
 				await entity.detach();
 			}
 		});
+		// @TODO no need to perform attachSystem in $attach, because `game` is not required?
+		behaviorTree.attachSystem(this);
+		blueprintProduction.attachSystem(this);
 		healthSystem.attachSystem(this);
 		driver.attach(this);
 	}

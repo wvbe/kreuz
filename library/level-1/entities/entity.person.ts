@@ -152,11 +152,6 @@ export class PersonEntity extends Entity {
 			// @TODO necessary?
 			// this.$detach.once(() => this.needs.forEach((need) => need.clear()));
 		});
-
-		// Register behavior tree system
-		this.$attach.on(async (game) => {
-			behaviorTree.attachSystem(game, this);
-		});
 	}
 
 	public get name(): string {

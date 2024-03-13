@@ -1,16 +1,17 @@
-import { FactoryBuildingEntity } from '@lib/core';
-import { Blueprint } from '../inventory/Blueprint.ts';
-import { EntityI } from '@lib';
+import { EntityI, EventedValue, Inventory } from '@lib';
 import Game from '../Game.ts';
+import { Collection } from '../events/Collection.ts';
+import { ProgressingNumericValue } from '../events/ProgressingNumericValue.ts';
+import { Blueprint } from '../inventory/Blueprint.ts';
 
-/**
- * Checks if an entity can work on a blueprint.
- * @param entity - The entity to check.
- * @returns Returns true if the entity can work on a blueprint, false otherwise.
- */
-export function canEntityWorkOnBlueprint(entity: EntityI) {
-	return entity.type === 'person';
-}
+type WorkerEntity = EntityI;
+
+type ProductionEntity = EntityI & {
+	inventory: Inventory;
+	$workers: Collection<WorkerEntity>;
+	$blueprint: EventedValue<Blueprint | null>;
+	$$progress: ProgressingNumericValue;
+};
 
 /**
  * Calculates the delta value for a given blueprint and worker amount.
@@ -45,7 +46,7 @@ function getDelta(blueprint: Blueprint, workerAmount: number) {
  * @param blueprint - The blueprint to be produced.
  * @returns A boolean indicating whether a new blueprint cycle can be started.
  */
-function canStartNewBlueprintCycle(factory: FactoryBuildingEntity, blueprint: Blueprint) {
+function canStartNewBlueprintCycle(factory: ProductionEntity, blueprint: Blueprint) {
 	if (!blueprint.hasAllIngredients(factory.inventory)) {
 		// Not all necessary ingredients are in inventory, so cannot start.
 		return false;
@@ -67,12 +68,12 @@ function canStartNewBlueprintCycle(factory: FactoryBuildingEntity, blueprint: Bl
 /**
  * Tells wether or not a factory is already working on a blueprint production cycle, or not.
  */
-function isBlueprintCycleBusy(factory: FactoryBuildingEntity): boolean {
+function isBlueprintCycleBusy(factory: ProductionEntity): boolean {
 	const isBusy = !!(factory.$blueprint.get() && factory.$$progress.delta > 0);
 	return isBusy;
 }
 
-export function attachSystem(game: Game, factory: FactoryBuildingEntity) {
+export function attachSystemToEntity(game: Game, factory: ProductionEntity) {
 	let ignoreInventoryChanges = false;
 	let hasReservation = false;
 
@@ -86,7 +87,7 @@ export function attachSystem(game: Game, factory: FactoryBuildingEntity) {
 		);
 	}
 
-	function stopBlueprintCycle(factory: FactoryBuildingEntity, skipClearReservation = false) {
+	function stopBlueprintCycle(factory: ProductionEntity, skipClearReservation = false) {
 		if (!skipClearReservation && isBlueprintCycleBusy(factory)) {
 			hasReservation = false;
 			factory.inventory.cancelReservation(factory);
@@ -101,13 +102,12 @@ export function attachSystem(game: Game, factory: FactoryBuildingEntity) {
 		}
 		game.time.setTimeout(() => {
 			if (!isBlueprintCycleBusy(factory)) {
-				console.log('Remove all the workers');
 				factory.$workers.removeAll();
 			}
 		}, 1000);
 	}
 
-	function startNewBlueprintCycle(factory: FactoryBuildingEntity, blueprint: Blueprint) {
+	function startNewBlueprintCycle(factory: ProductionEntity, blueprint: Blueprint) {
 		if (!canAllocateProducts()) {
 			throw new Error('New cycle shouldna been started, but it was');
 		}
@@ -208,4 +208,17 @@ export function attachSystem(game: Game, factory: FactoryBuildingEntity) {
 		},
 		true,
 	);
+}
+
+export async function attachSystem(game: Game) {
+	game.entities.$add.on(async (entities) => {
+		await Promise.all(
+			entities
+				.filter(
+					(entity): entity is ProductionEntity =>
+						(entity as ProductionEntity).$blueprint instanceof EventedValue,
+				)
+				.map((person) => attachSystemToEntity(game, person)),
+		);
+	});
 }

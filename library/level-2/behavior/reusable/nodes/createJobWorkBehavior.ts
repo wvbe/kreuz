@@ -11,7 +11,6 @@ export function createJobWorkBehavior() {
 			.filter(({ desirability }) => desirability > 0)
 			.sort((a, b) => a.desirability - b.desirability)
 			.pop(); // or pop?
-		// console.log('New job: ' + job?.desirability);
 
 		if (!job) {
 			throw new BehaviorTreeSignal(`There are no factories in need for workers`);

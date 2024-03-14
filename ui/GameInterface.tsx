@@ -15,11 +15,8 @@ import { InspectEntityTradelogRoute } from './routes/InspectEntityTradelogRoute.
 import { InspectEntityRoute } from './routes/InspectEntityRoute.tsx';
 import { ListEntityRoute } from './routes/ListEntityRoute.tsx';
 import {
-	ROUTE_ENTITIES_FACTORIES_DETAILS,
 	ROUTE_ENTITIES_FACTORIES,
-	ROUTE_ENTITIES_MARKETS_DETAILS,
 	ROUTE_ENTITIES_MARKETS,
-	ROUTE_ENTITIES_PEOPLE_DETAILS,
 	ROUTE_ENTITIES_PEOPLE_JOBS_DETAILS,
 	ROUTE_ENTITIES_PEOPLE_TRADE_DETAILS,
 	ROUTE_ENTITIES_PEOPLE,
@@ -27,25 +24,32 @@ import {
 	ROUTE_MATERIALS,
 	ROUTE_PRODUCTION_DETAILS,
 	ROUTE_PRODUCTION,
+	ROUTE_ENTITIES_DETAILS,
 } from './routes/ROUTES.ts';
 import { InspectBlueprintRoute } from './routes/InspectBlueprintRoute.tsx';
 import { InspectMaterialRoute } from './routes/InspectMaterialRoute.tsx';
+import { personArchetype } from '@lib';
+import { factoryArchetype } from '@lib';
+import { marketArchetype } from '@lib';
 
 const ListPeopleEntities: FC<PropsWithChildren> = ({ children }) => (
 	<>
-		<ListEntityRoute label="People" entityTypes={['person']} />
+		<ListEntityRoute label="People" entityTest={personArchetype.test.bind(personArchetype)} />
 		<Routes>{children}</Routes>
 	</>
 );
 const ListFactoryEntities: FC<PropsWithChildren> = ({ children }) => (
 	<>
-		<ListEntityRoute label="Factories" entityTypes={['factory']} />
+		<ListEntityRoute label="Factories" entityTest={factoryArchetype.test.bind(factoryArchetype)} />
 		<Routes>{children}</Routes>
 	</>
 );
 const ListMarketEntities: FC<PropsWithChildren> = ({ children }) => (
 	<>
-		<ListEntityRoute label="Market places" entityTypes={['market-stall']} />
+		<ListEntityRoute
+			label="Market places"
+			entityTest={marketArchetype.test.bind(marketArchetype)}
+		/>
 		<Routes>{children}</Routes>
 	</>
 );
@@ -64,7 +68,7 @@ export const GameInterface: FunctionComponent<{
 							<GameMap />
 							<GamePanels>
 								<Route path={ROUTE_ENTITIES_PEOPLE} Component={ListPeopleEntities} />
-								<Route path={ROUTE_ENTITIES_PEOPLE_DETAILS} Component={InspectEntityRoute} />
+								<Route path={ROUTE_ENTITIES_DETAILS} Component={InspectEntityRoute} />
 								<Route
 									path={ROUTE_ENTITIES_PEOPLE_TRADE_DETAILS}
 									Component={InspectEntityTradelogRoute}
@@ -74,9 +78,7 @@ export const GameInterface: FunctionComponent<{
 									Component={InspectEntityJobsRoute}
 								/>
 								<Route path={ROUTE_ENTITIES_FACTORIES} Component={ListFactoryEntities} />
-								<Route path={ROUTE_ENTITIES_FACTORIES_DETAILS} Component={InspectEntityRoute} />
 								<Route path={ROUTE_ENTITIES_MARKETS} Component={ListMarketEntities} />
-								<Route path={ROUTE_ENTITIES_MARKETS_DETAILS} Component={InspectEntityRoute} />
 								<Route path={ROUTE_PRODUCTION} Component={ProductionList} />
 								<Route path={ROUTE_PRODUCTION_DETAILS} Component={InspectBlueprintRoute} />
 								<Route path={ROUTE_MATERIALS} Component={MaterialList} />

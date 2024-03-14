@@ -312,6 +312,8 @@ export class Inventory {
 	/**
 	 * Associate with a trade order so that when this trade order completes there will not be
 	 * an excess or shortage of required materials.
+	 *
+	 * @deprecated Never used?
 	 */
 	public makeReservationFromTradeOrder(tradeOrder: TradeOrder) {
 		const exchanged = tradeOrder.getCargoExchangedToInventory(this);

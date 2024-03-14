@@ -2,12 +2,12 @@ import React, { FunctionComponent, useCallback } from 'react';
 
 import { useGameContext } from '../context/GameContext.tsx';
 import { EntityList } from '../entities/EntityList.tsx';
+import { EcsEntity } from '@lib';
 
 export const ListEntityRoute: FunctionComponent<{
 	label: string;
-	entityTypes: string[];
-}> = ({ label, entityTypes }) => {
+	entityTest: (entity: EcsEntity) => boolean;
+}> = ({ label, entityTest }) => {
 	const game = useGameContext();
-	const filter = useCallback((e) => entityTypes.includes(e.type), [entityTypes]);
-	return <EntityList label={label} entities={game.entities} filter={filter}  />;
+	return <EntityList label={label} entities={game.entities} filter={entityTest} />;
 };

@@ -1,14 +1,10 @@
-import Game from '../Game.ts';
-import { BehaviorTreeSignal } from '../behavior/BehaviorTreeSignal.ts';
-import { PersonEntityBehavior } from '../entities/entity.person.ts';
-import { PersonEntity } from '../entities/entity.person.ts';
-import { EntityI } from '../entities/types.ts';
-import { Event } from '../events/Event.ts';
-import { EventedValue } from '../events/EventedValue.ts';
+import Game from '../../Game.ts';
+import { BehaviorTreeSignal } from '../../behavior/BehaviorTreeSignal.ts';
+import { behaviorComponent } from '../components/behaviorComponent.ts';
+import { EcsSystem } from '../classes/EcsSystem.ts';
+import { EcsEntity } from '../types.ts';
 
-type BehavingEntity = EntityI & {
-	$behavior: EventedValue<PersonEntityBehavior>;
-};
+type BehavingEntity = EcsEntity<typeof behaviorComponent>;
 
 function attachSystemToEntity(game: Game, entity: BehavingEntity) {
 	let behaviorLoopEnabled = false;
@@ -27,7 +23,7 @@ function attachSystemToEntity(game: Game, entity: BehavingEntity) {
 				game,
 				// @TODO get rid of this type coercion. The behavior tree, too,
 				// should not care what kind of entity it is dealing with.
-				entity: entity as PersonEntity,
+				entity: entity as EcsEntity<typeof behaviorComponent | any>,
 			});
 		} catch (error: Error | BehaviorTreeSignal | unknown) {
 			if ((error as BehaviorTreeSignal)?.type !== 'fail') {
@@ -55,15 +51,14 @@ function attachSystemToEntity(game: Game, entity: BehavingEntity) {
 	doBehaviourLoop();
 }
 
-export async function attachSystem(game: Game) {
+async function attachSystem(game: Game) {
 	game.entities.$add.on(async (entities) => {
 		await Promise.all(
 			entities
-				.filter(
-					(entity): entity is BehavingEntity =>
-						(entity as PersonEntity).$behavior instanceof EventedValue,
-				)
+				.filter((entity): entity is BehavingEntity => behaviorComponent.test(entity))
 				.map((entity) => attachSystemToEntity(game, entity)),
 		);
 	});
 }
+
+export const behaviorTreeSystem = new EcsSystem([behaviorComponent], attachSystem);

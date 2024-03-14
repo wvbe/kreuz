@@ -61,12 +61,12 @@ export const InspectMaterialRoute: FunctionComponent = () => {
 
 			<FillBar
 				ratio={material.hydration}
-				label={`${PERSON_NEEDS.find((need) => need.id === 'water')!.label} Hydration`}
+				label={`${PERSON_NEEDS.find((need) => need.id === 'hydration')!.label} Hydration`}
 				labelRight={`${material.hydration * 100}%`}
 			/>
 			<FillBar
 				ratio={material.nutrition}
-				label={`${PERSON_NEEDS.find((need) => need.id === 'food')!.label} Nutrition`}
+				label={`${PERSON_NEEDS.find((need) => need.id === 'nutrition')!.label} Nutrition`}
 				labelRight={`${material.nutrition * 100}%`}
 			/>
 			<FillBar

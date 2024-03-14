@@ -1,5 +1,6 @@
-import { PersonEntity } from '../entities/entity.person.ts';
 import Game from '../Game.ts';
+import { personArchetype } from '../ecs/archetypes/personArchetype.ts';
+import { EcsArchetypeEntity } from '../ecs/types.ts';
 
 export interface BehaviorTreeNodeI<
 	BlackboardGeneric extends Record<string, unknown> = Record<string, never>,
@@ -21,6 +22,6 @@ export type ExecutionNodeFn<B extends Record<string, unknown>> = (
 ) => void | Promise<void>;
 
 export type EntityBlackboard = {
-	entity: PersonEntity;
+	entity: EcsArchetypeEntity<typeof personArchetype>;
 	game: Game;
 };

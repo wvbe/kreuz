@@ -1,8 +1,21 @@
-import { FactoryBuildingEntity, MarketBuildingEntity, Material, PersonEntity } from '@lib/core';
+import {
+	EcsEntity,
+	Material,
+	inventoryComponent,
+	locationComponent,
+	pathingComponent,
+	wealthComponent,
+} from '@lib/core';
+import { ownerComponent } from '@lib';
 
-export type VendorEntity = MarketBuildingEntity | FactoryBuildingEntity;
+type VendorEntity = EcsEntity<
+	| typeof inventoryComponent
+	| typeof wealthComponent
+	| typeof locationComponent
+	| typeof ownerComponent
+>;
 
-export type DesirabilityRecord<HasVendor extends boolean = boolean> = {
+export type DesirabilityRecord<IncludeVendor extends boolean> = {
 	/**
 	 * The person who's got an {@link Inventory} with this material in it.
 	 *
@@ -10,24 +23,27 @@ export type DesirabilityRecord<HasVendor extends boolean = boolean> = {
 	 *
 	 * @todo Rename to `vendor`
 	 */
-	market: HasVendor extends true
-		? VendorEntity
-		: HasVendor extends false
-		? null
-		: VendorEntity | null;
+	market: IncludeVendor extends true ? VendorEntity : null;
 	material: Material;
 	score: number;
 };
 
 /**
  * A function with which the attractiveness of a purchase is evaluated. Useful for selecting
- * to make a deal between a {@link PersonEntity} and any number of {@link VendorEntity VendorEntities}
+ * to make a deal between a buyer and any number of vendors.
  *
  * Return zero to not consider this purchase at all.
  */
-export type VendorPurchaseScorer = (
-	entity: PersonEntity,
-	vendor: VendorEntity | null,
+export type VendorPurchaseScorer<IncludeVendor extends boolean> = (
+	entity: IncludeVendor extends true
+		? EcsEntity<
+				| typeof inventoryComponent
+				| typeof wealthComponent
+				| typeof locationComponent
+				| typeof pathingComponent
+		  >
+		: EcsEntity<typeof inventoryComponent>,
+	vendor: IncludeVendor extends true ? VendorEntity : null,
 	material: Material,
 	available: number,
 ) => number;

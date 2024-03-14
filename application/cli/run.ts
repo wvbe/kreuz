@@ -14,7 +14,8 @@
 import { Demo, TestDriver } from '../../library/mod.ts';
 
 const demo: Demo = await import(self.Deno.args[0]);
-const { driver, game } = await demo.default(new TestDriver());
+const driver = new TestDriver();
+const game = await demo.default(driver);
 
 console.log(game.time.now);
 try {

@@ -1,11 +1,11 @@
-import { EntityI, PersonEntity } from '@lib';
 import React, { FunctionComponent, useCallback } from 'react';
 
+import { EcsEntity, healthComponent } from '@lib';
 import { FillBar } from '../../components/atoms/FillBar.tsx';
-import { useMemoFromEvent, useEventedValue } from '../../hooks/useEventedValue.ts';
+import { useEventedValue, useMemoFromEvent } from '../../hooks/useEventedValue.ts';
 
-export const EntityHealthDetails: FunctionComponent<{ entity: EntityI }> = ({ entity }) => {
-	const health = (entity as PersonEntity).$health;
+export const EntityHealthDetails: FunctionComponent<{ entity: EcsEntity }> = ({ entity }) => {
+	const health = (entity as EcsEntity<typeof healthComponent>).$health;
 	if (!health) {
 		return null;
 	}

@@ -1,6 +1,6 @@
-import { PersonEntity } from '../entities/entity.person.ts';
-import { EntityI } from '../entities/types.ts';
+import { pathingComponent } from '../ecs/components/pathingComponent.ts';
 import Game from '../Game.ts';
+import { EcsEntity } from '../ecs/types.ts';
 import { DestroyerFn } from '../types.ts';
 import { Driver } from './Driver.ts';
 import { DriverI } from './types.ts';
@@ -34,9 +34,11 @@ export class TestDriver extends Driver implements DriverI {
 			}),
 		);
 
-		const listenToPersonEntityMovement = (entities: EntityI[]) => {
+		const listenToPersonEntityMovement = (entities: EcsEntity[]) => {
 			entities
-				.filter((entity): entity is PersonEntity => entity instanceof PersonEntity)
+				.filter((entity): entity is EcsEntity<typeof pathingComponent> =>
+					pathingComponent.test(entity),
+				)
 				.forEach((entity) => {
 					this.$detach.once(
 						entity.$stepStart.on((_destination, duration, done) => {

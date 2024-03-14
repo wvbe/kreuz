@@ -1,15 +1,15 @@
+import { EcsEntity, ReplacementSpace, heroes } from '@lib';
 import React, {
-	type FunctionComponent,
-	type ReactNode,
 	createContext,
 	useContext,
 	useMemo,
+	type FunctionComponent,
+	type ReactNode,
 } from 'react';
-import { ReplacementSpace, type EntityI, token, heroes } from '@lib';
 import { useGameContext } from './GameContext.tsx';
 
 type RepSpaceBuckets = {
-	entity: EntityI;
+	entity: EcsEntity;
 };
 
 const _ReplacementSpaceContext = createContext<ReplacementSpace<RepSpaceBuckets> | null>(null);

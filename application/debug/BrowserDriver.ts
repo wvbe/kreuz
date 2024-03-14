@@ -1,4 +1,5 @@
-import { Driver, PersonEntity, type DriverI, type Game, EntityI } from '@lib';
+import { Driver, pathingComponent, type DriverI, type Game } from '@lib';
+import { EcsEntity } from '../../library/level-1/ecs/types.ts';
 
 export class BrowserDriver extends Driver implements DriverI {
 	game: Game | null = null;
@@ -74,9 +75,11 @@ export class BrowserDriver extends Driver implements DriverI {
 			}),
 		);
 
-		const listenToPersonEntityMovement = (entities: EntityI[]) => {
+		const listenToPersonEntityMovement = (entities: EcsEntity[]) => {
 			entities
-				.filter((entity): entity is PersonEntity => entity instanceof PersonEntity)
+				.filter((entity): entity is EcsEntity<typeof pathingComponent> =>
+					pathingComponent.test(entity),
+				)
 				.forEach((entity) => {
 					const destroy = entity.$stepStart.on((_destination, duration, done) => {
 						game.time.setTimeout(done, duration);

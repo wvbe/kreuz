@@ -1,22 +1,21 @@
 import { JobVacancy } from './behavior/JobVacancy.ts';
 import { EntityBlackboard } from './behavior/types.ts';
+import { Registry } from './classes/Registry.ts';
+import { TimeLine } from './classes/TimeLine.ts';
+import { DriverI } from './drivers/types.ts';
+import { behaviorTreeSystem } from './ecs/systems/behaviorTree.ts';
+import { blueprintSystem } from './ecs/systems/blueprintSystem.ts';
+import { healthSystem } from './ecs/systems/healthSystem.ts';
+import { EcsEntity } from './ecs/types.ts';
 import { Collection } from './events/Collection.ts';
 import { Event } from './events/Event.ts';
 import { KeyedCollection } from './events/KeyedCollection.ts';
-import { Registry } from './classes/Registry.ts';
-import { TimeLine } from './classes/TimeLine.ts';
-import { castSaveJsonToEntity } from './entities/castSaveJsonToEntity.ts';
-import { EntityI } from './entities/types.ts';
 import { Blueprint } from './inventory/Blueprint.ts';
 import { Material } from './inventory/Material.ts';
 import { BehaviorTreeNodeI } from './mod.ts';
 import { Terrain } from './terrain/Terrain.ts';
 import { SavedGameJson } from './types-savedgame.ts';
 import { SeedI } from './types.ts';
-import { DriverI } from './drivers/types.ts';
-import * as blueprintProduction from './systems/blueprintProduction.ts';
-import * as behaviorTree from './systems/behaviorTree.ts';
-import * as healthSystem from './systems/healthSystem.ts';
 
 export type GameAssets = {
 	behaviorNodes: Registry<BehaviorTreeNodeI<EntityBlackboard>>;
@@ -26,7 +25,7 @@ export type GameAssets = {
 export default class Game {
 	public readonly terrain: Terrain;
 
-	public readonly entities = new KeyedCollection<'id', EntityI>('id');
+	public readonly entities = new KeyedCollection<'id', EcsEntity<any>>('id');
 
 	public readonly time = new TimeLine();
 
@@ -53,18 +52,10 @@ export default class Game {
 		this.terrain = terrain;
 		this.assets = assets;
 
-		this.entities.$change.on(async (added, removed) => {
-			for (const entity of added) {
-				await entity.attach(this);
-			}
-			for (const entity of removed) {
-				await entity.detach();
-			}
-		});
-		// @TODO no need to perform attachSystem in $attach, because `game` is not required?
-		behaviorTree.attachSystem(this);
-		blueprintProduction.attachSystem(this);
-		healthSystem.attachSystem(this);
+		blueprintSystem.attachGame(this);
+		behaviorTreeSystem.attachGame(this);
+		healthSystem.attachGame(this);
+
 		driver.attach(this);
 	}
 
@@ -90,9 +81,9 @@ export default class Game {
 		return {
 			version: 'alpha', // todo version some time,
 			terrain: this.terrain.toSaveJson(),
-			entities: this.entities.map((entity) =>
-				entity.toSaveJson(this.assets),
-			) as SavedGameJson['entities'],
+			// entities: this.entities.map((entity) =>
+			// 	entity.toSaveJson(this.assets),
+			// ) as SavedGameJson['entities'],
 			time: this.time.toSaveJson(this.assets),
 			seed: this.seed,
 		};
@@ -103,9 +94,9 @@ export default class Game {
 		save: SavedGameJson,
 	): Promise<Game> {
 		const game = new Game(driver, save.seed, Terrain.fromSaveJson(save.terrain), assets);
-		await game.entities.add(
-			...(await Promise.all(save.entities.map((entity) => castSaveJsonToEntity(assets, entity)))),
-		);
+		// await game.entities.add(
+		// 	...(await Promise.all(save.entities.map((entity) => castSaveJsonToEntity(assets, entity)))),
+		// );
 		return game;
 	}
 }

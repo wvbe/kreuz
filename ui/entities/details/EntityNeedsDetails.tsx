@@ -1,6 +1,7 @@
-import { EntityI, Need, PERSON_NEEDS, PersonEntity } from '@lib';
+import { Need, PERSON_NEEDS } from '@lib';
 import React, { FunctionComponent, useMemo } from 'react';
 
+import { EcsEntity, needsComponent } from '@lib';
 import { FillBar } from '../../components/atoms/FillBar.tsx';
 import { useEventedValue } from '../../hooks/useEventedValue.ts';
 
@@ -23,15 +24,15 @@ const PersonEntityNeed: FunctionComponent<{ need: Need }> = ({ need }) => {
 	);
 };
 
-export const EntityNeedsDetails: FunctionComponent<{ entity: EntityI }> = ({ entity }) => {
-	const needs = (entity as PersonEntity).needs;
+export const EntityNeedsDetails: FunctionComponent<{ entity: EcsEntity }> = ({ entity }) => {
+	const needs = (entity as EcsEntity<typeof needsComponent>).needs;
 	if (!needs) {
 		return null;
 	}
 	return (
 		<>
-			{needs.map((need, index) => (
-				<PersonEntityNeed key={index} need={need} />
+			{Object.entries(needs).map(([key, need]) => (
+				<PersonEntityNeed key={key} need={need} />
 			))}
 		</>
 	);

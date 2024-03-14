@@ -5,11 +5,11 @@
 import {
 	DEFAULT_ASSETS,
 	DriverI,
-	FactoryBuildingEntity,
 	Game,
-	PersonEntity,
 	blueprints,
+	factoryArchetype,
 	materials,
+	personArchetype,
 } from '@lib';
 import { generateGridTerrainFromAscii } from '@test';
 import { createJobWorkBehavior } from '../library/level-2/behavior/reusable/nodes/createJobWorkBehavior.ts';
@@ -27,23 +27,21 @@ export default async function (driver: DriverI) {
 	`);
 	const game = new Game(driver, '1', terrain, DEFAULT_ASSETS);
 
-	const factory = new FactoryBuildingEntity(
-		'farm',
-		terrain.getTileClosestToXy(3, 3).toArray(),
-		headOfState,
-		{
-			blueprint: blueprints.beeKeeping,
-			maxWorkers: 20,
-			maxStackSpace: Infinity,
-		},
-	);
+	const factory = factoryArchetype.create({
+		location: terrain.getTileClosestToXy(3, 3).toArray(),
+		owner: headOfState,
+		blueprint: blueprints.beeKeeping,
+		maxWorkers: 20,
+		maxStackSpace: Infinity,
+	});
 	await factory.inventory.set(materials.honey, 99);
 	game.entities.add(factory);
 
 	for (let i = 0; i < 5; i++) {
-		const entity = new PersonEntity(`person-${i}`, terrain.getTileClosestToXy(0, 0).toArray(), {
-			gender: 'm',
-			firstName: 'Melanie',
+		const entity = personArchetype.create({
+			location: terrain.getTileClosestToXy(0, 0).toArray(),
+			icon: '🤖',
+			name: `Test dummy ${i + 1}`,
 		});
 		await game.entities.add(entity);
 

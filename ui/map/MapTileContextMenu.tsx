@@ -1,9 +1,10 @@
-import { type EntityI, type TileI } from '@lib';
+import { type TileI } from '@lib';
 import React, { FC, PropsWithChildren, useMemo } from 'react';
 
 import { useGameContext } from '../context/GameContext.tsx';
 import { useSelectedEntity } from '../hooks/useSelectedEntity.tsx';
 
+import { EcsEntity, locationComponent } from '@lib';
 import { EntityBadge } from '../entities/EntityBadge.tsx';
 
 const MapTileContextMenuItem: FC<
@@ -26,13 +27,17 @@ const MapTileContextMenuItem: FC<
 		</div>
 	);
 };
-export const MapTileContextMenu: FC<{ tile: TileI; entity: EntityI }> = ({ tile }) => {
+export const MapTileContextMenu: FC<{
+	tile: TileI;
+	entity: EcsEntity<typeof locationComponent>;
+}> = ({ tile }) => {
 	const game = useGameContext();
 	const selectedEntity = useSelectedEntity();
 
-	const tileEntities = game.entities.filter((entity) =>
-		// ['factory', 'market-stall', 'church', 'settlement'].includes(entity.type) &&
-		entity.$$location.get().equals(tile),
+	const tileEntities = game.entities.filter(
+		(entity) =>
+			locationComponent.test(entity) &&
+			(entity as EcsEntity<typeof locationComponent>).$$location.get().equals(tile),
 	);
 	return (
 		<div className="map-tile-context-menu">

@@ -1,22 +1,23 @@
 import {
 	BehaviorTreeSignal,
+	EcsEntity,
 	EntityBlackboard,
 	ExecutionNode,
 	InverterNode,
-	MarketBuildingEntity,
 	Material,
 	PersonNeedId,
 	SelectorNode,
 	SequenceNode,
-	type Inventory,
+	inventoryComponent,
+	locationComponent,
+	wealthComponent,
 	type MaterialState,
 } from '@lib/core';
+import { selectMostDesirableItemFromInventory } from '../primitives/selectMostDesirableItemFromInventory.ts';
+import { DesirabilityRecord, VendorPurchaseScorer } from '../primitives/types.ts';
 import { createBuyFromMarketBehavior } from './createBuyFromMarketBehavior.ts';
 import { createWaitBehavior } from './createWaitBehavior.ts';
-import { selectMostDesirableItemFromVendors } from '../primitives/selectMostDesirableItemFromVendors.ts';
-import { selectMostDesirableItemFromInventory } from '../primitives/selectMostDesirableItemFromInventory.ts';
-import { VendorPurchaseScorer } from '../primitives/types.ts';
-import { DesirabilityRecord } from '../primitives/types.ts';
+import { ownerComponent } from '@lib/core';
 
 type ConsumptionType = {
 	/**
@@ -48,7 +49,7 @@ type ConsumptionType = {
 export function createConsumeBehavior(config: ConsumptionType) {
 	return new SequenceNode<EntityBlackboard>(
 		new ExecutionNode('Have a craving??', ({ entity }) => {
-			const need = entity.needs.find((n) => n.id === 'food');
+			const need = entity.needs.nutrition;
 			if (!need) {
 				throw new BehaviorTreeSignal(`For some reason, ${entity} is unable to crave this`);
 			}
@@ -69,7 +70,18 @@ export function createConsumeBehavior(config: ConsumptionType) {
 					}),
 				),
 				createBuyFromMarketBehavior(
-					(vendor): vendor is MarketBuildingEntity => vendor.type === 'market-stall',
+					(
+						entity,
+					): entity is EcsEntity<
+						| typeof locationComponent
+						| typeof wealthComponent
+						| typeof inventoryComponent
+						| typeof ownerComponent
+					> =>
+						locationComponent.test(entity) &&
+						inventoryComponent.test(entity) &&
+						ownerComponent.test(entity) &&
+						wealthComponent.test(entity),
 					config.materialDesirabilityScore,
 				),
 			),
@@ -93,13 +105,12 @@ export function createConsumeBehavior(config: ConsumptionType) {
 					// throw new BehaviorTreeSignal(`${entity} does not have any edibles on hand`);
 					// }
 
-					const need = entity.needs.find((n) => n.id === config.fulfilledNeedId);
+					const need = entity.needs[config.fulfilledNeedId];
 					if (!need) {
 						throw new BehaviorTreeSignal(
 							`Expected entity to need ${config.fulfilledNeedId}, but they don't`,
 						);
 					}
-
 
 					await entity.$status.set(config.statusFormatter(material));
 					await entity.inventory.change(material, -1);
@@ -118,7 +129,7 @@ export function createConsumeBehavior(config: ConsumptionType) {
  * Preset configuration for finding something to drink, and drinking it
  */
 createConsumeBehavior.DRINK = {
-	fulfilledNeedId: 'water',
+	fulfilledNeedId: 'hydration',
 	fulfillingMaterialProperty: 'hydration',
 	statusFormatter: (material) => `Sipping on ${material}`,
 	materialFilter({ material }) {
@@ -137,7 +148,7 @@ createConsumeBehavior.DRINK = {
  * Preset configuration for finding something to eat, and eating it
  */
 createConsumeBehavior.EAT = {
-	fulfilledNeedId: 'food',
+	fulfilledNeedId: 'nutrition',
 	fulfillingMaterialProperty: 'nutrition',
 	statusFormatter: (material) => `Munching on ${material}`,
 	materialFilter({ material }) {

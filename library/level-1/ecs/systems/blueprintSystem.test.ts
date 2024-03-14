@@ -1,8 +1,8 @@
 import { FactoryBuildingEntity, PersonEntity } from '@lib';
 import { expect, generateEmptyGame } from '@test';
-import { createJobWorkBehavior } from '../../level-2/behavior/reusable/nodes/createJobWorkBehavior.ts';
-import { growWheat } from '../../level-2/blueprints.ts';
-import { wheat } from '../../level-2/materials.ts';
+import { createJobWorkBehavior } from '../../../level-2/behavior/reusable/nodes/createJobWorkBehavior.ts';
+import { growWheat } from '../../../level-2/blueprints.ts';
+import { wheat } from '../../../level-2/materials.ts';
 
 Deno.test('System: blueprintProduction', async (test) => {
 	const game = await generateEmptyGame();

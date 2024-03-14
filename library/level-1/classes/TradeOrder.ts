@@ -1,6 +1,15 @@
-import { type TradeEntityI } from '../entities/types.ts';
 import { type Inventory } from '../inventory/Inventory.ts';
 import { type MaterialState } from '../inventory/types.ts';
+
+import { inventoryComponent } from '../ecs/components/inventoryComponent.ts';
+import { wealthComponent } from '../ecs/components/wealthComponent.ts';
+import { locationComponent } from '../ecs/components/locationComponent.ts';
+import { type EcsEntity } from '../ecs/types.ts';
+
+/**
+ * Any entity capable of trading.
+ */
+export type TradeEntityI = EcsEntity<typeof wealthComponent | typeof inventoryComponent>;
 
 export enum TradeFailReason {
 	NO_MONEY_1 = 'Buyer has no money',

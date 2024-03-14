@@ -1,6 +1,7 @@
-import { HeroPersonEntity, PersonEntity } from '@lib/core';
+import { personArchetype } from '@lib/core';
 
-export const headOfState = new PersonEntity('$$$ king', [0, 0, Infinity], {
-	gender: 'm',
-	firstName: 'Richard',
+export const headOfState = personArchetype.create({
+	location: [0, 0, Infinity],
+	name: 'Richard I',
+	icon: '🤴',
 });

@@ -1,5 +1,12 @@
-import { Blueprint, EntityI, Event, FactoryBuildingEntity } from '@lib';
-import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
+import { Blueprint, Event } from '@lib';
+import React, {
+	FunctionComponent,
+	MouseEventHandler,
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+} from 'react';
 import { useGameContext } from '../context/GameContext.tsx';
 import { useCollection } from '../hooks/useEventedValue.ts';
 import { useNavigation } from '../hooks/useNavigation.ts';
@@ -8,17 +15,19 @@ import { Badge } from './atoms/Badge.tsx';
 import { CollapsibleWindow } from './atoms/CollapsibleWindow.tsx';
 import { PopOnUpdateSpan } from './atoms/PopOnUpdateSpan.tsx';
 import { Cell, Row, Table } from './atoms/Table.tsx';
+import { EcsEntity } from '@lib';
+import { productionComponent } from '@lib';
 
-function getTotalDelta(entities: FactoryBuildingEntity[]) {
+function getTotalDelta(entities: EcsEntity<typeof productionComponent>[]) {
 	return entities.reduce((total, entity) => (total += entity.$$progress.delta), 0);
 }
 
-function getTotalWorkers(entities: FactoryBuildingEntity[]): number {
+function getTotalWorkers(entities: EcsEntity<typeof productionComponent>[]): number {
 	return entities.reduce((total, factory) => total + factory.$workers.length, 0);
 }
 const ProductionSummary: FunctionComponent<{
 	blueprint: Blueprint;
-	entities: FactoryBuildingEntity[];
+	entities: EcsEntity<typeof productionComponent>[];
 }> = ({ blueprint, entities }) => {
 	const navigate = useNavigation();
 	const game = useGameContext();
@@ -31,7 +40,7 @@ const ProductionSummary: FunctionComponent<{
 			),
 		[entities],
 	);
-	const onClick = useCallback((event) => {
+	const onClick = useCallback<MouseEventHandler<HTMLTableRowElement>>((event) => {
 		event.preventDefault();
 		event.stopPropagation();
 		navigate(ROUTE_PRODUCTION_DETAILS, {
@@ -84,13 +93,17 @@ export const ProductionList: FunctionComponent = () => {
 		() =>
 			game.assets.blueprints
 				.list()
-				.reduce<Record<string, FactoryBuildingEntity[]>>((entitiesByBlueprint, blueprint) => {
-					const key = game.assets.blueprints.key(blueprint);
-					entitiesByBlueprint[key] = game.entities.filter(
-						(entity) => (entity as FactoryBuildingEntity).$blueprint?.get() === blueprint,
-					);
-					return entitiesByBlueprint;
-				}, {}),
+				.reduce<Record<string, EcsEntity<typeof productionComponent>[]>>(
+					(entitiesByBlueprint, blueprint) => {
+						const key = game.assets.blueprints.key(blueprint);
+						entitiesByBlueprint[key] = game.entities.filter(
+							(entity) =>
+								(entity as EcsEntity<typeof productionComponent>).$blueprint?.get() === blueprint,
+						);
+						return entitiesByBlueprint;
+					},
+					{},
+				),
 		[entities],
 	);
 

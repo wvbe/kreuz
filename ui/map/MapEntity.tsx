@@ -1,4 +1,4 @@
-import { EntityI } from '@lib';
+import { EcsEntity, locationComponent } from '@lib';
 import React, {
 	DetailedHTMLProps,
 	FunctionComponent,
@@ -10,12 +10,13 @@ import { useGameContext } from '../context/GameContext.tsx';
 import { useEventedValue } from '../hooks/useEventedValue.ts';
 import { useSelectedEntity } from '../hooks/useSelectedEntity.tsx';
 import { useMapTileContextMenu } from './MAP_TILE_CONTEXT_MENU.ts';
+import { visibilityComponent } from '@lib';
 
 export const MapEntity: FunctionComponent<
-	{ entity: EntityI; zoom: number } & DetailedHTMLProps<
-		HTMLAttributes<HTMLDivElement>,
-		HTMLDivElement
-	>
+	{
+		entity: EcsEntity<typeof locationComponent | typeof visibilityComponent>;
+		zoom: number;
+	} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>
 > = ({ entity, zoom, ...rest }) => {
 	const selectedEntity = useSelectedEntity();
 	const isSelected = selectedEntity.current === entity;
@@ -32,9 +33,7 @@ export const MapEntity: FunctionComponent<
 	const { x, y } = useEventedValue(entity.$$location);
 	return (
 		<div
-			className={`meta--emoji-symbols map-entity map-entity--${entity.type} ${
-				isSelected ? `map-entity--selected` : ''
-			}`}
+			className={`meta--emoji-symbols map-entity ${isSelected ? `map-entity--selected` : ''}`}
 			onClick={() => selectedEntity.set(entity)}
 			onContextMenu={onRmb}
 			style={{ top: `${y * zoom}px`, left: `${x * zoom}px` }}

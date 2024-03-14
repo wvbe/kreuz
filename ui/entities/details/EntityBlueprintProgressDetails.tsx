@@ -1,13 +1,13 @@
-import { EntityI, FactoryBuildingEntity } from '@lib';
+import { EcsEntity, productionComponent } from '@lib';
 import React, { FunctionComponent } from 'react';
 import { FillBar } from '../../components/atoms/FillBar.tsx';
 import { useEventedValue } from '../../hooks/useEventedValue.ts';
 
-export const EntityBlueprintProgressDetails: FunctionComponent<{ entity: EntityI }> = ({
-	entity,
-}) => {
-	const $blueprint = (entity as FactoryBuildingEntity).$blueprint;
-	const $$progress = (entity as FactoryBuildingEntity).$$progress;
+export const EntityBlueprintProgressDetails: FunctionComponent<{
+	entity: EcsEntity;
+}> = ({ entity }) => {
+	const $blueprint = (entity as EcsEntity<typeof productionComponent>).$blueprint;
+	const $$progress = (entity as EcsEntity<typeof productionComponent>).$$progress;
 	if (!$blueprint || !$$progress) {
 		return null;
 	}

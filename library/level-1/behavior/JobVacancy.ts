@@ -1,10 +1,7 @@
-import { EntityI } from '../entities/types.ts';
-import { PersonEntity } from '../entities/entity.person.ts';
-import { EventedNumericValue } from '../events/EventedNumericValue.ts';
-import { BehaviorTreeNodeI, EntityBlackboard } from './types.ts';
-import { black } from 'https://deno.land/std@0.106.0/fmt/colors.ts';
-import { VendorEntity } from '../../level-2/behavior/reusable/primitives/types.ts';
-import { FactoryBuildingEntity } from '../entities/entity.building.factory.ts';
+import { productionComponent } from '../ecs/components/productionComponent.ts';
+import { EcsEntity } from '../ecs/types.ts';
+
+import { EntityBlackboard } from './types.ts';
 
 /**
  * A function that scores how desirable a job is for a person:
@@ -28,7 +25,7 @@ type JobVacancyOptions = {
 	/**
 	 * Useful for cosmetic reasons, but not used in any of the actual computation (???)
 	 */
-	employer: EntityI;
+	employer: EcsEntity<typeof productionComponent>;
 };
 export class JobVacancy {
 	#onAssign: (blackboard: EntityBlackboard) => Promise<void>;
@@ -63,8 +60,10 @@ export class JobVacancy {
 		if (!employer) {
 			return 'Unknown job';
 		}
-		if ((employer as FactoryBuildingEntity).$blueprint) {
-			return `${employer}, ${(employer as FactoryBuildingEntity).$blueprint.get()?.name}`;
+		if (productionComponent.test(employer)) {
+			return `${employer}, ${
+				(employer as EcsEntity<typeof productionComponent>).$blueprint.get()?.name
+			}`;
 		}
 		return `${employer}`;
 	}

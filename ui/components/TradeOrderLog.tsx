@@ -1,12 +1,12 @@
-import React, { useMemo, type FunctionComponent } from 'react';
-import { type Collection, type TradeOrder, type MaterialState, type PersonEntity } from '@lib';
+import { EcsEntity, type Collection, type TradeOrder } from '@lib';
+import React, { type FunctionComponent } from 'react';
 import { useCollection } from '../hooks/useEventedValue.ts';
 import { CollapsibleWindow } from './atoms/CollapsibleWindow.tsx';
-import { Cell, Row, Table } from './atoms/Table.tsx';
+import { Table } from './atoms/Table.tsx';
 import { TokenizedText } from './atoms/TokenizedText.tsx';
 
 export const TradeOrderLog: FunctionComponent<{
-	entity: PersonEntity;
+	entity: EcsEntity;
 	log: Collection<TradeOrder>;
 }> = ({ entity, log }) => {
 	const items = useCollection(log);

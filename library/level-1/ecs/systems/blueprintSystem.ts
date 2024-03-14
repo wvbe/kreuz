@@ -1,25 +1,25 @@
-import Game from '../Game.ts';
-import { Collection } from '../events/Collection.ts';
-import { ProgressingNumericValue } from '../events/ProgressingNumericValue.ts';
-import { Blueprint } from '../inventory/Blueprint.ts';
-import { FactoryBuildingEntityOptions } from '../entities/entity.building.factory.ts';
-import { JobVacancy } from '../behavior/JobVacancy.ts';
-import { TileI } from '../types.ts';
-import { EntityI } from '../entities/types.ts';
-import { Inventory } from '../inventory/Inventory.ts';
-import { EventedValue } from '../events/EventedValue.ts';
+import Game from '../../Game.ts';
+import { JobVacancy } from '../../behavior/JobVacancy.ts';
+import { Blueprint } from '../../inventory/Blueprint.ts';
+import { inventoryComponent } from '../components/inventoryComponent.ts';
+import { locationComponent } from '../components/locationComponent.ts';
+import { pathingComponent } from '../components/pathingComponent.ts';
+import { walkToTile } from '../components/pathingComponent.ts';
+import { productionComponent } from '../components/productionComponent.ts';
+import { statusComponent } from '../components/statusComponent.ts';
+import { EcsSystem } from '../classes/EcsSystem.ts';
+import { EcsEntity } from '../types.ts';
 
-type WorkerEntity = EntityI & {
-	walkToTile: (tile: TileI) => Promise<void>;
-};
+type WorkerEntity = EcsEntity<
+	typeof statusComponent | typeof locationComponent | typeof pathingComponent
+>;
 
-type ProductionEntity = EntityI & {
-	options: FactoryBuildingEntityOptions;
-	inventory: Inventory;
-	$workers: Collection<WorkerEntity>;
-	$blueprint: EventedValue<Blueprint | null>;
-	$$progress: ProgressingNumericValue;
-};
+type ProductionEntity = EcsEntity<
+	| typeof productionComponent
+	| typeof statusComponent
+	| typeof locationComponent
+	| typeof inventoryComponent
+>;
 
 /**
  * Calculates the delta value for a given blueprint and worker amount.
@@ -82,10 +82,9 @@ function isBlueprintCycleBusy(factory: ProductionEntity): boolean {
 }
 
 async function assignWorkerToFactory(game: Game, worker: WorkerEntity, factory: ProductionEntity) {
-	// ...
 	await worker.$status.set(`Going to ${factory} for work`);
 	const tile = game.terrain.getTileEqualToLocation(factory.$$location.get());
-	await worker.walkToTile(tile);
+	await walkToTile(worker, tile);
 
 	await factory.$workers.add(worker);
 
@@ -144,15 +143,8 @@ async function attachSystemToEntity(game: Game, factory: ProductionEntity) {
 		if (!canAllocateProducts()) {
 			throw new Error('New cycle shouldna been started, but it was');
 		}
-		// if (isBlueprintCycleBusy(factory)) {
-		// 	// This might happen when a healthy blueprint cycle restarts; its delta never resets
-		// 	// to 0, ie.it is always busy
-		// hasReservation = false;
-		// 	factory.inventory.cancelReservation(factory);
-		// }
-		const delta = getDelta(blueprint, factory.$workers.length);
-
 		ignoreInventoryChanges = true;
+		const delta = getDelta(blueprint, factory.$workers.length);
 		void factory.inventory
 			.changeMultiple(
 				blueprint.ingredients.map(({ material, quantity }) => ({ material, quantity: -quantity })),
@@ -164,7 +156,6 @@ async function attachSystemToEntity(game: Game, factory: ProductionEntity) {
 		factory.inventory.makeReservation(factory, blueprint.products);
 		factory.$$progress.set(0);
 		factory.$$progress.setDelta(delta);
-
 		void factory.$status.set('Working…');
 	}
 
@@ -242,65 +233,76 @@ async function attachSystemToEntity(game: Game, factory: ProductionEntity) {
 		true,
 	);
 
-	factory.$blueprint.on((blueprint) => {
+	/**
+	 * Creates a job vacancy for a worker based on the given blueprint. Entities who are able may pick
+	 * up on this vacancy and come work on this blueprint.
+	 */
+	function createWorkerJobVacancy(blueprint: Blueprint | null) {
 		if (!blueprint || blueprint.options.workersRequired < 1) {
 			return;
 		}
 		const vacancy = new JobVacancy(
 			(blackboard) => assignWorkerToFactory(game, blackboard.entity, factory),
 			{
-				vacancies: factory.options.maxWorkers,
+				vacancies: factory.maxWorkers,
 				employer: factory,
 				score: ({ entity }) => {
-					let VAL = 1;
+					let desirability = 1;
 
-					const maximumDistanceWillingToTravel = 14,
+					const maximumDistanceWillingToTravel = 20,
 						distanceToJob = entity.$$location.get().euclideanDistanceTo(factory.$$location.get()),
 						// 1 = very close job, 0 = infinitely far
 						distanceMultiplier = Math.max(
 							0,
 							(maximumDistanceWillingToTravel - distanceToJob) / maximumDistanceWillingToTravel,
 						);
+					desirability *= distanceMultiplier;
 
-					VAL *= distanceMultiplier;
-
-					if (distanceMultiplier > 0) {
-						if (
-							!blueprint.hasAllIngredients(factory.inventory) ||
-							!factory.inventory.isEverythingAdditionallyAllocatable(blueprint.products)
-						) {
-							// Not enough ingredients in inventory to start another production cycle
-							// Or not enough space to stow the products
-							VAL *= 0.1;
-							return VAL;
-						}
+					if (
+						distanceMultiplier > 0 &&
+						(!blueprint.hasAllIngredients(factory.inventory) ||
+							!factory.inventory.isEverythingAdditionallyAllocatable(blueprint.products))
+					) {
+						// Not enough ingredients in inventory to start another production cycle
+						// Or not enough space to stow the products
+						desirability *= 0.1;
 					}
 
-					return VAL;
+					return desirability;
 				},
 			},
 		);
 		game.jobs.add(vacancy);
 		factory.$blueprint.once(() => game.jobs.remove(vacancy));
-	});
+	}
+	factory.$blueprint.on(createWorkerJobVacancy);
+	createWorkerJobVacancy(factory.$blueprint.get());
 
 	// factory.$detach.once(async () => {
 	// 	await factory.$$progress.detach();
 	// });
 
 	await factory.$$progress.attach(game);
-	factory.$blueprint.set(factory.options.blueprint);
+	// factory.$blueprint.set(factory.options.blueprint);
 }
 
-export async function attachSystem(game: Game) {
+async function attachSystem(game: Game) {
 	game.entities.$add.on(async (entities) => {
 		await Promise.all(
 			entities
 				.filter(
 					(entity): entity is ProductionEntity =>
-						(entity as ProductionEntity).$blueprint instanceof EventedValue,
+						productionComponent.test(entity) &&
+						statusComponent.test(entity) &&
+						inventoryComponent.test(entity) &&
+						locationComponent.test(entity),
 				)
 				.map((person) => attachSystemToEntity(game, person)),
 		);
 	});
 }
+
+export const blueprintSystem = new EcsSystem(
+	[productionComponent, statusComponent, locationComponent, inventoryComponent, pathingComponent],
+	attachSystem,
+);

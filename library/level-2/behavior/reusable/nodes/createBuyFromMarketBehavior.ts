@@ -3,18 +3,18 @@ import {
 	ExecutionNode,
 	SequenceNode,
 	TradeOrder,
+	wealthComponent,
+	inventoryComponent,
+	type EcsEntity,
 	type EntityBlackboard,
-	type EntityI,
-	type FactoryBuildingEntity,
-	type MarketBuildingEntity,
+	locationComponent,
 } from '@lib/core';
+import { TradeEntityI } from '../../../../level-1/classes/TradeOrder.ts';
 import { selectMostDesirableItemFromVendors } from '../primitives/selectMostDesirableItemFromVendors.ts';
+import { DesirabilityRecord, VendorPurchaseScorer } from '../primitives/types.ts';
 import { getEntitiesReachableByEntity, walkEntityToEntity } from '../travel.ts';
 import { createWaitBehavior } from './createWaitBehavior.ts';
-import { VendorPurchaseScorer } from '../primitives/types.ts';
-import { DesirabilityRecord } from '../primitives/types.ts';
-
-type VendorEntity = MarketBuildingEntity | FactoryBuildingEntity;
+import { ownerComponent } from '@lib';
 
 /**
  * Makes the entity select an attractive deal, go there and make the purchase.
@@ -22,8 +22,15 @@ type VendorEntity = MarketBuildingEntity | FactoryBuildingEntity;
  * Leaves a `deal` of type {@link DesirabilityRecord} onto the blackbloard.
  */
 export function createBuyFromMarketBehavior(
-	vendorFilter: (entity: EntityI) => entity is VendorEntity,
-	createDesirabilityScore: VendorPurchaseScorer,
+	vendorFilter: (
+		entity: EcsEntity,
+	) => entity is EcsEntity<
+		| typeof locationComponent
+		| typeof wealthComponent
+		| typeof inventoryComponent
+		| typeof ownerComponent
+	>,
+	createDesirabilityScore: VendorPurchaseScorer<true>,
 ) {
 	return new SequenceNode<EntityBlackboard>(
 		new ExecutionNode('Find a deal', (blackboard) => {

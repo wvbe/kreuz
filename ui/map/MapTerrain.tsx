@@ -1,16 +1,17 @@
-import { Collection, EntityI, type Terrain } from '@lib';
-import React, { FunctionComponent, useCallback, useMemo, useState } from 'react';
-import { MapEntity } from './MapEntity.tsx';
-import { MapTile } from './MapTile.tsx';
-import { MapTerrainOutline } from './MapTerrainOutline.tsx';
+import { Collection, EcsEntity, locationComponent, type Terrain } from '@lib';
+import React, { FunctionComponent, useMemo } from 'react';
 import { MapTileContextMenuHost } from './MAP_TILE_CONTEXT_MENU.ts';
+import { MapEntity } from './MapEntity.tsx';
+import { MapTerrainOutline } from './MapTerrainOutline.tsx';
+import { MapTile } from './MapTile.tsx';
+import { visibilityComponent } from '@lib';
 
 const MARGIN = 25;
 
-export const MapTerrain: FunctionComponent<{ terrain: Terrain; entities: Collection<EntityI> }> = ({
-	terrain,
-	entities,
-}) => {
+export const MapTerrain: FunctionComponent<{
+	terrain: Terrain;
+	entities: Collection<EcsEntity>;
+}> = ({ terrain, entities }) => {
 	const zoom = 32;
 
 	const tiles = useMemo(
@@ -38,7 +39,12 @@ export const MapTerrain: FunctionComponent<{ terrain: Terrain; entities: Collect
 	);
 
 	const entities2 = useMemo(
-		() => entities.map((entity, i) => <MapEntity key={entity.id} entity={entity} zoom={zoom} />),
+		() =>
+			entities
+				.filter<EcsEntity<typeof locationComponent | typeof visibilityComponent>>(
+					(entity) => locationComponent.test(entity) && visibilityComponent.test(entity),
+				)
+				.map((entity, i) => <MapEntity key={entity.id} entity={entity} zoom={zoom} />),
 		[],
 	);
 

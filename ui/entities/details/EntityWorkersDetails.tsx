@@ -1,23 +1,20 @@
-import { EntityI, FactoryBuildingEntity, PersonEntity } from '@lib';
+import { EcsEntity, productionComponent } from '@lib';
 import React, { FunctionComponent } from 'react';
 import { useMemoFromEvent } from '../../hooks/useEventedValue.ts';
 import { EntityLink } from '../EntityLink.tsx';
 
-export const EntityWorkersDetails: FunctionComponent<{ entity: EntityI }> = ({ entity }) => {
-	const $workers = (entity as FactoryBuildingEntity).$workers;
+export const EntityWorkersDetails: FunctionComponent<{ entity: EcsEntity }> = ({ entity }) => {
+	const $workers = (entity as EcsEntity<typeof productionComponent>).$workers;
 	if (!$workers) {
 		return null;
 	}
-	const workers = useMemoFromEvent<[PersonEntity[], PersonEntity[]], PersonEntity[]>(
-		$workers.$change,
-		$workers.slice(),
-		() => $workers.slice(),
-	);
+	const workers = useMemoFromEvent($workers.$change, $workers.slice(), () => $workers.slice());
 
 	return (
 		<>
 			<p>
-				Workers: {workers.length} out of {(entity as FactoryBuildingEntity).options.maxWorkers}
+				Workers: {workers.length} out of{' '}
+				{(entity as EcsEntity<typeof productionComponent>).maxWorkers}
 			</p>
 			<ul>
 				{workers.map((worker) => (

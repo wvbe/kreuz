@@ -1,17 +1,23 @@
-import { Inventory, TradeOrder } from '@lib/core';
+import {
+	EcsEntity,
+	TradeOrder,
+	inventoryComponent,
+	locationComponent,
+	pathingComponent,
+	wealthComponent,
+} from '@lib/core';
 import { DesirabilityRecord, VendorPurchaseScorer } from './types.ts';
-import { PersonEntity } from '@lib/core';
 
 /**
  * @todo Probably re-type this to match {@link TradeOrder} (eg. {@link TradeOrderConstructorParam})
  */
 export function selectMostDesirableItemFromInventory(
-	entity: PersonEntity,
-	createDesirabilityScore: VendorPurchaseScorer,
-): DesirabilityRecord | null {
-	const records: DesirabilityRecord[] = [];
+	entity: EcsEntity<typeof inventoryComponent>,
+	createDesirabilityScore: VendorPurchaseScorer<false>,
+): DesirabilityRecord<false> | null {
+	const records: DesirabilityRecord<false>[] = [];
 	for (const { material, quantity } of entity.inventory.getAvailableItems()) {
-		const record: DesirabilityRecord = {
+		const record: DesirabilityRecord<false> = {
 			market: null,
 			material,
 			score: createDesirabilityScore(entity, null, material, quantity),

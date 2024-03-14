@@ -1,5 +1,5 @@
-import { type EntityI, type FactoryBuildingEntity } from '@lib';
-import React, { FunctionComponent, useMemo } from 'react';
+import { EcsEntity } from '@lib';
+import React, { FunctionComponent } from 'react';
 import { GameNavigation, GameNavigationButton } from '../application/GameNavigation.tsx';
 import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow.tsx';
 import { useSelectedEntity } from '../hooks/useSelectedEntity.tsx';
@@ -10,12 +10,14 @@ import {
 import { EntityBadge } from './EntityBadge.tsx';
 import { EntityBlueprintBadgeDetails } from './details/EntityBlueprintBadgeDetails.tsx';
 import { EntityBlueprintProgressDetails } from './details/EntityBlueprintProgressDetails.tsx';
+import { EntityHealthDetails } from './details/EntityHealthDetails.tsx';
 import { EntityInventoryDetails } from './details/EntityInventoryDetails.tsx';
 import { EntityNeedsDetails } from './details/EntityNeedsDetails.tsx';
 import { EntityWorkersDetails } from './details/EntityWorkersDetails.tsx';
-import { EntityHealthDetails } from './details/EntityHealthDetails.tsx';
 
-export const EntityDetails: FunctionComponent<{ entity?: EntityI | null }> = ({ entity }) => {
+export const EntityDetails: FunctionComponent<{ entity?: EcsEntity<any> | null }> = ({
+	entity,
+}) => {
 	if (!entity) {
 		return null;
 	}

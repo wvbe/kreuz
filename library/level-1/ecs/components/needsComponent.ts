@@ -1,23 +1,12 @@
+import { PersonNeedId } from '@lib';
 import { PERSON_NEEDS } from '../../constants/needs.ts';
 import { Need } from '../../entities/Need.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
 
 export const needsComponent = new EcsComponent<
+	Record<PersonNeedId, number>,
 	{
-		nutrition: number;
-		hydration: number;
-		energy: number;
-		hygiene: number;
-		ideology: number;
-	},
-	{
-		needs: {
-			nutrition: Need;
-			hydration: Need;
-			energy: Need;
-			hygiene: Need;
-			religion: Need;
-		};
+		needs: Record<PersonNeedId, Need>;
 	}
 >(
 	(entity) => !!entity.needs,

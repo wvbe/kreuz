@@ -7,5 +7,7 @@ export const ownerComponent = new EcsComponent<{
 	owner: EcsEntity<typeof wealthComponent | typeof inventoryComponent>;
 }>(
 	(entity) =>
-		!!entity.owner && wealthComponent.test(entity.owner) && inventoryComponent.test(entity.owner),
+		!!entity.owner &&
+		wealthComponent.test(entity.owner as EcsEntity) &&
+		inventoryComponent.test(entity.owner as EcsEntity),
 );

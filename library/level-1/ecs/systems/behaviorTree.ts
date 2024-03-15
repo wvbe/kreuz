@@ -3,10 +3,10 @@ import { BehaviorTreeSignal } from '../../behavior/BehaviorTreeSignal.ts';
 import { behaviorComponent } from '../components/behaviorComponent.ts';
 import { EcsSystem } from '../classes/EcsSystem.ts';
 import { EcsEntity } from '../types.ts';
+import { EcsArchetypeEntity } from '../types.ts';
+import { personArchetype } from '@lib/core';
 
-type BehavingEntity = EcsEntity<typeof behaviorComponent>;
-
-function attachSystemToEntity(game: Game, entity: BehavingEntity) {
+function attachSystemToEntity(game: Game, entity: EcsArchetypeEntity<typeof personArchetype>) {
 	let behaviorLoopEnabled = false;
 
 	const doBehaviourLoop = async () => {
@@ -23,7 +23,7 @@ function attachSystemToEntity(game: Game, entity: BehavingEntity) {
 				game,
 				// @TODO get rid of this type coercion. The behavior tree, too,
 				// should not care what kind of entity it is dealing with.
-				entity: entity as EcsEntity<typeof behaviorComponent | any>,
+				entity,
 			});
 		} catch (error: Error | BehaviorTreeSignal | unknown) {
 			if ((error as BehaviorTreeSignal)?.type !== 'fail') {
@@ -55,10 +55,12 @@ async function attachSystem(game: Game) {
 	game.entities.$add.on(async (entities) => {
 		await Promise.all(
 			entities
-				.filter((entity): entity is BehavingEntity => behaviorComponent.test(entity))
+				.filter((entity): entity is EcsArchetypeEntity<typeof personArchetype> =>
+					personArchetype.test(entity),
+				)
 				.map((entity) => attachSystemToEntity(game, entity)),
 		);
 	});
 }
 
-export const behaviorTreeSystem = new EcsSystem([behaviorComponent], attachSystem);
+export const behaviorTreeSystem = new EcsSystem([], attachSystem);

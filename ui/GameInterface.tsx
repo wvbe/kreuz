@@ -1,4 +1,4 @@
-import { DriverI, Game } from '@lib';
+import { DriverI, Game, factoryArchetype, marketArchetype, personArchetype } from '@lib';
 import React, { FC, PropsWithChildren, type FunctionComponent } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import { GameClock } from './application/GameClock.tsx';
@@ -10,27 +10,22 @@ import { DriverContext } from './context/DriverContext.tsx';
 import { GameContext } from './context/GameContext.tsx';
 import { ReplacementSpaceContext } from './context/ReplacementSpaceContext.tsx';
 import { SelectedEntityContextProvider } from './hooks/useSelectedEntity.tsx';
+import { InspectBlueprintRoute } from './routes/InspectBlueprintRoute.tsx';
 import { InspectEntityJobsRoute } from './routes/InspectEntityJobsRoute.tsx';
-import { InspectEntityTradelogRoute } from './routes/InspectEntityTradelogRoute.tsx';
 import { InspectEntityRoute } from './routes/InspectEntityRoute.tsx';
+import { InspectMaterialRoute } from './routes/InspectMaterialRoute.tsx';
 import { ListEntityRoute } from './routes/ListEntityRoute.tsx';
 import {
+	ROUTE_ENTITIES_DETAILS,
 	ROUTE_ENTITIES_FACTORIES,
 	ROUTE_ENTITIES_MARKETS,
-	ROUTE_ENTITIES_PEOPLE_JOBS_DETAILS,
-	ROUTE_ENTITIES_PEOPLE_TRADE_DETAILS,
 	ROUTE_ENTITIES_PEOPLE,
-	ROUTE_MATERIALS_DETAILS,
+	ROUTE_ENTITIES_PEOPLE_JOBS_DETAILS,
 	ROUTE_MATERIALS,
-	ROUTE_PRODUCTION_DETAILS,
+	ROUTE_MATERIALS_DETAILS,
 	ROUTE_PRODUCTION,
-	ROUTE_ENTITIES_DETAILS,
+	ROUTE_PRODUCTION_DETAILS
 } from './routes/ROUTES.ts';
-import { InspectBlueprintRoute } from './routes/InspectBlueprintRoute.tsx';
-import { InspectMaterialRoute } from './routes/InspectMaterialRoute.tsx';
-import { personArchetype } from '@lib';
-import { factoryArchetype } from '@lib';
-import { marketArchetype } from '@lib';
 
 const ListPeopleEntities: FC<PropsWithChildren> = ({ children }) => (
 	<>
@@ -69,10 +64,6 @@ export const GameInterface: FunctionComponent<{
 							<GamePanels>
 								<Route path={ROUTE_ENTITIES_PEOPLE} Component={ListPeopleEntities} />
 								<Route path={ROUTE_ENTITIES_DETAILS} Component={InspectEntityRoute} />
-								<Route
-									path={ROUTE_ENTITIES_PEOPLE_TRADE_DETAILS}
-									Component={InspectEntityTradelogRoute}
-								/>
 								<Route
 									path={ROUTE_ENTITIES_PEOPLE_JOBS_DETAILS}
 									Component={InspectEntityJobsRoute}

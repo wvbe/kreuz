@@ -53,7 +53,7 @@ describe('Inventory', () => {
 		inventory.makeReservationFromTradeOrder(tradeOrder);
 		expect(inventory.reservedIncomingOf(test1)).toBe(10);
 		expect(inventory.availableOf(test1)).toBe(0);
-		expect(inventory.allocatableTo(test1)).toBe(25);
+		expect(inventory.amountAllocatableTo(test1)).toBe(25);
 	});
 	it('.reservedOutgoingOf()', async () => {
 		const inventory = new Inventory(1);
@@ -67,7 +67,7 @@ describe('Inventory', () => {
 		inventory.makeReservationFromTradeOrder(tradeOrder);
 		expect(inventory.reservedOutgoingOf(test1)).toBe(10);
 		expect(inventory.availableOf(test1)).toBe(5);
-		expect(inventory.allocatableTo(test1)).toBe(25);
+		expect(inventory.amountAllocatableTo(test1)).toBe(25);
 	});
 	it('.getReservedIncomingItems()', () => {
 		const inventory = new Inventory();

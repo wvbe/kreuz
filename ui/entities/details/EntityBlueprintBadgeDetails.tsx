@@ -22,6 +22,9 @@ export const EntityBlueprintBadgeDetails: FunctionComponent<{
 		<BlueprintInputOutput
 			blueprint={blueprint}
 			onClick={(event) => {
+				if (!blueprint) {
+					throw new Error('Had expected the clickhandler on a blueprint to have a blueprint');
+				}
 				event.preventDefault();
 				event.stopPropagation();
 				navigate(ROUTE_PRODUCTION_DETAILS, {

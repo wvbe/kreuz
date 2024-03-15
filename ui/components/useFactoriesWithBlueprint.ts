@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useGameContext } from '../context/GameContext.tsx';
 import { useMemoFromEvent } from '../hooks/useEventedValue.ts';
 
-export function useFactoriesWithBlueprint(blueprint: Blueprint | null) {
+export function useEntitiesWithBlueprint(blueprint: Blueprint | null) {
 	const game = useGameContext();
 
 	const transform = useCallback(
@@ -17,5 +17,9 @@ export function useFactoriesWithBlueprint(blueprint: Blueprint | null) {
 	if (!blueprint) {
 		return [];
 	}
-	return useMemoFromEvent<[EcsEntity[]]>(game.entities.$change, transform([], []), transform);
+	return useMemoFromEvent<[EcsEntity[], EcsEntity[]], EcsEntity<typeof productionComponent>[]>(
+		game.entities.$change,
+		transform([], []),
+		transform,
+	);
 }

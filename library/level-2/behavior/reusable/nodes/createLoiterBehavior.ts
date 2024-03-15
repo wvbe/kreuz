@@ -23,7 +23,7 @@ export function createLoiterBehavior() {
 
 				const closestTiles = game.terrain.selectClosestTiles(start, 5);
 				if (!closestTiles.length) {
-					throw new BehaviorTreeSignal(`Theres nowhere to wander to for ${entity.label}`);
+					throw new BehaviorTreeSignal(`Theres nowhere to wander to for ${entity}`);
 				}
 				const destination = Random.fromArray(closestTiles, entity.id, 'loiter walk', ++ticker);
 				await entity.walkToTile(destination);

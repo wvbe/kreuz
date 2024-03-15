@@ -1,4 +1,4 @@
-import { EcsEntity, productionComponent } from '@lib';
+import { EcsEntity, productionComponent, visibilityComponent } from '@lib';
 import React, { FunctionComponent } from 'react';
 import { useMemoFromEvent } from '../../hooks/useEventedValue.ts';
 import { EntityLink } from '../EntityLink.tsx';
@@ -17,11 +17,18 @@ export const EntityWorkersDetails: FunctionComponent<{ entity: EcsEntity }> = ({
 				{(entity as EcsEntity<typeof productionComponent>).maxWorkers}
 			</p>
 			<ul>
-				{workers.map((worker) => (
-					<li key={worker.id}>
-						<EntityLink entity={worker} />
-					</li>
-				))}
+				{workers
+					.filter((entity) => visibilityComponent.test(entity))
+					.map((worker) => (
+						<li key={worker.id}>
+							<EntityLink
+								entity={
+									// STFU TypeScript
+									worker as unknown as EcsEntity<typeof visibilityComponent>
+								}
+							/>
+						</li>
+					))}
 			</ul>
 		</>
 	);

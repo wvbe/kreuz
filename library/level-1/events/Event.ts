@@ -87,9 +87,6 @@ export class Event<Args extends unknown[] = []> implements EventI<Args> {
 		// while once-ers change the true callbacks list by reference:
 		const callbacks = this.#callbacks.slice();
 
-		// Do not care in which order the callbacks finish:
-		// await Promise.all(callbacks.map((cb) => cb(...args)));
-
 		for (const callback of callbacks) {
 			await callback(...args);
 		}

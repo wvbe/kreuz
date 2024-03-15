@@ -23,6 +23,7 @@ export const personArchetype = new EcsArchetype<
 	| typeof needsComponent
 	| typeof pathingComponent
 	| typeof statusComponent
+	| typeof visibilityComponent
 	| typeof wealthComponent
 >(
 	[
@@ -55,14 +56,14 @@ export const personArchetype = new EcsArchetype<
 			ideology: 1,
 			nutrition: 1,
 		});
-		visibilityComponent.attach(entity, {
-			name: options.name,
-			icon: options.icon,
-		});
 		pathingComponent.attach(entity, {
 			walkSpeed: 1 / 1000,
 		});
 		statusComponent.attach(entity, {});
+		visibilityComponent.attach(entity, {
+			name: options.name,
+			icon: options.icon,
+		});
 		wealthComponent.attach(entity, {
 			wealth: 0,
 		});

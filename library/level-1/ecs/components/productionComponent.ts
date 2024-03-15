@@ -4,6 +4,13 @@ import { ProgressingNumericValue } from '../../events/ProgressingNumericValue.ts
 import { Blueprint, SaveBlueprintJson } from '../../inventory/Blueprint.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
 import { EcsEntity } from '../types.ts';
+import { type locationComponent } from './locationComponent.ts';
+import { type statusComponent } from './statusComponent.ts';
+import { type pathingComponent } from './pathingComponent.ts';
+
+export type ProductionComponentWorkerEntity = EcsEntity<
+	typeof statusComponent | typeof locationComponent | typeof pathingComponent
+>;
 
 export const productionComponent = new EcsComponent<
 	{
@@ -12,7 +19,7 @@ export const productionComponent = new EcsComponent<
 	},
 	{
 		maxWorkers: number;
-		$workers: Collection<EcsEntity>;
+		$workers: Collection<ProductionComponentWorkerEntity>;
 		$blueprint: EventedValue<Blueprint | null>;
 		$$progress: ProgressingNumericValue;
 	}

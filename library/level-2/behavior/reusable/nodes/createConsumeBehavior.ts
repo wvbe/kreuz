@@ -27,7 +27,7 @@ type ConsumptionType = {
 	/**
 	 * A function that, from all the candidate materials, selects the one that is most desirable.
 	 */
-	materialDesirabilityScore: VendorPurchaseScorer;
+	materialDesirabilityScore: VendorPurchaseScorer<false>;
 	/**
 	 * A function that generates a status for the moment that the entity gets to satisfying their need.
 	 */
@@ -82,12 +82,12 @@ export function createConsumeBehavior(config: ConsumptionType) {
 						inventoryComponent.test(entity) &&
 						ownerComponent.test(entity) &&
 						wealthComponent.test(entity),
-					config.materialDesirabilityScore,
+					config.materialDesirabilityScore as unknown as VendorPurchaseScorer<true>,
 				),
 			),
 
 			// If the entity has food in inventory, eat from it:
-			new SequenceNode<EntityBlackboard & { deal?: DesirabilityRecord }>(
+			new SequenceNode<EntityBlackboard & { deal?: DesirabilityRecord<true | false> }>(
 				new ExecutionNode('Eat from inventory?', async ({ entity, deal }) => {
 					// The material that is going to be consumed is either that of the deal made
 					// in the previous BT node, or the most desirable item that the entity
@@ -136,7 +136,8 @@ createConsumeBehavior.DRINK = {
 		return material.hydration && !material.toxicity;
 	},
 	materialDesirabilityScore(entity, vendor, material, quantity) {
-		if (quantity <= 1 || entity.wallet.get() < material.value) {
+		if (quantity <= 1) {
+			//|| entity.wallet.get() < material.value) {
 			return 0;
 		}
 		// @TODO weigh in distance to vendor, if vendor is not the same as entity
@@ -155,7 +156,8 @@ createConsumeBehavior.EAT = {
 		return material.nutrition && !material.toxicity;
 	},
 	materialDesirabilityScore(entity, vendor, material, quantity) {
-		if (quantity <= 1 || entity.wallet.get() < material.value) {
+		if (quantity <= 1) {
+			// || entity.wallet.get() < material.value) {
 			return 0;
 		}
 		// @TODO weigh in distance to vendor, if vendor is not the same as entity

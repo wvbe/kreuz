@@ -1,7 +1,6 @@
 export const ROUTE_LANDING_PAGE = '/';
 export const ROUTE_ENTITIES_PEOPLE = '/people/*';
 export const ROUTE_ENTITIES_DETAILS = '/entity/:entityId/*';
-export const ROUTE_ENTITIES_PEOPLE_TRADE_DETAILS = '/people/:entityId/trade';
 export const ROUTE_ENTITIES_PEOPLE_JOBS_DETAILS = '/people/:entityId/jobs';
 export const ROUTE_ENTITIES_FACTORIES = '/factories/*';
 export const ROUTE_ENTITIES_MARKETS = '/market-places/*';

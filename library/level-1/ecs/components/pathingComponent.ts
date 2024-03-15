@@ -1,12 +1,10 @@
-import { TileI } from '@lib';
+import { Coordinate, TileI } from '@lib';
+import { Path } from '../../classes/Path.ts';
 import { Event } from '../../events/Event.ts';
-import { EventedValue } from '../../events/EventedValue.ts';
 import { CallbackFn, CoordinateI } from '../../types.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
 import { EcsEntity } from '../types.ts';
 import { locationComponent } from './locationComponent.ts';
-import { Path } from '../../classes/Path.ts';
-import { Coordinate } from '@lib';
 
 type WalkableEntity = EcsEntity<typeof locationComponent | typeof pathingComponent>;
 
@@ -20,7 +18,7 @@ async function animateTo(entity: WalkableEntity, coordinate: Coordinate) {
 	await entity.$stepStart.emit(coordinate, distance / entity.walkSpeed, done);
 }
 
-export async function walkToTile(entity: WalkableEntity, destination: TileI) {
+async function walkToTile(entity: WalkableEntity, destination: TileI) {
 	if (!locationComponent.test(entity) || !pathingComponent.test(entity)) {
 		throw new Error(`Entity ${entity} is unable to walk`);
 	}

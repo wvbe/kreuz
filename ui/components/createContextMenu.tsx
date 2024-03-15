@@ -1,4 +1,3 @@
-import { element } from 'https://esm.sh/v118/@types/prop-types@15.7.5/index.js';
 import React, {
 	FC,
 	MouseEvent,

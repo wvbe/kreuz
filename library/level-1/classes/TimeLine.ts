@@ -107,6 +107,16 @@ export class TimeLine extends EventedValue<number> {
 		};
 	}
 
+	public setInterval(callback: CallbackFn, delay: number): DestroyerFn<number> {
+		let destroyer: DestroyerFn<number>;
+		const loop = () => {
+			void callback();
+			destroyer = this.setTimeout(loop, delay);
+		};
+		loop();
+		return destroyer!;
+	}
+
 	public async wait(time: number): Promise<void> {
 		await new Promise<void>((resolve) => {
 			this.setTimeout(() => {

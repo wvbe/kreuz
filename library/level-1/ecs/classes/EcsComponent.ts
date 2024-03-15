@@ -39,8 +39,8 @@ export class EcsComponent<
 	public attach<EntityGeneric extends EcsEntity>(
 		entity: EntityGeneric,
 		options: OptionsGeneric,
-	): EcsEntity<this | ComponentFromEcsEntity<EntityGeneric>> {
+	): EcsEntity<this> {
 		this.#attach(entity, options);
-		return entity as EcsEntity<this | ComponentFromEcsEntity<EntityGeneric>>;
+		return entity as EcsEntity<this>;
 	}
 }

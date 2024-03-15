@@ -9,12 +9,13 @@ import { visibilityComponent } from '../components/visibilityComponent.ts';
 import { wealthComponent } from '../components/wealthComponent.ts';
 import { EcsArchetype } from '../classes/EcsArchetype.ts';
 import { EcsEntity } from '../types.ts';
+import { importExportComponent } from '../components/importExportComponent.ts';
 
 export const factoryArchetype = new EcsArchetype<
 	{
 		location: SimpleCoordinate;
 		owner: EcsEntity<typeof wealthComponent | typeof inventoryComponent>;
-		blueprint: Blueprint | null;
+		blueprint: Blueprint;
 		maxWorkers: number;
 		maxStackSpace: number;
 		name?: string;
@@ -26,6 +27,7 @@ export const factoryArchetype = new EcsArchetype<
 	| typeof ownerComponent
 	| typeof productionComponent
 	| typeof visibilityComponent
+	| typeof importExportComponent
 >(
 	[
 		inventoryComponent,
@@ -34,6 +36,7 @@ export const factoryArchetype = new EcsArchetype<
 		statusComponent,
 		productionComponent,
 		visibilityComponent,
+		importExportComponent,
 	],
 	(entity, options) => {
 		inventoryComponent.attach(entity, {
@@ -53,6 +56,16 @@ export const factoryArchetype = new EcsArchetype<
 		visibilityComponent.attach(entity, {
 			icon: options.icon ?? '🏭',
 			name: options.name ?? 'Factory',
+		});
+		importExportComponent.attach(entity, {
+			buyMaterialsWhenBelow: options.blueprint.ingredients.map(({ material, quantity }) => ({
+				material,
+				quantity: quantity * 5,
+			})),
+			sellMaterialsWhenAbove: options.blueprint.products.map(({ material, quantity }) => ({
+				material,
+				quantity: quantity * 5,
+			})),
 		});
 	},
 );

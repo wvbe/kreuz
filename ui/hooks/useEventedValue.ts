@@ -42,7 +42,7 @@ function noTransformMultiple<T extends unknown[], O = T>(...value: T): O {
  * values (arguments) at a time, the value returned by `useEvent` is an array of those values/arguments.
  */
 export function useMemoFromEvent<
-	EventArgsGeneric extends unknown[] = never[],
+	EventArgsGeneric extends unknown[] = any[],
 	OutputGeneric = EventArgsGeneric,
 >(
 	eventedValue: Event<EventArgsGeneric>,

@@ -26,9 +26,12 @@ export class EcsArchetype<
 	}
 
 	public create(options: OptionsGeneric): EcsEntity<ComponentGeneric> {
-		const entity: EcsEntity = { id: `archetype-${identifier++}` };
+		const entity: EcsEntity = {
+			id: `${identifier++}`,
+		};
 		this.#attachEntity(entity, options);
 		if (!this.test(entity)) {
+			// You forgot to attach all relevant components to this entity, in #attachEntity
 			throw new Error('Entity failed its own archetype test');
 		}
 		return entity as EcsEntity<ComponentGeneric>;

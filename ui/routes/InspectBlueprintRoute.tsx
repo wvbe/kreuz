@@ -9,8 +9,9 @@ import { InventoryBag } from '../inventory/InventoryUI.tsx';
 import { Badge } from '../components/atoms/Badge.tsx';
 import { GameNavigation, GameNavigationButton } from '../application/GameNavigation.tsx';
 import { BlueprintInputOutput } from '../components/BlueprintInputOutput.tsx';
-import { useFactoriesWithBlueprint } from '../components/useFactoriesWithBlueprint.ts';
+import { useEntitiesWithBlueprint } from '../components/useFactoriesWithBlueprint.ts';
 import { EntityLink } from '../entities/EntityLink.tsx';
+import { EcsEntity, productionComponent, visibilityComponent } from '@lib';
 
 export const InspectBlueprintRoute: FunctionComponent = () => {
 	const { blueprintId } = useParams<{ blueprintId: string }>();
@@ -19,7 +20,7 @@ export const InspectBlueprintRoute: FunctionComponent = () => {
 		() => (blueprintId ? game.assets.blueprints.item(blueprintId) : null),
 		[blueprintId],
 	);
-	const factories = useFactoriesWithBlueprint(blueprint);
+	const entities = useEntitiesWithBlueprint(blueprint);
 	if (!blueprint) {
 		return null;
 	}
@@ -36,11 +37,18 @@ export const InspectBlueprintRoute: FunctionComponent = () => {
 				/>
 				<BlueprintInputOutput blueprint={blueprint} />
 				<ul>
-					{factories.map((f) => (
-						<li key={f.id}>
-							<EntityLink entity={f} />
-						</li>
-					))}
+					{entities
+						.filter(
+							(
+								entity,
+							): entity is EcsEntity<typeof productionComponent | typeof visibilityComponent> =>
+								visibilityComponent.test(entity),
+						)
+						.map((f) => (
+							<li key={f.id}>
+								<EntityLink entity={f} />
+							</li>
+						))}
 				</ul>
 			</CollapsibleWindow>
 		</>

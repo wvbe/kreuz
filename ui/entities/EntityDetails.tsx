@@ -3,10 +3,7 @@ import React, { FunctionComponent } from 'react';
 import { GameNavigation, GameNavigationButton } from '../application/GameNavigation.tsx';
 import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow.tsx';
 import { useSelectedEntity } from '../hooks/useSelectedEntity.tsx';
-import {
-	ROUTE_ENTITIES_PEOPLE_JOBS_DETAILS,
-	ROUTE_ENTITIES_PEOPLE_TRADE_DETAILS,
-} from '../routes/ROUTES.ts';
+import { ROUTE_ENTITIES_PEOPLE_JOBS_DETAILS } from '../routes/ROUTES.ts';
 import { EntityBadge } from './EntityBadge.tsx';
 import { EntityBlueprintBadgeDetails } from './details/EntityBlueprintBadgeDetails.tsx';
 import { EntityBlueprintProgressDetails } from './details/EntityBlueprintProgressDetails.tsx';
@@ -35,12 +32,6 @@ export const EntityDetails: FunctionComponent<{ entity?: EcsEntity<any> | null }
 			</CollapsibleWindow>
 			{entity.type === 'person' ? (
 				<GameNavigation>
-					<GameNavigationButton
-						symbol="💰"
-						path={ROUTE_ENTITIES_PEOPLE_TRADE_DETAILS}
-						params={{ entityId: entity.id }}
-						tooltip="Trade"
-					/>
 					<GameNavigationButton
 						symbol="👔"
 						path={ROUTE_ENTITIES_PEOPLE_JOBS_DETAILS}

@@ -1,4 +1,4 @@
-import { JobVacancy } from './behavior/JobVacancy.ts';
+import { JobPosting } from './behavior/JobPosting.ts';
 import { EntityBlackboard } from './behavior/types.ts';
 import { Registry } from './classes/Registry.ts';
 import { TimeLine } from './classes/TimeLine.ts';
@@ -6,6 +6,7 @@ import { DriverI } from './drivers/types.ts';
 import { behaviorTreeSystem } from './ecs/systems/behaviorTree.ts';
 import { blueprintSystem } from './ecs/systems/blueprintSystem.ts';
 import { healthSystem } from './ecs/systems/healthSystem.ts';
+import { tradeFlowSystem } from './ecs/systems/tradeFlowSystem.ts';
 import { EcsEntity } from './ecs/types.ts';
 import { Collection } from './events/Collection.ts';
 import { Event } from './events/Event.ts';
@@ -33,7 +34,7 @@ export default class Game {
 
 	public readonly assets: GameAssets;
 
-	public readonly jobs = new Collection<JobVacancy>();
+	public readonly jobs = new Collection<JobPosting>();
 
 	/*
 	 * EVENTS
@@ -55,6 +56,7 @@ export default class Game {
 		blueprintSystem.attachGame(this);
 		behaviorTreeSystem.attachGame(this);
 		healthSystem.attachGame(this);
+		tradeFlowSystem.attachGame(this);
 
 		driver.attach(this);
 	}

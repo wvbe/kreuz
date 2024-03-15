@@ -12,7 +12,7 @@ export const InventoryStack: FunctionComponent<{
 }> = ({ material, quantity, isGhost }) => {
 	const navigate = useNavigation();
 	const game = useGameContext();
-	const onClick = useCallback(
+	const onClick = useCallback<React.MouseEventHandler<HTMLDivElement>>(
 		(event) => {
 			if (!material) {
 				return;

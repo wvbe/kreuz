@@ -8,15 +8,15 @@ import { EntityBlackboard } from './types.ts';
  *   0 = Not attractive at all or impossible. This worker will never take the job.
  *   1 = Totally attractive, it is the first job this worker would take
  */
-type JobVacancyDesirabilityFn = (blackboard: EntityBlackboard) => number;
+type JobPostingDesirabilityFn = (blackboard: EntityBlackboard) => number;
 
-type JobVacancyOptions = {
+type JobPostingOptions = {
 	/**
 	 * A function that scores how desirable a job is for a person:
 	 *   0 = Not attractive at all or impossible. This worker will never take the job.
 	 *   1 = Totally attractive, it is the first job this worker would take
 	 */
-	score: JobVacancyDesirabilityFn;
+	score: JobPostingDesirabilityFn;
 	/**
 	 * The amount of people that can work this job here.
 	 */
@@ -25,17 +25,17 @@ type JobVacancyOptions = {
 	/**
 	 * Useful for cosmetic reasons, but not used in any of the actual computation (???)
 	 */
-	employer: EcsEntity<typeof productionComponent>;
+	employer: EcsEntity;
 };
-export class JobVacancy {
-	#onAssign: (blackboard: EntityBlackboard) => Promise<void>;
+export class JobPosting {
+	#onAssign: (job: this, blackboard: EntityBlackboard) => Promise<void>;
 	public vacancies: number;
 
-	#options: JobVacancyOptions;
+	#options: JobPostingOptions;
 
 	public constructor(
-		onAssign: (blackboard: EntityBlackboard) => Promise<void>,
-		options: JobVacancyOptions,
+		onAssign: (job: JobPosting, blackboard: EntityBlackboard) => Promise<void>,
+		options: JobPostingOptions,
 	) {
 		this.#onAssign = onAssign;
 		this.#options = options;
@@ -51,7 +51,7 @@ export class JobVacancy {
 			throw new Error('Cannot take a job that is already forgiven');
 		}
 		this.vacancies--;
-		await this.#onAssign(blackboard);
+		await this.#onAssign(this, blackboard);
 		this.vacancies++;
 	}
 

@@ -1,4 +1,4 @@
-import { type TileI } from '@lib';
+import { visibilityComponent, type TileI } from '@lib';
 import React, { FC, PropsWithChildren, useMemo } from 'react';
 
 import { useGameContext } from '../context/GameContext.tsx';
@@ -44,11 +44,15 @@ export const MapTileContextMenu: FC<{
 			<MapTileContextMenuItem>
 				{tile.x},{tile.y}
 			</MapTileContextMenuItem>
-			{tileEntities.map((entity) => (
-				<MapTileContextMenuItem key={entity.id} onClick={() => selectedEntity.set(entity)}>
-					<EntityBadge entity={entity} />
-				</MapTileContextMenuItem>
-			))}
+			{tileEntities
+				.filter((entity): entity is EcsEntity<typeof visibilityComponent> =>
+					visibilityComponent.test(entity),
+				)
+				.map((entity) => (
+					<MapTileContextMenuItem key={entity.id} onClick={() => selectedEntity.set(entity)}>
+						<EntityBadge entity={entity} />
+					</MapTileContextMenuItem>
+				))}
 		</div>
 	);
 };

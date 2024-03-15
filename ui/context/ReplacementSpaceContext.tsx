@@ -1,4 +1,4 @@
-import { EcsEntity, ReplacementSpace, heroes } from '@lib';
+import { EcsEntity, ReplacementSpace, heroes, visibilityComponent } from '@lib';
 import React, {
 	createContext,
 	useContext,
@@ -9,7 +9,7 @@ import React, {
 import { useGameContext } from './GameContext.tsx';
 
 type RepSpaceBuckets = {
-	entity: EcsEntity;
+	entity: EcsEntity<typeof visibilityComponent>;
 };
 
 const _ReplacementSpaceContext = createContext<ReplacementSpace<RepSpaceBuckets> | null>(null);
@@ -21,8 +21,12 @@ export const ReplacementSpaceContext: FunctionComponent<{
 	const space = useMemo(
 		() =>
 			new ReplacementSpace<RepSpaceBuckets>({
-				entity: (id) =>
-					id === heroes.headOfState.id ? heroes.headOfState : game.entities.getByKey(id),
+				entity: (id) => {
+					if (id === heroes.headOfState.id) {
+						return heroes.headOfState;
+					}
+					return game.entities.getByKey(id) as EcsEntity<typeof visibilityComponent> | null;
+				},
 			}),
 		[game],
 	);

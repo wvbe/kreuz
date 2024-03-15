@@ -1,18 +1,16 @@
 import Game from '../../Game.ts';
-import { JobVacancy } from '../../behavior/JobVacancy.ts';
+import { JobPosting } from '../../behavior/JobPosting.ts';
 import { Blueprint } from '../../inventory/Blueprint.ts';
+import { EcsSystem } from '../classes/EcsSystem.ts';
 import { inventoryComponent } from '../components/inventoryComponent.ts';
 import { locationComponent } from '../components/locationComponent.ts';
 import { pathingComponent } from '../components/pathingComponent.ts';
-import { walkToTile } from '../components/pathingComponent.ts';
-import { productionComponent } from '../components/productionComponent.ts';
+import {
+	ProductionComponentWorkerEntity,
+	productionComponent,
+} from '../components/productionComponent.ts';
 import { statusComponent } from '../components/statusComponent.ts';
-import { EcsSystem } from '../classes/EcsSystem.ts';
 import { EcsEntity } from '../types.ts';
-
-type WorkerEntity = EcsEntity<
-	typeof statusComponent | typeof locationComponent | typeof pathingComponent
->;
 
 type ProductionEntity = EcsEntity<
 	| typeof productionComponent
@@ -81,10 +79,14 @@ function isBlueprintCycleBusy(factory: ProductionEntity): boolean {
 	return isBusy;
 }
 
-async function assignWorkerToFactory(game: Game, worker: WorkerEntity, factory: ProductionEntity) {
+async function assignWorkerToFactory(
+	game: Game,
+	worker: ProductionComponentWorkerEntity,
+	factory: ProductionEntity,
+) {
 	await worker.$status.set(`Going to ${factory} for work`);
 	const tile = game.terrain.getTileEqualToLocation(factory.$$location.get());
-	await walkToTile(worker, tile);
+	await worker.walkToTile(tile);
 
 	await factory.$workers.add(worker);
 
@@ -237,12 +239,12 @@ async function attachSystemToEntity(game: Game, factory: ProductionEntity) {
 	 * Creates a job vacancy for a worker based on the given blueprint. Entities who are able may pick
 	 * up on this vacancy and come work on this blueprint.
 	 */
-	function createWorkerJobVacancy(blueprint: Blueprint | null) {
+	function createWorkerJobPosting(blueprint: Blueprint | null) {
 		if (!blueprint || blueprint.options.workersRequired < 1) {
 			return;
 		}
-		const vacancy = new JobVacancy(
-			(blackboard) => assignWorkerToFactory(game, blackboard.entity, factory),
+		const vacancy = new JobPosting(
+			(_job, blackboard) => assignWorkerToFactory(game, blackboard.entity, factory),
 			{
 				vacancies: factory.maxWorkers,
 				employer: factory,
@@ -275,8 +277,8 @@ async function attachSystemToEntity(game: Game, factory: ProductionEntity) {
 		game.jobs.add(vacancy);
 		factory.$blueprint.once(() => game.jobs.remove(vacancy));
 	}
-	factory.$blueprint.on(createWorkerJobVacancy);
-	createWorkerJobVacancy(factory.$blueprint.get());
+	factory.$blueprint.on(createWorkerJobPosting);
+	createWorkerJobPosting(factory.$blueprint.get());
 
 	// factory.$detach.once(async () => {
 	// 	await factory.$$progress.detach();

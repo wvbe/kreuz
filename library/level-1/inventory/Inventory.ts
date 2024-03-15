@@ -10,11 +10,22 @@ import { Material } from './Material.ts';
 import { type MaterialState } from './types.ts';
 
 function getRequiredStackSpace(cargo: MaterialState[]): number {
-	return cargo.reduce<number>(
-		(amount, { material, quantity }) => amount + Math.ceil(quantity / material.stack),
-		0,
-	);
+	return cargo
+		.reduce<MaterialState[]>((unique, { material, quantity }) => {
+			const item = unique.find((u) => u.material === material);
+			if (item) {
+				item.quantity += quantity;
+			} else {
+				unique.push({ material, quantity });
+			}
+			return unique;
+		}, [])
+		.reduce<number>(
+			(amount, { material, quantity }) => amount + Math.ceil(quantity / material.stack),
+			0,
+		);
 }
+
 function getCombinedStacks(cargos: MaterialState[][]): MaterialState[] {
 	return cargos
 		.reduce((flat, states) => [...flat, ...states], [])
@@ -152,7 +163,7 @@ export class Inventory {
 	 * @todo Test
 	 * @todo Test that reservations are taken into account
 	 */
-	public allocatableTo(material: Material): number {
+	public amountAllocatableTo(material: Material): number {
 		if (this.capacity === Infinity) {
 			return Infinity;
 		}
@@ -171,16 +182,21 @@ export class Inventory {
 		return allocatableToOccupiedStacks + allocatableToEmptyStacks;
 	}
 
+	public amountAdditionallyAllocatableTo(material: Material): number {
+		return (
+			this.amountAllocatableTo(material) -
+			this.availableOf(material) -
+			this.reservedOutgoingOf(material)
+		);
+	}
+
 	/**
 	 * Returns `true` if the material can be stored on top of what is already stored of it.
 	 *
 	 * @deprecated Untested, unused
 	 */
 	public isAdditionallyAllocatableTo(material: Material, delta: number): boolean {
-		return (
-			this.allocatableTo(material) >=
-			this.availableOf(material) + this.reservedOutgoingOf(material) + delta
-		);
+		return delta <= this.amountAdditionallyAllocatableTo(material);
 	}
 	/**
 	 * Returns TRUE if the specified material/quantities fit in this inventory on top of the stuff
@@ -240,8 +256,6 @@ export class Inventory {
 	 */
 	public getUsedStackSpace() {
 		return getRequiredStackSpace([
-			// @BUG: This places items from different lists in different stacks, while in truth they can possibly
-			// be combined.
 			...this.items,
 			...this.getReservedIncomingItems(),
 			...this.getReservedOutgoingItems(),
@@ -295,7 +309,7 @@ export class Inventory {
 			return;
 		}
 
-		if (quantity > this.allocatableTo(material)) {
+		if (quantity > this.amountAllocatableTo(material)) {
 			// BUG: A factory may reach this point, and the error is then not handled
 			throw new Error(`Not enough stack space for ${quantity}x ${material}`);
 		}
@@ -335,12 +349,10 @@ export class Inventory {
 		}
 		const added = exchanged.filter(({ quantity }) => quantity > 0);
 		if (!this.isEverythingAdditionallyAllocatable(added)) {
-			// Its not really fair to throw maybe? Might change this.
 			throw new Error('Not enough available space to make a reservation');
 		}
 		const removed = exchanged.filter(({ quantity }) => quantity < 0);
 		if (!removed.every(({ material, quantity }) => this.availableOf(material) >= quantity)) {
-			// Its not really fair to throw maybe? Might change this.
 			throw new Error('Not enough available material to make a reservation');
 		}
 		this.reservations.set(key, exchanged);
@@ -349,12 +361,12 @@ export class Inventory {
 	/**
 	 * Remove the reservation without transferring the items for it.
 	 */
-	public cancelReservation(tradeOrder: any) {
-		if (!this.reservations.get(tradeOrder)) {
+	public cancelReservation(key: any) {
+		if (!this.reservations.get(key)) {
 			// Programmer error
 			throw new Error('No such reservation');
 		}
-		this.reservations.delete(tradeOrder);
+		this.reservations.delete(key);
 	}
 
 	/**
@@ -393,5 +405,17 @@ export class Inventory {
 			})),
 			true,
 		);
+	}
+
+	private debugMaterialStatus(material: Material) {
+		const data = {
+			'Stack size': material.stack,
+			Available: this.availableOf(material),
+			'Allocatable (total)': this.amountAllocatableTo(material),
+			'Allocatable (additional)': this.amountAdditionallyAllocatableTo(material),
+			'Reserved incoming': this.reservedIncomingOf(material),
+			'Reserved outgoing': this.reservedOutgoingOf(material),
+		};
+		return data;
 	}
 }

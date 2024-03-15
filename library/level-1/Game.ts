@@ -1,17 +1,17 @@
-import { JobPosting } from './behavior/JobPosting.ts';
-import { EntityBlackboard } from './behavior/types.ts';
+import { JobPosting } from './ecs/components/behaviorComponent/JobPosting.ts';
+import { EntityBlackboard } from './ecs/components/behaviorComponent/types.ts';
 import { Registry } from './classes/Registry.ts';
 import { TimeLine } from './classes/TimeLine.ts';
 import { DriverI } from './drivers/types.ts';
-import { behaviorTreeSystem } from './ecs/systems/behaviorTree.ts';
-import { blueprintSystem } from './ecs/systems/blueprintSystem.ts';
+import { behaviorTreeSystem } from './ecs/systems/behaviorTreeSystem.ts';
+import { productionSystem } from './ecs/systems/productionSystem.ts';
 import { healthSystem } from './ecs/systems/healthSystem.ts';
 import { tradeFlowSystem } from './ecs/systems/tradeFlowSystem.ts';
 import { EcsEntity } from './ecs/types.ts';
 import { Collection } from './events/Collection.ts';
 import { Event } from './events/Event.ts';
 import { KeyedCollection } from './events/KeyedCollection.ts';
-import { Blueprint } from './inventory/Blueprint.ts';
+import { Blueprint } from './ecs/components/productionComponent/Blueprint.ts';
 import { Material } from './inventory/Material.ts';
 import { BehaviorTreeNodeI } from './mod.ts';
 import { Terrain } from './terrain/Terrain.ts';
@@ -53,7 +53,7 @@ export default class Game {
 		this.terrain = terrain;
 		this.assets = assets;
 
-		blueprintSystem.attachGame(this);
+		productionSystem.attachGame(this);
 		behaviorTreeSystem.attachGame(this);
 		healthSystem.attachGame(this);
 		tradeFlowSystem.attachGame(this);

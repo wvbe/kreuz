@@ -1,6 +1,6 @@
 import Game from '../../Game.ts';
-import { JobPosting } from '../../behavior/JobPosting.ts';
-import { Blueprint } from '../../inventory/Blueprint.ts';
+import { JobPosting } from '../components/behaviorComponent/JobPosting.ts';
+import { Blueprint } from '../components/productionComponent/Blueprint.ts';
 import { EcsSystem } from '../classes/EcsSystem.ts';
 import { inventoryComponent } from '../components/inventoryComponent.ts';
 import { locationComponent } from '../components/locationComponent.ts';
@@ -304,7 +304,7 @@ async function attachSystem(game: Game) {
 	});
 }
 
-export const blueprintSystem = new EcsSystem(
+export const productionSystem = new EcsSystem(
 	[productionComponent, statusComponent, locationComponent, inventoryComponent, pathingComponent],
 	attachSystem,
 );

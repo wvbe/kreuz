@@ -28,6 +28,7 @@ export default async function (driver: DriverI) {
 		location: terrain.getTileClosestToXy(0, 0).toArray(),
 		name: 'Ro-bot',
 		icon: '🤖',
+		behavior: null,
 	});
 
 	entity.needs.hydration.set(0.1);

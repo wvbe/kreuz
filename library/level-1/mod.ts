@@ -1,11 +1,11 @@
 // Behavior tree:
-export { BehaviorTreeSignal } from './behavior/BehaviorTreeSignal.ts';
-export { ExecutionNode } from './behavior/ExecutionNode.ts';
-export { InverterNode } from './behavior/InverterNode.ts';
-export { RandomSelectorNode } from './behavior/RandomSelectorNode.ts';
-export { SelectorNode } from './behavior/SelectorNode.ts';
-export { SequenceNode } from './behavior/SequenceNode.ts';
-export * from './behavior/types.ts';
+export { BehaviorTreeSignal } from './ecs/components/behaviorComponent/BehaviorTreeSignal.ts';
+export { ExecutionNode } from './ecs/components/behaviorComponent/ExecutionNode.ts';
+export { InverterNode } from './ecs/components/behaviorComponent/InverterNode.ts';
+export { RandomSelectorNode } from './ecs/components/behaviorComponent/RandomSelectorNode.ts';
+export { SelectorNode } from './ecs/components/behaviorComponent/SelectorNode.ts';
+export { SequenceNode } from './ecs/components/behaviorComponent/SequenceNode.ts';
+export * from './ecs/components/behaviorComponent/types.ts';
 
 // Miscellaneous utilities:
 export { Path } from './classes/Path.ts';
@@ -27,8 +27,8 @@ export { Need } from './entities/Need.ts';
 
 // Inventory:
 export { default as Game, type GameAssets } from './Game.ts';
-export { Blueprint } from './inventory/Blueprint.ts';
-export { Inventory } from './inventory/Inventory.ts';
+export { Blueprint } from './ecs/components/productionComponent/Blueprint.ts';
+export { Inventory } from './ecs/components/inventoryComponent/Inventory.ts';
 export { Material } from './inventory/Material.ts';
 
 // Terrain:
@@ -48,11 +48,12 @@ export * from './types.ts';
 export * from './utilities/ReplacementSpace.ts';
 
 // ECS Types
-export { type EcsEntity } from './ecs/types.ts';
+export { type EcsEntity, type EcsArchetypeEntity } from './ecs/types.ts';
 
 // ECS helper classes
 export { EcsComponent } from './ecs/classes/EcsComponent.ts';
 export { EcsSystem } from './ecs/classes/EcsSystem.ts';
+export { EcsArchetype } from './ecs/classes/EcsArchetype.ts';
 
 // ECS components
 export { behaviorComponent } from './ecs/components/behaviorComponent.ts';

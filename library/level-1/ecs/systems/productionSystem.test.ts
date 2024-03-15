@@ -1,4 +1,4 @@
-import { FactoryBuildingEntity, PersonEntity } from '@lib';
+import { factoryArchetype, personArchetype } from '@lib';
 import { expect, generateEmptyGame } from '@test';
 import { createJobWorkBehavior } from '../../../level-2/behavior/reusable/nodes/createJobWorkBehavior.ts';
 import { growWheat } from '../../../level-2/blueprints.ts';
@@ -6,18 +6,22 @@ import { wheat } from '../../../level-2/materials.ts';
 
 Deno.test('System: blueprintProduction', async (test) => {
 	const game = await generateEmptyGame();
-	const worker = new PersonEntity('person-1', [0, 0, 1], {
-		gender: 'm',
-		firstName: 'test',
+	const worker = personArchetype.create({
+		location: [0, 0, 1],
+		icon: '🤖',
+		name: 'R-bot',
+		behavior: createJobWorkBehavior(),
 	});
-	const factory = new FactoryBuildingEntity('factory', [3, 0, 1], worker, {
+	const factory = factoryArchetype.create({
+		location: [3, 0, 1],
+		owner: worker,
 		blueprint: growWheat,
 		maxStackSpace: 1,
 		maxWorkers: 1,
 	});
+
 	await game.entities.add(worker);
 	await game.entities.add(factory);
-	await worker.$behavior.set(createJobWorkBehavior());
 
 	await test.step('Opening scenario', async (test) => {
 		await test.step('Time is zero', () => {

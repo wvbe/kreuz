@@ -1,7 +1,7 @@
 import { Collection } from '../../events/Collection.ts';
 import { EventedValue } from '../../events/EventedValue.ts';
 import { ProgressingNumericValue } from '../../events/ProgressingNumericValue.ts';
-import { Blueprint, SaveBlueprintJson } from '../../inventory/Blueprint.ts';
+import { Blueprint, SaveBlueprintJson } from './productionComponent/Blueprint.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
 import { EcsEntity } from '../types.ts';
 import { type locationComponent } from './locationComponent.ts';

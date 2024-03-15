@@ -107,6 +107,10 @@ export class TimeLine extends EventedValue<number> {
 		};
 	}
 
+	/**
+	 * @deprecated Setting an interval may cause the game to never end. Make sure you unset the
+	 * interval at some point!
+	 */
 	public setInterval(callback: CallbackFn, delay: number): DestroyerFn<number> {
 		let destroyer: DestroyerFn<number>;
 		const loop = () => {

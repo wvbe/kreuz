@@ -1,7 +1,7 @@
-import Game from '../Game.ts';
-import { SaveJsonContext } from '../types-savedgame.ts';
-import { type Inventory } from './Inventory.ts';
-import { type MaterialState } from './types.ts';
+import Game from '../../../Game.ts';
+import { SaveJsonContext } from '../../../types-savedgame.ts';
+import { type Inventory } from '../inventoryComponent/Inventory.ts';
+import { type MaterialState } from '../../../inventory/types.ts';
 
 export type SaveBlueprintJson = {
 	name: string;

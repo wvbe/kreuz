@@ -1,4 +1,4 @@
-import { type Inventory } from '../inventory/Inventory.ts';
+import { type Inventory } from '../ecs/components/inventoryComponent/Inventory.ts';
 import { type MaterialState } from '../inventory/types.ts';
 
 import { inventoryComponent } from '../ecs/components/inventoryComponent.ts';

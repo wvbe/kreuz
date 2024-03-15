@@ -29,7 +29,6 @@ export default async function (driver: DriverI) {
 	`);
 
 	const game = new Game(driver, '1', terrain, DEFAULT_ASSETS);
-	await driver.attach(game);
 	const entity = personArchetype.create({
 		location: terrain
 			.getTileClosestToXy(
@@ -39,6 +38,7 @@ export default async function (driver: DriverI) {
 			.toArray(),
 		name: 'Test',
 		icon: '🤖',
+		behavior: behavior.civilianBehavior,
 	});
 	await entity.wallet.set(500);
 
@@ -60,7 +60,5 @@ export default async function (driver: DriverI) {
 
 	await game.entities.add(entity, marketStall, factory);
 
-	await entity.$behavior.set(behavior.civilianBehavior);
-
-	return { driver, game };
+	return game;
 }

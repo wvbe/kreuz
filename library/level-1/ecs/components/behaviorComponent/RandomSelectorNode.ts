@@ -1,5 +1,5 @@
-import { Random } from '../classes/Random.ts';
-import { SeedI } from '../types.ts';
+import { Random } from '../../../classes/Random.ts';
+import { SeedI } from '../../../types.ts';
 import { BehaviorTreeSignal } from './BehaviorTreeSignal.ts';
 import { SelectorNode } from './SelectorNode.ts';
 import { type BehaviorTreeNodeI } from './types.ts';

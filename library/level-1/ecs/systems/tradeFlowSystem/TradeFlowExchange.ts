@@ -3,13 +3,20 @@ import { EcsEntity } from '../../types.ts';
 import { TradeFlowDeal } from './types.ts';
 import { type TradeFlowOffer, type TradeFlowEntity } from './types.ts';
 
+/**
+ * A space in which supply and demand for a specific {@link Material} is recorded. Whenever you like,
+ * use {@link TradeFlowExchange.getLargestTransferDeal} to find the biggest cargo haul available; this
+ * produces a {@link TradeFlowDeal} with all the necessary information to carry out the trade.
+ */
 export class TradeFlowExchange<EntityGeneric extends EcsEntity = TradeFlowEntity> {
 	#parties = new Map<EntityGeneric, number>();
 
 	public readonly material: Material;
+
 	public constructor(material: Material) {
 		this.material = material;
 	}
+
 	/**
 	 * - Positive number means the entity is looking to sell the material
 	 * - Negative number means the entity is looking to buy of the material
@@ -18,6 +25,9 @@ export class TradeFlowExchange<EntityGeneric extends EcsEntity = TradeFlowEntity
 		this.#parties.set(entity, quantityOnOffer);
 	}
 
+	/**
+	 * Returns the largest quantity of supply and demand between two parties.
+	 */
 	public getLargestTransferDeal(
 		minimumAmount: number = 1,
 		maximumAmount: number = this.material.stack,
@@ -57,11 +67,12 @@ export class TradeFlowExchange<EntityGeneric extends EcsEntity = TradeFlowEntity
 			return null;
 		}
 
+		const quantity = Math.min(biggestSupply.quantityOnOffer, -biggestDemand.quantityOnOffer);
 		return {
 			supplier: biggestSupply.entity,
 			destination: biggestDemand.entity,
 			material: this.material,
-			quantity: Math.min(biggestSupply.quantityOnOffer, -biggestDemand.quantityOnOffer),
+			quantity,
 		};
 	}
 

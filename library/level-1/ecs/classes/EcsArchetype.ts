@@ -1,5 +1,5 @@
 import Game from '../../Game.ts';
-import { EcsEntity } from '@lib/core';
+import { EcsEntity } from '../types.ts';
 import { EcsComponent } from './EcsComponent.ts';
 
 type EcsArchetypeAttachor<OptionsGeneric extends Record<string, unknown>> = (

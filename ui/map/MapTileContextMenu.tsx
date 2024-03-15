@@ -29,7 +29,6 @@ const MapTileContextMenuItem: FC<
 };
 export const MapTileContextMenu: FC<{
 	tile: TileI;
-	entity: EcsEntity<typeof locationComponent>;
 }> = ({ tile }) => {
 	const game = useGameContext();
 	const selectedEntity = useSelectedEntity();

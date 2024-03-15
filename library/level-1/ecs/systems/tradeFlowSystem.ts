@@ -1,6 +1,5 @@
-import { EntityBlackboard } from '@lib';
 import Game from '../../Game.ts';
-import { JobPosting } from '../../behavior/JobPosting.ts';
+import { JobPosting } from '../components/behaviorComponent/JobPosting.ts';
 import { EcsSystem } from '../classes/EcsSystem.ts';
 import { importExportComponent } from '../components/importExportComponent.ts';
 import { inventoryComponent } from '../components/inventoryComponent.ts';
@@ -8,6 +7,7 @@ import { locationComponent } from '../components/locationComponent.ts';
 
 import { TradeFlowExchangeByMaterial } from './tradeFlowSystem/TradeFlowExchangeByMaterial.ts';
 import { TradeFlowDeal, TradeFlowEntity } from './tradeFlowSystem/types.ts';
+import { EntityBlackboard } from '../components/behaviorComponent/types.ts';
 
 /**
  * Creates inventory reservations for the supplier and destination inventories, so that a transport
@@ -123,7 +123,7 @@ async function attachSystem(game: Game) {
 						inventoryComponent.test(entity) &&
 						locationComponent.test(entity),
 				)
-				.map((person) => attachSystemToEntity(game, exchange, person)),
+				.map((trader) => attachSystemToEntity(game, exchange, trader)),
 		);
 	});
 

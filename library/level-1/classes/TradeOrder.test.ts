@@ -1,8 +1,8 @@
 import { describe, expect, it, run } from '@test';
-import { PersonEntity } from '../entities/entity.person.ts';
 import { Material } from '../inventory/Material.ts';
 import { Coordinate } from '../terrain/Coordinate.ts';
 import { TradeFailReason, TradeOrder } from './TradeOrder.ts';
+import { personArchetype } from '@lib';
 
 const material1 = new Material('alpha', { stackSize: 10, symbol: 'a' });
 const material2 = new Material('beta', { stackSize: 10, symbol: 'b' });
@@ -10,8 +10,18 @@ const material2 = new Material('beta', { stackSize: 10, symbol: 'b' });
 describe('TradeOrder', () => {
 	describe('.findFailReasons()', () => {
 		it('every fail possible', () => {
-			const owner1 = new PersonEntity('a', [0, 0, Infinity], { gender: 'm', firstName: 'test A' });
-			const owner2 = new PersonEntity('b', [0, 0, Infinity], { gender: 'm', firstName: 'test B' });
+			const owner1 = personArchetype.create({
+				location: [0, 0, Infinity],
+				icon: '🤖',
+				name: 'test A',
+				behavior: null,
+			});
+			const owner2 = personArchetype.create({
+				location: [0, 0, Infinity],
+				icon: '🤖',
+				name: 'test B',
+				behavior: null,
+			});
 			const order = new TradeOrder(
 				{
 					owner: owner1,
@@ -36,8 +46,18 @@ describe('TradeOrder', () => {
 			]);
 		});
 		it('no fails at all', async () => {
-			const owner1 = new PersonEntity('a', [0, 0, Infinity], { gender: 'm', firstName: 'test A' });
-			const owner2 = new PersonEntity('b', [0, 0, Infinity], { gender: 'm', firstName: 'test B' });
+			const owner1 = personArchetype.create({
+				location: [0, 0, Infinity],
+				icon: '🤖',
+				name: 'test A',
+				behavior: null,
+			});
+			const owner2 = personArchetype.create({
+				location: [0, 0, Infinity],
+				icon: '🤖',
+				name: 'test B',
+				behavior: null,
+			});
 			await owner1.wallet.set(51);
 			await owner1.inventory.change(material1, 10);
 			await owner2.wallet.set(51);
@@ -60,8 +80,18 @@ describe('TradeOrder', () => {
 		});
 	});
 	it('.makeItHappen()', async () => {
-		const owner1 = new PersonEntity('a', [0, 0, Infinity], { gender: 'm', firstName: 'test A' });
-		const owner2 = new PersonEntity('b', [0, 0, Infinity], { gender: 'm', firstName: 'test B' });
+		const owner1 = personArchetype.create({
+			location: [0, 0, Infinity],
+			icon: '🤖',
+			name: 'test A',
+			behavior: null,
+		});
+		const owner2 = personArchetype.create({
+			location: [0, 0, Infinity],
+			icon: '🤖',
+			name: 'test B',
+			behavior: null,
+		});
 		owner1.wallet.set(50);
 		await owner1.inventory.change(material1, 10);
 		await owner1.inventory.change(material2, 10);

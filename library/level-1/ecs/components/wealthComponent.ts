@@ -1,5 +1,5 @@
 import { EventedNumericValue } from '../../events/EventedNumericValue.ts';
-import { Inventory } from '../../inventory/Inventory.ts';
+import { Inventory } from './inventoryComponent/Inventory.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
 
 export const wealthComponent = new EcsComponent<

@@ -47,10 +47,9 @@ export default async function (driver: DriverI) {
 			location: terrain.getTileClosestToXy(0, 0).toArray(),
 			icon: '🤖',
 			name: `Test dummy ${i + 1}`,
+			behavior: behavior.civilianBehavior,
 		});
 		await game.entities.add(entity);
-
-		await entity.$behavior.set(behavior.civilianBehavior);
 	}
 
 	return game;

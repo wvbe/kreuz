@@ -1,7 +1,7 @@
 import { describe, expect, it, run } from '@test';
 import { Blueprint } from './Blueprint.ts';
-import { Inventory } from './Inventory.ts';
-import { Material } from './Material.ts';
+import { Inventory } from '../inventoryComponent/Inventory.ts';
+import { Material } from '../../../inventory/Material.ts';
 
 export const tinIngot = new Material('Tin ingot', {
 		symbol: 'Ti',

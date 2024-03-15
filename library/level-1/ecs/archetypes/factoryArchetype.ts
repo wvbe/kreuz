@@ -1,4 +1,4 @@
-import { Blueprint } from '../../inventory/Blueprint.ts';
+import { Blueprint } from '../components/productionComponent/Blueprint.ts';
 import { SimpleCoordinate } from '../../types.ts';
 import { inventoryComponent } from '../components/inventoryComponent.ts';
 import { locationComponent } from '../components/locationComponent.ts';

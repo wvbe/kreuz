@@ -1,4 +1,4 @@
-import { Inventory } from '../../inventory/Inventory.ts';
+import { Inventory } from './inventoryComponent/Inventory.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
 
 export const inventoryComponent = new EcsComponent<

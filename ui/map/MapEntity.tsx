@@ -25,7 +25,7 @@ export const MapEntity: FunctionComponent<
 	const onRmb = useCallback<MouseEventHandler<HTMLDivElement>>(
 		(event) => {
 			const tile = game.terrain.getTileEqualToLocation(entity.$$location.get());
-			contextMenu.open(event, { tile, entity });
+			contextMenu.open(event, { tile });
 		},
 		[contextMenu],
 	);

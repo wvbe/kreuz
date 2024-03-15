@@ -1,6 +1,6 @@
-import { describe, expect, it, run, beforeAll } from 'tincan';
+import { beforeAll, describe, expect, it, run } from 'tincan';
 
-import { FactoryBuildingEntity, PersonEntity, SettlementEntity, TestDriver, Game } from '@lib';
+import { Game, TestDriver, factoryArchetype, personArchetype } from '@lib';
 import createGeneratorDemo from './main.ts';
 
 describe('Default generator', async () => {
@@ -11,15 +11,8 @@ describe('Default generator', async () => {
 	});
 
 	it('Has several entities of various types', () => {
-		expect(game.entities.filter((e) => e instanceof PersonEntity).length).toBeGreaterThanOrEqual(
-			12,
-		);
-		expect(
-			game.entities.filter((e) => e instanceof SettlementEntity).length,
-		).toBeGreaterThanOrEqual(3);
-		expect(
-			game.entities.filter((e) => e instanceof FactoryBuildingEntity).length,
-		).toBeGreaterThanOrEqual(6);
+		expect(game.entities.filter((e) => personArchetype.test(e)).length).toBeGreaterThanOrEqual(12);
+		expect(game.entities.filter((e) => factoryArchetype.test(e)).length).toBeGreaterThanOrEqual(6);
 	});
 });
 

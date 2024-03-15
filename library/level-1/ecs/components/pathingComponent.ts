@@ -1,6 +1,8 @@
-import { Coordinate, TileI } from '@lib';
 import { Path } from '../../classes/Path.ts';
 import { Event } from '../../events/Event.ts';
+import { EventedValue } from '../../events/EventedValue.ts';
+import { Coordinate } from '../../terrain/Coordinate.ts';
+import { TileI } from '../../types.ts';
 import { CallbackFn, CoordinateI } from '../../types.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
 import { EcsEntity } from '../types.ts';
@@ -8,14 +10,16 @@ import { locationComponent } from './locationComponent.ts';
 
 type WalkableEntity = EcsEntity<typeof locationComponent | typeof pathingComponent>;
 
-async function animateTo(entity: WalkableEntity, coordinate: Coordinate) {
-	if (coordinate.hasNaN()) {
-		// @TODO remove at some point?
+async function animateTo(entity: WalkableEntity, destination: Coordinate) {
+	if (destination.hasNaN()) {
 		throw new Error('This should never happen I suppose');
 	}
-	const done = async () => await entity.$stepEnd.emit(coordinate);
-	const distance = entity.$$location.get().euclideanDistanceTo(coordinate as CoordinateI);
-	await entity.$stepStart.emit(coordinate, distance / entity.walkSpeed, done);
+	const distance = entity.$$location.get().euclideanDistanceTo(destination as CoordinateI);
+	await entity.$stepStart.set({
+		destination,
+		duration: distance / entity.walkSpeed,
+		done: async () => await entity.$stepEnd.emit(destination),
+	});
 }
 
 async function walkToTile(entity: WalkableEntity, destination: TileI) {
@@ -99,24 +103,22 @@ export const pathingComponent = new EcsComponent<
 		 * the next event is safely emitted.
 		 */
 		$pathEnd: Event<[]>;
-		$stepStart: Event<
-			[
-				/**
-				 * The destination of this step
-				 */
-				CoordinateI,
-				/**
-				 * The expected duration of time it takes to perform this step
-				 */
-				number,
+		$stepStart: EventedValue<{
+			/**
+			 * The destination of this step
+			 */
+			destination: CoordinateI;
+			/**
+			 * The expected duration of time it takes to perform this step
+			 */
+			duration: number;
 
-				/**
-				 * The "done" callback. Call this when the driver animation/timeout ends, so that
-				 * the next event is safely emitted.
-				 */
-				CallbackFn,
-			]
-		>;
+			/**
+			 * The "done" callback. Call this when the driver animation/timeout ends, so that
+			 * the next event is safely emitted.
+			 */
+			done: CallbackFn;
+		} | null>;
 		$stepEnd: Event<[CoordinateI]>;
 	}
 >(
@@ -124,7 +126,7 @@ export const pathingComponent = new EcsComponent<
 		locationComponent.test(entity) &&
 		entity.$pathStart instanceof Event &&
 		entity.$pathEnd instanceof Event &&
-		entity.$stepStart instanceof Event &&
+		entity.$stepStart instanceof EventedValue &&
 		entity.$stepEnd instanceof Event &&
 		typeof entity.walkToTile === 'function',
 	(entity, options) => {
@@ -133,7 +135,11 @@ export const pathingComponent = new EcsComponent<
 			walkSpeed: options.walkSpeed,
 			$pathStart: new Event<[]>('pathingComponent $pathStart'),
 			$pathEnd: new Event<[]>('pathingComponent $pathEnd'),
-			$stepStart: new Event<[CoordinateI, number, CallbackFn]>('pathingComponent $stepStart'),
+			$stepStart: new EventedValue<{
+				destination: CoordinateI;
+				duration: number;
+				done: CallbackFn;
+			} | null>(null, 'pathingComponent $stepStart'),
 			$stepEnd: new Event<[CoordinateI]>('pathingComponent $stepEnd'),
 		});
 	},

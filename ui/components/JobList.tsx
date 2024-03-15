@@ -1,4 +1,11 @@
-import { Collection, EcsEntity, Event, locationComponent } from '@lib';
+import {
+	Collection,
+	EcsArchetypeEntity,
+	EcsEntity,
+	Event,
+	locationComponent,
+	personArchetype,
+} from '@lib';
 import React, { FunctionComponent, useCallback, useMemo } from 'react';
 import { EventCombination } from '../../library/level-1/events/EventCombination.ts';
 import { useGameContext } from '../context/GameContext.tsx';
@@ -19,16 +26,16 @@ export function useCombinedEventCollection<T>(
 				: collection.$change,
 		[],
 	);
-	return useMemoFromEvent<[T[], T[]], T[]>(
+	return useMemoFromEvent<any[], T[]>(
 		combinedEvent,
 		collection.slice(),
 		useCallback(() => collection.slice(), [collection]),
 	);
 }
 
-export const JobList: FunctionComponent<{ entity?: EcsEntity<typeof locationComponent> }> = ({
-	entity,
-}) => {
+export const JobList: FunctionComponent<{
+	entity?: EcsArchetypeEntity<typeof personArchetype>;
+}> = ({ entity }) => {
 	const game = useGameContext();
 
 	const jobs = useCombinedEventCollection(game.jobs, entity?.$$location);

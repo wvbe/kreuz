@@ -1,18 +1,9 @@
-import { Collection, CoordinateI, EcsEntity, EventedValue, FilterFn } from '@lib';
+import { Collection, EcsEntity, FilterFn } from '@lib';
 import React, { FunctionComponent, useMemo } from 'react';
 import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow.tsx';
-import { PopOnUpdateSpan } from '../components/atoms/PopOnUpdateSpan.tsx';
 import { Cell, Row, Table } from '../components/atoms/Table.tsx';
-import { useEventedValue } from '../hooks/useEventedValue.ts';
 import { useSelectedEntity } from '../hooks/useSelectedEntity.tsx';
 import { EntityBadge } from './EntityBadge.tsx';
-
-const EntityLocationPhrase: FunctionComponent<{ location: EventedValue<CoordinateI> }> = ({
-	location,
-}) => {
-	const { x, y } = useEventedValue(location);
-	return <PopOnUpdateSpan>{`(${y.toFixed(2)}, ${x.toFixed(2)})`}</PopOnUpdateSpan>;
-};
 
 export const EntityList: FunctionComponent<{
 	label: string;
@@ -26,9 +17,6 @@ export const EntityList: FunctionComponent<{
 				<Row key={entity.id} onClick={() => selectedEntity.set(entity)}>
 					<Cell>
 						<EntityBadge entity={entity} />
-					</Cell>
-					<Cell>
-						<EntityLocationPhrase location={entity.$$location} />
 					</Cell>
 				</Row>
 			)),

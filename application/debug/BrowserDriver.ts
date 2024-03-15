@@ -81,10 +81,20 @@ export class BrowserDriver extends Driver implements DriverI {
 					pathingComponent.test(entity),
 				)
 				.forEach((entity) => {
-					const destroy = entity.$stepStart.on((_destination, duration, done) => {
-						game.time.setTimeout(done, duration);
+					const destroy = entity.$stepStart.on((step) => {
+						if (step === null) {
+							return;
+						}
+						game.time.setTimeout(step.done, step.duration);
 					});
 					this.$detach.once(destroy);
+
+					// Perform initial step if it was set before driver was attached to game:
+					const step = entity.$stepStart.get();
+					if (step === null) {
+						return;
+					}
+					game.time.setTimeout(step.done, step.duration);
 				});
 		};
 		// Whenever an entity starts to move, make sure that the "animation" ends at some point too.

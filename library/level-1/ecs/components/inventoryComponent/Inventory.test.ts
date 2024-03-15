@@ -1,9 +1,9 @@
 import { describe, expect, it, mock, run } from '@test';
-import { TradeOrder } from '../classes/TradeOrder.ts';
-import { PersonEntity } from '../entities/entity.person.ts';
+import { TradeOrder } from '../../../classes/TradeOrder.ts';
 import { Inventory } from './Inventory.ts';
-import { Material } from './Material.ts';
-import { MaterialState } from './types.ts';
+import { Material } from '../../../inventory/Material.ts';
+import { MaterialState } from '../../../inventory/types.ts';
+import { personArchetype } from '../../archetypes/personArchetype.ts';
 
 const test1 = new Material('wheat', { symbol: '🌾', stackSize: 25 });
 const test2 = new Material('barley', { symbol: '𐂏', stackSize: 33 });
@@ -16,13 +16,23 @@ function createTradeOrderForCargo(
 ): TradeOrder {
 	return new TradeOrder(
 		{
-			owner: new PersonEntity('a', [0, 0, Infinity], { gender: 'm', firstName: 'test A' }),
+			owner: personArchetype.create({
+				location: [0, 0, Infinity],
+				icon: '🤖',
+				name: 'test A',
+				behavior: null,
+			}),
 			inventory: inventory1,
 			money: 0,
 			cargo: cargo1,
 		},
 		{
-			owner: new PersonEntity('b', [0, 0, Infinity], { gender: 'f', firstName: 'test B' }),
+			owner: personArchetype.create({
+				location: [0, 0, Infinity],
+				icon: '🤖',
+				name: 'test B',
+				behavior: null,
+			}),
 			inventory: inventory2,
 			money: 0,
 			cargo: cargo2,
@@ -200,3 +210,34 @@ describe('Issues', () => {
 });
 
 run();
+
+// describe('getRequiredStackSpace', () => {
+// 	it('should return 0 for an empty cargo', () => {
+// 		const cargo: MaterialState[] = [];
+// 		const result = getRequiredStackSpace(cargo);
+// 		expect(result).toBe(0);
+// 	});
+
+// 	it('should return the correct stack space for a single material', () => {
+// 		const cargo: MaterialState[] = [
+// 			{ material: test1, quantity: 10 },
+// 			{ material: test1, quantity: 15 },
+// 			{ material: test1, quantity: 5 },
+// 		];
+// 		const result = getRequiredStackSpace(cargo);
+// 		expect(result).toBe(2); // 10 + 15 + 5 = 30, 30 / 25 = 1.2, ceil(1.2) = 2
+// 	});
+
+// 	it('should return the correct stack space for multiple materials', () => {
+// 		const cargo: MaterialState[] = [
+// 			{ material: test1, quantity: 10 },
+// 			{ material: test2, quantity: 33 },
+// 			{ material: test1, quantity: 25 },
+// 			{ material: test2, quantity: 20 },
+// 		];
+// 		const result = getRequiredStackSpace(cargo);
+// 		expect(result).toBe(5); // 10 + 25 = 35, 35 / 25 = 1.4, ceil(1.4) = 2
+// 		// 33 + 20 = 53, 53 / 33 = 1.606, ceil(1.606) = 2
+// 		// Total: 2 + 2 = 4
+// 	});
+// });

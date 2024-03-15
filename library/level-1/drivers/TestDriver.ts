@@ -41,14 +41,18 @@ export class TestDriver extends Driver implements DriverI {
 				)
 				.forEach((entity) => {
 					this.$detach.once(
-						entity.$stepStart.on((_destination, duration, done) => {
+						entity.$stepStart.on((step) => {
+							if (!step) {
+								return;
+							}
+
 							// The step timeout is cancelled when the entity is destroyed. When the step
 							// finishes, that timeout cancellor is cancelled too.
 							let cancelDestroy: DestroyerFn;
 							const cancelStep = game.time.setTimeout(() => {
 								cancelDestroy();
-								done();
-							}, duration);
+								step.done();
+							}, step.duration);
 							cancelDestroy = this.$detach.once(cancelStep);
 						}),
 					);

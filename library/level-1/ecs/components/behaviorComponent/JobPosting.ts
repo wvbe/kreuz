@@ -1,5 +1,5 @@
-import { productionComponent } from '../ecs/components/productionComponent.ts';
-import { EcsEntity } from '../ecs/types.ts';
+import { productionComponent } from '../productionComponent.ts';
+import { EcsEntity } from '../../types.ts';
 
 import { EntityBlackboard } from './types.ts';
 

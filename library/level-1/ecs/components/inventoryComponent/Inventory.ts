@@ -3,11 +3,11 @@
  * https://github.com/wvbe/experimental-factory-game/blob/master/src/classes/Inventory.ts
  */
 
-import { Event } from '../events/Event.ts';
-import { TradeOrder } from '../classes/TradeOrder.ts';
-import { SaveJsonContext } from '../types-savedgame.ts';
-import { Material } from './Material.ts';
-import { type MaterialState } from './types.ts';
+import { Event } from '../../../events/Event.ts';
+import { TradeOrder } from '../../../classes/TradeOrder.ts';
+import { SaveJsonContext } from '../../../types-savedgame.ts';
+import { Material } from '../../../inventory/Material.ts';
+import { type MaterialState } from '../../../inventory/types.ts';
 
 function getRequiredStackSpace(cargo: MaterialState[]): number {
 	return cargo
@@ -24,20 +24,6 @@ function getRequiredStackSpace(cargo: MaterialState[]): number {
 			(amount, { material, quantity }) => amount + Math.ceil(quantity / material.stack),
 			0,
 		);
-}
-
-function getCombinedStacks(cargos: MaterialState[][]): MaterialState[] {
-	return cargos
-		.reduce((flat, states) => [...flat, ...states], [])
-		.reduce((totals, { material, quantity }) => {
-			const existing = totals.find((t) => t.material === material);
-			if (existing) {
-				existing.quantity += quantity;
-			} else {
-				totals.push({ quantity, material });
-			}
-			return totals;
-		}, [] as MaterialState[]);
 }
 
 export type SaveInventoryJson = {
@@ -209,12 +195,8 @@ export class Inventory {
 		}
 
 		const requiredStackSpace = getRequiredStackSpace([
-			...getCombinedStacks([
-				// Assuming the cargo is merged with the "available" stacks, not with the stack
-				// reserves;
-				cargo,
-				this.getAvailableItems(),
-			]),
+			...cargo,
+			...this.getAvailableItems(),
 			...this.getReservedIncomingItems(),
 			...this.getReservedOutgoingItems(),
 		]);

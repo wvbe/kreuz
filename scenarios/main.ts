@@ -60,10 +60,10 @@ export async function generateEntities(game: Game) {
 		const person = personArchetype.create({
 			location: Random.fromArray(walkableTiles, id).toArray(),
 			...generatePassport([id]),
+			behavior: behavior.civilianBehavior,
 		});
 		await person.wallet.set(Random.between(20, 500, id, 'munnie'));
 		await game.entities.add(person);
-		await person.$behavior.set(behavior.civilianBehavior);
 	}
 
 	for (let i = 0; i < Random.between(24, 32, game.seed, 'factories'); i++) {

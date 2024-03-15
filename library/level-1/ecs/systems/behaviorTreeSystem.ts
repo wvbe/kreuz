@@ -1,11 +1,12 @@
-import Game from '../../Game.ts';
-import { BehaviorTreeSignal } from '../../behavior/BehaviorTreeSignal.ts';
-import { behaviorComponent } from '../components/behaviorComponent.ts';
+import type Game from '../../Game.ts';
 import { EcsSystem } from '../classes/EcsSystem.ts';
-import { EcsEntity } from '../types.ts';
 import { EcsArchetypeEntity } from '../types.ts';
-import { personArchetype } from '@lib/core';
+import { BehaviorTreeSignal } from '../components/behaviorComponent/BehaviorTreeSignal.ts';
+import { personArchetype } from '../archetypes/personArchetype.ts';
 
+/**
+ * Loops through a behavior tree for a capable entity. The behavior tree will hopefully make the entity do stuff.
+ */
 function attachSystemToEntity(game: Game, entity: EcsArchetypeEntity<typeof personArchetype>) {
 	let behaviorLoopEnabled = false;
 
@@ -51,7 +52,10 @@ function attachSystemToEntity(game: Game, entity: EcsArchetypeEntity<typeof pers
 	doBehaviourLoop();
 }
 
-async function attachSystem(game: Game) {
+/**
+ * A system that runs behavior trees for entities of the {@link personArchetype} archetype.
+ */
+export const behaviorTreeSystem = new EcsSystem([], (game) => {
 	game.entities.$add.on(async (entities) => {
 		await Promise.all(
 			entities
@@ -61,6 +65,4 @@ async function attachSystem(game: Game) {
 				.map((entity) => attachSystemToEntity(game, entity)),
 		);
 	});
-}
-
-export const behaviorTreeSystem = new EcsSystem([], attachSystem);
+});

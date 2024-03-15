@@ -1,6 +1,8 @@
 import { SimpleCoordinate } from '../../types.ts';
 import { EcsArchetype } from '../classes/EcsArchetype.ts';
 import { behaviorComponent } from '../components/behaviorComponent.ts';
+import { EntityBlackboard } from '../components/behaviorComponent/types.ts';
+import { BehaviorTreeNodeI } from '../components/behaviorComponent/types.ts';
 import { healthComponent } from '../components/healthComponent.ts';
 import { inventoryComponent } from '../components/inventoryComponent.ts';
 import { locationComponent } from '../components/locationComponent.ts';
@@ -15,6 +17,7 @@ export const personArchetype = new EcsArchetype<
 		location: SimpleCoordinate;
 		name: string;
 		icon: string;
+		behavior: BehaviorTreeNodeI<EntityBlackboard> | null;
 	},
 	| typeof behaviorComponent
 	| typeof healthComponent
@@ -38,7 +41,7 @@ export const personArchetype = new EcsArchetype<
 	],
 	(entity, options) => {
 		behaviorComponent.attach(entity, {
-			// behavior: null,
+			behavior: options.behavior,
 		});
 		healthComponent.attach(entity, {
 			health: 1,

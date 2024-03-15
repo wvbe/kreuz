@@ -1,5 +1,5 @@
+import { Game, TestDriver, generateGridTerrainFromAscii, personArchetype } from '@lib';
 import { beforeAll, describe, expect, it, mock, run } from 'tincan';
-import { Game, PersonEntity, TestDriver, generateGridTerrainFromAscii } from '@lib';
 
 import { DEFAULT_ASSETS } from '../DEFAULT_ASSETS.ts';
 import { createLoiterBehavior } from './reusable/nodes/createLoiterBehavior.ts';
@@ -21,9 +21,11 @@ describe('BT: createLoiterBehavior()', async () => {
 			`),
 			DEFAULT_ASSETS,
 		),
-		entity = new PersonEntity('person-1', game.terrain.getTileClosestToXy(3, 3).toArray(), {
-			gender: 'm',
-			firstName: 'test',
+		entity = personArchetype.create({
+			location: game.terrain.getTileClosestToXy(3, 3).toArray(),
+			behavior: createLoiterBehavior(),
+			icon: '🤖',
+			name: 'Loiterbot',
 		});
 
 	const pathStart = mock.fn(),
@@ -33,7 +35,6 @@ describe('BT: createLoiterBehavior()', async () => {
 
 	beforeAll(async () => {
 		await game.entities.add(entity);
-		await entity.$behavior.set(createLoiterBehavior());
 	});
 
 	it('t=500.000', async () => {

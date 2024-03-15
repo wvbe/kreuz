@@ -1,5 +1,6 @@
 import { Collection, Event, EventedValue } from '@lib';
 import { useCallback, useEffect, useState } from 'react';
+import { EventEmitterI } from '../../library/level-1/events/types.ts';
 
 function noTransformSingle<T, O = T>(value: T): O {
 	// Shut the fuck up, TypeScript.
@@ -45,7 +46,7 @@ export function useMemoFromEvent<
 	EventArgsGeneric extends unknown[] = any[],
 	OutputGeneric = EventArgsGeneric,
 >(
-	eventedValue: Event<EventArgsGeneric>,
+	eventedValue: EventEmitterI<EventArgsGeneric>,
 	initial: OutputGeneric,
 	transform: (...value: EventArgsGeneric) => OutputGeneric = noTransformMultiple,
 ): OutputGeneric {

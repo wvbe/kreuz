@@ -14,9 +14,6 @@ const defaultEmptyGameMap = `
 /**
  * @deprecated Only here as a test convenience.
  */
-export async function generateEmptyGame(
-	ascii: string = defaultEmptyGameMap,
-	driver: DriverI = new TestDriver(),
-) {
-	return new Game(driver, '1', generateGridTerrainFromAscii(ascii), DEFAULT_ASSETS);
+export async function generateEmptyGame(ascii: string = defaultEmptyGameMap) {
+	return new Game(new TestDriver(), '1', generateGridTerrainFromAscii(ascii), DEFAULT_ASSETS);
 }

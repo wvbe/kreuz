@@ -39,7 +39,7 @@ export function createContextMenu<Props extends {}>(Component: FC<Props>) {
 				x: event.nativeEvent.offsetX,
 				y: event.nativeEvent.offsetY,
 			};
-			let node = event.target as HTMLElement | SVGElement;
+			let node = event.target as HTMLElement | SVGElement | null;
 			while (node) {
 				if (node.hasAttribute('data-context-menu-role')) {
 					break;

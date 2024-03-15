@@ -2,21 +2,19 @@ import { beforeAll, describe, expect, it, run } from 'tincan';
 
 import createBasementDemo from './basement.ts';
 
-import { DriverI, Game, TestDriver, type PersonEntity } from '@lib/core';
+import { DriverI, Game, TestDriver, personArchetype, type EcsArchetypeEntity } from '@lib';
 
 describe('"The basement"', async () => {
-	let game: Game, driver: DriverI, melanie: PersonEntity;
+	let game: Game, driver: DriverI, melanie: EcsArchetypeEntity<typeof personArchetype>;
 	beforeAll(async () => {
-		game = await createBasementDemo(new TestDriver());
 		driver = new TestDriver();
+		game = await createBasementDemo(driver);
 		melanie = game.entities.get(0);
-
-		driver.attach(game);
 	});
 
 	it('Melanie is called Melanie, and she has needs', () => {
 		expect(melanie.name).toBe('Melanie');
-		melanie.needs.forEach((need) => {
+		Object.values(melanie.needs).forEach((need) => {
 			expect(need.get()).toBeGreaterThan(0);
 		});
 	});
@@ -29,7 +27,7 @@ describe('"The basement"', async () => {
 	});
 
 	it("All of Melanie's needs are depleted", () => {
-		melanie.needs.forEach((need) => {
+		Object.values(melanie.needs).forEach((need) => {
 			expect(need.get()).toBe(0);
 		});
 	});

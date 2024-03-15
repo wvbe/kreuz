@@ -1,5 +1,4 @@
-import { PersonNeedId } from '@lib';
-import { PERSON_NEEDS } from '../../constants/needs.ts';
+import { PERSON_NEEDS, PersonNeedId } from '../../constants/needs.ts';
 import { Need } from '../../entities/Need.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
 

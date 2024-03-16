@@ -68,6 +68,7 @@ export { resellerComponent } from './ecs/components/resellerComponent.ts';
 export { statusComponent } from './ecs/components/statusComponent.ts';
 export { visibilityComponent } from './ecs/components/visibilityComponent.ts';
 export { wealthComponent } from './ecs/components/wealthComponent.ts';
+export { importExportComponent } from './ecs/components/importExportComponent.ts';
 
 // ECS archetypes
 export * from './ecs/archetypes/factoryArchetype.ts';

@@ -32,7 +32,7 @@ export class EcsArchetype<
 		this.#attachEntity(entity, options);
 		if (!this.test(entity)) {
 			// You forgot to attach all relevant components to this entity, in #attachEntity
-			throw new Error('Entity failed its own archetype test');
+			throw new Error(`Entity ${entity.id} failed its own archetype test`);
 		}
 		return entity as EcsEntity<ComponentGeneric>;
 	}

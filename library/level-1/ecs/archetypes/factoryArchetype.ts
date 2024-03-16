@@ -58,11 +58,11 @@ export const factoryArchetype = new EcsArchetype<
 			name: options.name ?? 'Factory',
 		});
 		importExportComponent.attach(entity, {
-			buyMaterialsWhenBelow: options.blueprint.ingredients.map(({ material, quantity }) => ({
+			requestMaterialsWhenBelow: options.blueprint.ingredients.map(({ material, quantity }) => ({
 				material,
 				quantity: quantity * 5,
 			})),
-			sellMaterialsWhenAbove: options.blueprint.products.map(({ material, quantity }) => ({
+			provideMaterialsWhenAbove: options.blueprint.products.map(({ material, quantity }) => ({
 				material,
 				quantity: quantity * 5,
 			})),

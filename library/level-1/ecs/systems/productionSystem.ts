@@ -124,7 +124,7 @@ async function attachSystemToEntity(game: Game, factory: ProductionEntity) {
 	function stopBlueprintCycle(factory: ProductionEntity, skipClearReservation = false) {
 		if (!skipClearReservation && isBlueprintCycleBusy(factory)) {
 			hasReservation = false;
-			factory.inventory.cancelReservation(factory);
+			factory.inventory.clearReservation(factory);
 		}
 		factory.$$progress.set(0);
 		factory.$$progress.setDelta(0);
@@ -222,7 +222,7 @@ async function attachSystemToEntity(game: Game, factory: ProductionEntity) {
 			// All products are allocatable, so the cycle is complete
 			ignoreInventoryChanges = true;
 			hasReservation = false;
-			factory.inventory.cancelReservation(factory);
+			factory.inventory.clearReservation(factory);
 			void factory.inventory.changeMultiple(blueprint.products).then(() => {
 				ignoreInventoryChanges = false;
 			});

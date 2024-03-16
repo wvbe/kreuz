@@ -3,11 +3,11 @@ import { EcsComponent } from '../classes/EcsComponent.ts';
 import { inventoryComponent } from './inventoryComponent.ts';
 
 export const importExportComponent = new EcsComponent<{
-	sellMaterialsWhenAbove: MaterialState[];
-	buyMaterialsWhenBelow: MaterialState[];
+	provideMaterialsWhenAbove: MaterialState[];
+	requestMaterialsWhenBelow: MaterialState[];
 }>(
 	(entity) =>
 		inventoryComponent.test(entity) &&
-		Array.isArray(entity.sellMaterialsWhenAbove) &&
-		Array.isArray(entity.buyMaterialsWhenBelow),
+		Array.isArray(entity.provideMaterialsWhenAbove) &&
+		Array.isArray(entity.requestMaterialsWhenBelow),
 );

@@ -1,14 +1,14 @@
 import { type Material } from '../../../inventory/Material.ts';
 import { EcsEntity } from '../../types.ts';
-import { TradeFlowDeal } from './types.ts';
-import { type TradeFlowOffer, type TradeFlowEntity } from './types.ts';
+import { LogisticsDeal } from './types.ts';
+import { type LogisticsOffer, type LogisticsEntity } from './types.ts';
 
 /**
  * A space in which supply and demand for a specific {@link Material} is recorded. Whenever you like,
- * use {@link TradeFlowExchange.getLargestTransferDeal} to find the biggest cargo haul available; this
- * produces a {@link TradeFlowDeal} with all the necessary information to carry out the trade.
+ * use {@link LogisticsExchange.getLargestTransferDeal} to find the biggest cargo haul available; this
+ * produces a {@link LogisticsDeal} with all the necessary information to carry out the trade.
  */
-export class TradeFlowExchange<EntityGeneric extends EcsEntity = TradeFlowEntity> {
+export class LogisticsExchange<EntityGeneric extends EcsEntity = LogisticsEntity> {
 	#parties = new Map<EntityGeneric, number>();
 
 	public readonly material: Material;
@@ -31,10 +31,10 @@ export class TradeFlowExchange<EntityGeneric extends EcsEntity = TradeFlowEntity
 	public getLargestTransferDeal(
 		minimumAmount: number = 1,
 		maximumAmount: number = this.material.stack,
-	): TradeFlowDeal<EntityGeneric> | null {
+	): LogisticsDeal<EntityGeneric> | null {
 		const biggestSupply = Array.from(
 			this.#parties.entries(),
-		).reduce<TradeFlowOffer<EntityGeneric> | null>((result, [entity, quantity]) => {
+		).reduce<LogisticsOffer<EntityGeneric> | null>((result, [entity, quantity]) => {
 			if (
 				quantity >= minimumAmount &&
 				quantity <= maximumAmount &&
@@ -51,7 +51,7 @@ export class TradeFlowExchange<EntityGeneric extends EcsEntity = TradeFlowEntity
 
 		const biggestDemand = Array.from(
 			this.#parties.entries(),
-		).reduce<TradeFlowOffer<EntityGeneric> | null>((result, [entity, quantity]) => {
+		).reduce<LogisticsOffer<EntityGeneric> | null>((result, [entity, quantity]) => {
 			if (
 				quantity <= -minimumAmount &&
 				quantity >= -maximumAmount &&
@@ -80,7 +80,7 @@ export class TradeFlowExchange<EntityGeneric extends EcsEntity = TradeFlowEntity
 	 * If a deal is accepted, update the records known to this exchange so that the deal
 	 * does not get suggested again for the same materials.
 	 */
-	public excludeDealFromRecords(deal: TradeFlowDeal<EntityGeneric>) {
+	public excludeDealFromRecords(deal: LogisticsDeal<EntityGeneric>) {
 		this.#parties.set(deal.supplier, this.#parties.get(deal.supplier)! - deal.quantity);
 		this.#parties.set(deal.destination, this.#parties.get(deal.destination)! + deal.quantity);
 	}

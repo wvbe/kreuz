@@ -1,5 +1,5 @@
 import { expect } from '@test';
-import { TradeFlowExchange } from './TradeFlowExchange.ts';
+import { LogisticsExchange } from './LogisticsExchange.ts';
 import { EcsEntity, Material } from '@lib';
 import { importExportComponent } from '../../components/importExportComponent.ts';
 
@@ -15,19 +15,19 @@ const material = new Material(`TestMaterial`, {
 const supplier = { id: 'supplier' };
 const destination = { id: 'demand' };
 
-Deno.test('TradeFlowExchange', async (test) => {
+Deno.test('LogisticsExchange', async (test) => {
 	await test.step('No demand', () => {
-		const exchange = new TradeFlowExchange<EcsEntity>(material);
+		const exchange = new LogisticsExchange<EcsEntity>(material);
 		exchange.updateSupplyDemand(supplier, 10);
 		expect(exchange.getLargestTransferDeal()).toBeNull();
 	});
 	await test.step('No supply', () => {
-		const exchange = new TradeFlowExchange<EcsEntity>(material);
+		const exchange = new LogisticsExchange<EcsEntity>(material);
 		exchange.updateSupplyDemand(destination, -10);
 		expect(exchange.getLargestTransferDeal()).toBeNull();
 	});
 	await test.step('One match', () => {
-		const exchange = new TradeFlowExchange<EcsEntity>(material);
+		const exchange = new LogisticsExchange<EcsEntity>(material);
 		exchange.updateSupplyDemand(supplier, 10);
 		exchange.updateSupplyDemand(destination, -10);
 		expect(exchange.getLargestTransferDeal()).toEqual({
@@ -38,7 +38,7 @@ Deno.test('TradeFlowExchange', async (test) => {
 		});
 	});
 	await test.step('Partial match (too little demand)', () => {
-		const exchange = new TradeFlowExchange<EcsEntity>(material);
+		const exchange = new LogisticsExchange<EcsEntity>(material);
 		exchange.updateSupplyDemand(supplier, 10);
 		exchange.updateSupplyDemand(destination, -5);
 		expect(exchange.getLargestTransferDeal()).toEqual({
@@ -49,7 +49,7 @@ Deno.test('TradeFlowExchange', async (test) => {
 		});
 	});
 	await test.step('Partial match (too little supply)', () => {
-		const exchange = new TradeFlowExchange<EcsEntity>(material);
+		const exchange = new LogisticsExchange<EcsEntity>(material);
 		exchange.updateSupplyDemand(supplier, 5);
 		exchange.updateSupplyDemand(destination, -10);
 		expect(exchange.getLargestTransferDeal()).toEqual({

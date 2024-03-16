@@ -69,8 +69,8 @@ export class Inventory {
 	}
 
 	/**
-	 * List all cargo that is available to be picked up -- meaning all cargo already in stock, minus
-	 * what has been reserved by others.
+	 * List all cargo that is available to be picked up -- meaning all cargo already in stock and that
+	 * is not reserved.
 	 */
 	public getAvailableItems() {
 		return this.items
@@ -169,10 +169,15 @@ export class Inventory {
 	}
 
 	public amountAdditionallyAllocatableTo(material: Material): number {
+		if (this.capacity === Infinity) {
+			return Infinity;
+		}
+
 		return (
 			this.amountAllocatableTo(material) -
 			this.availableOf(material) -
-			this.reservedOutgoingOf(material)
+			this.reservedOutgoingOf(material) -
+			this.reservedIncomingOf(material)
 		);
 	}
 
@@ -182,6 +187,9 @@ export class Inventory {
 	 * @deprecated Untested, unused
 	 */
 	public isAdditionallyAllocatableTo(material: Material, delta: number): boolean {
+		if (this.capacity === Infinity) {
+			return true;
+		}
 		return delta <= this.amountAdditionallyAllocatableTo(material);
 	}
 	/**
@@ -197,6 +205,7 @@ export class Inventory {
 		const requiredStackSpace = getRequiredStackSpace([
 			...cargo,
 			...this.getAvailableItems(),
+			// Possibly this causes the bug asserted in the last test of Inventory.test.ts?
 			...this.getReservedIncomingItems(),
 			...this.getReservedOutgoingItems(),
 		]);
@@ -343,7 +352,7 @@ export class Inventory {
 	/**
 	 * Remove the reservation without transferring the items for it.
 	 */
-	public cancelReservation(key: any) {
+	public clearReservation(key: any) {
 		if (!this.reservations.get(key)) {
 			// Programmer error
 			throw new Error('No such reservation');
@@ -357,7 +366,7 @@ export class Inventory {
 	public fulfillReservation(tradeOrder: TradeOrder) {
 		// @TODO transfer materials
 
-		this.cancelReservation(tradeOrder);
+		this.clearReservation(tradeOrder);
 	}
 
 	public toSaveJson(context: SaveJsonContext): SaveInventoryJson {

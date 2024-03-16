@@ -4,16 +4,16 @@ import { type importExportComponent } from '../../components/importExportCompone
 import { EcsEntity } from '../../types.ts';
 import { type Material } from '../../../inventory/Material.ts';
 
-export type TradeFlowEntity = EcsEntity<
+export type LogisticsEntity = EcsEntity<
 	typeof inventoryComponent | typeof locationComponent | typeof importExportComponent
 >;
 
-export type TradeFlowOffer<EntityGeneric extends EcsEntity = TradeFlowEntity> = {
+export type LogisticsOffer<EntityGeneric extends EcsEntity = LogisticsEntity> = {
 	entity: EntityGeneric;
 	quantityOnOffer: number;
 };
 
-export type TradeFlowDeal<EntityGeneric extends EcsEntity = TradeFlowEntity> = {
+export type LogisticsDeal<EntityGeneric extends EcsEntity = LogisticsEntity> = {
 	supplier: EntityGeneric;
 	destination: EntityGeneric;
 	material: Material;

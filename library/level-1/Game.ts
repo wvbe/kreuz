@@ -6,7 +6,7 @@ import { DriverI } from './drivers/types.ts';
 import { behaviorTreeSystem } from './ecs/systems/behaviorTreeSystem.ts';
 import { productionSystem } from './ecs/systems/productionSystem.ts';
 import { healthSystem } from './ecs/systems/healthSystem.ts';
-import { tradeFlowSystem } from './ecs/systems/tradeFlowSystem.ts';
+import { logisticsSystem } from './ecs/systems/logisticsSystem.ts';
 import { EcsEntity } from './ecs/types.ts';
 import { Collection } from './events/Collection.ts';
 import { Event } from './events/Event.ts';
@@ -56,7 +56,7 @@ export default class Game {
 		productionSystem.attachGame(this);
 		behaviorTreeSystem.attachGame(this);
 		healthSystem.attachGame(this);
-		tradeFlowSystem.attachGame(this);
+		logisticsSystem.attachGame(this);
 
 		driver.attach(this);
 	}

@@ -207,6 +207,26 @@ describe('Issues', () => {
 		}).not.toThrow();
 		expect(inventory.availableOf(test2)).toBe(34);
 	});
+
+	it('.isEverythingAllocatable() responds false while .additionalyAllocatableTo doesnt', async () => {
+		const inventory = new Inventory(8);
+
+		const copper = new Material('Copper ingot', { symbol: 'C', stackSize: 30 });
+		const tin = new Material('Tin ingot', { symbol: 'T', stackSize: 30 });
+		const bronze = new Material('Bronze ingot', { symbol: 'B', stackSize: 30 });
+		await inventory.changeMultiple([
+			{ material: copper, quantity: 24 },
+			{ material: tin, quantity: 12 },
+			{ material: bronze, quantity: 176 },
+		]);
+		inventory.makeReservation('transport-job-602', [{ material: copper, quantity: 5 }]);
+
+		expect(inventory.amountAdditionallyAllocatableTo(copper)).toBe(1);
+		expect(inventory.isAdditionallyAllocatableTo(copper, 5)).toBe(false);
+		expect(inventory.isEverythingAdditionallyAllocatable([{ material: copper, quantity: 5 }])).toBe(
+			inventory.isAdditionallyAllocatableTo(copper, 5),
+		);
+	});
 });
 
 run();

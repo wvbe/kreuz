@@ -15,6 +15,9 @@ import {
 	inventoryComponent,
 	materials,
 	factoryArchetype,
+	locationComponent,
+	pathingComponent,
+	visibilityComponent,
 } from '@lib';
 import { headOfState } from '../library/level-2/heroes/heroes.ts';
 import { generateDualMeshTerrain } from '../library/level-3/utils/generateDualMeshTerrain.ts';
@@ -54,6 +57,12 @@ export async function generateEntities(game: Game) {
 	if (!walkableTiles.length) {
 		throw new Error('The terrain does not contain any walkable tiles!');
 	}
+
+	const dog = { id: 'dog' };
+	visibilityComponent.attach(dog, { name: 'Archibald', icon: '🐶' });
+	locationComponent.attach(dog, { location: Random.fromArray(walkableTiles, 'dog').toArray() });
+	pathingComponent.attach(dog, { walkSpeed: 0.1 });
+	game.entities.add(dog);
 
 	for (let i = 0; i < Random.between(100, 200, game.seed, 'guardamount'); i++) {
 		const id = `${game.seed}-person-${i}`;

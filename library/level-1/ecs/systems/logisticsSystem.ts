@@ -5,15 +5,16 @@ import { importExportComponent } from '../components/importExportComponent.ts';
 import { inventoryComponent } from '../components/inventoryComponent.ts';
 import { locationComponent } from '../components/locationComponent.ts';
 
-import { TradeFlowExchangeByMaterial } from './tradeFlowSystem/TradeFlowExchangeByMaterial.ts';
-import { TradeFlowDeal, TradeFlowEntity } from './tradeFlowSystem/types.ts';
+import { LogisticsExchangeByMaterial } from './logisticsSystem/LogisticsExchangeByMaterial.ts';
+import { LogisticsDeal, LogisticsEntity } from './logisticsSystem/types.ts';
 import { EntityBlackboard } from '../components/behaviorComponent/types.ts';
+import { DestroyerFn } from '../../types.ts';
 
 /**
  * Creates inventory reservations for the supplier and destination inventories, so that a transport
  * agreement can be fulfilled.
  */
-function createInventoryReservations(transportJobId: string, deal: TradeFlowDeal) {
+function createInventoryReservations(transportJobId: string, deal: LogisticsDeal) {
 	// As soon as the job is created (not taken), the supplier and destination inventories are reserved
 	// for their parts of the deal.
 	deal.supplier.inventory.makeReservation(transportJobId, [
@@ -34,7 +35,7 @@ function createInventoryReservations(transportJobId: string, deal: TradeFlowDeal
  * Creates a job that represents a transport job. Same as production jobs, transport jobs can be
  * attractive to certain persons, or not.
  */
-function createTransportJob(transportJobId: string, deal: TradeFlowDeal) {
+function createTransportJob(transportJobId: string, deal: LogisticsDeal) {
 	const assignJobToEntity = async (job: JobPosting, { game, entity: worker }: EntityBlackboard) => {
 		// Jobs are designed to have vacancies, that are taken and restored when the job finishes.
 		// For transport jobs however, its not useful to open up a vacancy again when the transport
@@ -45,7 +46,7 @@ function createTransportJob(transportJobId: string, deal: TradeFlowDeal) {
 		await worker.walkToTile(game.terrain.getTileEqualToLocation(deal.supplier.$$location.get()));
 
 		await worker.$status.set(`Transferring cargo`);
-		deal.supplier.inventory.cancelReservation(transportJobId);
+		deal.supplier.inventory.clearReservation(transportJobId);
 		await deal.supplier.inventory.change(deal.material, -deal.quantity);
 		await worker.inventory.change(deal.material, deal.quantity);
 
@@ -54,7 +55,7 @@ function createTransportJob(transportJobId: string, deal: TradeFlowDeal) {
 
 		await worker.$status.set(`Transferring cargo`);
 		await worker.inventory.change(deal.material, -deal.quantity);
-		deal.destination.inventory.cancelReservation(transportJobId);
+		deal.destination.inventory.clearReservation(transportJobId);
 		await deal.destination.inventory.change(deal.material, deal.quantity);
 
 		await worker.$status.set(null);
@@ -89,16 +90,16 @@ function createTransportJob(transportJobId: string, deal: TradeFlowDeal) {
 
 async function attachSystemToEntity(
 	game: Game,
-	exchange: TradeFlowExchangeByMaterial,
-	trader: TradeFlowEntity,
+	exchange: LogisticsExchangeByMaterial,
+	trader: LogisticsEntity,
 ) {
 	trader.inventory.$change.on(async () => {
-		for (const { material, quantity } of trader.sellMaterialsWhenAbove) {
+		for (const { material, quantity } of trader.provideMaterialsWhenAbove) {
 			if (trader.inventory.availableOf(material) > quantity) {
 				exchange.get(material).updateSupplyDemand(trader, quantity);
 			}
 		}
-		for (const { material, quantity } of trader.buyMaterialsWhenBelow) {
+		for (const { material, quantity } of trader.requestMaterialsWhenBelow) {
 			if (trader.inventory.availableOf(material) < quantity) {
 				// Never ask for more than what we can stow
 				const requestQuantity = Math.min(
@@ -112,25 +113,15 @@ async function attachSystemToEntity(
 }
 
 async function attachSystem(game: Game) {
-	const exchange = new TradeFlowExchangeByMaterial();
-
-	game.entities.$add.on(async (entities) => {
-		await Promise.all(
-			entities
-				.filter(
-					(entity): entity is TradeFlowEntity =>
-						importExportComponent.test(entity) &&
-						inventoryComponent.test(entity) &&
-						locationComponent.test(entity),
-				)
-				.map((trader) => attachSystemToEntity(game, exchange, trader)),
-		);
-	});
+	const exchange = new LogisticsExchangeByMaterial();
 
 	let identifier = 0;
-	game.time.setInterval(() => {
+	let lastUpdateTime = 0;
+	let timeoutId: DestroyerFn<number> | null = null;
+
+	function postTransportJobs() {
 		exchange.forEach((materialExchange) => {
-			let deal: TradeFlowDeal | null = null;
+			let deal: LogisticsDeal | null = null;
 			while ((deal = materialExchange.getLargestTransferDeal())) {
 				const transportJobId = `transport-job-${identifier++}`;
 				// console.log(
@@ -147,7 +138,37 @@ async function attachSystem(game: Game) {
 				game.jobs.add(job);
 			}
 		});
-	}, 10_000);
+	}
+
+	game.entities.$add.on(async (entities) => {
+		await Promise.all(
+			entities
+				.filter(
+					(entity): entity is LogisticsEntity =>
+						importExportComponent.test(entity) &&
+						inventoryComponent.test(entity) &&
+						locationComponent.test(entity),
+				)
+				.map((trader) => {
+					trader.inventory.$change.on(async () => {
+						if (timeoutId !== null) {
+							// A timer is already set
+							return;
+						}
+						const timeLeft = lastUpdateTime % 10_000;
+						timeoutId = game.time.setTimeout(() => {
+							postTransportJobs();
+							lastUpdateTime = game.time.now;
+							timeoutId = null;
+						}, Math.max(timeLeft, 1));
+					});
+
+					return attachSystemToEntity(game, exchange, trader);
+				}),
+		);
+	});
+
+	game.time.setInterval(() => {}, 10_000);
 }
 
-export const tradeFlowSystem = new EcsSystem([], attachSystem);
+export const logisticsSystem = new EcsSystem([], attachSystem);

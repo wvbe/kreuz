@@ -60,7 +60,11 @@ export class TestDriver extends Driver implements DriverI {
 		};
 		// Whenever an entity starts to move, make sure that the "animation" ends at some point too.
 		listenToPersonEntityMovement(game.entities.slice());
-		this.$detach.once(game.entities.$add.on((added) => listenToPersonEntityMovement(added)));
+		this.$detach.once(
+			game.entities.$add.on((added) => {
+				listenToPersonEntityMovement(added);
+			}),
+		);
 
 		return this;
 	}

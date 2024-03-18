@@ -1,7 +1,8 @@
 import Game from '../../Game.ts';
-import { JobPosting } from '../components/behaviorComponent/JobPosting.ts';
-import { Blueprint } from '../components/productionComponent/Blueprint.ts';
+import { type Material } from '../../inventory/Material.ts';
 import { EcsSystem } from '../classes/EcsSystem.ts';
+import { JobPosting } from '../components/behaviorComponent/JobPosting.ts';
+import { healthComponent } from '../components/healthComponent.ts';
 import { inventoryComponent } from '../components/inventoryComponent.ts';
 import { locationComponent } from '../components/locationComponent.ts';
 import { pathingComponent } from '../components/pathingComponent.ts';
@@ -9,10 +10,17 @@ import {
 	ProductionComponentWorkerEntity,
 	productionComponent,
 } from '../components/productionComponent.ts';
+import { Blueprint } from '../components/productionComponent/Blueprint.ts';
 import { statusComponent } from '../components/statusComponent.ts';
+import { wealthComponent } from '../components/wealthComponent.ts';
 import { EcsEntity } from '../types.ts';
 
-type ProductionEntity = EcsEntity<
+/**
+ * The minimal entity definition that can function as a factory building in this system.
+ *
+ * Note that {@link factoryArchetype} is a superset definition of a factory building.
+ */
+type ProductionSystemFactoryEntity = EcsEntity<
 	| typeof productionComponent
 	| typeof statusComponent
 	| typeof locationComponent
@@ -52,7 +60,7 @@ function getDelta(blueprint: Blueprint, workerAmount: number) {
  * @param blueprint - The blueprint to be produced.
  * @returns A boolean indicating whether a new blueprint cycle can be started.
  */
-function canStartNewBlueprintCycle(factory: ProductionEntity, blueprint: Blueprint) {
+function canStartNewBlueprintCycle(factory: ProductionSystemFactoryEntity, blueprint: Blueprint) {
 	if (!blueprint.hasAllIngredients(factory.inventory)) {
 		// Not all necessary ingredients are in inventory, so cannot start.
 		return false;
@@ -74,7 +82,7 @@ function canStartNewBlueprintCycle(factory: ProductionEntity, blueprint: Bluepri
 /**
  * Tells wether or not a factory is already working on a blueprint production cycle, or not.
  */
-function isBlueprintCycleBusy(factory: ProductionEntity): boolean {
+function isBlueprintCycleBusy(factory: ProductionSystemFactoryEntity): boolean {
 	const isBusy = !!(factory.$blueprint.get() && factory.$$progress.delta > 0);
 	return isBusy;
 }
@@ -82,13 +90,25 @@ function isBlueprintCycleBusy(factory: ProductionEntity): boolean {
 async function assignWorkerToFactory(
 	game: Game,
 	worker: ProductionComponentWorkerEntity,
-	factory: ProductionEntity,
+	factory: ProductionSystemFactoryEntity,
 ) {
+	if (worker.$health.get() <= 0) {
+		throw new Error('Dead people cannot work');
+	}
 	await worker.$status.set(`Going to ${factory} for work`);
 	const tile = game.terrain.getTileEqualToLocation(factory.$$location.get());
 	await worker.walkToTile(tile);
+	if (worker.$health.get() <= 0) {
+		// Worker died on the way to the factory :(
+		return;
+	}
 
 	await factory.$workers.add(worker);
+
+	// .on instead of .once, because we're manually destroying the listener
+	const destroyDeathListener = worker.$death.on(() => {
+		factory.$workers.remove(worker);
+	});
 
 	await worker.$status.set(`Working in ${factory}`);
 
@@ -99,6 +119,7 @@ async function assignWorkerToFactory(
 			if (!removed.includes(worker)) {
 				return;
 			}
+			destroyDeathListener();
 			unlisten();
 			resolve();
 		});
@@ -107,7 +128,7 @@ async function assignWorkerToFactory(
 	await worker.$status.set(null);
 }
 
-async function attachSystemToEntity(game: Game, factory: ProductionEntity) {
+async function attachSystemToEntity(game: Game, factory: ProductionSystemFactoryEntity) {
 	let ignoreInventoryChanges = false;
 	let hasReservation = false;
 
@@ -121,7 +142,10 @@ async function attachSystemToEntity(game: Game, factory: ProductionEntity) {
 		);
 	}
 
-	function stopBlueprintCycle(factory: ProductionEntity, skipClearReservation = false) {
+	function stopBlueprintCycle(
+		factory: ProductionSystemFactoryEntity,
+		skipClearReservation = false,
+	) {
 		if (!skipClearReservation && isBlueprintCycleBusy(factory)) {
 			hasReservation = false;
 			factory.inventory.clearReservation(factory);
@@ -141,7 +165,7 @@ async function attachSystemToEntity(game: Game, factory: ProductionEntity) {
 		}, 1000);
 	}
 
-	function startNewBlueprintCycle(factory: ProductionEntity, blueprint: Blueprint) {
+	function startNewBlueprintCycle(factory: ProductionSystemFactoryEntity, blueprint: Blueprint) {
 		if (!canAllocateProducts()) {
 			throw new Error('New cycle shouldna been started, but it was');
 		}
@@ -244,11 +268,30 @@ async function attachSystemToEntity(game: Game, factory: ProductionEntity) {
 			return;
 		}
 		const vacancy = new JobPosting(
-			(_job, blackboard) => assignWorkerToFactory(game, blackboard.entity, factory),
+			(_job, blackboard) =>
+				assignWorkerToFactory(game, blackboard.entity as ProductionComponentWorkerEntity, factory),
 			{
 				vacancies: factory.maxWorkers,
+				restoreVacancyWhenDone: true,
 				employer: factory,
 				score: ({ entity }) => {
+					if (
+						!healthComponent.test(entity) ||
+						!wealthComponent.test(entity) ||
+						!locationComponent.test(entity) ||
+						!statusComponent.test(entity) ||
+						!pathingComponent.test(entity)
+					) {
+						// Entities who are not interested in money, or entities who do not have a location,
+						// are never interested in this job.
+						return 0;
+					}
+
+					if (!entity.$health.get()) {
+						// This person is ded
+						return 0;
+					}
+
 					let desirability = 1;
 
 					const maximumDistanceWillingToTravel = 20,
@@ -280,12 +323,7 @@ async function attachSystemToEntity(game: Game, factory: ProductionEntity) {
 	factory.$blueprint.on(createWorkerJobPosting);
 	createWorkerJobPosting(factory.$blueprint.get());
 
-	// factory.$detach.once(async () => {
-	// 	await factory.$$progress.detach();
-	// });
-
 	await factory.$$progress.attach(game);
-	// factory.$blueprint.set(factory.options.blueprint);
 }
 
 async function attachSystem(game: Game) {
@@ -293,7 +331,7 @@ async function attachSystem(game: Game) {
 		await Promise.all(
 			entities
 				.filter(
-					(entity): entity is ProductionEntity =>
+					(entity): entity is ProductionSystemFactoryEntity =>
 						productionComponent.test(entity) &&
 						statusComponent.test(entity) &&
 						inventoryComponent.test(entity) &&
@@ -304,7 +342,28 @@ async function attachSystem(game: Game) {
 	});
 }
 
+/**
+ * The production system lets factories or other entities with production-related components produce
+ * {@link Material}s. A {@link Blueprint} is used as the recipe for this production process.
+ *
+ * Blueprint ingredients and products are all exchanged within the inventory belonging to the factory
+ * entity.
+ *
+ * The production speed is determined by the amount of worker entities at the factory -- the
+ * production speed is linear to the number of workers, unless there are too little workers to
+ * satisfy the requirement of a blueprint, in which case the production speed is penalized by 70%.
+ *
+ * When a production cycle is complete and there is still enough ingredients as well as avaialble space
+ * in the inventory, and workers present, a new production cycle starts automatically.
+ */
 export const productionSystem = new EcsSystem(
-	[productionComponent, statusComponent, locationComponent, inventoryComponent, pathingComponent],
+	[
+		productionComponent,
+		statusComponent,
+		locationComponent,
+		inventoryComponent,
+		pathingComponent,
+		healthComponent,
+	],
 	attachSystem,
 );

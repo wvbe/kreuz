@@ -74,3 +74,4 @@ export { importExportComponent } from './ecs/components/importExportComponent.ts
 export * from './ecs/archetypes/factoryArchetype.ts';
 export * from './ecs/archetypes/marketArchetype.ts';
 export * from './ecs/archetypes/personArchetype.ts';
+export { rejectBehaviorTreeWhenMissingEcsComponent } from './ecs/components/behaviorComponent/rejectBehaviorTreeWhenMissingEcsComponent.ts';

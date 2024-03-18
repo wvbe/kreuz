@@ -18,6 +18,9 @@ import {
 	locationComponent,
 	pathingComponent,
 	visibilityComponent,
+	behaviorComponent,
+	statusComponent,
+	healthComponent,
 } from '@lib';
 import { headOfState } from '../library/level-2/heroes/heroes.ts';
 import { generateDualMeshTerrain } from '../library/level-3/utils/generateDualMeshTerrain.ts';
@@ -62,6 +65,9 @@ export async function generateEntities(game: Game) {
 	visibilityComponent.attach(dog, { name: 'Archibald', icon: '🐶' });
 	locationComponent.attach(dog, { location: Random.fromArray(walkableTiles, 'dog').toArray() });
 	pathingComponent.attach(dog, { walkSpeed: 0.1 });
+	statusComponent.attach(dog, { status: 'Being a good boy' });
+	healthComponent.attach(dog, { health: 1 });
+	behaviorComponent.attach(dog, { behavior: behavior.civilianBehavior });
 	game.entities.add(dog);
 
 	for (let i = 0; i < Random.between(100, 200, game.seed, 'guardamount'); i++) {

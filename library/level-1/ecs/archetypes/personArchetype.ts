@@ -53,10 +53,7 @@ export const personArchetype = new EcsArchetype<
 			location: options.location,
 		});
 		needsComponent.attach(entity, {
-			energy: 1,
 			hydration: 1,
-			hygiene: 1,
-			ideology: 1,
 			nutrition: 1,
 		});
 		pathingComponent.attach(entity, {

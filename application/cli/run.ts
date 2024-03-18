@@ -18,8 +18,11 @@ const driver = new TestDriver();
 const game = await demo.default(driver);
 
 try {
-	await driver.startUntilStop();
 	console.log('-----------------------');
+	await game.driver.startUntilStop();
+	console.log('-----------------------');
+	console.log(`Game stopped  at t=${game.time.now}`);
+	console.log(game.time.hasNextEvent());
 } catch (e: unknown) {
 	console.log('-----------------------');
 	console.group('ERROR');

@@ -74,6 +74,17 @@ export class TimeLine extends EventedValue<number> {
 		await this.step();
 	}
 
+	public async skip(to: number) {
+		let next: number = this.getNextEventAbsoluteTime();
+		while (next < to) {
+			await this.jump(next);
+			next = this.getNextEventAbsoluteTime();
+		}
+		if (this.now < to) {
+			await this.jump(to);
+		}
+	}
+
 	/**
 	 * Schedule a callback for a relative amount of time in the future.
 	 *
@@ -108,19 +119,8 @@ export class TimeLine extends EventedValue<number> {
 	}
 
 	/**
-	 * @deprecated Setting an interval may cause the game to never end. Make sure you unset the
-	 * interval at some point!
+	 * Wait for a promise to resolve after the indicated amount of "time"
 	 */
-	public setInterval(callback: CallbackFn, delay: number): DestroyerFn<number> {
-		let destroyer: DestroyerFn<number>;
-		const loop = () => {
-			void callback();
-			destroyer = this.setTimeout(loop, delay);
-		};
-		loop();
-		return destroyer!;
-	}
-
 	public async wait(time: number): Promise<void> {
 		await new Promise<void>((resolve) => {
 			this.setTimeout(() => {

@@ -7,9 +7,13 @@ import { EcsEntity } from '../types.ts';
 import { type locationComponent } from './locationComponent.ts';
 import { type statusComponent } from './statusComponent.ts';
 import { type pathingComponent } from './pathingComponent.ts';
+import { healthComponent } from './healthComponent.ts';
 
 export type ProductionComponentWorkerEntity = EcsEntity<
-	typeof statusComponent | typeof locationComponent | typeof pathingComponent
+	| typeof statusComponent
+	| typeof locationComponent
+	| typeof pathingComponent
+	| typeof healthComponent
 >;
 
 export const productionComponent = new EcsComponent<

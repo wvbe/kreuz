@@ -6,6 +6,7 @@ import { DriverI } from './drivers/types.ts';
 import { behaviorTreeSystem } from './ecs/systems/behaviorTreeSystem.ts';
 import { productionSystem } from './ecs/systems/productionSystem.ts';
 import { healthSystem } from './ecs/systems/healthSystem.ts';
+import { selfsustainingSystem } from './ecs/systems/selfsustainingSystem.ts';
 import { logisticsSystem } from './ecs/systems/logisticsSystem.ts';
 import { EcsEntity } from './ecs/types.ts';
 import { Collection } from './events/Collection.ts';
@@ -24,9 +25,11 @@ export type GameAssets = {
 	blueprints: Registry<Blueprint>;
 };
 export default class Game {
+	public readonly driver: DriverI;
+
 	public readonly terrain: Terrain;
 
-	public readonly entities = new KeyedCollection<'id', EcsEntity<any>>('id');
+	public readonly entities = new KeyedCollection<'id', EcsEntity>('id');
 
 	public readonly time = new TimeLine();
 
@@ -49,6 +52,8 @@ export default class Game {
 	 */
 
 	constructor(driver: DriverI, seed: SeedI, terrain: Terrain, assets: GameAssets) {
+		this.driver = driver;
+
 		this.seed = seed;
 		this.terrain = terrain;
 		this.assets = assets;
@@ -57,6 +62,7 @@ export default class Game {
 		behaviorTreeSystem.attachGame(this);
 		healthSystem.attachGame(this);
 		logisticsSystem.attachGame(this);
+		selfsustainingSystem.attachGame(this);
 
 		driver.attach(this);
 	}

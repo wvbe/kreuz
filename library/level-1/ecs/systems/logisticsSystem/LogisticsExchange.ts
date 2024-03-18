@@ -37,10 +37,9 @@ export class LogisticsExchange<EntityGeneric extends EcsEntity = LogisticsEntity
 		).reduce<LogisticsOffer<EntityGeneric> | null>((result, [entity, quantity]) => {
 			if (
 				quantity >= minimumAmount &&
-				quantity <= maximumAmount &&
-				quantity > (result?.quantityOnOffer || 0)
+				Math.min(maximumAmount, quantity) > (result?.quantityOnOffer || 0)
 			) {
-				return { entity, quantityOnOffer: quantity };
+				return { entity, quantityOnOffer: Math.min(maximumAmount, quantity) };
 			}
 			return result;
 		}, null);
@@ -54,10 +53,9 @@ export class LogisticsExchange<EntityGeneric extends EcsEntity = LogisticsEntity
 		).reduce<LogisticsOffer<EntityGeneric> | null>((result, [entity, quantity]) => {
 			if (
 				quantity <= -minimumAmount &&
-				quantity >= -maximumAmount &&
-				quantity < (result?.quantityOnOffer || 0)
+				Math.max(-maximumAmount, quantity) < (result?.quantityOnOffer || 0)
 			) {
-				return { entity, quantityOnOffer: quantity };
+				return { entity, quantityOnOffer: Math.max(-maximumAmount, quantity) };
 			}
 			return result;
 		}, null);

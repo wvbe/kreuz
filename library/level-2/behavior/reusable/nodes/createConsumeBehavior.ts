@@ -12,12 +12,15 @@ import {
 	locationComponent,
 	wealthComponent,
 	type MaterialState,
+	needsComponent,
 } from '@lib/core';
 import { selectMostDesirableItemFromInventory } from '../primitives/selectMostDesirableItemFromInventory.ts';
 import { DesirabilityRecord, VendorPurchaseScorer } from '../primitives/types.ts';
 import { createBuyFromMarketBehavior } from './createBuyFromMarketBehavior.ts';
 import { createWaitBehavior } from './createWaitBehavior.ts';
 import { ownerComponent } from '@lib/core';
+import { rejectBehaviorTreeWhenMissingEcsComponent } from '@lib/core';
+import { statusComponent } from '@lib/core';
 
 type ConsumptionType = {
 	/**
@@ -49,11 +52,12 @@ type ConsumptionType = {
 export function createConsumeBehavior(config: ConsumptionType) {
 	return new SequenceNode<EntityBlackboard>(
 		new ExecutionNode('Have a craving??', ({ entity }) => {
+			rejectBehaviorTreeWhenMissingEcsComponent(entity, [needsComponent]);
 			const need = entity.needs.nutrition;
 			if (!need) {
 				throw new BehaviorTreeSignal(`For some reason, ${entity} is unable to crave this`);
 			}
-			if (need.get() > 0.2) {
+			if (need.get() > 0) {
 				throw new BehaviorTreeSignal(`${entity} isn't feeling it`);
 			}
 		}),
@@ -62,6 +66,7 @@ export function createConsumeBehavior(config: ConsumptionType) {
 			new SequenceNode(
 				new InverterNode(
 					new ExecutionNode('Has nothing to satisfy this craving?', ({ entity }) => {
+						rejectBehaviorTreeWhenMissingEcsComponent(entity, [inventoryComponent]);
 						if (!entity.inventory.getAvailableItems().some(config.materialFilter)) {
 							throw new BehaviorTreeSignal(
 								`${entity} does not have any satisfactory items on hand`,
@@ -92,6 +97,12 @@ export function createConsumeBehavior(config: ConsumptionType) {
 					// The material that is going to be consumed is either that of the deal made
 					// in the previous BT node, or the most desirable item that the entity
 					// already owns.
+
+					rejectBehaviorTreeWhenMissingEcsComponent(entity, [
+						needsComponent,
+						statusComponent,
+						inventoryComponent,
+					]);
 					const material = deal
 						? deal.material
 						: selectMostDesirableItemFromInventory(entity, config.materialDesirabilityScore)
@@ -118,6 +129,7 @@ export function createConsumeBehavior(config: ConsumptionType) {
 				}),
 				createWaitBehavior(500, 3000),
 				new ExecutionNode('Unset status', async ({ entity }) => {
+					rejectBehaviorTreeWhenMissingEcsComponent(entity, [statusComponent]);
 					await entity.$status.set(null);
 				}),
 			),

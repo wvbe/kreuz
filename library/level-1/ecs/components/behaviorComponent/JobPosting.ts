@@ -22,6 +22,8 @@ type JobPostingOptions = {
 	 */
 	vacancies: number;
 
+	restoreVacancyWhenDone: boolean;
+
 	/**
 	 * Useful for cosmetic reasons, but not used in any of the actual computation (???)
 	 */
@@ -52,7 +54,9 @@ export class JobPosting {
 		}
 		this.vacancies--;
 		await this.#onAssign(this, blackboard);
-		this.vacancies++;
+		if (this.#options.restoreVacancyWhenDone) {
+			this.vacancies++;
+		}
 	}
 
 	public get label() {

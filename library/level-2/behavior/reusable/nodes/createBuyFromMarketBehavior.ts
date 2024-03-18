@@ -3,18 +3,19 @@ import {
 	ExecutionNode,
 	SequenceNode,
 	TradeOrder,
-	wealthComponent,
 	inventoryComponent,
+	locationComponent,
+	ownerComponent,
+	pathingComponent,
+	statusComponent,
+	wealthComponent,
 	type EcsEntity,
 	type EntityBlackboard,
-	locationComponent,
 } from '@lib/core';
-import { TradeEntityI } from '../../../../level-1/classes/TradeOrder.ts';
 import { selectMostDesirableItemFromVendors } from '../primitives/selectMostDesirableItemFromVendors.ts';
 import { DesirabilityRecord, VendorPurchaseScorer } from '../primitives/types.ts';
 import { getEntitiesReachableByEntity, walkEntityToEntity } from '../travel.ts';
 import { createWaitBehavior } from './createWaitBehavior.ts';
-import { ownerComponent } from '@lib';
 
 /**
  * Makes the entity select an attractive deal, go there and make the purchase.
@@ -35,6 +36,14 @@ export function createBuyFromMarketBehavior(
 	return new SequenceNode<EntityBlackboard>(
 		new ExecutionNode('Find a deal', (blackboard) => {
 			const { game, entity } = blackboard;
+			if (
+				!inventoryComponent.test(entity) ||
+				!wealthComponent.test(entity) ||
+				!locationComponent.test(entity) ||
+				!pathingComponent.test(entity)
+			) {
+				throw new BehaviorTreeSignal(`The entity doesn't have the necessary components`);
+			}
 			const mostDesirableDeal = selectMostDesirableItemFromVendors(
 				entity,
 				getEntitiesReachableByEntity(game, entity).filter(vendorFilter),
@@ -49,6 +58,9 @@ export function createBuyFromMarketBehavior(
 		new ExecutionNode<EntityBlackboard & { deal?: DesirabilityRecord<true> }>(
 			'Walk to vendor',
 			async ({ game, entity, deal }) => {
+				if (!statusComponent.test(entity) || !pathingComponent.test(entity)) {
+					throw new BehaviorTreeSignal(`The entity doesn't have the necessary components`);
+				}
 				if (!deal) {
 					throw new BehaviorTreeSignal(`There isn't a deal to be made`);
 				}
@@ -59,6 +71,13 @@ export function createBuyFromMarketBehavior(
 		new ExecutionNode<EntityBlackboard & { deal?: DesirabilityRecord<true> }>(
 			'Buy any food',
 			async ({ entity, deal, game }) => {
+				if (
+					!statusComponent.test(entity) ||
+					!wealthComponent.test(entity) ||
+					!inventoryComponent.test(entity)
+				) {
+					throw new BehaviorTreeSignal(`The entity doesn't have the necessary components`);
+				}
 				if (!deal) {
 					throw new BehaviorTreeSignal(`There isn't a deal to be made`);
 				}

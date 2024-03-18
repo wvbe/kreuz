@@ -1,3 +1,4 @@
+import { EcsSystem } from '@lib';
 import { EcsEntity } from '../types.ts';
 
 type EcsComponentFilter = (entity: EcsEntity) => boolean;
@@ -14,7 +15,7 @@ export class EcsComponent<
 	/**
 	 * The method with which can be determined wether a given entity has this component or not.
 	 */
-	public readonly test: EcsComponentFilter;
+	readonly #test: EcsComponentFilter;
 
 	/**
 	 * The method with which this component can be attached to an entity.
@@ -32,7 +33,7 @@ export class EcsComponent<
 			Object.assign(entity, options);
 		},
 	) {
-		this.test = entityTest;
+		this.#test = entityTest;
 		this.#attach = entityAttach;
 	}
 
@@ -42,5 +43,9 @@ export class EcsComponent<
 	): EcsEntity<this> {
 		this.#attach(entity, options);
 		return entity as EcsEntity<this>;
+	}
+
+	public test(entity: EcsEntity): entity is EcsEntity<this> {
+		return this.#test(entity);
 	}
 }

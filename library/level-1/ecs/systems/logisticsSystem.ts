@@ -9,6 +9,10 @@ import { LogisticsExchangeByMaterial } from './logisticsSystem/LogisticsExchange
 import { LogisticsDeal, LogisticsEntity } from './logisticsSystem/types.ts';
 import { EntityBlackboard } from '../components/behaviorComponent/types.ts';
 import { DestroyerFn } from '../../types.ts';
+import { healthComponent } from '../components/healthComponent.ts';
+import { assertEcsComponents } from '../assert.ts';
+import { statusComponent } from '@lib/core';
+import { pathingComponent } from '@lib/core';
 
 /**
  * Creates inventory reservations for the supplier and destination inventories, so that a transport
@@ -37,6 +41,16 @@ function createInventoryReservations(transportJobId: string, deal: LogisticsDeal
  */
 function createTransportJob(transportJobId: string, deal: LogisticsDeal) {
 	const assignJobToEntity = async (job: JobPosting, { game, entity: worker }: EntityBlackboard) => {
+		assertEcsComponents(worker, [
+			healthComponent,
+			statusComponent,
+			pathingComponent,
+			locationComponent,
+			inventoryComponent,
+		]);
+		if (worker.$health.get() <= 0) {
+			throw new Error('Dead people cannot haul cargo');
+		}
 		// Jobs are designed to have vacancies, that are taken and restored when the job finishes.
 		// For transport jobs however, its not useful to open up a vacancy again when the transport
 		// is done. Therefore, remove the job altogether.
@@ -44,17 +58,35 @@ function createTransportJob(transportJobId: string, deal: LogisticsDeal) {
 
 		await worker.$status.set(`Going to ${deal.supplier} for a hauling job`);
 		await worker.walkToTile(game.terrain.getTileEqualToLocation(deal.supplier.$$location.get()));
+		if (worker.$health.get() <= 0) {
+			// Worker died to retrieve the cargo. There is now an inventory reservation that will never be fulfilled.
+			// @TODO release inventory reservations
+			return;
+		}
 
-		await worker.$status.set(`Transferring cargo`);
+		await worker.$status.set(`Loading cargo`);
 		deal.supplier.inventory.clearReservation(transportJobId);
 		await deal.supplier.inventory.change(deal.material, -deal.quantity);
+		await game.time.wait(1_000 * (deal.quantity / deal.material.stack));
 		await worker.inventory.change(deal.material, deal.quantity);
+		worker.inventory.makeReservation('transport-job', [
+			// Make an outgoing reservation for the cargo, so that the worker doesn't accidentially... eat it, or something
+			{ material: deal.material, quantity: -deal.quantity },
+		]);
 
 		await worker.$status.set(`Delivering cargo to ${deal.destination}`);
 		await worker.walkToTile(game.terrain.getTileEqualToLocation(deal.destination.$$location.get()));
 
-		await worker.$status.set(`Transferring cargo`);
+		if (worker.$health.get() <= 0) {
+			// Worker died on the way to deliver the cargo.
+			// @TODO Retrieve the cargo from their cold dead hands and deliver it?
+			return;
+		}
+
+		await worker.$status.set(`Unloading cargo`);
+		worker.inventory.clearReservation('transport-job');
 		await worker.inventory.change(deal.material, -deal.quantity);
+		await game.time.wait(1_000 * (deal.quantity / deal.material.stack));
 		deal.destination.inventory.clearReservation(transportJobId);
 		await deal.destination.inventory.change(deal.material, deal.quantity);
 
@@ -62,6 +94,18 @@ function createTransportJob(transportJobId: string, deal: LogisticsDeal) {
 	};
 
 	const scoreJobDesirability = ({ entity }: EntityBlackboard) => {
+		if (
+			!inventoryComponent.test(entity) ||
+			!locationComponent.test(entity) ||
+			!healthComponent.test(entity) ||
+			!pathingComponent.test(entity)
+		) {
+			return 0;
+		}
+		if (entity.$health.get() <= 0) {
+			// Dead people cannot haul cargo
+			return 0;
+		}
 		if (!entity.inventory.isAdditionallyAllocatableTo(deal.material, deal.quantity)) {
 			// If not enough inventory space, never take the job
 			return 0;
@@ -85,6 +129,7 @@ function createTransportJob(transportJobId: string, deal: LogisticsDeal) {
 		vacancies: 1,
 		employer: deal.destination,
 		score: scoreJobDesirability,
+		restoreVacancyWhenDone: false,
 	});
 }
 
@@ -93,7 +138,7 @@ async function attachSystemToEntity(
 	exchange: LogisticsExchangeByMaterial,
 	trader: LogisticsEntity,
 ) {
-	trader.inventory.$change.on(async () => {
+	const updateExchangeForInventoryContents = async () => {
 		for (const { material, quantity } of trader.provideMaterialsWhenAbove) {
 			if (trader.inventory.availableOf(material) > quantity) {
 				exchange.get(material).updateSupplyDemand(trader, quantity);
@@ -109,9 +154,13 @@ async function attachSystemToEntity(
 				exchange.get(material).updateSupplyDemand(trader, -requestQuantity);
 			}
 		}
-	});
+	};
+
+	trader.inventory.$change.on(updateExchangeForInventoryContents);
+	updateExchangeForInventoryContents();
 }
 
+const JOB_POST_INTERVAL = 10_000;
 async function attachSystem(game: Game) {
 	const exchange = new LogisticsExchangeByMaterial();
 
@@ -120,24 +169,28 @@ async function attachSystem(game: Game) {
 	let timeoutId: DestroyerFn<number> | null = null;
 
 	function postTransportJobs() {
-		exchange.forEach((materialExchange) => {
-			let deal: LogisticsDeal | null = null;
-			while ((deal = materialExchange.getLargestTransferDeal())) {
-				const transportJobId = `transport-job-${identifier++}`;
-				// console.log(
-				// 	[
-				// 		transportJobId,
-				// 		deal.supplier,
-				// 		`${deal.quantity}x ${deal.material}`,
-				// 		deal.destination,
-				// 	].join('\t'),
-				// );
-				materialExchange.excludeDealFromRecords(deal);
-				createInventoryReservations(transportJobId, deal);
-				const job = createTransportJob(transportJobId, deal);
-				game.jobs.add(job);
-			}
-		});
+		if (timeoutId !== null) {
+			// A timer is already set
+			return;
+		}
+		const timeLeft = JOB_POST_INTERVAL - (lastUpdateTime % JOB_POST_INTERVAL);
+
+		// @BUG transport jobs are posted only once :( This should be an interval or loop
+		timeoutId = game.time.setTimeout(() => {
+			lastUpdateTime = game.time.now;
+			timeoutId = null;
+			// postTransportJobs();
+			exchange.forEach((materialExchange) => {
+				let deal: LogisticsDeal | null = null;
+				while ((deal = materialExchange.getLargestTransferDeal())) {
+					const transportJobId = `transport-job-${identifier++}`;
+					materialExchange.excludeDealFromRecords(deal);
+					createInventoryReservations(transportJobId, deal);
+					const job = createTransportJob(transportJobId, deal);
+					game.jobs.add(job);
+				}
+			});
+		}, Math.max(timeLeft, 1));
 	}
 
 	game.entities.$add.on(async (entities) => {
@@ -151,24 +204,14 @@ async function attachSystem(game: Game) {
 				)
 				.map((trader) => {
 					trader.inventory.$change.on(async () => {
-						if (timeoutId !== null) {
-							// A timer is already set
-							return;
-						}
-						const timeLeft = lastUpdateTime % 10_000;
-						timeoutId = game.time.setTimeout(() => {
-							postTransportJobs();
-							lastUpdateTime = game.time.now;
-							timeoutId = null;
-						}, Math.max(timeLeft, 1));
+						postTransportJobs();
 					});
+					postTransportJobs();
 
 					return attachSystemToEntity(game, exchange, trader);
 				}),
 		);
 	});
-
-	game.time.setInterval(() => {}, 10_000);
 }
 
 export const logisticsSystem = new EcsSystem([], attachSystem);

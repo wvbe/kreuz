@@ -32,16 +32,6 @@ export type ExecutionNodeFn<B extends Record<string, unknown>> = (
 ) => void | Promise<void>;
 
 export type EntityBlackboard = {
-	entity: EcsEntity<
-		// | typeof behaviorComponent
-		// | typeof healthComponent
-		| typeof inventoryComponent
-		| typeof locationComponent
-		| typeof needsComponent
-		| typeof pathingComponent
-		| typeof statusComponent
-		// | typeof visibilityComponent
-		| typeof wealthComponent
-	>;
+	entity: EcsEntity;
 	game: Game;
 };

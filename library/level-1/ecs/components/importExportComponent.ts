@@ -7,7 +7,7 @@ export const importExportComponent = new EcsComponent<{
 	requestMaterialsWhenBelow: MaterialState[];
 }>(
 	(entity) =>
-		inventoryComponent.test(entity) &&
 		Array.isArray(entity.provideMaterialsWhenAbove) &&
-		Array.isArray(entity.requestMaterialsWhenBelow),
+		Array.isArray(entity.requestMaterialsWhenBelow) &&
+		inventoryComponent.test(entity),
 );

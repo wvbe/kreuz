@@ -1,6 +1,7 @@
 import { Path } from '../../classes/Path.ts';
 import { Event } from '../../events/Event.ts';
 import { EventedValue } from '../../events/EventedValue.ts';
+import { healthComponent } from '@lib/core';
 import { Coordinate } from '../../terrain/Coordinate.ts';
 import { TileI } from '../../types.ts';
 import { CallbackFn, CoordinateI } from '../../types.ts';
@@ -8,7 +9,9 @@ import { EcsComponent } from '../classes/EcsComponent.ts';
 import { EcsEntity } from '../types.ts';
 import { locationComponent } from './locationComponent.ts';
 
-type WalkableEntity = EcsEntity<typeof locationComponent | typeof pathingComponent>;
+type WalkableEntity = EcsEntity<
+	typeof locationComponent | typeof pathingComponent | typeof healthComponent
+>;
 
 async function animateTo(entity: WalkableEntity, destination: Coordinate) {
 	if (destination.hasNaN()) {
@@ -76,12 +79,19 @@ async function walkToTile(entity: WalkableEntity, destination: TileI) {
 	const promise = new Promise<void>((resolve, reject) => {
 		const stopListeningForFinish = entity.$pathEnd.once(() => {
 			stopListeningForInterrupt();
+			stopListeningForDeath();
 			resolve();
 		});
-		const stopListeningForInterrupt = entity.$pathStart.once(() => {
+		const cancelWalk = () => {
 			stopListeningForFinish();
+			stopListeningForDeath();
 			reject();
+		};
+		const stopListeningForDeath = entity.$death.on(() => {
+			cancelWalk();
+			stopListeningForInterrupt();
 		});
+		const stopListeningForInterrupt = entity.$pathStart.once(cancelWalk);
 	});
 
 	// Take the first step to kick off this event chain;
@@ -123,12 +133,13 @@ export const pathingComponent = new EcsComponent<
 	}
 >(
 	(entity) =>
-		locationComponent.test(entity) &&
 		entity.$pathStart instanceof Event &&
 		entity.$pathEnd instanceof Event &&
 		entity.$stepStart instanceof EventedValue &&
 		entity.$stepEnd instanceof Event &&
-		typeof entity.walkToTile === 'function',
+		typeof entity.walkToTile === 'function' &&
+		locationComponent.test(entity) &&
+		healthComponent.test(entity),
 	(entity, options) => {
 		Object.assign(entity, {
 			walkToTile: walkToTile.bind(null, entity as WalkableEntity),

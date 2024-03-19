@@ -121,12 +121,17 @@ describe('TradeOrder', () => {
 
 		await order.makeItHappen(0);
 
-		expect(owner1.wallet.get()).toBe(42);
-		expect(owner2.wallet.get()).toBe(58);
-		expect(owner1.inventory.availableOf(material1)).toBe(3);
-		expect(owner1.inventory.availableOf(material2)).toBe(17);
-		expect(owner2.inventory.availableOf(material1)).toBe(17);
-		expect(owner2.inventory.availableOf(material2)).toBe(3);
+		// money was exchanged both ways
+		expect(owner1.wallet.get()).toBe(42); // 50 - 33 + 25
+		expect(owner2.wallet.get()).toBe(58); // 50 + 33 - 25
+
+		// material1 was exchanged both ways
+		expect(owner1.inventory.availableOf(material1)).toBe(3); // 10 - 10 + 3
+		expect(owner2.inventory.availableOf(material1)).toBe(17); // 10 - 3 + 10
+
+		// ⚠️
+		expect(owner1.inventory.availableOf(material2)).toBe(17); // 10 - 3 + 10
+		expect(owner2.inventory.availableOf(material2)).toBe(3); // 10 - 10 + 3
 	});
 	// });
 });

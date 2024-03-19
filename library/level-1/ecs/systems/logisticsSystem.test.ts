@@ -31,7 +31,7 @@ function createChestEntity(
 }
 
 Deno.test('System: logisticsSystem', async (test) => {
-	const game = await generateEmptyGame();
+	const game = generateEmptyGame();
 	const worker = personArchetype.create({
 		location: [0, 0, 1],
 		icon: '🤖',

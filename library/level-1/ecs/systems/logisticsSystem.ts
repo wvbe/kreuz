@@ -70,7 +70,8 @@ function createTransportJob(transportJobId: string, deal: LogisticsDeal) {
 		await game.time.wait(1_000 * (deal.quantity / deal.material.stack));
 		await worker.inventory.change(deal.material, deal.quantity);
 		worker.inventory.makeReservation('transport-job', [
-			// Make an outgoing reservation for the cargo, so that the worker doesn't accidentially... eat it, or something
+			// Make an outgoing reservation for the cargo
+			// It would be a shame is somebody... ate the cargo
 			{ material: deal.material, quantity: -deal.quantity },
 		]);
 
@@ -168,6 +169,13 @@ async function attachSystem(game: Game) {
 	let lastUpdateTime = 0;
 	let timeoutId: DestroyerFn<number> | null = null;
 
+	/**
+	 * Finds a deal to be made in any of the {@link LogisticExchange}s, and oosts a job for it on
+	 * the global jobboard so that a capable entity can pick it up.
+	 *
+	 * This function is called in a timeout (triggered from an inventory change somewhere) instead
+	 * of an interval, because an interval would prevent the game from ever ending.
+	 */
 	function postTransportJobs() {
 		if (timeoutId !== null) {
 			// A timer is already set
@@ -175,11 +183,9 @@ async function attachSystem(game: Game) {
 		}
 		const timeLeft = JOB_POST_INTERVAL - (lastUpdateTime % JOB_POST_INTERVAL);
 
-		// @BUG transport jobs are posted only once :( This should be an interval or loop
 		timeoutId = game.time.setTimeout(() => {
 			lastUpdateTime = game.time.now;
 			timeoutId = null;
-			// postTransportJobs();
 			exchange.forEach((materialExchange) => {
 				let deal: LogisticsDeal | null = null;
 				while ((deal = materialExchange.getLargestTransferDeal())) {

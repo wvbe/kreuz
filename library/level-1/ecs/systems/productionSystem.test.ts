@@ -5,7 +5,7 @@ import { growWheat } from '../../../level-2/blueprints.ts';
 import { wheat } from '../../../level-2/materials.ts';
 
 Deno.test('System: productionSystem', async (test) => {
-	const game = await generateEmptyGame();
+	const game = generateEmptyGame();
 	const worker = personArchetype.create({
 		location: [0, 0, 1],
 		icon: '🤖',
@@ -27,7 +27,7 @@ Deno.test('System: productionSystem', async (test) => {
 		await test.step('Time is zero', () => {
 			expect(game.time.now).toBe(0);
 		});
-		await test.step('Person is in their starting position', () => {
+		await test.step('Worker is in their starting position', () => {
 			expect(worker.$$location.get().toArray()).toEqual([0, 0, 1]);
 		});
 		await test.step('Factory does not have workers', () => {

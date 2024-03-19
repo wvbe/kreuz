@@ -1,26 +1,10 @@
-import { Game, TestDriver, generateGridTerrainFromAscii, personArchetype } from '@lib';
-import { beforeAll, describe, expect, it, mock, run } from 'tincan';
+import { personArchetype } from '@lib';
+import { beforeAll, describe, expect, generateEmptyGame, it, mock, run } from '@test';
 
-import { DEFAULT_ASSETS } from '../DEFAULT_ASSETS.ts';
 import { createLoiterBehavior } from './reusable/nodes/createLoiterBehavior.ts';
 
 describe('BT: createLoiterBehavior()', async () => {
-	const game = new Game(
-			new TestDriver(),
-			'1',
-			generateGridTerrainFromAscii(`
-				XXXXXXXXXXXXXXXXXXXXX
-				XXXXXXXXXXXXXXXXXXXXX
-				XXXXXXXXXXXXXXXXXXXXX
-				XXXXXXXXXXXXXXXXXXXXX
-				XXXXXXXXXXXXXXXXXXXXX
-				XXXXXXXXXXXXXXXXXXXXX
-				XXXXXXXXXXXXXXXXXXXXX
-				XXXXXXXXXXXXXXXXXXXXX
-				XXXXXXXXXXXXXXXXXXXXX
-			`),
-			DEFAULT_ASSETS,
-		),
+	const game = generateEmptyGame(),
 		entity = personArchetype.create({
 			location: game.terrain.getTileClosestToXy(3, 3).toArray(),
 			behavior: createLoiterBehavior(),

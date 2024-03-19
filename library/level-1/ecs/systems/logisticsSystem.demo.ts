@@ -29,7 +29,7 @@ function createChestEntity(
 }
 
 export default async function () {
-	const game = await generateEmptyGame();
+	const game = generateEmptyGame();
 	const worker = personArchetype.create({
 		location: [0, 0, 1],
 		icon: '🤖',

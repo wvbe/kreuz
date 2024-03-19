@@ -144,31 +144,23 @@ describe('Inventory', () => {
 	});
 	it('.isEverythingAllocatable() with reservation', async () => {
 		const inventory = new Inventory(2);
-		const tradeOrder = createTradeOrderForCargo(
-			godInventory,
-			[{ material: test2, quantity: 10 }],
-			inventory,
-			[],
-		);
+		const additionalItems = [
+			{ material: test1, quantity: 25 },
+			// { material: test2, quantity: 10 },
+			{ material: test2, quantity: 23 },
+		];
+
 		// If you ask before a reservation is made, all is cool
-		expect(
-			inventory.isEverythingAdditionallyAllocatable([
-				{ material: test1, quantity: 25 },
-				// { material: test2, quantity: 10 },
-				{ material: test2, quantity: 23 },
-			]),
-		).toBeTruthy();
+		expect(inventory.isEverythingAdditionallyAllocatable(additionalItems)).toBeTruthy();
 
 		// If you ask after a reservation is made, the reserved items are "in the way" of what
 		// you're trying to allocate
-		inventory.makeReservationFromTradeOrder(tradeOrder);
-		expect(
-			inventory.isEverythingAdditionallyAllocatable([
-				{ material: test1, quantity: 25 },
-				// { material: test2, quantity: 10 },
-				{ material: test2, quantity: 23 },
-			]),
-		).toBeFalsy();
+		inventory.makeReservation('test', [{ material: test2, quantity: 11 }]);
+		expect(inventory.isEverythingAdditionallyAllocatable(additionalItems)).toBeFalsy();
+
+		// Clear the reservation, and everything is cool again
+		inventory.clearReservation('test');
+		expect(inventory.isEverythingAdditionallyAllocatable(additionalItems)).toBeTruthy();
 	});
 	it('.set()', async () => {
 		const inventory = new Inventory(2);

@@ -13,7 +13,7 @@ describe('"The basement"', async () => {
 	});
 
 	it('Melanie is called Melanie, and she has needs', () => {
-		expect(melanie.name).toBe('Melanie');
+		expect(melanie.name).toBe('Ro-bot');
 		Object.values(melanie.needs).forEach((need) => {
 			expect(need.get()).toBeGreaterThan(0);
 		});

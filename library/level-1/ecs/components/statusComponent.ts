@@ -1,9 +1,17 @@
 import { EventedValue } from '../../events/EventedValue.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
 
+/**
+ * Entities with this component have a status string.
+ */
 export const statusComponent = new EcsComponent<
 	{ status?: string },
-	{ $status: EventedValue<string | null> }
+	{
+		/**
+		 * The status of the entity as an arbitrary string or `null`
+		 */
+		$status: EventedValue<string | null>;
+	}
 >(
 	(entity) => entity.$status instanceof EventedValue,
 	(entity, options) => {

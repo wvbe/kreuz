@@ -16,15 +16,30 @@ export type ProductionComponentWorkerEntity = EcsEntity<
 	| typeof healthComponent
 >;
 
+/**
+ * A component that allows an entity to produce something.
+ */
 export const productionComponent = new EcsComponent<
 	{
 		blueprint: Blueprint | null;
 		maxWorkers: number;
 	},
 	{
+		/**
+		 * The maximum amount of workers that can work on this production component.
+		 */
 		maxWorkers: number;
+		/**
+		 * The {@link Collection} of workers that are currently participating.
+		 */
 		$workers: Collection<ProductionComponentWorkerEntity>;
+		/**
+		 * The manufacturing recipe that this entity is currently working on.
+		 */
 		$blueprint: EventedValue<Blueprint | null>;
+		/**
+		 * The progress towards finishing one more production cycle. 0 means not started, 1 means finished.
+		 */
 		$$progress: ProgressingNumericValue;
 	}
 >(

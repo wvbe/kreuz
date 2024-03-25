@@ -9,9 +9,7 @@ import { EcsComponent } from '../classes/EcsComponent.ts';
 import { EcsEntity } from '../types.ts';
 import { locationComponent } from './locationComponent.ts';
 
-type WalkableEntity = EcsEntity<
-	typeof locationComponent | typeof pathingComponent | typeof healthComponent
->;
+type WalkableEntity = EcsEntity<typeof locationComponent | typeof pathingComponent>;
 
 async function animateTo(entity: WalkableEntity, destination: Coordinate) {
 	if (destination.hasNaN()) {
@@ -87,10 +85,13 @@ async function walkToTile(entity: WalkableEntity, destination: TileI) {
 			stopListeningForDeath();
 			reject();
 		};
-		const stopListeningForDeath = entity.$death.on(() => {
-			cancelWalk();
-			stopListeningForInterrupt();
-		});
+		const stopListeningForDeath =
+			// Walking around may be stopped by death, ie. there is a dependency on healthComponent,
+			// but having health is not a prerequisite.
+			(entity as unknown as EcsEntity<typeof healthComponent>).$death?.on(() => {
+				cancelWalk();
+				stopListeningForInterrupt();
+			});
 		const stopListeningForInterrupt = entity.$pathStart.once(cancelWalk);
 	});
 
@@ -100,19 +101,33 @@ async function walkToTile(entity: WalkableEntity, destination: TileI) {
 	return promise;
 }
 
+/**
+ * Entities with this component can walk along a path.
+ */
 export const pathingComponent = new EcsComponent<
 	{
 		walkSpeed: number;
 	},
 	{
+		/**
+		 * A method to make this entity find a path towards the given tile and animate towards it.
+		 */
 		walkToTile(tile: TileI): Promise<void>;
+		/**
+		 * The distance covered per game time.
+		 */
 		walkSpeed: number;
+		/**
+		 * Emitted when the entity starts walking along a path.
+		 */
 		$pathStart: Event<[]>;
 		/**
-		 * The "done" callback. Call this when the driver animation/timeout ends, so that
-		 * the next event is safely emitted.
+		 * Emitted when the entity stops walking along a path.
 		 */
 		$pathEnd: Event<[]>;
+		/**
+		 * Emitted when the entity starts a new step in the path.
+		 */
 		$stepStart: EventedValue<{
 			/**
 			 * The destination of this step
@@ -129,6 +144,9 @@ export const pathingComponent = new EcsComponent<
 			 */
 			done: CallbackFn;
 		} | null>;
+		/**
+		 * Emitted when the entity finishes a step in the path.
+		 */
 		$stepEnd: Event<[CoordinateI]>;
 	}
 >(
@@ -137,9 +155,7 @@ export const pathingComponent = new EcsComponent<
 		entity.$pathEnd instanceof Event &&
 		entity.$stepStart instanceof EventedValue &&
 		entity.$stepEnd instanceof Event &&
-		typeof entity.walkToTile === 'function' &&
-		locationComponent.test(entity) &&
-		healthComponent.test(entity),
+		typeof entity.walkToTile === 'function',
 	(entity, options) => {
 		Object.assign(entity, {
 			walkToTile: walkToTile.bind(null, entity as WalkableEntity),

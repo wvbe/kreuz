@@ -62,17 +62,17 @@ export { EcsArchetype } from './ecs/classes/EcsArchetype.ts';
 // ECS components
 export { behaviorComponent } from './ecs/components/behaviorComponent.ts';
 export { healthComponent } from './ecs/components/healthComponent.ts';
+export { importExportComponent } from './ecs/components/importExportComponent.ts';
 export { inventoryComponent } from './ecs/components/inventoryComponent.ts';
 export { locationComponent } from './ecs/components/locationComponent.ts';
 export { needsComponent } from './ecs/components/needsComponent.ts';
 export { ownerComponent } from './ecs/components/ownerComponent.ts';
 export { pathingComponent } from './ecs/components/pathingComponent.ts';
 export { productionComponent } from './ecs/components/productionComponent.ts';
-export { resellerComponent } from './ecs/components/resellerComponent.ts';
 export { statusComponent } from './ecs/components/statusComponent.ts';
+export { vendorComponent } from './ecs/components/vendorComponent.ts';
 export { visibilityComponent } from './ecs/components/visibilityComponent.ts';
 export { wealthComponent } from './ecs/components/wealthComponent.ts';
-export { importExportComponent } from './ecs/components/importExportComponent.ts';
 
 // ECS archetypes
 export * from './ecs/archetypes/factoryArchetype.ts';

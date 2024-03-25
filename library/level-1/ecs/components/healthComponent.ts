@@ -3,9 +3,25 @@ import { ProgressingNumericValue } from '../../events/ProgressingNumericValue.ts
 import { EcsEntity } from '../types.ts';
 import { Event } from '../../events/Event.ts';
 
+/**
+ * Entities with the health component have a health value, and may die when it reaches zero.
+ */
 export const healthComponent = new EcsComponent<
 	{ health: number },
-	{ $health: ProgressingNumericValue; $death: Event }
+	{
+		/**
+		 * Describes the health of the entity. 0 means dead, 1 means full health.
+		 *
+		 * If your process depends on a healthy entity, be sure to listen to the
+		 * {@link EcsEntity<typeof healthComponent>.$death} event.
+		 */
+		$health: ProgressingNumericValue;
+		/**
+		 * Emitted when the entity dies. Processes that are dependent on alive entities should listen
+		 * and handle this event.
+		 */
+		$death: Event;
+	}
 >(
 	(entity) => entity.$health instanceof ProgressingNumericValue && entity.$death instanceof Event,
 	(entity, options) => {

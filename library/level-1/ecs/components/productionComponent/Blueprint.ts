@@ -103,11 +103,11 @@ export class Blueprint {
 		return new Blueprint(
 			save.name,
 			save.ingredients.map(({ material, quantity }) => ({
-				material: context.materials.item(material, true),
+				material: context.materials.get(material, true),
 				quantity,
 			})),
 			save.products.map(({ material, quantity }) => ({
-				material: context.materials.item(material, true),
+				material: context.materials.get(material, true),
 				quantity,
 			})),
 			save.options,

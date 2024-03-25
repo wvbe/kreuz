@@ -8,21 +8,18 @@ export { SequenceNode } from './ecs/components/behaviorComponent/SequenceNode.ts
 export * from './ecs/components/behaviorComponent/types.ts';
 
 // Miscellaneous utilities:
-export { Path } from './classes/Path.ts';
 export { Random } from './classes/Random.ts';
 export { TimeLine } from './classes/TimeLine.ts';
 export { TradeOrder } from './classes/TradeOrder.ts';
 export { Collection } from './events/Collection.ts';
 export { Event } from './events/Event.ts';
-export { EventedNumericValue } from './events/EventedNumericValue.ts';
 export { EventedValue } from './events/EventedValue.ts';
 
 // Drivers:
 export { Driver } from './drivers/Driver.ts';
-export { TestDriver } from './drivers/TestDriver.ts';
 
 // Entities:
-export * from './drivers/types.ts';
+export { type DriverI } from './drivers/types.ts';
 export { Need } from './entities/Need.ts';
 
 // Inventory:
@@ -43,8 +40,15 @@ export { Terrain } from './terrain/Terrain.ts';
 export * from './constants/needs.ts';
 
 // Utilities
-export { Registry } from './classes/Registry.ts';
-export * from './types.ts';
+export { StrictMap } from './classes/StrictMap.ts';
+export {
+	type GameDistance,
+	type CoordinateI,
+	type TileI,
+	type SeedI,
+	type DestroyerFn,
+	type FilterFn,
+} from './types.ts';
 export * from './utilities/ReplacementSpace.ts';
 
 // ECS Types

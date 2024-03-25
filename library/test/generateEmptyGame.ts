@@ -1,7 +1,7 @@
-import { DEFAULT_ASSETS, DriverI, Game } from '@lib';
+import { DEFAULT_ASSETS, Game } from '@lib';
 
 import { generateGridTerrainFromAscii } from './generateGridTerrainFromAscii.ts';
-import { TestDriver } from '../level-1/drivers/TestDriver.ts';
+import { TestDriver } from './TestDriver.ts';
 
 const defaultEmptyGameMap = `
 	XXXXX
@@ -11,9 +11,6 @@ const defaultEmptyGameMap = `
 	XXXXX
 `;
 
-/**
- * @deprecated Only here as a test convenience.
- */
 export function generateEmptyGame(ascii: string = defaultEmptyGameMap) {
 	return new Game(new TestDriver(), '1', generateGridTerrainFromAscii(ascii), DEFAULT_ASSETS);
 }

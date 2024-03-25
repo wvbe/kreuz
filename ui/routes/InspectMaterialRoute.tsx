@@ -18,7 +18,7 @@ function createListItemsForMaterialToBlueprintRelationship(
 	navigate: ReturnType<typeof useNavigation>,
 ) {
 	return game.assets.blueprints
-		.list()
+		.toArray()
 		.filter((blueprint) => blueprint[relationship].some((state) => state.material === material))
 		.map((blueprint, i) => (
 			<li key={i}>
@@ -41,7 +41,7 @@ export const InspectMaterialRoute: FunctionComponent = () => {
 	const { materialId } = useParams<{ materialId: string }>();
 	const game = useGameContext();
 	const navigate = useNavigation();
-	const material = useMemo(() => game.assets.materials.item(materialId!), [materialId]);
+	const material = useMemo(() => game.assets.materials.get(materialId!), [materialId]);
 	if (!material) {
 		return null;
 	}

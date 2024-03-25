@@ -8,9 +8,6 @@ const adjacency = [
 	[0, -1],
 ];
 
-/**
- * @deprecated Only here as a test convenience.
- */
 export function generateGridTerrainFromAscii(ascii: string) {
 	const datas = ascii
 		.trim()

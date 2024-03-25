@@ -1,9 +1,9 @@
-import { pathingComponent } from '../ecs/components/pathingComponent.ts';
-import Game from '../Game.ts';
-import { EcsEntity } from '../ecs/types.ts';
-import { DestroyerFn } from '../types.ts';
-import { Driver } from './Driver.ts';
-import { DriverI } from './types.ts';
+import { pathingComponent } from '../level-1/ecs/components/pathingComponent.ts';
+import Game from '../level-1/Game.ts';
+import { EcsEntity } from '../level-1/ecs/types.ts';
+import { DestroyerFn } from '../level-1/types.ts';
+import { Driver } from '../level-1/drivers/Driver.ts';
+import { DriverI } from '../level-1/drivers/types.ts';
 
 /**
  * A driver without a visible DOM or ThreeJS world. Probably only useful for testing.

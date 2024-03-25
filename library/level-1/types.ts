@@ -46,9 +46,6 @@ export interface TileI extends CoordinateI {
 	isLand(): boolean;
 	toSaveJson(): SaveTileJson;
 }
-export type AssetsI = {
-	behaviorNodes: BehaviorTreeNodeI;
-};
 
 export type SeedI = string | number;
 

@@ -391,7 +391,7 @@ export class Inventory {
 		this.items.splice(0, this.items.length);
 		await this.changeMultiple(
 			save.items.map(({ material, quantity }) => ({
-				material: context.materials.item(material, true),
+				material: context.materials.get(material, true),
 				quantity,
 			})),
 			true,

@@ -47,7 +47,7 @@ export const productionComponent = new EcsComponent<
 				fromJson: async (context, saved) =>
 					saved
 						? typeof saved === 'string'
-							? context.blueprints.item(saved as string)
+							? context.blueprints.get(saved as string)
 							: Blueprint.fromSaveJson(context, saved as SaveBlueprintJson)
 						: null,
 			},

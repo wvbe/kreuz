@@ -1,5 +1,4 @@
 import Game from '../../Game.ts';
-import { EcsComponent } from './EcsComponent.ts';
 
 type EcsSystemAttachor = (game: Game) => void | Promise<void>;
 

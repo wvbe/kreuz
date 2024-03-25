@@ -92,7 +92,7 @@ export const ProductionList: FunctionComponent = () => {
 	const entitiesByBlueprint = useMemo(
 		() =>
 			game.assets.blueprints
-				.list()
+				.toArray()
 				.reduce<Record<string, EcsEntity<typeof productionComponent>[]>>(
 					(entitiesByBlueprint, blueprint) => {
 						const key = game.assets.blueprints.key(blueprint);
@@ -109,11 +109,7 @@ export const ProductionList: FunctionComponent = () => {
 
 	const products = useMemo(() => {
 		return Object.entries(entitiesByBlueprint).map(([key, entities], i) => (
-			<ProductionSummary
-				key={i}
-				blueprint={game.assets.blueprints.item(key)!}
-				entities={entities}
-			/>
+			<ProductionSummary key={i} blueprint={game.assets.blueprints.get(key)!} entities={entities} />
 		));
 	}, [entitiesByBlueprint]);
 

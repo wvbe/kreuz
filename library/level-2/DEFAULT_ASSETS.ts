@@ -1,7 +1,7 @@
 import {
 	Blueprint,
 	Material,
-	Registry,
+	StrictMap,
 	type BehaviorTreeNodeI,
 	type EntityBlackboard,
 	type GameAssets,
@@ -15,14 +15,14 @@ import * as materials from './materials.ts';
  * The default assets passed to most if not all game instances.
  */
 export const DEFAULT_ASSETS: GameAssets = {
-	behaviorNodes: new Registry<BehaviorTreeNodeI<EntityBlackboard>>(),
-	materials: new Registry<Material>(),
-	blueprints: new Registry<Blueprint>(),
+	behaviorNodes: new StrictMap<BehaviorTreeNodeI<EntityBlackboard>>(),
+	materials: new StrictMap<Material>(),
+	blueprints: new StrictMap<Blueprint>(),
 };
 
 let identifier = 0;
 (function recurse(
-	registry: Registry<BehaviorTreeNodeI<EntityBlackboard>>,
+	registry: StrictMap<BehaviorTreeNodeI<EntityBlackboard>>,
 	behaviorNode: BehaviorTreeNodeI<Record<string, unknown>>,
 ) {
 	if (!registry.contains(behaviorNode)) {

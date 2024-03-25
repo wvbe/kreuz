@@ -1,5 +1,4 @@
-import { expect, it, describe, run } from '@test';
-import { generateGridTerrainFromAscii } from '../../test/generateGridTerrainFromAscii.ts';
+import { expect, it, describe, run, generateGridTerrainFromAscii } from '@test';
 import { Path } from './Path.ts';
 
 describe('Path', () => {

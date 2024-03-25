@@ -16,8 +16,9 @@ export const behaviorComponent = new EcsComponent<
 				options.behavior,
 				`behaviorComponent $behavior`,
 				{
-					fromJson: async (context, id) => context.behaviorNodes.itemFromSaveJson(id as string),
-					toJson: (context, node) => context.behaviorNodes.itemToSaveJson(node),
+					fromJson: async (context, id) =>
+						id === null ? null : context.behaviorNodes.get(id as string),
+					toJson: (context, node) => (node === null ? null : context.behaviorNodes.key(node)),
 				},
 			),
 		});

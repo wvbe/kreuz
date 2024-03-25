@@ -1,4 +1,4 @@
-import { Path } from '../../classes/Path.ts';
+import { Path } from './pathingComponent/Path.ts';
 import { Event } from '../../events/Event.ts';
 import { EventedValue } from '../../events/EventedValue.ts';
 import { healthComponent } from '@lib/core';

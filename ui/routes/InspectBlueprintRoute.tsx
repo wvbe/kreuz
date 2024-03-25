@@ -17,7 +17,7 @@ export const InspectBlueprintRoute: FunctionComponent = () => {
 	const { blueprintId } = useParams<{ blueprintId: string }>();
 	const game = useGameContext();
 	const blueprint = useMemo(
-		() => (blueprintId ? game.assets.blueprints.item(blueprintId) : null),
+		() => (blueprintId ? game.assets.blueprints.get(blueprintId) : null),
 		[blueprintId],
 	);
 	const entities = useEntitiesWithBlueprint(blueprint);

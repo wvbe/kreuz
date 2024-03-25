@@ -27,11 +27,16 @@ import { generateDualMeshTerrain } from '../library/level-3/utils/generateDualMe
 import { generatePassport } from '../library/level-3/utils/generatePassport.ts';
 import { EcsArchetypeEntity } from '../library/level-1/ecs/types.ts';
 
-const TOOLS = [materials.axe, materials.hammer, materials.pickaxe, materials.woodsaw];
+const TOOLS = [
+	DEFAULT_ASSETS.materials.get('axe'),
+	DEFAULT_ASSETS.materials.get('hammer'),
+	DEFAULT_ASSETS.materials.get('pickaxe'),
+	DEFAULT_ASSETS.materials.get('woodsaw'),
+];
 
-const FOODS = Object.values(materials).filter(
-	(material) => material.nutrition > 0 && !material.toxicity,
-);
+const FOODS = DEFAULT_ASSETS.materials
+	.toArray()
+	.filter((material) => material.nutrition > 0 && !material.toxicity);
 
 async function generateRandomInventories(game: Game) {
 	const possibleRandomTools = [...TOOLS, null, null, null];

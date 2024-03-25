@@ -110,6 +110,7 @@ export function createConsumeBehavior(config: ConsumptionType) {
 					if (!material) {
 						throw new BehaviorTreeSignal(`${entity} does not have any edibles on hand`);
 					}
+
 					// if (!entity.inventory.availableOf(material)) {
 					// @TODO remove this check, and make sure that by the time this node is reached
 					// there is simply always already a consumable in inventory

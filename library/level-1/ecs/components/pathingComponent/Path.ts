@@ -6,8 +6,8 @@
 //   Includes Binary Heap (with modifications) from Marijn Haverbeke.
 //   http://eloquentjavascript.net/appendix2.html
 
-import { type Terrain } from '../terrain/Terrain.ts';
-import { TileI } from '../types.ts';
+import { type Terrain } from '../../../terrain/Terrain.ts';
+import { TileI } from '../../../types.ts';
 import { BinaryHeap } from './BinaryHeap.ts';
 
 // See list of heuristics: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html

@@ -1,51 +1,95 @@
-import { JobPosting } from './ecs/components/behaviorComponent/JobPosting.ts';
-import { EntityBlackboard } from './ecs/components/behaviorComponent/types.ts';
-import { Registry } from './classes/Registry.ts';
+import { type DEFAULT_ASSETS } from '../level-2/DEFAULT_ASSETS.ts';
+import { type StrictMap } from './classes/StrictMap.ts';
 import { TimeLine } from './classes/TimeLine.ts';
-import { DriverI } from './drivers/types.ts';
+import { type DriverI } from './drivers/types.ts';
+import { type EcsArchetype } from './ecs/classes/EcsArchetype.ts';
+import { type EcsComponent } from './ecs/classes/EcsComponent.ts';
+import { type EcsSystem } from './ecs/classes/EcsSystem.ts';
+import { type JobPosting } from './ecs/components/behaviorComponent/JobPosting.ts';
+import {
+	type BehaviorTreeNodeI,
+	type EntityBlackboard,
+} from './ecs/components/behaviorComponent/types.ts';
+import { type Blueprint } from './ecs/components/productionComponent/Blueprint.ts';
 import { behaviorTreeSystem } from './ecs/systems/behaviorTreeSystem.ts';
-import { productionSystem } from './ecs/systems/productionSystem.ts';
 import { healthSystem } from './ecs/systems/healthSystem.ts';
-import { selfsustainingSystem } from './ecs/systems/selfsustainingSystem.ts';
 import { logisticsSystem } from './ecs/systems/logisticsSystem.ts';
-import { EcsEntity } from './ecs/types.ts';
+import { productionSystem } from './ecs/systems/productionSystem.ts';
+import { selfsustainingSystem } from './ecs/systems/selfsustainingSystem.ts';
+import { type EcsEntity } from './ecs/types.ts';
 import { Collection } from './events/Collection.ts';
 import { Event } from './events/Event.ts';
 import { KeyedCollection } from './events/KeyedCollection.ts';
-import { Blueprint } from './ecs/components/productionComponent/Blueprint.ts';
-import { Material } from './inventory/Material.ts';
-import { BehaviorTreeNodeI } from './mod.ts';
+import { type Material } from './inventory/Material.ts';
 import { Terrain } from './terrain/Terrain.ts';
-import { SavedGameJson } from './types-savedgame.ts';
-import { SeedI } from './types.ts';
+import { type SavedGameJson } from './types-savedgame.ts';
+import { type SeedI } from './types.ts';
 
 export type GameAssets = {
-	behaviorNodes: Registry<BehaviorTreeNodeI<EntityBlackboard>>;
-	materials: Registry<Material>;
-	blueprints: Registry<Blueprint>;
+	behaviorNodes: StrictMap<BehaviorTreeNodeI<EntityBlackboard>>;
+	materials: StrictMap<Material>;
+	blueprints: StrictMap<Blueprint>;
 };
+
+/**
+ * Represents one game world, where entities interact with eachother and things around them.
+ *
+ * - Uses an {@link EcsEntity entity}-{@link EcsComponent component}-{@link EcsSystem system} architecture for most interactive things.
+ * - Uses {@link Blueprint}s and {@link Material} to create somewhat of an economy.
+ */
 export default class Game {
-	public readonly driver: DriverI;
-
-	public readonly terrain: Terrain;
-
+	/**
+	 * An unsorted list of all ECS entities in the game. For most uses, you'll probably want to
+	 * {@link KeyedCollection.filter} this list and use {@link EcsComponent.test} or {@link EcsArchetype.test}
+	 * methods select the entities you're interested in.
+	 */
 	public readonly entities = new KeyedCollection<'id', EcsEntity>('id');
 
+	/**
+	 * The global understanding of the passage of time. Has some helper methods such as {@link TimeLine.setTimeout}
+	 * and {@link TimeLine.wait} to link game events to time passed. Has other methods ({@link TimeLine.step},
+	 * {@link TimeLine.steps} or {@link TimeLine.jump}) to move time forward.
+	 *
+	 * A {@link DriverI} is responsible for linking the passage of time to animation frames or other.
+	 *
+	 * We pretend that a thousand "time" is "one hour". The current time is always {@link TimeLine.now}.
+	 */
 	public readonly time = new TimeLine();
 
-	public readonly seed: SeedI;
-
-	public readonly assets: GameAssets;
-
+	/**
+	 * The global jobboard, where capable entities can find a new activity to do. Jobs may be posted
+	 * by external code, for example an ECS system like {@link productionSystem} or {@link logisticsSystem}.
+	 */
 	public readonly jobs = new Collection<JobPosting>();
 
-	/*
-	 * EVENTS
+	/**
+	 * A {@link DriverI} is responsible for linking the game to an environment such as a browser or CLI.
+	 * The driver, amongst other things, can determine when to move game time forward and sync it with
+	 * animation.
 	 */
+	public readonly driver: DriverI;
 
-	public readonly $resume = new Event('Game $resume');
+	/**
+	 * The geography in which all game events supposedly take place. A magical land.
+	 */
+	public readonly terrain: Terrain;
 
-	public readonly $pause = new Event('Game $pause');
+	/**
+	 * A seed number or string to help create semi-random things.
+	 */
+	public readonly seed: SeedI;
+
+	/**
+	 * Things of various types that systems within the game have access to. For example, contains the
+	 * {@link Material}s and {@link Blueprint}s that the game knows about, ie. which crafting recipes
+	 * and outcomes are possible.
+	 *
+	 * All these things are pluggable, but in most games and tests the preset {@link DEFAULT_ASSETS}
+	 * is used, because it is sane and diverse.
+	 *
+	 * See {@link GameAssets}.
+	 */
+	public readonly assets: GameAssets;
 
 	/*
 	 * EVENTED VALUES
@@ -68,22 +112,9 @@ export default class Game {
 	}
 
 	/**
-	 * Announces to all those who listen (but want to remain agnostic of the driver) that the
-	 * game has started. This usually coincides with a render loop etc. being handled by the
-	 * driver.
-	 *
-	 * Normally called by the driver, or from a unit test.
-	 */
-	public async start() {
-		await this.$resume.emit();
-	}
-
-	public async stop() {
-		await this.$pause.emit();
-	}
-
-	/**
 	 * Serialize for a save game JSON
+	 *
+	 * @todo re-enable JSON-seriazing ECS entities, or rather, their components.
 	 */
 	public toSaveJson(): SavedGameJson {
 		return {
@@ -96,6 +127,12 @@ export default class Game {
 			seed: this.seed,
 		};
 	}
+
+	/**
+	 * Deserialize a JSON into a live {@link Game} instance.
+	 *
+	 * @todo re-enable JSON-deseriazing ECS entities, or rather, their components.
+	 */
 	public static async fromSaveJson(
 		driver: DriverI,
 		assets: GameAssets,

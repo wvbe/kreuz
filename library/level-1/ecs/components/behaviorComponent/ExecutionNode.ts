@@ -1,5 +1,6 @@
 import { type BehaviorTreeNodeI, type ExecutionNodeFn } from './types.ts';
-
+import { type SequenceNode } from './SequenceNode.ts';
+import { type SelectorNode } from './SelectorNode.ts';
 /**
  * Will execute a bit of code and return a {@link Promise}.
  *

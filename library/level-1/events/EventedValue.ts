@@ -12,6 +12,9 @@ type SerializationOptions<T> = {
 	fromJson: (context: SaveJsonContext, json: JsonValue) => Promise<T>;
 };
 
+/**
+ * A value that emits an event when changed.
+ */
 export class EventedValue<T> extends Event<[T]> {
 	protected current: T;
 

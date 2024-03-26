@@ -5,7 +5,7 @@ import { SelectorNode } from './SelectorNode.ts';
 import { type BehaviorTreeNodeI } from './types.ts';
 
 /**
- * Same as a SelectorNode, but somewhat randomizes order.
+ * Same as a {@link SelectorNode}, but somewhat randomizes order.
  */
 export class RandomSelectorNode<B extends Record<string, unknown> = Record<string, never>>
 	extends SelectorNode<B>

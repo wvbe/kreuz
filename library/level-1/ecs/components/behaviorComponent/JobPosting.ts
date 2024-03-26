@@ -22,6 +22,9 @@ type JobPostingOptions = {
 	 */
 	vacancies: number;
 
+	/**
+	 * Wether or not a new vacancy opens up when the job is done and the last worker leaves.
+	 */
 	restoreVacancyWhenDone: boolean;
 
 	/**
@@ -29,6 +32,7 @@ type JobPostingOptions = {
 	 */
 	employer: EcsEntity;
 };
+
 export class JobPosting {
 	#onAssign: (job: this, blackboard: EntityBlackboard) => Promise<void>;
 	public vacancies: number;

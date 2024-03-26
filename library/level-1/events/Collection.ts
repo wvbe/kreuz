@@ -1,6 +1,9 @@
 import { CallbackFn, SortFn } from '../types.ts';
 import { Event } from './Event.ts';
 
+/**
+ * A list of {@link ItemGeneric} things. Emits events when items are added or removed.
+ */
 export class Collection<ItemGeneric> {
 	protected readonly list: Array<ItemGeneric> = [];
 	public readonly $add = new Event<[ItemGeneric[]]>('Collection $add');

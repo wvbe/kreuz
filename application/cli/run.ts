@@ -11,18 +11,33 @@
  *   deno run -A --inspect-brk demo.ts ./level-3/factories.ts
  */
 
-import { Demo, TestDriver } from '../../library/mod.ts';
+import { TestDriver } from '@test';
+import { Game, healthComponent } from '@lib';
 
-const demo: Demo = await import(self.Deno.args[0]);
+console.group('Importing demo');
+const demo = await import(self.Deno.args[0]);
 const driver = new TestDriver();
-const game = await demo.default(driver);
+console.groupEnd();
+
+console.group('Generating game');
+const game = (await demo.default(driver)) as Game;
+console.groupEnd();
 
 try {
 	console.log('-----------------------');
+	console.group('Running game:');
 	await game.driver.startUntilStop();
+	console.groupEnd();
 	console.log('-----------------------');
-	console.log(`Game stopped  at t=${game.time.now}`);
-	console.log(game.time.hasNextEvent());
+	console.group('Game stopped:');
+	console.log('Graceful', true);
+	console.log('    Time', game.time.now);
+	console.log(
+		'   Alive',
+		game.entities.filter((entity) => healthComponent.test(entity) && entity.$health.get() > 0)
+			.length,
+	);
+	console.groupEnd();
 } catch (e: unknown) {
 	console.log('-----------------------');
 	console.group('ERROR');

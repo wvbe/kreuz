@@ -15,6 +15,7 @@ import { behaviorTreeSystem } from './ecs/systems/behaviorTreeSystem.ts';
 import { healthSystem } from './ecs/systems/healthSystem.ts';
 import { logisticsSystem } from './ecs/systems/logisticsSystem.ts';
 import { productionSystem } from './ecs/systems/productionSystem.ts';
+import { grocerySystem } from './ecs/systems/grocerySystem.ts';
 import { selfsustainingSystem } from './ecs/systems/selfsustainingSystem.ts';
 import { type EcsEntity } from './ecs/types.ts';
 import { Collection } from './events/Collection.ts';
@@ -24,6 +25,7 @@ import { type Material } from './inventory/Material.ts';
 import { Terrain } from './terrain/Terrain.ts';
 import { type SavedGameJson } from './types-savedgame.ts';
 import { type SeedI } from './types.ts';
+import { JobBoard } from './classes/JobBoard.ts';
 
 export type GameAssets = {
 	behaviorNodes: StrictMap<BehaviorTreeNodeI<EntityBlackboard>>;
@@ -60,7 +62,7 @@ export default class Game {
 	 * The global jobboard, where capable entities can find a new activity to do. Jobs may be posted
 	 * by external code, for example an ECS system like {@link productionSystem} or {@link logisticsSystem}.
 	 */
-	public readonly jobs = new Collection<JobPosting>();
+	public readonly jobs = new JobBoard();
 
 	/**
 	 * A {@link DriverI} is responsible for linking the game to an environment such as a browser or CLI.
@@ -107,6 +109,7 @@ export default class Game {
 		healthSystem.attachGame(this);
 		logisticsSystem.attachGame(this);
 		selfsustainingSystem.attachGame(this);
+		grocerySystem.attachGame(this);
 
 		driver.attach(this);
 	}

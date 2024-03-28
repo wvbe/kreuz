@@ -33,7 +33,7 @@ function selectMaterialsFromInventoryToSatistfyNeed(
 		accum += state.material[craving];
 		order[0].quantity++;
 		state.quantity--;
-		if (state.quantity === 0) {
+		if (state.quantity <= 0) {
 			materials.shift();
 		}
 		if (accum >= quantity) {
@@ -44,33 +44,62 @@ function selectMaterialsFromInventoryToSatistfyNeed(
 }
 
 function attachSystemToEntityNeed(game: Game, entity: SelfSustainingEnitity, need: Need) {
+	// const satisfy = async () => {
+	// 	const order = selectMaterialsFromInventoryToSatistfyNeed(
+	// 		entity.inventory,
+	// 		need.id,
+	// 		0.9 - need.get(),
+	// 	);
+	// 	if (!order.length) {
+	// 		// Bummer, the entity will go hungry or thirsty today. Let's hope that (via another system)
+	// 		// they manage to acquire some sustenance.
+	// 		return;
+	// 	}
+	// 	const originalDelta = need.delta;
+	// 	need.setDelta(0);
+	// 	for (const { material, quantity } of order) {
+	// 		if (statusComponent.test(entity)) {
+	// 			entity.$status.set(`Eating ${quantity} of ${material}...`);
+	// 		}
+	// 		for (let index = 0; index < quantity; index++) {
+	// 			await entity.inventory.change(material, -1);
+	// 			await game.time.wait(quantity * 1_000);
+	// 			need.set(Math.min(1, need.get() + material[need.id]));
+	// 		}
+	// 	}
+	// 	need.setDelta(originalDelta);
+	// };
+	const satisfy = async () => {
+		const originalDelta = need.delta;
+		// need.setDelta(0);
+		while (need.get() < 0.9) {
+			const stock = entity.inventory
+				.getAvailableItems()
+				.filter((item) => item.material[need.id] > 0)
+				.sort((a, b) => a.material[need.id] - b.material[need.id])
+				.shift();
+			if (!stock) {
+				break;
+			}
+
+			// @TODO remove me, this is a debug hack:
+			(entity as any).$status?.set(`Eating ${stock.material}...`);
+
+			await entity.inventory.change(stock.material, -1);
+			await game.time.wait(1 * 1_000);
+			need.set(Math.min(1, need.get() + stock.material[need.id]));
+		}
+
+		// need.setDelta(originalDelta);
+	};
 	need.onBelow(0.3, () => {
 		// An IIFE to make the async/await work without blocking the `onBelow` event handler
-		(async () => {
-			const order = selectMaterialsFromInventoryToSatistfyNeed(
-				entity.inventory,
-				need.id,
-				0.9 - need.get(),
-			);
-			if (!order.length) {
-				// Bummer, the entity will go hungry or thirsty today. Let's hope that (via another system)
-				// they manage to acquire some sustenance.
-				return;
-			}
-			const originalDelta = need.delta;
-			need.setDelta(0);
-			for (const { material, quantity } of order) {
-				if (statusComponent.test(entity)) {
-					entity.$status.set(`Eating ${quantity} of ${material}...`);
-				}
-				for (let i = 0; i < quantity; i++) {
-					await entity.inventory.change(material, -1);
-					await game.time.wait(quantity * 1_000);
-					need.set(Math.min(1, need.get() + material[need.id]));
-				}
-			}
-			need.setDelta(originalDelta);
-		})();
+		satisfy();
+	});
+	entity.inventory.$change.on(() => {
+		if (need.get() < 0.3) {
+			satisfy();
+		}
 	});
 }
 

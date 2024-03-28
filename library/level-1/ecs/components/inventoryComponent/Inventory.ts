@@ -74,11 +74,11 @@ export class Inventory {
 	 */
 	public getAvailableItems() {
 		return this.items
-			.filter(({ quantity }) => quantity > 0)
 			.map(({ material, quantity }) => ({
 				material,
 				quantity: quantity - this.reservedOutgoingOf(material),
-			}));
+			}))
+			.filter(({ quantity }) => quantity > 0);
 	}
 
 	/**
@@ -314,16 +314,6 @@ export class Inventory {
 		}
 	}
 
-	/**
-	 * Associate with a trade order so that when this trade order completes there will not be
-	 * an excess or shortage of required materials.
-	 *
-	 * @deprecated Never used?
-	 */
-	public makeReservationFromTradeOrder(tradeOrder: TradeOrder) {
-		const exchanged = tradeOrder.getCargoExchangedToInventory(this);
-		this.makeReservation(tradeOrder, exchanged);
-	}
 
 	/**
 	 * Make inventory reservations for the described exchange;
@@ -391,7 +381,7 @@ export class Inventory {
 		this.items.splice(0, this.items.length);
 		await this.changeMultiple(
 			save.items.map(({ material, quantity }) => ({
-				material: context.materials.get(material, true),
+				material: context.materials.get(material),
 				quantity,
 			})),
 			true,

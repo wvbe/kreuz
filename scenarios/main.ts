@@ -36,7 +36,7 @@ const TOOLS = [
 
 const FOODS = DEFAULT_ASSETS.materials
 	.toArray()
-	.filter((material) => material.nutrition > 0 && !material.toxicity);
+	.filter((material) => (material.nutrition > 0 || material.hydration > 0) && !material.toxicity);
 
 async function generateRandomInventories(game: Game) {
 	const possibleRandomTools = [...TOOLS, null, null, null];
@@ -74,17 +74,6 @@ export async function generateEntities(game: Game) {
 	healthComponent.attach(dog, { health: 1 });
 	behaviorComponent.attach(dog, { behavior: behavior.civilianBehavior });
 	game.entities.add(dog);
-
-	for (let i = 0; i < Random.between(100, 200, game.seed, 'guardamount'); i++) {
-		const id = `${game.seed}-person-${i}`;
-		const person = personArchetype.create({
-			location: Random.fromArray(walkableTiles, id).toArray(),
-			...generatePassport([id]),
-			behavior: behavior.civilianBehavior,
-		});
-		await person.wallet.set(Random.between(20, 500, id, 'munnie'));
-		await game.entities.add(person);
-	}
 
 	for (let i = 0; i < Random.between(24, 32, game.seed, 'factories'); i++) {
 		const id = `${game.seed}-factory-${i}`;
@@ -134,6 +123,17 @@ export async function generateEntities(game: Game) {
 		await market.inventory.set(material, Math.round(material.stack * Random.between(1, 4, id)));
 		await game.entities.add(market);
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
+	}
+
+	for (let i = 0; i < Random.between(100, 200, game.seed, 'guardamount'); i++) {
+		const id = `${game.seed}-person-${i}`;
+		const person = personArchetype.create({
+			location: Random.fromArray(walkableTiles, id).toArray(),
+			...generatePassport([id]),
+			behavior: behavior.civilianBehavior,
+		});
+		await person.wallet.set(Random.between(20, 500, id, 'munnie'));
+		await game.entities.add(person);
 	}
 }
 

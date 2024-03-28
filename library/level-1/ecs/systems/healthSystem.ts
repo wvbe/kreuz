@@ -65,7 +65,6 @@ async function attachSystemToEntity(game: Game, entity: HealthSystemEntity) {
 		if (visibilityComponent.test(entity)) {
 			entity.icon = '💀';
 		}
-		console.log(`${entity} died`);
 	});
 }
 

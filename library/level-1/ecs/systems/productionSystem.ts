@@ -105,10 +105,25 @@ async function assignWorkerToFactory(
 
 	await factory.$workers.add(worker);
 
+	const destroyWorkerPoorHealthListener = worker.$health.$recalibrate.on(() => {
+		if (worker.$health.delta > 0) {
+			return;
+		}
+		factory.$workers.remove(worker);
+	});
+
 	// .on instead of .once, because we're manually destroying the listener
 	const destroyDeathListener = worker.$death.on(() => {
 		factory.$workers.remove(worker);
 	});
+
+	// const destroyProductionComplete = factory.$$progress.onBelow(
+	// 	0,
+	// 	() => {
+	// 		factory.$workers.remove(worker);
+	// 	},
+	// 	true,
+	// );
 
 	await worker.$status.set(`Working in ${factory}`);
 
@@ -120,6 +135,8 @@ async function assignWorkerToFactory(
 				return;
 			}
 			destroyDeathListener();
+			destroyWorkerPoorHealthListener();
+			// destroyProductionComplete();
 			unlisten();
 			resolve();
 		});
@@ -263,18 +280,18 @@ async function attachSystemToEntity(game: Game, factory: ProductionSystemFactory
 	 * Creates a job vacancy for a worker based on the given blueprint. Entities who are able may pick
 	 * up on this vacancy and come work on this blueprint.
 	 */
-	function createWorkerJobPosting(blueprint: Blueprint | null) {
+	function createWorkerJobPosting(game: Game, blueprint: Blueprint | null) {
 		if (!blueprint || blueprint.options.workersRequired < 1) {
 			return;
 		}
 		const vacancy = new JobPosting(
-			(_job, blackboard) =>
-				assignWorkerToFactory(game, blackboard.entity as ProductionComponentWorkerEntity, factory),
+			(_job, entity) =>
+				assignWorkerToFactory(game, entity as ProductionComponentWorkerEntity, factory),
 			{
 				vacancies: factory.maxWorkers,
 				restoreVacancyWhenDone: true,
 				employer: factory,
-				score: ({ entity }) => {
+				score: (entity) => {
 					if (
 						!healthComponent.test(entity) ||
 						!wealthComponent.test(entity) ||
@@ -317,11 +334,11 @@ async function attachSystemToEntity(game: Game, factory: ProductionSystemFactory
 				},
 			},
 		);
-		game.jobs.add(vacancy);
-		factory.$blueprint.once(() => game.jobs.remove(vacancy));
+		game.jobs.addGlobal(vacancy);
+		factory.$blueprint.once(() => game.jobs.removeGlobal(vacancy));
 	}
-	factory.$blueprint.on(createWorkerJobPosting);
-	createWorkerJobPosting(factory.$blueprint.get());
+	factory.$blueprint.on(createWorkerJobPosting.bind(undefined, game));
+	createWorkerJobPosting(game, factory.$blueprint.get());
 
 	await factory.$$progress.attach(game);
 }

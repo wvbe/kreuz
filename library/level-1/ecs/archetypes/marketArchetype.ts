@@ -8,6 +8,7 @@ import { wealthComponent } from '../components/wealthComponent.ts';
 import { vendorComponent } from '../components/vendorComponent.ts';
 import { EcsArchetype } from '../classes/EcsArchetype.ts';
 import { EcsEntity } from '../types.ts';
+import { importExportComponent } from '../components/importExportComponent.ts';
 
 export const marketArchetype = new EcsArchetype<
 	{
@@ -21,10 +22,18 @@ export const marketArchetype = new EcsArchetype<
 	| typeof inventoryComponent
 	| typeof locationComponent
 	| typeof ownerComponent
+	| typeof importExportComponent
 	| typeof vendorComponent
 	| typeof visibilityComponent
 >(
-	[inventoryComponent, locationComponent, ownerComponent, vendorComponent, visibilityComponent],
+	[
+		inventoryComponent,
+		locationComponent,
+		ownerComponent,
+		vendorComponent,
+		importExportComponent,
+		visibilityComponent,
+	],
 	(entity, options) => {
 		inventoryComponent.attach(entity, {
 			maxStackSpace: options.maxStackSpace,
@@ -38,6 +47,13 @@ export const marketArchetype = new EcsArchetype<
 		visibilityComponent.attach(entity, {
 			icon: options.icon ?? '🏪',
 			name: options.name ?? 'Market',
+		});
+		importExportComponent.attach(entity, {
+			provideMaterialsWhenAbove: [],
+			requestMaterialsWhenBelow: options.materials.map((material) => ({
+				material,
+				quantity: material.stack * (options.maxStackSpace / options.materials.length) * 0.8,
+			})),
 		});
 		vendorComponent.attach(entity, {
 			sellMaterialsWhenAbove: options.materials.map((material) => ({

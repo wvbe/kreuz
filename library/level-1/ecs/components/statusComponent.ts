@@ -15,8 +15,10 @@ export const statusComponent = new EcsComponent<
 >(
 	(entity) => entity.$status instanceof EventedValue,
 	(entity, options) => {
-		Object.assign(entity, {
-			$status: new EventedValue(options.status || null, 'statusComponent $status'),
-		});
+		const $status = new EventedValue(options.status || null, 'statusComponent $status');
+		// $status.on(() => {
+		// 	console.log(`${(entity as any).name}\t"${$status.get()}"`);
+		// });
+		Object.assign(entity, { $status });
 	},
 );

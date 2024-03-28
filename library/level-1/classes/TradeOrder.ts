@@ -131,16 +131,6 @@ export class TradeOrder {
 			);
 	}
 
-	public getCargoExchangedToInventory(inventory: Inventory): MaterialState[] {
-		if (inventory === this.inventory1) {
-			return this.getCargoExchanged()[0];
-		}
-		if (inventory === this.inventory2) {
-			return this.getCargoExchanged()[1];
-		}
-		throw new Error(`This inventory is not party to the trade order`);
-	}
-
 	public async makeItHappen(time: number): Promise<void> {
 		const failReasons = this.findFailReasons();
 		if (failReasons.length) {

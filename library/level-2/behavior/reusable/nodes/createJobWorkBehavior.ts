@@ -2,20 +2,17 @@ import { BehaviorTreeSignal, EntityBlackboard, ExecutionNode } from '@lib/core';
 
 export function createJobWorkBehavior() {
 	return new ExecutionNode<EntityBlackboard>('Do the work', async (blackboard) => {
-		const match = blackboard.game.jobs
-			.filter((job) => job.vacancies > 0)
-			.map((job) => ({
-				job: job,
-				desirability: job.score(blackboard),
-			}))
-			.filter(({ desirability }) => desirability > 0)
-			.sort((a, b) => a.desirability - b.desirability)
+		const job = blackboard.game.jobs
+			.forEntity(blackboard.entity)
+			.map((job) => job())
+			.filter(({ score }) => score > 0)
+			.sort((a, b) => a.score - b.score)
 			.pop(); // or pop?
 
-		if (!match) {
+		if (!job) {
 			throw new BehaviorTreeSignal(`There are no factories in need for workers`);
 		}
 
-		await match.job.doJob(blackboard);
+		await job.execute();
 	});
 }

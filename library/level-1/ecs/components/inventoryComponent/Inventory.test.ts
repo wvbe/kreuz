@@ -52,15 +52,20 @@ describe('Inventory', () => {
 		expect(inventory.availableOf(test1)).toBe(100);
 		expect(inventory.availableOf(test2)).toBe(420);
 	});
+	it('.getAvailableItems()', async () => {
+		const inventory = new Inventory();
+		await inventory.set(test1, 100);
+		await inventory.set(test2, 420);
+		inventory.makeReservation('test1', [{ material: test1, quantity: -100 }]);
+		inventory.makeReservation('test2', [{ material: test2, quantity: 10 }]);
+		expect(inventory.getAvailableItems()).toEqual([
+			// { material: test1, quantity: 0 },
+			{ material: test2, quantity: 420 },
+		]);
+	});
 	it('.reservedIncomingOf()', () => {
 		const inventory = new Inventory(1);
-		const tradeOrder = createTradeOrderForCargo(
-			godInventory,
-			[{ material: test1, quantity: 10 }],
-			inventory,
-			[],
-		);
-		inventory.makeReservationFromTradeOrder(tradeOrder);
+		inventory.makeReservation('test', [{ material: test1, quantity: 10 }]);
 		expect(inventory.reservedIncomingOf(test1)).toBe(10);
 		expect(inventory.availableOf(test1)).toBe(0);
 		expect(inventory.amountAllocatableTo(test1)).toBe(25);
@@ -68,13 +73,7 @@ describe('Inventory', () => {
 	it('.reservedOutgoingOf()', async () => {
 		const inventory = new Inventory(1);
 		await inventory.set(test1, 15);
-		const tradeOrder = createTradeOrderForCargo(
-			inventory,
-			[{ material: test1, quantity: 10 }],
-			godInventory,
-			[],
-		);
-		inventory.makeReservationFromTradeOrder(tradeOrder);
+		inventory.makeReservation('test', [{ material: test1, quantity: 10 }]);
 		expect(inventory.reservedOutgoingOf(test1)).toBe(10);
 		expect(inventory.availableOf(test1)).toBe(5);
 		expect(inventory.amountAllocatableTo(test1)).toBe(25);
@@ -85,17 +84,10 @@ describe('Inventory', () => {
 			{ material: test1, quantity: 99 },
 			{ material: test2, quantity: 99 },
 		]);
-		inventory.makeReservationFromTradeOrder(
-			createTradeOrderForCargo(
-				godInventory,
-				[
-					{ material: test1, quantity: 1 },
-					{ material: test2, quantity: 1 },
-				],
-				inventory,
-				[],
-			),
-		);
+		inventory.makeReservation('test', [
+			{ material: test1, quantity: 1 },
+			{ material: test2, quantity: 1 },
+		]);
 		expect(inventory.getReservedIncomingItems()).toEqual([
 			{ material: test1, quantity: 1 },
 			{ material: test2, quantity: 1 },

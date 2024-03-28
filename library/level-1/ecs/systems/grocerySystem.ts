@@ -156,7 +156,7 @@ async function doGrocery(
 	entity.inventory.makeReservation(reservationId, [{ material, quantity: purchaseQuantity }]);
 	vendor.inventory.makeReservation(reservationId, [{ material, quantity: -purchaseQuantity }]);
 
-	// await entity.$status.set(`Going to ${deal.vendor} to get some supplies
+	// await entity.$status.push(`Going to ${deal.vendor} to get some supplies
 
 	await entity.walkToTile(game.terrain.getTileEqualToLocation(vendor.$$location.get()));
 	if (entity.$health.get() <= 0) {

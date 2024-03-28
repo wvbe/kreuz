@@ -1,7 +1,6 @@
 import {
 	EcsEntity,
 	MaterialState,
-	SimpleCoordinate,
 	importExportComponent,
 	inventoryComponent,
 	locationComponent,
@@ -11,6 +10,7 @@ import {
 import { expect, generateEmptyGame } from '@test';
 import { createJobWorkBehavior } from '../../../level-2/behavior/reusable/nodes/createJobWorkBehavior.ts';
 import { wheat } from '../../../level-2/materials.ts';
+import { SimpleCoordinate } from '../../types.ts';
 
 function createChestEntity(
 	location: SimpleCoordinate,
@@ -58,7 +58,7 @@ Deno.test('System: logisticsSystem', async (test) => {
 			expect(worker.$$location.get().toArray()).toEqual([0, 0, 1]);
 		});
 		await test.step('There is a job posting', () => {
-			expect(game.jobs.length).toBe(0);
+			expect(game.jobs.globalJobCount).toBe(0);
 		});
 	});
 
@@ -69,7 +69,7 @@ Deno.test('System: logisticsSystem', async (test) => {
 			expect(worker.$$location.get().toArray()).toEqual([0, 0, 1]);
 		});
 		await test.step('There is a job posting', () => {
-			expect(game.jobs.length).toBe(0);
+			expect(game.jobs.globalJobCount).toBe(0);
 		});
 	});
 

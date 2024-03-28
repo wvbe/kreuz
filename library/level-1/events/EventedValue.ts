@@ -60,7 +60,7 @@ export class EventedValue<T> extends Event<[T]> {
 	 * Emit that there was an update
 	 */
 	public async emit() {
-		await super.emit(this.current);
+		await super.emit(this.get());
 	}
 
 	public toSaveJson(context: SaveJsonContext): SaveEventedValueJson {

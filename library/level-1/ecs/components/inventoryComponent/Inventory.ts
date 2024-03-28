@@ -4,10 +4,9 @@
  */
 
 import { Event } from '../../../events/Event.ts';
-import { TradeOrder } from '../../../classes/TradeOrder.ts';
-import { SaveJsonContext } from '../../../types-savedgame.ts';
 import { Material } from '../../../inventory/Material.ts';
 import { type MaterialState } from '../../../inventory/types.ts';
+import { SaveJsonContext } from '../../../types-savedgame.ts';
 
 function getRequiredStackSpace(cargo: MaterialState[]): number {
 	return cargo
@@ -314,7 +313,6 @@ export class Inventory {
 		}
 	}
 
-
 	/**
 	 * Make inventory reservations for the described exchange;
 	 *
@@ -348,15 +346,6 @@ export class Inventory {
 			throw new Error('No such reservation');
 		}
 		this.reservations.delete(key);
-	}
-
-	/**
-	 * Transfer the reserved items and then remove ("cancel") the reservation.
-	 */
-	public fulfillReservation(tradeOrder: TradeOrder) {
-		// @TODO transfer materials
-
-		this.clearReservation(tradeOrder);
 	}
 
 	public toSaveJson(context: SaveJsonContext): SaveInventoryJson {

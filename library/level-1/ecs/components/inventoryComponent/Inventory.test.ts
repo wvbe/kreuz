@@ -1,44 +1,9 @@
 import { describe, expect, it, mock, run } from '@test';
-import { TradeOrder } from '../../../classes/TradeOrder.ts';
-import { Inventory } from './Inventory.ts';
 import { Material } from '../../../inventory/Material.ts';
-import { MaterialState } from '../../../inventory/types.ts';
-import { personArchetype } from '../../archetypes/personArchetype.ts';
+import { Inventory } from './Inventory.ts';
 
 const test1 = new Material('wheat', { symbol: '🌾', stackSize: 25 });
 const test2 = new Material('barley', { symbol: '𐂏', stackSize: 33 });
-
-function createTradeOrderForCargo(
-	inventory1: Inventory,
-	cargo1: MaterialState[],
-	inventory2: Inventory,
-	cargo2: MaterialState[],
-): TradeOrder {
-	return new TradeOrder(
-		{
-			owner: personArchetype.create({
-				location: [0, 0, Infinity],
-				icon: '🤖',
-				name: 'test A',
-				behavior: null,
-			}),
-			inventory: inventory1,
-			money: 0,
-			cargo: cargo1,
-		},
-		{
-			owner: personArchetype.create({
-				location: [0, 0, Infinity],
-				icon: '🤖',
-				name: 'test B',
-				behavior: null,
-			}),
-			inventory: inventory2,
-			money: 0,
-			cargo: cargo2,
-		},
-	);
-}
 
 const godInventory = new Inventory();
 await godInventory.change(test1, Infinity);
@@ -73,7 +38,7 @@ describe('Inventory', () => {
 	it('.reservedOutgoingOf()', async () => {
 		const inventory = new Inventory(1);
 		await inventory.set(test1, 15);
-		inventory.makeReservation('test', [{ material: test1, quantity: 10 }]);
+		inventory.makeReservation('test', [{ material: test1, quantity: -10 }]);
 		expect(inventory.reservedOutgoingOf(test1)).toBe(10);
 		expect(inventory.availableOf(test1)).toBe(5);
 		expect(inventory.amountAllocatableTo(test1)).toBe(25);

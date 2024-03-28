@@ -15,6 +15,13 @@ export class JobBoard {
 		return this.#global.add(job);
 	}
 
+	/**
+	 * @deprecated For testing purposes only
+	 */
+	public get globalJobCount() {
+		return this.#global.length;
+	}
+
 	public removeGlobal(job: JobPosting) {
 		return this.#global.remove(job);
 	}

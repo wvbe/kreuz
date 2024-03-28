@@ -19,7 +19,7 @@ export function createWaitBehavior(
 		}
 
 		if (statusUpdate !== undefined) {
-			await entity.$status.set(statusUpdate);
+			await entity.$status.push(statusUpdate);
 		}
 		const timeout = Math.round(
 			Random.between(lowerBounary, upperBoundary, entity.id, 'wait bt', ++ticker),

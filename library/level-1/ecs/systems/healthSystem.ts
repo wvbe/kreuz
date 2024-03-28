@@ -60,7 +60,7 @@ async function attachSystemToEntity(game: Game, entity: HealthSystemEntity) {
 	}
 	entity.$death.once(() => {
 		if (statusComponent.test(entity)) {
-			entity.$status.set('Died of natural causes.');
+			entity.$status.push('Died of natural causes.');
 		}
 		if (visibilityComponent.test(entity)) {
 			entity.icon = '💀';

@@ -59,7 +59,7 @@ function attachSystemToEntityNeed(game: Game, entity: SelfSustainingEnitity, nee
 	// 	need.setDelta(0);
 	// 	for (const { material, quantity } of order) {
 	// 		if (statusComponent.test(entity)) {
-	// 			entity.$status.set(`Eating ${quantity} of ${material}...`);
+	// 			entity.$status.push(`Eating ${quantity} of ${material}...`);
 	// 		}
 	// 		for (let index = 0; index < quantity; index++) {
 	// 			await entity.inventory.change(material, -1);
@@ -81,9 +81,6 @@ function attachSystemToEntityNeed(game: Game, entity: SelfSustainingEnitity, nee
 			if (!stock) {
 				break;
 			}
-
-			// @TODO remove me, this is a debug hack:
-			(entity as any).$status?.set(`Eating ${stock.material}...`);
 
 			await entity.inventory.change(stock.material, -1);
 			await game.time.wait(1 * 1_000);

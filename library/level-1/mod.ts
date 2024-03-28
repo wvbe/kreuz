@@ -10,7 +10,6 @@ export * from './ecs/components/behaviorComponent/types.ts';
 // Miscellaneous utilities:
 export { Random } from './classes/Random.ts';
 export { TimeLine } from './classes/TimeLine.ts';
-export { TradeOrder } from './classes/TradeOrder.ts';
 export { Collection } from './events/Collection.ts';
 export { Event } from './events/Event.ts';
 export { EventedValue } from './events/EventedValue.ts';

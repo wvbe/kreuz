@@ -1,8 +1,8 @@
-import { beforeAll, describe, expect, it, run } from 'tincan';
+import { TestDriver, beforeAll, describe, expect, it, run } from '@test';
 
 import createBasementDemo from './basement.ts';
 
-import { DriverI, Game, TestDriver, personArchetype, type EcsArchetypeEntity } from '@lib';
+import { DriverI, Game, personArchetype, type EcsArchetypeEntity } from '@lib';
 
 describe('"The basement"', async () => {
 	let game: Game, driver: DriverI, melanie: EcsArchetypeEntity<typeof personArchetype>;

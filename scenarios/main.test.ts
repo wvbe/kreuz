@@ -1,19 +1,11 @@
-import { beforeAll, describe, expect, it, run } from 'tincan';
+import { TestDriver, beforeAll, describe, expect, it, run } from '@test';
 
-import { Game, TestDriver, factoryArchetype, personArchetype } from '@lib';
+import { Game, factoryArchetype, personArchetype } from '@lib';
 import createGeneratorDemo from './main.ts';
 
-describe('Default generator', async () => {
-	let game: Game;
-	beforeAll(async () => {
-		game = await createGeneratorDemo(new TestDriver());
-		// new TestDriver().attach(game);
-	});
+Deno.test('Default generator', async (test) => {
+	const game = await createGeneratorDemo(new TestDriver());
 
-	it('Has several entities of various types', () => {
-		expect(game.entities.filter((e) => personArchetype.test(e)).length).toBeGreaterThanOrEqual(12);
-		expect(game.entities.filter((e) => factoryArchetype.test(e)).length).toBeGreaterThanOrEqual(6);
-	});
+	expect(game.entities.filter((e) => personArchetype.test(e)).length).toBeGreaterThanOrEqual(12);
+	expect(game.entities.filter((e) => factoryArchetype.test(e)).length).toBeGreaterThanOrEqual(6);
 });
-
-run();

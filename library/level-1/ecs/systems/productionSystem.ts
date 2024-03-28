@@ -95,7 +95,7 @@ async function assignWorkerToFactory(
 	if (worker.$health.get() <= 0) {
 		throw new Error('Dead people cannot work');
 	}
-	await worker.$status.set(`Going to ${factory} for work`);
+	await worker.$status.push(`Going to ${factory} for work`);
 	const tile = game.terrain.getTileEqualToLocation(factory.$$location.get());
 	await worker.walkToTile(tile);
 	if (worker.$health.get() <= 0) {
@@ -125,7 +125,7 @@ async function assignWorkerToFactory(
 	// 	true,
 	// );
 
-	await worker.$status.set(`Working in ${factory}`);
+	await worker.$status.push(`Working in ${factory}`);
 
 	// Finish job when the worker is removed from the worker list. factory happens
 	// when the factory is not productive for a while..
@@ -142,7 +142,7 @@ async function assignWorkerToFactory(
 		});
 	});
 
-	await worker.$status.set(null);
+	await worker.$status.pop();
 }
 
 async function attachSystemToEntity(game: Game, factory: ProductionSystemFactoryEntity) {
@@ -169,7 +169,7 @@ async function attachSystemToEntity(game: Game, factory: ProductionSystemFactory
 		}
 		factory.$$progress.set(0);
 		factory.$$progress.setDelta(0);
-		void factory.$status.set('Idle…');
+		void factory.$status.push('Idle…');
 
 		// Workers wait around a little bit to see if theres no more work. After an hour of idleness, they go home.
 		if (!factory.$workers.length) {
@@ -199,7 +199,7 @@ async function attachSystemToEntity(game: Game, factory: ProductionSystemFactory
 		factory.inventory.makeReservation(factory, blueprint.products);
 		factory.$$progress.set(0);
 		factory.$$progress.setDelta(delta);
-		void factory.$status.set('Working…');
+		void factory.$status.push('Working…');
 	}
 
 	factory.$blueprint.on((blueprint) => {

@@ -35,7 +35,7 @@ export function createLoiterBehavior() {
 				// if ((entity.needs.energy.get() || 0) < 0.2) {
 				// 	throw new BehaviorTreeSignal(`${entity} is too tired to wander around`);
 				// }
-				await entity.$status.set('Wandering around…');
+				await entity.$status.push('Wandering around…');
 				const start = game.terrain.getTileEqualToLocation(entity.$$location.get());
 
 				const closestTiles = game.terrain.selectClosestTiles(start, 5);

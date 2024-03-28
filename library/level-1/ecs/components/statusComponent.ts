@@ -1,4 +1,5 @@
 import { EventedValue } from '../../events/EventedValue.ts';
+import { StackedEventedValue } from '../../events/StackedEventedValue.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
 
 /**
@@ -13,9 +14,9 @@ export const statusComponent = new EcsComponent<
 		$status: EventedValue<string | null>;
 	}
 >(
-	(entity) => entity.$status instanceof EventedValue,
+	(entity) => entity.$status instanceof StackedEventedValue,
 	(entity, options) => {
-		const $status = new EventedValue(options.status || null, 'statusComponent $status');
+		const $status = new StackedEventedValue(options.status || null, 'statusComponent $status');
 		// $status.on(() => {
 		// 	console.log(`${(entity as any).name}\t"${$status.get()}"`);
 		// });

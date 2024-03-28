@@ -56,7 +56,7 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 		// is done. Therefore, remove the job altogether.
 		game.jobs.removeGlobal(job);
 
-		await entity.$status.set(`Going to ${deal.supplier} for a hauling job`);
+		await entity.$status.push(`Going to ${deal.supplier} for a hauling job`);
 		await entity.walkToTile(game.terrain.getTileEqualToLocation(deal.supplier.$$location.get()));
 		if (entity.$health.get() <= 0) {
 			// Worker died to retrieve the cargo. There is now an inventory reservation that will never be fulfilled.
@@ -64,7 +64,7 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 			return;
 		}
 
-		await entity.$status.set(`Loading cargo`);
+		await entity.$status.push(`Loading cargo`);
 		deal.supplier.inventory.clearReservation(transportJobId);
 		await deal.supplier.inventory.change(deal.material, -deal.quantity);
 		await game.time.wait(1_000 * (deal.quantity / deal.material.stack));
@@ -77,7 +77,7 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 			{ material: deal.material, quantity: -deal.quantity },
 		]);
 
-		await entity.$status.set(`Delivering cargo to ${deal.destination}`);
+		await entity.$status.push(`Delivering cargo to ${deal.destination}`);
 		await entity.walkToTile(game.terrain.getTileEqualToLocation(deal.destination.$$location.get()));
 
 		if (entity.$health.get() <= 0) {
@@ -86,7 +86,7 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 			return;
 		}
 
-		await entity.$status.set(`Unloading cargo`);
+		await entity.$status.push(`Unloading cargo`);
 		entity.inventory.clearReservation('transport-job');
 		// Skip emitting this event, because (due to the reservation made) nothing in the available
 		// materials changes.
@@ -95,7 +95,7 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 		deal.destination.inventory.clearReservation(transportJobId);
 		await deal.destination.inventory.change(deal.material, deal.quantity);
 
-		await entity.$status.set(null);
+		await entity.$status.pop();
 	};
 
 	const scoreJobDesirability: ConstructorParameters<typeof JobPosting>[1]['score'] = (entity) => {

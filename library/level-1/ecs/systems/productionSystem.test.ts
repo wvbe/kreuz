@@ -34,7 +34,7 @@ Deno.test('System: productionSystem', async (test) => {
 			expect(factory.$workers.length).toBe(0);
 		});
 		await test.step('There is a job posting', () => {
-			expect(game.jobs.length).toBe(1);
+			expect(game.jobs.globalJobCount).toBe(1);
 		});
 	});
 

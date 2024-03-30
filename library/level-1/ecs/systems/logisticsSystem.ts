@@ -70,6 +70,9 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 		await game.time.wait(1_000 * (deal.quantity / deal.material.stack));
 		// Skip emitting this event, because (due to the reservation made) nothing in the available
 		// materials changes.
+		// - This avoids a bug where the entity might snack on a material bfore it is reserved
+		// - This introduces a bug where the UI might not updat
+		// @TODO
 		await entity.inventory.change(deal.material, deal.quantity, true);
 		entity.inventory.makeReservation('transport-job', [
 			// Make an outgoing reservation for the cargo
@@ -90,6 +93,9 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 		entity.inventory.clearReservation('transport-job');
 		// Skip emitting this event, because (due to the reservation made) nothing in the available
 		// materials changes.
+		// - This avoids a bug where the entity might snack on a material bfore it is reserved
+		// - This introduces a bug where the UI might not updat
+		// @TODO
 		await entity.inventory.change(deal.material, -deal.quantity, true);
 		await game.time.wait(1_000 * (deal.quantity / deal.material.stack));
 		deal.destination.inventory.clearReservation(transportJobId);
@@ -145,15 +151,18 @@ async function attachSystemToEntity(
 ) {
 	const updateExchangeForInventoryContents = async () => {
 		for (const { material, quantity } of trader.provideMaterialsWhenAbove) {
-			if (trader.inventory.availableOf(material) > quantity) {
-				exchange.get(material).updateSupplyDemand(trader, quantity);
+			const availableOf = trader.inventory.availableOf(material);
+			if (availableOf > quantity) {
+				const provideQuantity = availableOf - quantity;
+				exchange.get(material).updateSupplyDemand(trader, provideQuantity);
 			}
 		}
 		for (const { material, quantity } of trader.requestMaterialsWhenBelow) {
-			if (trader.inventory.availableOf(material) < quantity) {
+			const availableOf = trader.inventory.availableOf(material);
+			if (availableOf < quantity) {
 				// Never ask for more than what we can stow
 				const requestQuantity = Math.min(
-					quantity,
+					quantity - availableOf,
 					trader.inventory.amountAdditionallyAllocatableTo(material),
 				);
 				exchange.get(material).updateSupplyDemand(trader, -requestQuantity);

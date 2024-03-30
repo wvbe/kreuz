@@ -6,7 +6,7 @@ import { MapTerrainOutline } from './MapTerrainOutline.tsx';
 import { MapTile } from './MapTile.tsx';
 import { visibilityComponent } from '@lib';
 
-const MARGIN = 25;
+const SVG_PADDING = 25;
 
 export const MapTerrain: FunctionComponent<{
 	terrain: Terrain;
@@ -49,8 +49,8 @@ export const MapTerrain: FunctionComponent<{
 	);
 
 	const [terrainCss, svgProps, overlayCss] = useMemo(() => {
-		const width = (boundaries.maxX - boundaries.minX) * zoom + 2 * MARGIN;
-		const height = (boundaries.maxY - boundaries.minY) * zoom + 2 * MARGIN;
+		const width = (boundaries.maxX - boundaries.minX) * zoom + 2 * SVG_PADDING;
+		const height = (boundaries.maxY - boundaries.minY) * zoom + 2 * SVG_PADDING;
 		return [
 			{
 				width: `${width}px`,
@@ -59,12 +59,12 @@ export const MapTerrain: FunctionComponent<{
 			{
 				width,
 				height,
-				viewBox: `${-MARGIN} ${-MARGIN} ${width} ${height}`,
+				viewBox: `${-SVG_PADDING} ${-SVG_PADDING} ${width} ${height}`,
 			},
 			{
 				position: 'absolute',
-				top: MARGIN,
-				left: MARGIN,
+				top: SVG_PADDING,
+				left: SVG_PADDING,
 				// zIndex: 0,
 			} as React.CSSProperties,
 		];

@@ -12,11 +12,12 @@ import { useMapTileContextMenu } from './MAP_TILE_CONTEXT_MENU.ts';
 // </palette>
 
 const baseGreen = Color('#8F8A49');
+const baseBlue = Color('#234A59');
 
 export const MapTile: FunctionComponent<{ zoom: number; tile: TileI }> = ({ tile, zoom }) => {
 	const green = useMemo(
 		() =>
-			baseGreen
+			(tile.isLand() ? baseGreen : baseBlue)
 				.lighten(Random.between(-0.05, 0.05, tile.toString(), 'lighten'))
 				.saturate(Random.between(-0.2, 0.2, tile.toString(), 'saturate')),
 		[],
@@ -31,9 +32,9 @@ export const MapTile: FunctionComponent<{ zoom: number; tile: TileI }> = ({ tile
 		[contextMenu],
 	);
 
-	if (!tile.isLand()) {
-		return null;
-	}
+	// if (!tile.isLand()) {
+	// 	return null;
+	// }
 
 	const points = tile
 		.getOutlineCoordinates()

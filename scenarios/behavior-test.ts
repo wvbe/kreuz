@@ -36,7 +36,7 @@ export default async function (driver: DriverI) {
 				Math.floor(Random.between(0, 10, 'zfs', 0 + 'f')),
 			)
 			.toArray(),
-		name: 'Test',
+		name: 'Ro-bot',
 		icon: '🤖',
 		behavior: behavior.civilianBehavior,
 	});
@@ -45,10 +45,18 @@ export default async function (driver: DriverI) {
 	const marketStall = marketArchetype.create({
 		location: terrain.getTileClosestToXy(5, 5).toArray(),
 		maxStackSpace: 6,
-		materials: [materials.eggs],
+		materials: [materials.honey],
 		owner: headOfState,
 	});
-	await marketStall.inventory.change(materials.eggs, 30);
+	await marketStall.inventory.change(materials.honey, 30);
+
+	const marketStall2 = marketArchetype.create({
+		location: terrain.getTileClosestToXy(9, 5).toArray(),
+		maxStackSpace: 6,
+		materials: [materials.freshWater],
+		owner: headOfState,
+	});
+	await marketStall2.inventory.change(materials.freshWater, 300);
 
 	const factory = factoryArchetype.create({
 		location: terrain.getTileClosestToXy(13, 10).toArray(),
@@ -58,7 +66,7 @@ export default async function (driver: DriverI) {
 		maxStackSpace: 8,
 	});
 
-	await game.entities.add(entity, marketStall, factory);
+	await game.entities.add(entity, marketStall, marketStall2, factory);
 
 	return game;
 }

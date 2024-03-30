@@ -17,6 +17,8 @@ import { assertEcsComponents } from '../assert.ts';
 /**
  * Creates inventory reservations for the supplier and destination inventories, so that a transport
  * agreement can be fulfilled.
+ *
+ *
  */
 function createInventoryReservations(transportJobId: string, deal: LogisticsDeal) {
 	// As soon as the job is created (not taken), the supplier and destination inventories are reserved
@@ -202,6 +204,7 @@ async function attachSystem(game: Game) {
 			exchange.forEach((materialExchange) => {
 				let deal: LogisticsDeal | null = null;
 				while ((deal = materialExchange.getLargestTransferDeal())) {
+					// @TODO update an existing transport job, if it exists and while carry capacity can
 					const transportJobId = `transport-job-${identifier++}`;
 					materialExchange.excludeDealFromRecords(deal);
 					createInventoryReservations(transportJobId, deal);

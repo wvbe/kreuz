@@ -21,6 +21,7 @@ import {
 	behaviorComponent,
 	statusComponent,
 	healthComponent,
+	needsComponent,
 } from '@lib';
 import { headOfState } from '../library/level-2/heroes/heroes.ts';
 import { generateDualMeshTerrain } from '../library/level-3/utils/generateDualMeshTerrain.ts';
@@ -83,7 +84,7 @@ export async function generateEntities(game: Game) {
 			location: tile.toArray(),
 			owner: headOfState,
 			blueprint,
-			maxWorkers: 3 * blueprint.options.workersRequired,
+			maxWorkers: 1 * blueprint.options.workersRequired,
 			maxStackSpace: 8,
 			name: blueprint.options.buildingName,
 			icon: blueprint.products[0].material.symbol,
@@ -125,7 +126,7 @@ export async function generateEntities(game: Game) {
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 	}
 
-	for (let i = 0; i < Random.between(100, 200, game.seed, 'guardamount'); i++) {
+	for (let i = 0; i < Random.between(6, 8, game.seed, 'guardamount'); i++) {
 		const id = `${game.seed}-person-${i}`;
 		const person = personArchetype.create({
 			location: Random.fromArray(walkableTiles, id).toArray(),

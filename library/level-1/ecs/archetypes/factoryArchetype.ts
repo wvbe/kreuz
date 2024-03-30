@@ -64,7 +64,7 @@ export const factoryArchetype = new EcsArchetype<
 			})),
 			provideMaterialsWhenAbove: options.blueprint.products.map(({ material, quantity }) => ({
 				material,
-				quantity: quantity * 5,
+				quantity: 0, //quantity * 5,
 			})),
 		});
 	},

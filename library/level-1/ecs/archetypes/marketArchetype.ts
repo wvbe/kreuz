@@ -52,7 +52,9 @@ export const marketArchetype = new EcsArchetype<
 			provideMaterialsWhenAbove: [],
 			requestMaterialsWhenBelow: options.materials.map((material) => ({
 				material,
-				quantity: material.stack * (options.maxStackSpace / options.materials.length) * 0.8,
+				quantity: Math.round(
+					material.stack * (options.maxStackSpace / options.materials.length) * 0.8,
+				),
 			})),
 		});
 		vendorComponent.attach(entity, {

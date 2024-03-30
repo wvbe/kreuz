@@ -25,13 +25,20 @@ export const healthComponent = new EcsComponent<
 >(
 	(entity) => entity.$health instanceof ProgressingNumericValue && entity.$death instanceof Event,
 	(entity, options) => {
+		const $health = new ProgressingNumericValue(
+			options.health,
+			{ delta: 0, granularity: 0.01, min: 0, max: 1 },
+			'healthComponent $health',
+		);
+		const $death = new Event('healthComponent $death');
+
+		$death.on(() => {
+			console.log(`${entity} died`);
+		});
+
 		Object.assign(entity, {
-			$health: new ProgressingNumericValue(
-				options.health,
-				{ delta: 0, granularity: 0.01, min: 0, max: 1 },
-				'healthComponent $health',
-			),
-			$death: new Event('healthComponent $death'),
+			$health,
+			$death,
 		});
 	},
 );

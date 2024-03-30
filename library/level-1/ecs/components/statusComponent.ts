@@ -11,7 +11,7 @@ export const statusComponent = new EcsComponent<
 		/**
 		 * The status of the entity as an arbitrary string or `null`
 		 */
-		$status: EventedValue<string | null>;
+		$status: StackedEventedValue<string | null>;
 	}
 >(
 	(entity) => entity.$status instanceof StackedEventedValue,

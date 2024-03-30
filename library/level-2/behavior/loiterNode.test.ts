@@ -12,7 +12,7 @@ describe('BT: createLoiterBehavior()', async () => {
 			name: 'Loiterbot',
 		});
 
-	const pathStart = mock.fn(),
+	const pathStart = mock.fn((path: any) => {}),
 		pathEnd = mock.fn();
 	entity.$pathStart.on(pathStart);
 	entity.$pathEnd.on(pathEnd);

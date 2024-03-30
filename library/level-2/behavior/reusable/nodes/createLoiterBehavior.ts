@@ -43,6 +43,7 @@ export function createLoiterBehavior() {
 					throw new BehaviorTreeSignal(`Theres nowhere to wander to for ${entity}`);
 				}
 				const destination = Random.fromArray(closestTiles, entity.id, 'loiter walk', ++ticker);
+
 				await entity.walkToTile(destination);
 			}),
 			createWaitBehavior(1000, 3000),

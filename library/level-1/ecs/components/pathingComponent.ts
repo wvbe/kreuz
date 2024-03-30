@@ -54,7 +54,7 @@ async function walkToTile(entity: WalkableEntity, destination: TileI) {
 		return;
 	}
 
-	await entity.$pathStart.emit();
+	await entity.$pathStart.emit(path);
 
 	const unlisten = entity.$stepEnd.on(async (coordinate) => {
 		entity.$$location.set(coordinate);
@@ -120,7 +120,7 @@ export const pathingComponent = new EcsComponent<
 		/**
 		 * Emitted when the entity starts walking along a path.
 		 */
-		$pathStart: Event<[]>;
+		$pathStart: Event<[TileI[]]>;
 		/**
 		 * Emitted when the entity stops walking along a path.
 		 */

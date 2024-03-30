@@ -40,22 +40,25 @@ export class TestDriver extends Driver implements DriverI {
 					pathingComponent.test(entity),
 				)
 				.forEach((entity) => {
-					this.$detach.once(
-						entity.$stepStart.on((step) => {
-							if (!step) {
-								return;
-							}
+					const stepStart = () => {
+						const step = entity.$stepStart.get();
+						if (!step) {
+							return;
+						}
 
-							// The step timeout is cancelled when the entity is destroyed. When the step
-							// finishes, that timeout cancellor is cancelled too.
-							let cancelDestroy: DestroyerFn;
-							const cancelStep = game.time.setTimeout(() => {
-								cancelDestroy();
-								step.done();
-							}, step.duration);
-							cancelDestroy = this.$detach.once(cancelStep);
-						}),
-					);
+						// The step timeout is cancelled when the entity is destroyed. When the step
+						// finishes, that timeout cancellor is cancelled too.
+						let cancelDestroy: DestroyerFn;
+						const cancelStep = game.time.setTimeout(() => {
+							cancelDestroy();
+							step.done();
+						}, step.duration);
+						cancelDestroy = this.$detach.once(cancelStep);
+					};
+					this.$detach.once(entity.$stepStart.on(stepStart));
+					if (entity.$stepStart.get()) {
+						stepStart();
+					}
 				});
 		};
 		// Whenever an entity starts to move, make sure that the "animation" ends at some point too.

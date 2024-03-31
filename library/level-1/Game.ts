@@ -1,31 +1,29 @@
 import { type DEFAULT_ASSETS } from '../level-2/DEFAULT_ASSETS.ts';
+import { JobBoard } from './classes/JobBoard.ts';
 import { type StrictMap } from './classes/StrictMap.ts';
 import { TimeLine } from './classes/TimeLine.ts';
 import { type DriverI } from './drivers/types.ts';
 import { type EcsArchetype } from './ecs/classes/EcsArchetype.ts';
 import { type EcsComponent } from './ecs/classes/EcsComponent.ts';
 import { type EcsSystem } from './ecs/classes/EcsSystem.ts';
-import { type JobPosting } from './ecs/components/behaviorComponent/JobPosting.ts';
 import {
 	type BehaviorTreeNodeI,
 	type EntityBlackboard,
 } from './ecs/components/behaviorComponent/types.ts';
 import { type Blueprint } from './ecs/components/productionComponent/Blueprint.ts';
 import { behaviorTreeSystem } from './ecs/systems/behaviorTreeSystem.ts';
+import { grocerySystem } from './ecs/systems/grocerySystem.ts';
 import { healthSystem } from './ecs/systems/healthSystem.ts';
 import { logisticsSystem } from './ecs/systems/logisticsSystem.ts';
 import { productionSystem } from './ecs/systems/productionSystem.ts';
-import { grocerySystem } from './ecs/systems/grocerySystem.ts';
 import { selfsustainingSystem } from './ecs/systems/selfsustainingSystem.ts';
 import { type EcsEntity } from './ecs/types.ts';
-import { Collection } from './events/Collection.ts';
-import { Event } from './events/Event.ts';
 import { KeyedCollection } from './events/KeyedCollection.ts';
 import { type Material } from './inventory/Material.ts';
 import { Terrain } from './terrain/Terrain.ts';
+import { type TerrainI } from './terrain/types.ts';
 import { type SavedGameJson } from './types-savedgame.ts';
 import { type SeedI } from './types.ts';
-import { JobBoard } from './classes/JobBoard.ts';
 
 export type GameAssets = {
 	behaviorNodes: StrictMap<BehaviorTreeNodeI<EntityBlackboard>>;
@@ -74,7 +72,7 @@ export default class Game {
 	/**
 	 * The geography in which all game events supposedly take place. A magical land.
 	 */
-	public readonly terrain: Terrain;
+	public readonly terrain: TerrainI;
 
 	/**
 	 * A seed number or string to help create semi-random things.
@@ -97,7 +95,7 @@ export default class Game {
 	 * EVENTED VALUES
 	 */
 
-	constructor(driver: DriverI, seed: SeedI, terrain: Terrain, assets: GameAssets) {
+	constructor(driver: DriverI, seed: SeedI, terrain: TerrainI, assets: GameAssets) {
 		this.driver = driver;
 
 		this.seed = seed;

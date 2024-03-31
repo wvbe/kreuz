@@ -1,10 +1,10 @@
-import { type CoordinateI, type Terrain } from '@lib';
+import { type TerrainI, type CoordinateI } from '@lib';
 import React, { FunctionComponent, useMemo } from 'react';
 
 const MARGIN = 25;
 
 export const MapTerrainOutline: FunctionComponent<{
-	terrain: Terrain;
+	terrain: TerrainI;
 }> = ({ terrain }) => {
 	const zoom = 32;
 

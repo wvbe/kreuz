@@ -3,18 +3,15 @@ import { Event } from '../../events/Event.ts';
 import { EventedValue } from '../../events/EventedValue.ts';
 import { healthComponent } from '@lib/core';
 import { Coordinate } from '../../terrain/Coordinate.ts';
-import { TileI } from '../../types.ts';
-import { CallbackFn, CoordinateI } from '../../types.ts';
+import { CallbackFn } from '../../types.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
 import { EcsEntity } from '../types.ts';
 import { locationComponent } from './locationComponent.ts';
+import { type CoordinateI, type TileI } from '../../terrain/types.ts';
 
 type WalkableEntity = EcsEntity<typeof locationComponent | typeof pathingComponent>;
 
 async function animateTo(entity: WalkableEntity, destination: Coordinate) {
-	if (destination.hasNaN()) {
-		throw new Error('This should never happen I suppose');
-	}
 	const distance = entity.$$location.get().euclideanDistanceTo(destination as CoordinateI);
 	await entity.$stepStart.set({
 		destination,

@@ -1,7 +1,6 @@
 import {
 	EcsEntity,
 	MaterialState,
-	SimpleCoordinate,
 	importExportComponent,
 	inventoryComponent,
 	locationComponent,
@@ -10,6 +9,7 @@ import {
 import { expect, generateEmptyGame } from '@test';
 import { createJobWorkBehavior } from '../../../level-2/behavior/reusable/nodes/createJobWorkBehavior.ts';
 import { wheat } from '../../../level-2/materials.ts';
+import { SimpleCoordinate } from '../../terrain/types.ts';
 
 function createChestEntity(
 	location: SimpleCoordinate,

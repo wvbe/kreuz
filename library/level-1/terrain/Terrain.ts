@@ -1,6 +1,7 @@
+import { FilterFn } from '../types.ts';
 import { Coordinate } from './Coordinate.ts';
-import { type CoordinateI, type FilterFn, type TileI, type SimpleCoordinate } from '../types.ts';
 import { DualMeshTile } from './DualMeshTile.ts';
+import { type SimpleCoordinate, type TerrainI, type CoordinateI, type TileI } from './types.ts';
 
 export type SaveTerrainJson = {
 	tiles: Array<{
@@ -10,7 +11,7 @@ export type SaveTerrainJson = {
 	}>;
 	size: number;
 };
-export class Terrain {
+export class Terrain implements TerrainI {
 	readonly #tiles: TileI[] = [];
 	public readonly size: number;
 
@@ -80,6 +81,8 @@ export class Terrain {
 
 	/**
 	 * Get a list of contigious groups of tiles, aka a list of islands.
+	 *
+	 * @note Only public for testing purposes.
 	 */
 	public getIslands(selector: FilterFn<TileI> = (t) => t.isLand()): TileI[][] {
 		const fromCache = this.#islands.get(selector);
@@ -101,10 +104,6 @@ export class Terrain {
 
 		this.#islands.set(selector, islands);
 		return islands;
-	}
-
-	public getTileEqualToXy(x: number, y: number): TileI | null {
-		return this.#tiles.find((tile) => tile.x === x && tile.y === y) || null;
 	}
 
 	/**

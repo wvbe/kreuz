@@ -1,7 +1,6 @@
+import { type SaveTileJson } from '../types-savedgame.ts';
 import { Coordinate } from './Coordinate.ts';
-import { CoordinateI, TileI } from '../types.ts';
-import { SaveTileJson } from '../types-savedgame.ts';
-import { type Terrain } from './Terrain.ts';
+import { type CoordinateI, type TerrainI, type TileI } from './types.ts';
 
 /**
  * A special type of coordinate that is equal to another terrain coordinate when the X and Y are equal, disregarding Z.
@@ -10,7 +9,7 @@ export class Tile extends Coordinate implements TileI {
 	/**
 	 * @deprecated This reference is an anti-pattern
 	 */
-	public terrain?: Terrain;
+	public terrain?: TerrainI;
 	public readonly neighbors: TileI[] = [];
 
 	public equals(coord: CoordinateI): boolean {
@@ -24,7 +23,7 @@ export class Tile extends Coordinate implements TileI {
 	 * @deprecated not currently in use?
 	 */
 	public static clone(coord: TileI) {
-		const coord2 = new Tile(coord.x, coord.y, coord.z);
+		const coord2 = new this(coord.x, coord.y, coord.z);
 		coord2.terrain = coord.terrain;
 		coord2.neighbors.splice(0, 0, ...coord.neighbors);
 		return coord2;

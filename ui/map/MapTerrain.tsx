@@ -1,15 +1,14 @@
-import { Collection, EcsEntity, locationComponent, type Terrain } from '@lib';
+import { Collection, EcsEntity, TerrainI, locationComponent, visibilityComponent } from '@lib';
 import React, { FunctionComponent, useMemo } from 'react';
 import { MapTileContextMenuHost } from './MAP_TILE_CONTEXT_MENU.ts';
 import { MapEntity } from './MapEntity.tsx';
 import { MapTerrainOutline } from './MapTerrainOutline.tsx';
 import { MapTile } from './MapTile.tsx';
-import { visibilityComponent } from '@lib';
 
 const SVG_PADDING = 25;
 
 export const MapTerrain: FunctionComponent<{
-	terrain: Terrain;
+	terrain: TerrainI;
 	entities: Collection<EcsEntity>;
 }> = ({ terrain, entities }) => {
 	const zoom = 32;

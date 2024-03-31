@@ -1,8 +1,6 @@
+import { DualMeshTile, Random, Terrain, TerrainI, type SeedI } from '@lib/core';
 import MeshBuilder from '@redblobgames/dual-mesh/create';
 import Poisson from 'poisson-disk-sampling';
-import { Terrain, Random, DualMeshTile, type SeedI, GameDistance } from '@lib/core';
-
-type CoordinateArray = [GameDistance, GameDistance, GameDistance];
 
 export function generateDualMeshTerrain(seed: SeedI, size: number, density: number = 1) {
 	// Use @redblobgames/dual-mesh to generate tiles and relationships.
@@ -44,7 +42,7 @@ export function generateDualMeshTerrain(seed: SeedI, size: number, density: numb
 			tile.neighbors.push(
 				...mesh
 					.r_circulate_r([], i)
-					.map((x: keyof Terrain['tiles']) => tiles[x])
+					.map((x: keyof TerrainI['tiles']) => tiles[x])
 					.filter((x): x is DualMeshTile => !!x),
 			);
 

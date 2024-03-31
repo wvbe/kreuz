@@ -1,4 +1,4 @@
-import { SimpleCoordinate } from '../../types.ts';
+import { SimpleCoordinate } from '../../terrain/types.ts';
 import { EcsArchetype } from '../classes/EcsArchetype.ts';
 import { behaviorComponent } from '../components/behaviorComponent.ts';
 import { EntityBlackboard } from '../components/behaviorComponent/types.ts';

@@ -1,15 +1,15 @@
-import { Blueprint } from '../components/productionComponent/Blueprint.ts';
-import { SimpleCoordinate } from '../../types.ts';
+import { type SimpleCoordinate } from '../../terrain/types.ts';
+import { EcsArchetype } from '../classes/EcsArchetype.ts';
+import { importExportComponent } from '../components/importExportComponent.ts';
 import { inventoryComponent } from '../components/inventoryComponent.ts';
 import { locationComponent } from '../components/locationComponent.ts';
 import { ownerComponent } from '../components/ownerComponent.ts';
 import { productionComponent } from '../components/productionComponent.ts';
+import { Blueprint } from '../components/productionComponent/Blueprint.ts';
 import { statusComponent } from '../components/statusComponent.ts';
 import { visibilityComponent } from '../components/visibilityComponent.ts';
 import { wealthComponent } from '../components/wealthComponent.ts';
-import { EcsArchetype } from '../classes/EcsArchetype.ts';
 import { EcsEntity } from '../types.ts';
-import { importExportComponent } from '../components/importExportComponent.ts';
 
 export const factoryArchetype = new EcsArchetype<
 	{

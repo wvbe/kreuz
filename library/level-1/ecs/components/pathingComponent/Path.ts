@@ -6,8 +6,7 @@
 //   Includes Binary Heap (with modifications) from Marijn Haverbeke.
 //   http://eloquentjavascript.net/appendix2.html
 
-import { type Terrain } from '../../../terrain/Terrain.ts';
-import { TileI } from '../../../types.ts';
+import { type TerrainI, type TileI } from '../../../terrain/types.ts';
 import { BinaryHeap } from './BinaryHeap.ts';
 
 // See list of heuristics: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
@@ -35,18 +34,18 @@ type PathOptions = {
 /**
  * @TODO
  */
-function getVisitationCost(_terrain: Terrain, _from: TileI, _neighbor: TileI) {
+function getVisitationCost(_terrain: TerrainI, _from: TileI, _neighbor: TileI) {
 	return 1;
 }
 
 export class Path {
-	readonly #terrain: Terrain;
+	readonly #terrain: TerrainI;
 	readonly #options: PathOptions;
 	readonly #cache: Map<TileI, HeuristicReport>;
 	readonly #heap: BinaryHeap<TileI>;
 	readonly #heuristic: HeuristicScorer;
 
-	constructor(graph: Terrain, options: PathOptions) {
+	constructor(graph: TerrainI, options: PathOptions) {
 		this.#terrain = graph;
 		this.#options = options;
 		this.#cache = new Map<TileI, HeuristicReport>();
@@ -215,7 +214,7 @@ export class Path {
 		return path.map((heuristicReport) => heuristicReport.coordinate);
 	}
 
-	static find(graph: Terrain, start: TileI, end: TileI, options: PathOptions) {
+	static find(graph: TerrainI, start: TileI, end: TileI, options: PathOptions) {
 		const p = new Path(graph, options);
 		return p.findPathBetween(start, end);
 	}

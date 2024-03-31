@@ -1,6 +1,6 @@
 import { EventedValue } from '../../events/EventedValue.ts';
 import { Coordinate } from '../../terrain/Coordinate.ts';
-import { CoordinateI } from '../../types.ts';
+import { CoordinateI } from '../../terrain/types.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
 
 /**

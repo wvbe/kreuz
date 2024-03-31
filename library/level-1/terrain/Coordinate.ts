@@ -1,4 +1,4 @@
-import { CoordinateI, GameDistance } from '../types.ts';
+import { type CoordinateI, type GameDistance } from './types.ts';
 
 export class Coordinate implements CoordinateI {
 	x: GameDistance;
@@ -31,18 +31,6 @@ export class Coordinate implements CoordinateI {
 			this.z += delta.z;
 		}
 		return this;
-	}
-
-	scale(r: number) {
-		this.x *= r;
-		this.y *= r;
-		this.z *= r;
-
-		return this;
-	}
-
-	hasNaN() {
-		return isNaN(this.x) || isNaN(this.y) || isNaN(this.z);
 	}
 
 	manhattanDistanceTo(coord: CoordinateI) {
@@ -83,13 +71,6 @@ export class Coordinate implements CoordinateI {
 		} else {
 			return angle;
 		}
-	}
-
-	/**
-	 * @deprecated For debugging purposes only, may change without notice or tests
-	 */
-	toString() {
-		return `[${this.toArray().join(',')}]`;
 	}
 
 	/**

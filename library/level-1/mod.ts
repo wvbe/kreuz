@@ -30,6 +30,7 @@ export { Material } from './inventory/Material.ts';
 // Terrain:
 export * from '../test/generateGridTerrainFromAscii.ts';
 export * from './inventory/types.ts';
+export { type TerrainI, type CoordinateI, type TileI } from './terrain/types.ts';
 export { Coordinate } from './terrain/Coordinate.ts';
 export { DualMeshTile } from './terrain/DualMeshTile.ts';
 export { SquareTile } from './terrain/SquareTile.ts';
@@ -40,14 +41,7 @@ export * from './constants/needs.ts';
 
 // Utilities
 export { StrictMap } from './classes/StrictMap.ts';
-export {
-	type GameDistance,
-	type CoordinateI,
-	type TileI,
-	type SeedI,
-	type DestroyerFn,
-	type FilterFn,
-} from './types.ts';
+export { type SeedI, type DestroyerFn, type FilterFn } from './types.ts';
 export * from './utilities/ReplacementSpace.ts';
 
 // ECS Types

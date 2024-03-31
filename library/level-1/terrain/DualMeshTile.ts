@@ -1,7 +1,7 @@
-import { Coordinate } from './Coordinate.ts';
-import { TileI } from '../types.ts';
-import { Tile } from './Tile.ts';
 import { type SaveTileJson } from '../types-savedgame.ts';
+import { Coordinate } from './Coordinate.ts';
+import { Tile } from './Tile.ts';
+import { type TileI } from './types.ts';
 
 export class DualMeshTile extends Tile implements TileI {
 	public readonly neighbors: DualMeshTile[] = [];

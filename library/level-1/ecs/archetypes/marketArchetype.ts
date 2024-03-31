@@ -1,5 +1,5 @@
 import { Material } from '../../inventory/Material.ts';
-import { SimpleCoordinate } from '../../types.ts';
+import { SimpleCoordinate } from '../../terrain/types.ts';
 import { inventoryComponent } from '../components/inventoryComponent.ts';
 import { locationComponent } from '../components/locationComponent.ts';
 import { ownerComponent } from '../components/ownerComponent.ts';

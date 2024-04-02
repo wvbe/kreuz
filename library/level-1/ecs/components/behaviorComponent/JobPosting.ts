@@ -27,8 +27,10 @@ type JobPostingOptions = {
 
 	/**
 	 * Useful for cosmetic reasons, but not used in any of the actual computation (???)
+	 *
+	 * @deprecated Clumsy, too specific, not reusable. Need to figure something else out.
 	 */
-	employer: EcsEntity;
+	employer?: EcsEntity;
 };
 
 /**

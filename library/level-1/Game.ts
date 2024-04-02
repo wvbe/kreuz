@@ -91,9 +91,7 @@ export default class Game {
 	 */
 	public readonly assets: GameAssets;
 
-	/*
-	 * EVENTED VALUES
-	 */
+	public readonly inputs = new UserInput();
 
 	constructor(driver: DriverI, seed: SeedI, terrain: TerrainI, assets: GameAssets) {
 		this.driver = driver;

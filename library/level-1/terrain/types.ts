@@ -1,5 +1,6 @@
 import { type SaveTileJson } from '../types-savedgame.ts';
 import { type FilterFn } from '../types.ts';
+import { SaveTerrainJson } from './Terrain.ts';
 
 export type GameDistance = number;
 
@@ -55,5 +56,6 @@ export interface TerrainI {
 	getTileEqualToLocation(location: CoordinateI, lax?: boolean): TileI | null;
 	selectClosestTiles(start: CoordinateI, maxDistance: number): TileI[];
 	selectContiguousTiles(start: TileI, selector: FilterFn<TileI>, inclusive: boolean): TileI[];
+	toSaveJson(): SaveTerrainJson;
 	tiles: TileI[];
 }

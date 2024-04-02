@@ -158,7 +158,11 @@ async function doGrocery(
 
 	// await entity.$status.push(`Going to ${deal.vendor} to get some supplies
 
-	await entity.walkToTile(game.terrain.getTileEqualToLocation(vendor.$$location.get()));
+	const vendorLocation = game.terrain.getTileEqualToLocation(vendor.$$location.get());
+	if (!vendorLocation) {
+		throw new Error(`Vendor "${vendor.id}" lives on a detached coordinate`);
+	}
+	await entity.walkToTile(vendorLocation);
 	if (entity.$health.get() <= 0) {
 		// Worker died to retrieve the cargo. There is now an inventory reservation that will never be fulfilled.
 		// @TODO release inventory reservations

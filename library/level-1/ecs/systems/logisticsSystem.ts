@@ -59,7 +59,12 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 		game.jobs.removeGlobal(job);
 
 		await entity.$status.push(`Going to ${deal.supplier} for a hauling job`);
-		await entity.walkToTile(game.terrain.getTileEqualToLocation(deal.supplier.$$location.get()));
+
+		const supplier = game.terrain.getTileEqualToLocation(deal.supplier.$$location.get());
+		if (!supplier) {
+			throw new Error(`Deal destination lives on a detached coordinate`);
+		}
+		await entity.walkToTile(supplier);
 		if (entity.$health.get() <= 0) {
 			// Worker died to retrieve the cargo. There is now an inventory reservation that will never be fulfilled.
 			// @TODO release inventory reservations
@@ -83,7 +88,12 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 		]);
 
 		await entity.$status.push(`Delivering cargo to ${deal.destination}`);
-		await entity.walkToTile(game.terrain.getTileEqualToLocation(deal.destination.$$location.get()));
+
+		const destination = game.terrain.getTileEqualToLocation(deal.destination.$$location.get());
+		if (!destination) {
+			throw new Error(`Deal destination lives on a detached coordinate`);
+		}
+		await entity.walkToTile(destination);
 
 		if (entity.$health.get() <= 0) {
 			// Worker died on the way to deliver the cargo.

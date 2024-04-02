@@ -134,7 +134,7 @@ export class Terrain implements TerrainI {
 		return center.neighbors;
 	}
 
-	#medianCoordinate: Coordinate | null = null;
+	#medianCoordinate: CoordinateI | null = null;
 
 	/**
 	 * Get the approximate middle coordinate of the map.

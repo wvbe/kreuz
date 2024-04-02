@@ -37,7 +37,9 @@ export function createLoiterBehavior() {
 				// }
 				await entity.$status.push('Wandering around…');
 				const start = game.terrain.getTileEqualToLocation(entity.$$location.get());
-
+				if (!start) {
+					throw new Error(`Entity "${entity.id}" lives on a detached coordinate`);
+				}
 				const closestTiles = game.terrain.selectClosestTiles(start, 5);
 				if (!closestTiles.length) {
 					throw new BehaviorTreeSignal(`Theres nowhere to wander to for ${entity}`);

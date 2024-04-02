@@ -11,7 +11,7 @@ import { type CoordinateI, type TileI } from '../../terrain/types.ts';
 
 type WalkableEntity = EcsEntity<typeof locationComponent | typeof pathingComponent>;
 
-async function animateTo(entity: WalkableEntity, destination: Coordinate) {
+async function animateTo(entity: WalkableEntity, destination: CoordinateI) {
 	const distance = entity.$$location.get().euclideanDistanceTo(destination as CoordinateI);
 	await entity.$stepStart.set({
 		destination,
@@ -40,6 +40,9 @@ async function walkToTile(entity: WalkableEntity, destination: TileI) {
 	// location. The only downsize is that entities that are mid-way a tile will not find one. Since
 	// this is not a feature yet, we can use it regardless:
 	const start = terrain.getTileEqualToLocation(entity.$$location.get());
+	if (!start) {
+		throw new Error(`Entity "${entity.id}" lives on a detached coordinate`);
+	}
 	const path = new Path(terrain, { closest: true }).findPathBetween(start, destination);
 
 	// -----------------------------

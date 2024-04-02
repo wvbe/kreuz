@@ -2,13 +2,13 @@ import React, { type FunctionComponent } from 'react';
 import { createRoot } from 'react-dom';
 
 import { GameInterface, useGeneratedGame } from '@ui';
-import { behaviorTest } from '@scenarios';
+import { digTest } from '@scenarios';
 import { BrowserDriver } from './BrowserDriver.ts';
 
 const driver = new BrowserDriver();
 
 const Application: FunctionComponent = () => {
-	const game = useGeneratedGame(behaviorTest, driver);
+	const game = useGeneratedGame(digTest, driver);
 
 	if (!game) {
 		return <p className="please-wait">Please wait…</p>;

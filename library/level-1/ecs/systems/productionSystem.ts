@@ -97,6 +97,9 @@ async function assignWorkerToFactory(
 	}
 	await worker.$status.push(`Going to ${factory} for work`);
 	const tile = game.terrain.getTileEqualToLocation(factory.$$location.get());
+	if (!tile) {
+		throw new Error(`Entity "${factory.id}" lives on a detached coordinate`);
+	}
 	await worker.walkToTile(tile);
 	if (worker.$health.get() <= 0) {
 		// Worker died on the way to the factory :(

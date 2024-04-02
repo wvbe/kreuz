@@ -60,7 +60,7 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 
 		await entity.$status.push(`Going to ${deal.supplier} for a hauling job`);
 
-		const supplier = game.terrain.getTileEqualToLocation(deal.supplier.$$location.get());
+		const supplier = game.terrain.getTileEqualToLocation(deal.supplier.location.get());
 		if (!supplier) {
 			throw new Error(`Deal destination lives on a detached coordinate`);
 		}
@@ -89,7 +89,7 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 
 		await entity.$status.push(`Delivering cargo to ${deal.destination}`);
 
-		const destination = game.terrain.getTileEqualToLocation(deal.destination.$$location.get());
+		const destination = game.terrain.getTileEqualToLocation(deal.destination.location.get());
 		if (!destination) {
 			throw new Error(`Deal destination lives on a detached coordinate`);
 		}
@@ -136,7 +136,7 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 
 		let desirability = 1;
 		const maximumDistanceWillingToTravel = 20,
-			distanceToJob = entity.$$location.get().euclideanDistanceTo(deal.supplier.$$location.get()),
+			distanceToJob = entity.euclideanDistanceTo(deal.supplier.location.get()),
 			// 1 = very close job, 0 = infinitely far
 			distanceMultiplier = Math.max(
 				0,

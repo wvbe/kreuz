@@ -27,7 +27,7 @@ export const SelectedEntityContextProvider: FC<PropsWithChildren> = ({ children 
 			if (!entity) {
 				return;
 			}
-			return navigate(ROUTE_ENTITIES_DETAILS, { entityId: entity.id });
+			return navigate(ROUTE_ENTITIES_DETAILS, { entityId: String(entity.id) });
 		},
 		[setCurrent],
 	);

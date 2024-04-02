@@ -1,7 +1,5 @@
-import { EcsEntity } from '../types.ts';
-import { CoordinateI } from '../../terrain/types.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
-import { EcsSystem } from '../classes/EcsSystem.ts';
+import { EcsEntity } from '../types.ts';
 
 /**
  * Entities with this component can be walked over, and (so long as they are connected to other

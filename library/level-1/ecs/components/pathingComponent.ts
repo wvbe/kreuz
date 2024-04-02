@@ -1,21 +1,20 @@
+import { healthComponent } from '@lib/core';
 import type Game from '../../Game.ts';
-import { Path } from './pathingComponent/Path.ts';
 import { Event } from '../../events/Event.ts';
 import { EventedValue } from '../../events/EventedValue.ts';
-import { healthComponent } from '@lib/core';
-import { Coordinate } from '../../terrain/Coordinate.ts';
+import { SimpleCoordinate } from '../../terrain/types.ts';
 import { CallbackFn } from '../../types.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
 import { EcsEntity } from '../types.ts';
 import { locationComponent } from './locationComponent.ts';
 import { pathableComponent } from './pathableComponent.ts';
-import { type CoordinateI } from '../../terrain/types.ts';
+import { Path } from './pathingComponent/Path.ts';
 
 type WalkableEntity = EcsEntity<typeof locationComponent | typeof pathingComponent>;
 type WalkableTile = EcsEntity<typeof locationComponent | typeof pathableComponent>;
 
-async function animateTo(entity: WalkableEntity, destination: CoordinateI) {
-	const distance = entity.$$location.get().euclideanDistanceTo(destination as CoordinateI);
+async function animateTo(entity: WalkableEntity, destination: SimpleCoordinate) {
+	const distance = entity.euclideanDistanceTo(destination);
 	await entity.$stepStart.set({
 		destination,
 		duration: distance / entity.walkSpeed,
@@ -32,12 +31,12 @@ async function walkToTile(entity: WalkableEntity, game: Game, destination: Walka
 	// .getTileClosestToXy actually finds the _wrong_ tile -- because its neighbor is closer than
 	// the proximity to z=0. In that case, there is a bug:
 	//
-	// const start = terrain.getTileClosestToXy(this.$$location.get().x, this.$$location.get().y);
+	// const start = terrain.getTileClosestToXy(this.location.get().x, this.location.get().y);
 	//
 	// To work around the bug, and as a cheaper option, find the tile whose XY is equal to the current
 	// location. The only downsize is that entities that are mid-way a tile will not find one. Since
 	// this is not a feature yet, we can use it regardless:
-	const start = game.terrain.getTileEqualToLocation(entity.$$location.get());
+	const start = game.terrain.getTileEqualToLocation(entity.location.get());
 	if (!start) {
 		throw new Error(`Entity "${entity.id}" lives on a detached coordinate`);
 	}
@@ -55,14 +54,14 @@ async function walkToTile(entity: WalkableEntity, game: Game, destination: Walka
 	await entity.$pathStart.emit(path);
 
 	const unlisten = entity.$stepEnd.on(async (coordinate) => {
-		entity.$$location.set(coordinate);
+		entity.location.set(coordinate);
 		const nextStep = path.shift();
 		if (!nextStep) {
 			unlisten();
 			unlistenNewPath();
 			await entity.$pathEnd.emit();
 		} else {
-			await animateTo(entity, nextStep.$$location.get());
+			await animateTo(entity, nextStep.location.get());
 		}
 	});
 
@@ -94,7 +93,7 @@ async function walkToTile(entity: WalkableEntity, game: Game, destination: Walka
 	});
 
 	// Take the first step to kick off this event chain;
-	await animateTo(entity, nextTileInPath.$$location.get());
+	await animateTo(entity, nextTileInPath.location.get());
 
 	return promise;
 }
@@ -130,7 +129,7 @@ export const pathingComponent = new EcsComponent<
 			/**
 			 * The destination of this step
 			 */
-			destination: CoordinateI;
+			destination: SimpleCoordinate;
 			/**
 			 * The expected duration of time it takes to perform this step
 			 */
@@ -145,7 +144,7 @@ export const pathingComponent = new EcsComponent<
 		/**
 		 * Emitted when the entity finishes a step in the path.
 		 */
-		$stepEnd: Event<[CoordinateI]>;
+		$stepEnd: Event<[SimpleCoordinate]>;
 	}
 >(
 	(entity) =>
@@ -161,11 +160,11 @@ export const pathingComponent = new EcsComponent<
 			$pathStart: new Event<[]>('pathingComponent $pathStart'),
 			$pathEnd: new Event<[]>('pathingComponent $pathEnd'),
 			$stepStart: new EventedValue<{
-				destination: CoordinateI;
+				destination: SimpleCoordinate;
 				duration: number;
 				done: CallbackFn;
 			} | null>(null, 'pathingComponent $stepStart'),
-			$stepEnd: new Event<[CoordinateI]>('pathingComponent $stepEnd'),
+			$stepEnd: new Event<[SimpleCoordinate]>('pathingComponent $stepEnd'),
 		});
 	},
 );

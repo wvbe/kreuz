@@ -28,7 +28,7 @@ Deno.test('System: productionSystem', async (test) => {
 			expect(game.time.now).toBe(0);
 		});
 		await test.step('Worker is in their starting position', () => {
-			expect(worker.$$location.get().toArray()).toEqual([0, 0, 1]);
+			expect(worker.location.get()).toEqual([0, 0, 1]);
 		});
 		await test.step('Factory does not have workers', () => {
 			expect(factory.$workers.length).toBe(0);
@@ -45,7 +45,7 @@ Deno.test('System: productionSystem', async (test) => {
 			expect(game.time.now).toBe(3004);
 		});
 		await test.step('Person is physically at the factory', () => {
-			expect(worker.$$location.get().toArray()).toEqual(factory.$$location.get().toArray());
+			expect(worker.location.get()).toEqual(factory.location.get());
 		});
 		await test.step('Factory does have workers', () => {
 			expect(factory.$workers.length).toBe(1);

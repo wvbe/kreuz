@@ -63,8 +63,7 @@ export class Path {
 			return heuristic.f;
 		});
 		this.#heuristic = (pos0, pos1) => {
-			const { x, y, z } = pos1.$$location.get();
-			return pos0.euclideanDistanceTo([x, y, z]);
+			return pos0.euclideanDistanceTo(pos1.location.get());
 		};
 	}
 
@@ -97,7 +96,7 @@ export class Path {
 			}
 
 			// End case -- result has been found, return the traced path.
-			if (currentNode.equalsMapLocation(end.$$location.get().toArray())) {
+			if (currentNode.equalsMapLocation(end.location.get())) {
 				return this.tracePath(currentNodeHeuristics);
 			}
 
@@ -181,7 +180,7 @@ export class Path {
 		const nearest: { tile: PathableEntity; distance: number; path?: PathableEntity[] }[] = options
 			.map((tile) => ({
 				tile,
-				distance: start.euclideanDistanceTo(tile.$$location.get().toArray()),
+				distance: start.euclideanDistanceTo(tile.location.get()),
 			}))
 			.sort((a, b) => a.distance - b.distance);
 

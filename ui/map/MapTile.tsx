@@ -35,13 +35,9 @@ export const MapTile: FunctionComponent<{
 		[contextMenu],
 	);
 
-	// if (!tile.isLand()) {
-	// 	return null;
-	// }
-
-	const loc = tile.$$location.get();
+	const [x1, y1] = tile.location.get();
 	const points = tile.outlineCoordinates
-		.map((coord) => `${(loc.x + coord.x) * zoom},${(loc.y + coord.y) * zoom}`)
+		.map(([x2, y2]) => `${(x1 + x2) * zoom},${(y1 + y2) * zoom}`)
 		.join(' ');
 
 	return <polygon points={points} fill={green.toString()} onContextMenu={onRmb} />;

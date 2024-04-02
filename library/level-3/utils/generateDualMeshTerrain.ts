@@ -1,5 +1,4 @@
 import {
-	Coordinate,
 	EcsEntity,
 	Random,
 	Terrain,
@@ -51,7 +50,7 @@ export function generateDualMeshTerrain(seed: SeedI, size: number, density: numb
 			outlineComponent.attach(entity, {
 				outlineCoordinates: mesh
 					.r_circulate_t([], i)
-					.map((i: number) => new Coordinate(mesh.t_x(i) - x, mesh.t_y(i) - y, z)),
+					.map((i: number) => [mesh.t_x(i) - x, mesh.t_y(i) - y, z]),
 			});
 			surfaceComponent.attach(entity, {
 				surfaceColor: z >= 0 ? 'red' : 'green',

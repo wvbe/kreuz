@@ -79,7 +79,7 @@ function scoreEntityVendor(entity: GroceryPurchasingEntity, vendor: GrocerySelli
 	let desirability = 1;
 
 	const maximumDistanceWillingToTravel = 20,
-		distanceToJob = vendor.$$location.get().euclideanDistanceTo(entity.$$location.get()),
+		distanceToJob = vendor.euclideanDistanceTo(entity.location.get()),
 		// 1 = very close job, 0 = infinitely far
 		distanceMultiplier = Math.max(
 			0,
@@ -158,7 +158,7 @@ async function doGrocery(
 
 	// await entity.$status.push(`Going to ${deal.vendor} to get some supplies
 
-	const vendorLocation = game.terrain.getTileEqualToLocation(vendor.$$location.get());
+	const vendorLocation = game.terrain.getTileEqualToLocation(vendor.location.get());
 	if (!vendorLocation) {
 		throw new Error(`Vendor "${vendor.id}" lives on a detached coordinate`);
 	}

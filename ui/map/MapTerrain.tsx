@@ -28,7 +28,7 @@ export const MapTerrain: FunctionComponent<{
 		() =>
 			terrain.tiles.reduce(
 				(b, tile) => {
-					const { x, y } = tile.$$location.get();
+					const [x, y] = tile.location.get();
 					return {
 						minX: Math.min(b.minX, x),
 						maxX: Math.max(b.minX, x),

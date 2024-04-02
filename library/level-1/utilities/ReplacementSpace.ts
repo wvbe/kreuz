@@ -1,26 +1,27 @@
 import type { TokenizedText } from '../../../ui/components/atoms/TokenizedText.tsx';
 
-export function token(bucket: string | number | symbol, item: { id: string }): string {
+export function token(bucket: string | number | symbol, item: { id: string | number }): string {
 	return `#{${String(bucket)}:${item.id}}`;
 }
 
-type BucketItems<BucketsGeneric extends Record<string, { id: string }>> =
+type BucketItems<BucketsGeneric extends Record<string, { id: string | number }>> =
 	BucketsGeneric extends Record<string, infer I> ? I : never;
 
-type BucketFunctions<BucketsGeneric extends Record<string, { id: string }>> = Record<
+type BucketFunctions<BucketsGeneric extends Record<string, { id: string | number }>> = Record<
 	string,
 	(id: string) => BucketItems<BucketsGeneric> | null
 >;
 
-export type ReplacementSpaceResult<BucketsGeneric extends Record<string, { id: string }>> = Array<
-	| string
-	| [
-			// A tuple of the matching item (or null), the key, and the entire token
-			BucketItems<BucketsGeneric> | null,
-			string,
-			string,
-	  ]
->;
+export type ReplacementSpaceResult<BucketsGeneric extends Record<string, { id: string | number }>> =
+	Array<
+		| string
+		| [
+				// A tuple of the matching item (or null), the key, and the entire token
+				BucketItems<BucketsGeneric> | null,
+				string,
+				string,
+		  ]
+	>;
 
 /**
  * A registry that can be used find tokens of different kinds, to be replaced with different stuff.
@@ -28,7 +29,7 @@ export type ReplacementSpaceResult<BucketsGeneric extends Record<string, { id: s
  * For example, {@link TokenizedText &lt;TokenizedText/&gt;} uses an instance of `ReplacementSpace` to render
  * clickable links instead of the mention of an entity.
  */
-export class ReplacementSpace<BucketsGeneric extends Record<string, { id: string }>> {
+export class ReplacementSpace<BucketsGeneric extends Record<string, { id: string | number }>> {
 	#buckets: BucketFunctions<BucketsGeneric>;
 
 	public constructor(buckets: BucketFunctions<BucketsGeneric>) {

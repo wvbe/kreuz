@@ -1,4 +1,3 @@
-import { CoordinateI } from '../../terrain/types.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
 
 /**

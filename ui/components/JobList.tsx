@@ -38,7 +38,7 @@ export const JobList: FunctionComponent<{
 }> = ({ entity }) => {
 	const game = useGameContext();
 
-	const jobs = useCombinedEventCollection(game.jobs, entity?.$$location);
+	const jobs = useCombinedEventCollection(game.jobs, entity?.location);
 	const sortedJobs = useMemo(
 		() =>
 			jobs

@@ -24,13 +24,16 @@ export const MapEntity: FunctionComponent<
 	const game = useGameContext();
 	const onRmb = useCallback<MouseEventHandler<HTMLDivElement>>(
 		(event) => {
-			const tile = game.terrain.getTileEqualToLocation(entity.$$location.get());
+			const tile = game.terrain.getTileEqualToLocation(entity.location.get());
+			if (!tile) {
+				throw new Error(`Entity "${entity.id}" lives on a detached coordinate`);
+			}
 			contextMenu.open(event, { tile });
 		},
 		[contextMenu],
 	);
 
-	const { x, y } = useEventedValue(entity.$$location);
+	const [x, y] = useEventedValue(entity.location);
 	return (
 		<div
 			className={`meta--emoji-symbols map-entity ${isSelected ? `map-entity--selected` : ''}`}

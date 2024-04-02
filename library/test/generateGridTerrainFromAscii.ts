@@ -1,5 +1,3 @@
-import { Coordinate } from '../level-1/terrain/Coordinate.ts';
-import { Terrain } from '../level-1/terrain/Terrain.ts';
 import {
 	EcsEntity,
 	locationComponent,
@@ -7,6 +5,7 @@ import {
 	pathableComponent,
 	surfaceComponent,
 } from '@lib/core';
+import { Terrain } from '../level-1/terrain/Terrain.ts';
 
 const adjacency = [
 	[-1, 0],
@@ -37,11 +36,11 @@ export function generateGridTerrainFromAscii(ascii: string) {
 			pathableComponent.attach(entity, { walkability: character === '-' ? 0 : 1 });
 			outlineComponent.attach(entity, {
 				outlineCoordinates: [
-					[-0.5, -0.5],
-					[0.5, -0.5],
-					[0.5, 0.5],
-					[-0.5, 0.5],
-				].map(([x, y]) => new Coordinate(x, y, 0)),
+					[-0.5, -0.5, 0],
+					[0.5, -0.5, 0],
+					[0.5, 0.5, 0],
+					[-0.5, 0.5, 0],
+				],
 			});
 			return entity as TileEntity;
 		}),

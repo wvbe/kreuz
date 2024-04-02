@@ -96,7 +96,7 @@ async function assignWorkerToFactory(
 		throw new Error('Dead people cannot work');
 	}
 	await worker.$status.push(`Going to ${factory} for work`);
-	const tile = game.terrain.getTileEqualToLocation(factory.$$location.get());
+	const tile = game.terrain.getTileEqualToLocation(factory.location.get());
 	if (!tile) {
 		throw new Error(`Entity "${factory.id}" lives on a detached coordinate`);
 	}
@@ -315,7 +315,7 @@ async function attachSystemToEntity(game: Game, factory: ProductionSystemFactory
 					let desirability = 1;
 
 					const maximumDistanceWillingToTravel = 20,
-						distanceToJob = entity.$$location.get().euclideanDistanceTo(factory.$$location.get()),
+						distanceToJob = entity.euclideanDistanceTo(factory.location.get()),
 						// 1 = very close job, 0 = infinitely far
 						distanceMultiplier = Math.max(
 							0,

@@ -25,7 +25,7 @@ export default async function (driver: DriverI) {
 	const game = new Game(driver, '1', terrain, DEFAULT_ASSETS);
 
 	const entity = personArchetype.create({
-		location: terrain.getTileClosestToXy(0, 0).$$location.get().toArray(),
+		location: terrain.getTileClosestToXy(0, 0).location.get(),
 		name: 'Ro-bot',
 		icon: '🤖',
 		behavior: null,
@@ -35,7 +35,7 @@ export default async function (driver: DriverI) {
 	await game.entities.add(entity);
 
 	const well = factoryArchetype.create({
-		location: terrain.getTileClosestToXy(3, 3).$$location.get().toArray(),
+		location: terrain.getTileClosestToXy(3, 3).location.get(),
 		owner: headOfState,
 		blueprint: blueprints.getWaterFromWell,
 		maxWorkers: 0,

@@ -3,7 +3,7 @@ import { type locationComponent } from '../ecs/components/locationComponent.ts';
 import { type pathableComponent } from '../ecs/components/pathableComponent.ts';
 import { EcsEntity } from '../ecs/types.ts';
 import { FilterFn } from '../types.ts';
-import { type CoordinateI, type SimpleCoordinate, type TerrainI } from './types.ts';
+import { type SimpleCoordinate, type TerrainI } from './types.ts';
 export type SaveTerrainJson = {
 	tiles: Array<{
 		center: SimpleCoordinate;
@@ -33,10 +33,10 @@ export class Terrain implements TerrainI<TileEcs> {
 		return this.#tiles;
 	}
 
-	public getTileEqualToLocation(location: CoordinateI, lax?: false): TileEcs;
-	public getTileEqualToLocation(location: CoordinateI, lax?: true): TileEcs | null;
-	public getTileEqualToLocation(location: CoordinateI, lax?: boolean) {
-		const tile = this.#tiles.find((tile) => tile.equalsMapLocation(location.toArray())) || null;
+	public getTileEqualToLocation(location: SimpleCoordinate, lax?: false): TileEcs;
+	public getTileEqualToLocation(location: SimpleCoordinate, lax?: true): TileEcs | null;
+	public getTileEqualToLocation(location: SimpleCoordinate, lax?: boolean) {
+		const tile = this.#tiles.find((tile) => tile.equalsMapLocation(location)) || null;
 		if (!tile && !lax) {
 			throw new Error(`No tile matches coordinate ${location} exactly`);
 		}
@@ -71,10 +71,10 @@ export class Terrain implements TerrainI<TileEcs> {
 	/**
 	 * Get the tiles closest to the starting tile (not counting the starting tile itself).
 	 */
-	public selectClosestTiles(start: CoordinateI, maxDistance: number): TileEcs[] {
+	public selectClosestTiles(start: SimpleCoordinate, maxDistance: number): TileEcs[] {
 		return this.selectContiguousTiles(
-			this.getTileClosestToXy(start.x, start.y),
-			(tile) => tile.walkability > 0 && tile.euclideanDistanceTo(start.toArray()) <= maxDistance,
+			this.getTileClosestToXy(start[0], start[1]),
+			(tile) => tile.walkability > 0 && tile.euclideanDistanceTo(start) <= maxDistance,
 			false,
 		);
 	}

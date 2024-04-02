@@ -70,7 +70,7 @@ export async function generateEntities(game: Game) {
 	const dog = { id: 'dog' };
 	visibilityComponent.attach(dog, { name: 'Archibald', icon: '🐶' });
 	locationComponent.attach(dog, {
-		location: Random.fromArray(walkableTiles, 'dog').$$location.get().toArray(),
+		location: Random.fromArray(walkableTiles, 'dog').location.get(),
 	});
 	pathingComponent.attach(dog, { walkSpeed: 0.1 });
 	statusComponent.attach(dog, { status: 'Being a good boy' });
@@ -83,7 +83,7 @@ export async function generateEntities(game: Game) {
 		const tile = Random.fromArray(walkableTiles, id);
 		const blueprint = Random.fromArray(Object.values(blueprints), id, 'blueprint');
 		const factory = factoryArchetype.create({
-			location: tile.$$location.get().toArray(),
+			location: tile.location.get(),
 			owner: headOfState,
 			blueprint,
 			maxWorkers: 1 * blueprint.options.workersRequired,
@@ -116,7 +116,7 @@ export async function generateEntities(game: Game) {
 		const tile = Random.fromArray(walkableTiles, id);
 		const material = Random.fromArray(FOODS, id, '-mat');
 		const market = marketArchetype.create({
-			location: tile.$$location.get().toArray(),
+			location: tile.location.get(),
 			materials: [material],
 			owner: headOfState,
 			maxStackSpace: 6,
@@ -131,7 +131,7 @@ export async function generateEntities(game: Game) {
 	for (let i = 0; i < Random.between(6, 8, game.seed, 'guardamount'); i++) {
 		const id = `${game.seed}-person-${i}`;
 		const person = personArchetype.create({
-			location: Random.fromArray(walkableTiles, id).$$location.get().toArray(),
+			location: Random.fromArray(walkableTiles, id).location.get(),
 			...generatePassport([id]),
 			behavior: behavior.civilianBehavior,
 		});

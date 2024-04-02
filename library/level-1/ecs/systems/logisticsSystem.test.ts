@@ -55,7 +55,7 @@ Deno.test('System: logisticsSystem', async (test) => {
 			expect(game.time.now).toBe(0);
 		});
 		await test.step('Person is in their starting position', () => {
-			expect(worker.$$location.get().toArray()).toEqual([0, 0, 1]);
+			expect(worker.location.get()).toEqual([0, 0, 1]);
 		});
 		await test.step('There is a job posting', () => {
 			expect(game.jobs.globalJobCount).toBe(0);
@@ -66,7 +66,7 @@ Deno.test('System: logisticsSystem', async (test) => {
 		await game.time.steps(9_000);
 		expect(game.time.now).toBe(9_000);
 		await test.step('Person is still in their starting position', () => {
-			expect(worker.$$location.get().toArray()).toEqual([0, 0, 1]);
+			expect(worker.location.get()).toEqual([0, 0, 1]);
 		});
 		await test.step('There is a job posting', () => {
 			expect(game.jobs.globalJobCount).toBe(0);
@@ -79,7 +79,7 @@ Deno.test('System: logisticsSystem', async (test) => {
 		expect(providerChest.inventory.availableOf(wheat)).toBe(900);
 		expect(worker.inventory.reservedOutgoingOf(wheat)).toBe(0);
 		await test.step('Person is still in their starting position', () => {
-			expect(worker.$$location.get().toArray()).toEqual([0, 0, 1]);
+			expect(worker.location.get()).toEqual([0, 0, 1]);
 		});
 		await test.step('Worker has a status update', () => {
 			expect(worker.$status.get()).toBe('Going to #{entity:chest-2/2/1} for a hauling job');
@@ -95,7 +95,7 @@ Deno.test('System: logisticsSystem', async (test) => {
 		expect(game.time.now).toBe(14_001);
 		expect(worker.inventory.reservedOutgoingOf(wheat)).toBe(0);
 		await test.step('Person location is same as provider chest', () => {
-			expect(worker.$$location.get().toArray()).toEqual(providerChest.$$location.get().toArray());
+			expect(worker.location.get()).toEqual(providerChest.location.get());
 		});
 		await test.step('Provider clears its outgoing reservation', () => {
 			expect(providerChest.inventory.reservedOutgoingOf(wheat)).toBe(0);

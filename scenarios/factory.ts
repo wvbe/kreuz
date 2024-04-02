@@ -28,7 +28,7 @@ export default async function (driver: DriverI) {
 	const game = new Game(driver, '1', terrain, DEFAULT_ASSETS);
 
 	const factory = factoryArchetype.create({
-		location: terrain.getTileClosestToXy(3, 3).$$location.get().toArray(),
+		location: terrain.getTileClosestToXy(3, 3).location.get(),
 		owner: headOfState,
 		blueprint: blueprints.beeKeeping,
 		maxWorkers: 20,
@@ -39,7 +39,7 @@ export default async function (driver: DriverI) {
 
 	for (let i = 0; i < 5; i++) {
 		const entity = personArchetype.create({
-			location: terrain.getTileClosestToXy(0, 0).$$location.get().toArray(),
+			location: terrain.getTileClosestToXy(0, 0).location.get(),
 			icon: '🤖',
 			name: `Test dummy ${i + 1}`,
 			behavior: createJobWorkBehavior(),

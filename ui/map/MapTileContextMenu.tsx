@@ -36,14 +36,15 @@ export const MapTileContextMenu: FC<{
 	const tileEntities = game.entities.filter(
 		(entity) =>
 			locationComponent.test(entity) &&
-			(entity as EcsEntity<typeof locationComponent>).equalsMapLocation(
-				tile.$$location.get().toArray(),
-			),
+			(entity as EcsEntity<typeof locationComponent>).equalsMapLocation(tile.location.get()),
 	);
 	return (
 		<div className="map-tile-context-menu">
 			<MapTileContextMenuItem>
-				{tile.$$location.get().x},{tile.$$location.get().y}
+				{tile.location
+					.get()
+					.map((num) => num.toFixed(2))
+					.join(', ')}
 			</MapTileContextMenuItem>
 			{tileEntities
 				.filter((entity): entity is EcsEntity<typeof visibilityComponent> =>

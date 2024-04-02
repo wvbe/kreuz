@@ -6,7 +6,7 @@ import { createLoiterBehavior } from './reusable/nodes/createLoiterBehavior.ts';
 describe('BT: createLoiterBehavior()', async () => {
 	const game = generateEmptyGame(),
 		entity = personArchetype.create({
-			location: game.terrain.getTileClosestToXy(3, 3).toArray(),
+			location: game.terrain.getTileClosestToXy(3, 3).location.get(),
 			behavior: createLoiterBehavior(),
 			icon: '🤖',
 			name: 'Loiterbot',

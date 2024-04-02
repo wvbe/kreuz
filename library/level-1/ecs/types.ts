@@ -1,6 +1,9 @@
 import { type EcsArchetype } from './classes/EcsArchetype.ts';
 import { type EcsComponent } from './classes/EcsComponent.ts';
 
+/**
+ * Utility type to convert a union type (|) to an intersection type (&).
+ */
 type UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (x: infer I) => void
 	? I
 	: never;
@@ -12,7 +15,7 @@ type _EcsDataFromComponent<ComponentGeneric extends EcsComponent<any, any>> =
  * An entity, with the components as per the `ComponentGeneric` type parameter.
  */
 export type EcsEntity<ComponentGeneric extends EcsComponent<any, any> = EcsComponent> = {
-	id: string;
+	id: string | number;
 } & UnionToIntersection<_EcsDataFromComponent<ComponentGeneric>>;
 
 /**

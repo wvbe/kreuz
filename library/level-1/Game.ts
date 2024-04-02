@@ -1,4 +1,5 @@
 import { type DEFAULT_ASSETS } from '../level-2/DEFAULT_ASSETS.ts';
+import { outlineComponent } from '@lib';
 import { JobBoard } from './classes/JobBoard.ts';
 import { type StrictMap } from './classes/StrictMap.ts';
 import { TimeLine } from './classes/TimeLine.ts';
@@ -10,6 +11,8 @@ import {
 	type BehaviorTreeNodeI,
 	type EntityBlackboard,
 } from './ecs/components/behaviorComponent/types.ts';
+import { locationComponent } from './ecs/components/locationComponent.ts';
+import { pathableComponent } from './ecs/components/pathableComponent.ts';
 import { type Blueprint } from './ecs/components/productionComponent/Blueprint.ts';
 import { behaviorTreeSystem } from './ecs/systems/behaviorTreeSystem.ts';
 import { grocerySystem } from './ecs/systems/grocerySystem.ts';
@@ -19,6 +22,7 @@ import { productionSystem } from './ecs/systems/productionSystem.ts';
 import { selfsustainingSystem } from './ecs/systems/selfsustainingSystem.ts';
 import { type EcsEntity } from './ecs/types.ts';
 import { KeyedCollection } from './events/KeyedCollection.ts';
+import { UserInput } from './inputs/UserInput.ts';
 import { type Material } from './inventory/Material.ts';
 import { Terrain } from './terrain/Terrain.ts';
 import { type TerrainI } from './terrain/types.ts';
@@ -30,6 +34,10 @@ export type GameAssets = {
 	materials: StrictMap<Material>;
 	blueprints: StrictMap<Blueprint>;
 };
+
+type GameTerrainTile = EcsEntity<
+	typeof locationComponent | typeof pathableComponent | typeof outlineComponent
+>;
 
 /**
  * Represents one game world, where entities interact with eachother and things around them.
@@ -72,7 +80,7 @@ export default class Game {
 	/**
 	 * The geography in which all game events supposedly take place. A magical land.
 	 */
-	public readonly terrain: TerrainI;
+	public readonly terrain: TerrainI<GameTerrainTile>;
 
 	/**
 	 * A seed number or string to help create semi-random things.
@@ -93,7 +101,12 @@ export default class Game {
 
 	public readonly inputs = new UserInput();
 
-	constructor(driver: DriverI, seed: SeedI, terrain: TerrainI, assets: GameAssets) {
+	constructor(
+		driver: DriverI,
+		seed: SeedI,
+		terrain: TerrainI<GameTerrainTile>,
+		assets: GameAssets,
+	) {
 		this.driver = driver;
 
 		this.seed = seed;
@@ -118,7 +131,7 @@ export default class Game {
 	public toSaveJson(): SavedGameJson {
 		return {
 			version: 'alpha', // todo version some time,
-			terrain: this.terrain.toSaveJson(),
+			// terrain: this.terrain.toSaveJson(),
 			// entities: this.entities.map((entity) =>
 			// 	entity.toSaveJson(this.assets),
 			// ) as SavedGameJson['entities'],
@@ -132,15 +145,15 @@ export default class Game {
 	 *
 	 * @todo re-enable JSON-deseriazing ECS entities, or rather, their components.
 	 */
-	public static async fromSaveJson(
-		driver: DriverI,
-		assets: GameAssets,
-		save: SavedGameJson,
-	): Promise<Game> {
-		const game = new Game(driver, save.seed, Terrain.fromSaveJson(save.terrain), assets);
-		// await game.entities.add(
-		// 	...(await Promise.all(save.entities.map((entity) => castSaveJsonToEntity(assets, entity)))),
-		// );
-		return game;
-	}
+	// public static async fromSaveJson(
+	// 	driver: DriverI,
+	// 	assets: GameAssets,
+	// 	save: SavedGameJson,
+	// ): Promise<Game> {
+	// 	const game = new Game(driver, save.seed, Terrain.fromSaveJson(save.terrain), assets);
+	// 	// await game.entities.add(
+	// 	// 	...(await Promise.all(save.entities.map((entity) => castSaveJsonToEntity(assets, entity)))),
+	// 	// );
+	// 	return game;
+	// }
 }

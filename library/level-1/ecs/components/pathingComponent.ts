@@ -1,3 +1,4 @@
+import type Game from '../../Game.ts';
 import { Path } from './pathingComponent/Path.ts';
 import { Event } from '../../events/Event.ts';
 import { EventedValue } from '../../events/EventedValue.ts';
@@ -7,9 +8,11 @@ import { CallbackFn } from '../../types.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
 import { EcsEntity } from '../types.ts';
 import { locationComponent } from './locationComponent.ts';
-import { type CoordinateI, type TileI } from '../../terrain/types.ts';
+import { pathableComponent } from './pathableComponent.ts';
+import { type CoordinateI } from '../../terrain/types.ts';
 
 type WalkableEntity = EcsEntity<typeof locationComponent | typeof pathingComponent>;
+type WalkableTile = EcsEntity<typeof locationComponent | typeof pathableComponent>;
 
 async function animateTo(entity: WalkableEntity, destination: CoordinateI) {
 	const distance = entity.$$location.get().euclideanDistanceTo(destination as CoordinateI);
@@ -20,14 +23,9 @@ async function animateTo(entity: WalkableEntity, destination: CoordinateI) {
 	});
 }
 
-async function walkToTile(entity: WalkableEntity, destination: TileI) {
+async function walkToTile(entity: WalkableEntity, game: Game, destination: WalkableTile) {
 	if (!locationComponent.test(entity) || !pathingComponent.test(entity)) {
 		throw new Error(`Entity ${entity} is unable to walk`);
-	}
-
-	const terrain = destination.terrain;
-	if (!terrain) {
-		throw new Error(`Entity "${entity.id}" is trying to path to a detached coordinate`);
 	}
 
 	// Its _possible_ that an entity lives on a tile that has so much elevation that
@@ -39,11 +37,11 @@ async function walkToTile(entity: WalkableEntity, destination: TileI) {
 	// To work around the bug, and as a cheaper option, find the tile whose XY is equal to the current
 	// location. The only downsize is that entities that are mid-way a tile will not find one. Since
 	// this is not a feature yet, we can use it regardless:
-	const start = terrain.getTileEqualToLocation(entity.$$location.get());
+	const start = game.terrain.getTileEqualToLocation(entity.$$location.get());
 	if (!start) {
 		throw new Error(`Entity "${entity.id}" lives on a detached coordinate`);
 	}
-	const path = new Path(terrain, { closest: true }).findPathBetween(start, destination);
+	const path = new Path({ closest: true }).findPathBetween(start, destination);
 
 	// -----------------------------
 
@@ -64,7 +62,7 @@ async function walkToTile(entity: WalkableEntity, destination: TileI) {
 			unlistenNewPath();
 			await entity.$pathEnd.emit();
 		} else {
-			await animateTo(entity, nextStep);
+			await animateTo(entity, nextStep.$$location.get());
 		}
 	});
 
@@ -96,7 +94,7 @@ async function walkToTile(entity: WalkableEntity, destination: TileI) {
 	});
 
 	// Take the first step to kick off this event chain;
-	await animateTo(entity, nextTileInPath);
+	await animateTo(entity, nextTileInPath.$$location.get());
 
 	return promise;
 }
@@ -112,7 +110,7 @@ export const pathingComponent = new EcsComponent<
 		/**
 		 * A method to make this entity find a path towards the given tile and animate towards it.
 		 */
-		walkToTile(tile: TileI): Promise<void>;
+		walkToTile(game: Game, tile: WalkableTile): Promise<void>;
 		/**
 		 * The distance covered per game time.
 		 */
@@ -120,7 +118,7 @@ export const pathingComponent = new EcsComponent<
 		/**
 		 * Emitted when the entity starts walking along a path.
 		 */
-		$pathStart: Event<[TileI[]]>;
+		$pathStart: Event<[WalkableTile[]]>;
 		/**
 		 * Emitted when the entity stops walking along a path.
 		 */

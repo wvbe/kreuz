@@ -13,7 +13,7 @@ export function createDigJob(game: Game, location: CoordinateI) {
 		assertEcsComponents(entity, [pathingComponent, locationComponent, inventoryComponent]);
 
 		const tile = game.terrain.getTileClosestToXy(location.x, location.y);
-		await entity.walkToTile(tile);
+		await entity.walkToTile(game, tile);
 		// tile.
 	};
 }

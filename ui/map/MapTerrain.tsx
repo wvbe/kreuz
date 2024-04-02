@@ -1,14 +1,20 @@
-import { Collection, EcsEntity, TerrainI, locationComponent, visibilityComponent } from '@lib';
+import {
+	Collection,
+	EcsEntity,
+	Game,
+	TerrainI,
+	locationComponent,
+	visibilityComponent,
+} from '@lib';
 import React, { FunctionComponent, useMemo } from 'react';
 import { MapTileContextMenuHost } from './MAP_TILE_CONTEXT_MENU.ts';
 import { MapEntity } from './MapEntity.tsx';
-import { MapTerrainOutline } from './MapTerrainOutline.tsx';
 import { MapTile } from './MapTile.tsx';
 
 const SVG_PADDING = 25;
 
 export const MapTerrain: FunctionComponent<{
-	terrain: TerrainI;
+	terrain: Game['terrain'];
 	entities: Collection<EcsEntity>;
 }> = ({ terrain, entities }) => {
 	const zoom = 32;
@@ -21,12 +27,15 @@ export const MapTerrain: FunctionComponent<{
 	const boundaries = useMemo(
 		() =>
 			terrain.tiles.reduce(
-				(b, tile) => ({
-					minX: Math.min(b.minX, tile.x),
-					maxX: Math.max(b.minX, tile.x),
-					minY: Math.min(b.minY, tile.y),
-					maxY: Math.max(b.minY, tile.y),
-				}),
+				(b, tile) => {
+					const { x, y } = tile.$$location.get();
+					return {
+						minX: Math.min(b.minX, x),
+						maxX: Math.max(b.minX, x),
+						minY: Math.min(b.minY, y),
+						maxY: Math.max(b.minY, y),
+					};
+				},
 				{
 					minX: Infinity,
 					maxX: -Infinity,
@@ -74,9 +83,7 @@ export const MapTerrain: FunctionComponent<{
 			<MapTileContextMenuHost>
 				<svg {...svgProps}>
 					<g className="tiles">{tiles}</g>
-					<g className="outline">
-						<MapTerrainOutline terrain={terrain} />
-					</g>
+					<g className="outline">{/* <MapTerrainOutline terrain={terrain} /> */}</g>
 				</svg>
 				<div style={overlayCss}>{entities2}</div>
 			</MapTileContextMenuHost>

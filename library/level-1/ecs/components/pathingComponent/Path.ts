@@ -6,18 +6,26 @@
 //   Includes Binary Heap (with modifications) from Marijn Haverbeke.
 //   http://eloquentjavascript.net/appendix2.html
 
-import { type TerrainI, type TileI } from '../../../terrain/types.ts';
+import { EcsEntity } from '@lib/core';
+import { locationComponent } from '../locationComponent.ts';
+import { pathableComponent } from '../pathableComponent.ts';
 import { BinaryHeap } from './BinaryHeap.ts';
 
+type PathableEntity = EcsEntity<typeof pathableComponent | typeof locationComponent>;
+
+function isPathableEntity(entity: EcsEntity): entity is PathableEntity {
+	return pathableComponent.test(entity) && locationComponent.test(entity);
+}
+
 // See list of heuristics: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
-type HeuristicScorer = (a: TileI, b: TileI) => number;
+type HeuristicScorer = (a: PathableEntity, b: PathableEntity) => number;
 
 /**
  * Perform an A* Search on a graph given a start and end node.
  */
 
 type HeuristicReport = {
-	coordinate: TileI;
+	coordinate: PathableEntity;
 	h: number;
 	g: number;
 	f: number;
@@ -34,22 +42,20 @@ type PathOptions = {
 /**
  * @TODO
  */
-function getVisitationCost(_terrain: TerrainI, _from: TileI, _neighbor: TileI) {
+function getVisitationCost(_from: PathableEntity, _neighbor: PathableEntity) {
 	return 1;
 }
 
 export class Path {
-	readonly #terrain: TerrainI;
 	readonly #options: PathOptions;
-	readonly #cache: Map<TileI, HeuristicReport>;
-	readonly #heap: BinaryHeap<TileI>;
+	readonly #cache: Map<PathableEntity, HeuristicReport>;
+	readonly #heap: BinaryHeap<PathableEntity>;
 	readonly #heuristic: HeuristicScorer;
 
-	constructor(graph: TerrainI, options: PathOptions) {
-		this.#terrain = graph;
+	constructor(options: PathOptions) {
 		this.#options = options;
-		this.#cache = new Map<TileI, HeuristicReport>();
-		this.#heap = new BinaryHeap<TileI>((node) => {
+		this.#cache = new Map<PathableEntity, HeuristicReport>();
+		this.#heap = new BinaryHeap<PathableEntity>((node) => {
 			const heuristic = this.#cache.get(node);
 			if (!heuristic) {
 				throw new Error('This is weird');
@@ -57,11 +63,12 @@ export class Path {
 			return heuristic.f;
 		});
 		this.#heuristic = (pos0, pos1) => {
-			return pos0.euclideanDistanceTo(pos1);
+			const { x, y, z } = pos1.$$location.get();
+			return pos0.euclideanDistanceTo([x, y, z]);
 		};
 	}
 
-	public findPathBetween(start: TileI, end: TileI) {
+	public findPathBetween(start: PathableEntity, end: PathableEntity) {
 		let closestNode = start; // set the start node to be the closest if required
 		let closestNodeHeuristics: HeuristicReport = {
 			coordinate: closestNode,
@@ -90,7 +97,7 @@ export class Path {
 			}
 
 			// End case -- result has been found, return the traced path.
-			if (currentNode.equals(end)) {
+			if (currentNode.equalsMapLocation(end.$$location.get().toArray())) {
 				return this.tracePath(currentNodeHeuristics);
 			}
 
@@ -98,21 +105,20 @@ export class Path {
 			currentNodeHeuristics.closed = true;
 
 			// Find all neighbors for the current node.
-			const neighbors = this.#terrain.getNeighborTiles(currentNode);
+			const neighbors = currentNode.pathingNeighbours.filter(isPathableEntity);
 
 			for (let i = 0, il = neighbors.length; i < il; ++i) {
 				const neighbor = neighbors[i];
 				let neighborHeuristics = this.#cache.get(neighbor);
 
-				if (neighborHeuristics?.closed || !neighbor.isLand()) {
+				if (neighborHeuristics?.closed || neighbor.walkability <= 0) {
 					// Not a valid node to process, skip to next neighbor.
 					continue;
 				}
 
 				// The g score is the shortest distance from start to current node.
 				// We need to check if the path we have arrived at this neighbor is the shortest one we have seen yet.
-				const gScore =
-					currentNodeHeuristics.g + getVisitationCost(this.#terrain, currentNode, neighbor);
+				const gScore = currentNodeHeuristics.g + getVisitationCost(currentNode, neighbor);
 				const beenVisited = !!neighborHeuristics;
 
 				if (!beenVisited || (neighborHeuristics && gScore < neighborHeuristics.g)) {
@@ -171,11 +177,11 @@ export class Path {
 	 *   path to it.
 	 * - As an optimization, may weed out the tiles that are on a different island early.
 	 */
-	public findPathToClosest(start: TileI, options: TileI[]) {
-		const nearest: { tile: TileI; distance: number; path?: TileI[] }[] = options
+	public findPathToClosest(start: PathableEntity, options: PathableEntity[]) {
+		const nearest: { tile: PathableEntity; distance: number; path?: PathableEntity[] }[] = options
 			.map((tile) => ({
 				tile,
-				distance: start.euclideanDistanceTo(tile),
+				distance: start.euclideanDistanceTo(tile.$$location.get().toArray()),
 			}))
 			.sort((a, b) => a.distance - b.distance);
 
@@ -212,10 +218,5 @@ export class Path {
 			curr = curr.parent;
 		}
 		return path.map((heuristicReport) => heuristicReport.coordinate);
-	}
-
-	static find(graph: TerrainI, start: TileI, end: TileI, options: PathOptions) {
-		const p = new Path(graph, options);
-		return p.findPathBetween(start, end);
 	}
 }

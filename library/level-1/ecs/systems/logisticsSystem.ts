@@ -64,7 +64,7 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 		if (!supplier) {
 			throw new Error(`Deal destination lives on a detached coordinate`);
 		}
-		await entity.walkToTile(supplier);
+		await entity.walkToTile(game, supplier);
 		if (entity.$health.get() <= 0) {
 			// Worker died to retrieve the cargo. There is now an inventory reservation that will never be fulfilled.
 			// @TODO release inventory reservations
@@ -93,7 +93,7 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 		if (!destination) {
 			throw new Error(`Deal destination lives on a detached coordinate`);
 		}
-		await entity.walkToTile(destination);
+		await entity.walkToTile(game, destination);
 
 		if (entity.$health.get() <= 0) {
 			// Worker died on the way to deliver the cargo.

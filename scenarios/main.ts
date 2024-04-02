@@ -62,14 +62,16 @@ async function generateRandomInventories(game: Game) {
 }
 
 export async function generateEntities(game: Game) {
-	const walkableTiles = game.terrain.tiles.filter((c) => c.isLand());
+	const walkableTiles = game.terrain.tiles.filter((tile) => tile.walkability > 0);
 	if (!walkableTiles.length) {
 		throw new Error('The terrain does not contain any walkable tiles!');
 	}
 
 	const dog = { id: 'dog' };
 	visibilityComponent.attach(dog, { name: 'Archibald', icon: '🐶' });
-	locationComponent.attach(dog, { location: Random.fromArray(walkableTiles, 'dog').toArray() });
+	locationComponent.attach(dog, {
+		location: Random.fromArray(walkableTiles, 'dog').$$location.get().toArray(),
+	});
 	pathingComponent.attach(dog, { walkSpeed: 0.1 });
 	statusComponent.attach(dog, { status: 'Being a good boy' });
 	healthComponent.attach(dog, { health: 1 });
@@ -81,7 +83,7 @@ export async function generateEntities(game: Game) {
 		const tile = Random.fromArray(walkableTiles, id);
 		const blueprint = Random.fromArray(Object.values(blueprints), id, 'blueprint');
 		const factory = factoryArchetype.create({
-			location: tile.toArray(),
+			location: tile.$$location.get().toArray(),
 			owner: headOfState,
 			blueprint,
 			maxWorkers: 1 * blueprint.options.workersRequired,
@@ -114,7 +116,7 @@ export async function generateEntities(game: Game) {
 		const tile = Random.fromArray(walkableTiles, id);
 		const material = Random.fromArray(FOODS, id, '-mat');
 		const market = marketArchetype.create({
-			location: tile.toArray(),
+			location: tile.$$location.get().toArray(),
 			materials: [material],
 			owner: headOfState,
 			maxStackSpace: 6,
@@ -129,7 +131,7 @@ export async function generateEntities(game: Game) {
 	for (let i = 0; i < Random.between(6, 8, game.seed, 'guardamount'); i++) {
 		const id = `${game.seed}-person-${i}`;
 		const person = personArchetype.create({
-			location: Random.fromArray(walkableTiles, id).toArray(),
+			location: Random.fromArray(walkableTiles, id).$$location.get().toArray(),
 			...generatePassport([id]),
 			behavior: behavior.civilianBehavior,
 		});

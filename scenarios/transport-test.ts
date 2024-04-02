@@ -24,7 +24,7 @@ export default async function (driver: DriverI) {
 	const game = new Game(driver, '1', terrain, DEFAULT_ASSETS);
 
 	const farm = factoryArchetype.create({
-		location: terrain.getTileClosestToXy(3, 3).toArray(),
+		location: terrain.getTileClosestToXy(3, 3).$$location.get().toArray(),
 		owner: headOfState,
 		blueprint: blueprints.growWheat,
 		maxWorkers: 1,
@@ -33,7 +33,7 @@ export default async function (driver: DriverI) {
 	await farm.inventory.set(materials.wheat, 99);
 
 	const mill = factoryArchetype.create({
-		location: terrain.getTileClosestToXy(8, 3).toArray(),
+		location: terrain.getTileClosestToXy(8, 3).$$location.get().toArray(),
 		owner: headOfState,
 		blueprint: blueprints.milling,
 		maxWorkers: 1,
@@ -44,7 +44,7 @@ export default async function (driver: DriverI) {
 
 	for (let i = 0; i < 5; i++) {
 		const entity = personArchetype.create({
-			location: terrain.getTileClosestToXy(0, 0).toArray(),
+			location: terrain.getTileClosestToXy(0, 0).$$location.get().toArray(),
 			icon: '🤖',
 			name: `Test dummy ${i + 1}`,
 			behavior: behavior.civilianBehavior,

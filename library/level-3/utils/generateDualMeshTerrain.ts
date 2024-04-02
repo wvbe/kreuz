@@ -1,6 +1,23 @@
-import { DualMeshTile, Random, Terrain, TerrainI, type SeedI } from '@lib/core';
+import {
+	Coordinate,
+	EcsEntity,
+	Random,
+	Terrain,
+	locationComponent,
+	outlineComponent,
+	pathableComponent,
+	surfaceComponent,
+	type SeedI,
+} from '@lib/core';
 import MeshBuilder from '@redblobgames/dual-mesh/create';
 import Poisson from 'poisson-disk-sampling';
+
+type TileEntity = EcsEntity<
+	| typeof locationComponent
+	| typeof outlineComponent
+	| typeof surfaceComponent
+	| typeof pathableComponent
+>;
 
 export function generateDualMeshTerrain(seed: SeedI, size: number, density: number = 1) {
 	// Use @redblobgames/dual-mesh to generate tiles and relationships.
@@ -28,27 +45,31 @@ export function generateDualMeshTerrain(seed: SeedI, size: number, density: numb
 	const mesh = meshBuilder.create();
 
 	const tiles = meshBuilder.points
-		.map(([x, y, z], i) => {
-			const outline = mesh.r_circulate_t([], i);
-			return new DualMeshTile(
-				x,
-				y,
-				z,
-				outline.map((i: number) => [mesh.t_x(i), mesh.t_y(i)]),
-				outline.some((index: number) => mesh.t_ghost(index)),
-			);
+		.map<TileEntity>(([x, y, z], i) => {
+			const entity = { id: `dual-mesh-tile-${i}` };
+			locationComponent.attach(entity, { location: [x, y, z] });
+			outlineComponent.attach(entity, {
+				outlineCoordinates: mesh
+					.r_circulate_t([], i)
+					.map((i: number) => new Coordinate(mesh.t_x(i) - x, mesh.t_y(i) - y, z)),
+			});
+			surfaceComponent.attach(entity, {
+				surfaceColor: z >= 0 ? 'red' : 'green',
+			});
+			pathableComponent.attach(entity, { walkability: z >= 0 ? 1 : 0 });
+			return entity as TileEntity;
 		})
 		.map((tile, i, tiles) => {
-			tile.neighbors.push(
-				...mesh
-					.r_circulate_r([], i)
-					.map((x: keyof TerrainI['tiles']) => tiles[x])
-					.filter((x): x is DualMeshTile => !!x),
-			);
-
+			if (pathableComponent.test(tile)) {
+				tile.pathingNeighbours.push(
+					...mesh
+						.r_circulate_r([], i)
+						.map((x: number) => tiles[x])
+						.filter(Boolean),
+				);
+			}
 			return tile;
-		})
-		.filter(Boolean);
+		});
 
 	const terrain = new Terrain(size, tiles);
 

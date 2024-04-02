@@ -25,37 +25,20 @@ export interface CoordinateI {
 	clone(): CoordinateI;
 }
 
-/**
- * A tile
- *
- * @note Interestingly this type is barely used outside the level 1 library.
- */
-export interface TileI extends CoordinateI {
-	/**
-	 * @deprecated This reference is an anti-pattern
-	 */
-	terrain?: TerrainI;
-	/**
-	 * @deprecated Use Terrain.getNeighborTiles instead if you can
-	 */
-	neighbors: TileI[];
-	equals(other: TileI): boolean;
-	getOutlineCoordinates(): CoordinateI[];
-	isAdjacentToEdge(): boolean;
-	isAdjacentToLand(): boolean;
-	isLand(): boolean;
-	toSaveJson(): SaveTileJson;
-}
 
 /**
  * A landmass or other terrain
  */
-export interface TerrainI {
-	getNeighborTiles(center: TileI): TileI[];
-	getTileClosestToXy(x: number, y: number): TileI;
-	getTileEqualToLocation(location: CoordinateI, lax?: boolean): TileI | null;
-	selectClosestTiles(start: CoordinateI, maxDistance: number): TileI[];
-	selectContiguousTiles(start: TileI, selector: FilterFn<TileI>, inclusive: boolean): TileI[];
-	toSaveJson(): SaveTerrainJson;
-	tiles: TileI[];
+export interface TerrainI<TileGeneric> {
+	getNeighborTiles(center: TileGeneric): TileGeneric[];
+	getTileClosestToXy(x: number, y: number): TileGeneric;
+	getTileEqualToLocation(location: CoordinateI, lax?: boolean): TileGeneric | null;
+	selectClosestTiles(start: CoordinateI, maxDistance: number): TileGeneric[];
+	selectContiguousTiles(
+		start: TileGeneric,
+		selector?: FilterFn<TileGeneric>,
+		inclusive?: boolean,
+	): TileGeneric[];
+	// toSaveJson(): SaveTerrainJson;
+	tiles: TileGeneric[];
 }

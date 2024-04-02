@@ -1,4 +1,4 @@
-import { Random, type TileI } from '@lib';
+import { EcsEntity, Random, locationComponent, outlineComponent, pathableComponent } from '@lib';
 import Color from 'color';
 import React, { MouseEventHandler, useCallback, useMemo, type FunctionComponent } from 'react';
 import { useMapTileContextMenu } from './MAP_TILE_CONTEXT_MENU.ts';
@@ -14,10 +14,13 @@ import { useMapTileContextMenu } from './MAP_TILE_CONTEXT_MENU.ts';
 const baseGreen = Color('#8F8A49');
 const baseBlue = Color('#234A59');
 
-export const MapTile: FunctionComponent<{ zoom: number; tile: TileI }> = ({ tile, zoom }) => {
+export const MapTile: FunctionComponent<{
+	zoom: number;
+	tile: EcsEntity<typeof pathableComponent | typeof outlineComponent | typeof locationComponent>;
+}> = ({ tile, zoom }) => {
 	const green = useMemo(
 		() =>
-			(tile.isLand() ? baseGreen : baseBlue)
+			(tile.walkability ? baseGreen : baseBlue)
 				.lighten(Random.between(-0.05, 0.05, tile.toString(), 'lighten'))
 				.saturate(Random.between(-0.2, 0.2, tile.toString(), 'saturate')),
 		[],
@@ -36,9 +39,9 @@ export const MapTile: FunctionComponent<{ zoom: number; tile: TileI }> = ({ tile
 	// 	return null;
 	// }
 
-	const points = tile
-		.getOutlineCoordinates()
-		.map((coord) => `${(tile.x + coord.x) * zoom},${(tile.y + coord.y) * zoom}`)
+	const loc = tile.$$location.get();
+	const points = tile.outlineCoordinates
+		.map((coord) => `${(loc.x + coord.x) * zoom},${(loc.y + coord.y) * zoom}`)
 		.join(' ');
 
 	return <polygon points={points} fill={green.toString()} onContextMenu={onRmb} />;

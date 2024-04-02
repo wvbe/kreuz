@@ -6,7 +6,7 @@ type Location = [number, number, number];
 
 export type SavedGameJson = {
 	version: 'broken' | 'alpha' | 'beta-1';
-	terrain: SaveTerrainJson;
+	// terrain: SaveTerrainJson;
 	// entities: Array<SaveSettlementEntityJson | SavePersonEntityJson>;
 	time: SaveEventedValueJson;
 	seed: string | number;
@@ -22,4 +22,4 @@ export type SaveJsonContext = GameAssets;
 type ArrayItem<Arr> = Arr extends Array<infer P> ? P : never;
 
 export type SaveTimeJson = SavedGameJson['time'];
-export type SaveTileJson = ArrayItem<SavedGameJson['terrain']['tiles']>;
+export type SaveTileJson = unknown; //ArrayItem<SavedGameJson['terrain']['tiles']>;

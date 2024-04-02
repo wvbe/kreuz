@@ -1,4 +1,4 @@
-import { visibilityComponent, type TileI } from '@lib';
+import { visibilityComponent } from '@lib';
 import React, { FC, PropsWithChildren, useMemo } from 'react';
 
 import { useGameContext } from '../context/GameContext.tsx';
@@ -28,7 +28,7 @@ const MapTileContextMenuItem: FC<
 	);
 };
 export const MapTileContextMenu: FC<{
-	tile: TileI;
+	tile: EcsEntity<typeof locationComponent>;
 }> = ({ tile }) => {
 	const game = useGameContext();
 	const selectedEntity = useSelectedEntity();
@@ -36,12 +36,14 @@ export const MapTileContextMenu: FC<{
 	const tileEntities = game.entities.filter(
 		(entity) =>
 			locationComponent.test(entity) &&
-			(entity as EcsEntity<typeof locationComponent>).$$location.get().equals(tile),
+			(entity as EcsEntity<typeof locationComponent>).equalsMapLocation(
+				tile.$$location.get().toArray(),
+			),
 	);
 	return (
 		<div className="map-tile-context-menu">
 			<MapTileContextMenuItem>
-				{tile.x},{tile.y}
+				{tile.$$location.get().x},{tile.$$location.get().y}
 			</MapTileContextMenuItem>
 			{tileEntities
 				.filter((entity): entity is EcsEntity<typeof visibilityComponent> =>

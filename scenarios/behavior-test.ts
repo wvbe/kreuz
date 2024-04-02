@@ -35,6 +35,7 @@ export default async function (driver: DriverI) {
 				Math.floor(Random.between(0, 10, 'zfs', 0)),
 				Math.floor(Random.between(0, 10, 'zfs', 0 + 'f')),
 			)
+			.$$location.get()
 			.toArray(),
 		name: 'Ro-bot',
 		icon: '🤖',
@@ -43,7 +44,7 @@ export default async function (driver: DriverI) {
 	await entity.wallet.set(500);
 
 	const marketStall = marketArchetype.create({
-		location: terrain.getTileClosestToXy(5, 5).toArray(),
+		location: terrain.getTileClosestToXy(5, 5).$$location.get().toArray(),
 		maxStackSpace: 6,
 		materials: [materials.honey],
 		owner: headOfState,
@@ -51,7 +52,7 @@ export default async function (driver: DriverI) {
 	await marketStall.inventory.change(materials.honey, 30);
 
 	const marketStall2 = marketArchetype.create({
-		location: terrain.getTileClosestToXy(9, 5).toArray(),
+		location: terrain.getTileClosestToXy(9, 5).$$location.get().toArray(),
 		maxStackSpace: 6,
 		materials: [materials.freshWater],
 		owner: headOfState,
@@ -59,7 +60,7 @@ export default async function (driver: DriverI) {
 	await marketStall2.inventory.change(materials.freshWater, 300);
 
 	const factory = factoryArchetype.create({
-		location: terrain.getTileClosestToXy(13, 10).toArray(),
+		location: terrain.getTileClosestToXy(13, 10).$$location.get().toArray(),
 		owner: headOfState,
 		blueprint: blueprints.beeKeeping,
 		maxWorkers: 4,

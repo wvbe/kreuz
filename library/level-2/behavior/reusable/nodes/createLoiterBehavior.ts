@@ -40,13 +40,13 @@ export function createLoiterBehavior() {
 				if (!start) {
 					throw new Error(`Entity "${entity.id}" lives on a detached coordinate`);
 				}
-				const closestTiles = game.terrain.selectClosestTiles(start, 5);
+				const closestTiles = game.terrain.selectClosestTiles(start.$$location.get(), 5);
 				if (!closestTiles.length) {
 					throw new BehaviorTreeSignal(`Theres nowhere to wander to for ${entity}`);
 				}
 				const destination = Random.fromArray(closestTiles, entity.id, 'loiter walk', ++ticker);
 
-				await entity.walkToTile(destination);
+				await entity.walkToTile(game, destination);
 			}),
 			createWaitBehavior(1000, 3000),
 		),

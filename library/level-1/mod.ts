@@ -30,10 +30,8 @@ export { Material } from './inventory/Material.ts';
 // Terrain:
 export * from '../test/generateGridTerrainFromAscii.ts';
 export * from './inventory/types.ts';
-export { type TerrainI, type CoordinateI, type TileI } from './terrain/types.ts';
+export { type TerrainI, type CoordinateI } from './terrain/types.ts';
 export { Coordinate } from './terrain/Coordinate.ts';
-export { DualMeshTile } from './terrain/DualMeshTile.ts';
-export { SquareTile } from './terrain/SquareTile.ts';
 export { Terrain } from './terrain/Terrain.ts';
 
 // Constants:
@@ -66,6 +64,9 @@ export { statusComponent } from './ecs/components/statusComponent.ts';
 export { vendorComponent } from './ecs/components/vendorComponent.ts';
 export { visibilityComponent } from './ecs/components/visibilityComponent.ts';
 export { wealthComponent } from './ecs/components/wealthComponent.ts';
+export { outlineComponent } from './ecs/components/outlineComponent.ts';
+export { pathableComponent } from './ecs/components/pathableComponent.ts';
+export { surfaceComponent } from './ecs/components/surfaceComponent.ts';
 
 // ECS archetypes
 export * from './ecs/archetypes/factoryArchetype.ts';

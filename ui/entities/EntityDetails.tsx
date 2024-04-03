@@ -12,35 +12,17 @@ import { EntityInventoryDetails } from './details/EntityInventoryDetails.tsx';
 import { EntityNeedsDetails } from './details/EntityNeedsDetails.tsx';
 import { EntityWorkersDetails } from './details/EntityWorkersDetails.tsx';
 
-export const EntityDetails: FunctionComponent<{ entity?: EcsEntity<any> | null }> = ({
-	entity,
-}) => {
-	if (!entity) {
-		return null;
-	}
-
+export const EntityDetails: FunctionComponent<{ entity: EcsEntity<any> }> = ({ entity }) => {
 	return (
-		<>
-			<CollapsibleWindow label={`Details panel`} initiallyOpened>
-				<EntityBadge entity={entity} />
-				<EntityBlueprintBadgeDetails entity={entity} />
-				<EntityHealthDetails entity={entity} />
-				<EntityNeedsDetails entity={entity} />
-				<EntityBlueprintProgressDetails entity={entity} />
-				<EntityWorkersDetails entity={entity} />
-				<EntityInventoryDetails entity={entity} />
-			</CollapsibleWindow>
-			{entity.type === 'person' ? (
-				<GameNavigation>
-					<GameNavigationButton
-						symbol="👔"
-						path={ROUTE_ENTITIES_PEOPLE_JOBS_DETAILS}
-						params={{ entityId: entity.id }}
-						tooltip="Jobs"
-					/>
-				</GameNavigation>
-			) : null}
-		</>
+		<CollapsibleWindow label={`Details panel`} initiallyOpened>
+			<EntityBadge entity={entity} />
+			<EntityBlueprintBadgeDetails entity={entity} />
+			<EntityHealthDetails entity={entity} />
+			<EntityNeedsDetails entity={entity} />
+			<EntityBlueprintProgressDetails entity={entity} />
+			<EntityWorkersDetails entity={entity} />
+			<EntityInventoryDetails entity={entity} />
+		</CollapsibleWindow>
 	);
 };
 

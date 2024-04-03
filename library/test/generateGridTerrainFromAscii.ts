@@ -6,6 +6,7 @@ import {
 	surfaceComponent,
 } from '@lib/core';
 import { Terrain } from '../level-1/terrain/Terrain.ts';
+import { SurfaceType } from '@lib/core';
 
 const adjacency = [
 	[-1, 0],
@@ -31,7 +32,7 @@ export function generateGridTerrainFromAscii(ascii: string) {
 
 	const tiles = datas.map((data, y) =>
 		data.map((character, x) => {
-			const entity = { id: x };
+			const entity = { id: String(x) };
 			locationComponent.attach(entity, { location: [x, y, character === '-' ? -1 : 1] });
 			pathableComponent.attach(entity, { walkability: character === '-' ? 0 : 1 });
 			outlineComponent.attach(entity, {
@@ -41,6 +42,9 @@ export function generateGridTerrainFromAscii(ascii: string) {
 					[0.5, 0.5, 0],
 					[-0.5, 0.5, 0],
 				],
+			});
+			surfaceComponent.attach(entity, {
+				surfaceType: character === '-' ? SurfaceType.UNKNOWN : SurfaceType.OPEN,
 			});
 			return entity as TileEntity;
 		}),

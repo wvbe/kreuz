@@ -15,7 +15,7 @@ export const healthComponent = new EcsComponent<
 		 * If your process depends on a healthy entity, be sure to listen to the
 		 * {@link EcsEntity<typeof healthComponent>.$death} event.
 		 */
-		$health: ProgressingNumericValue;
+		health: ProgressingNumericValue;
 		/**
 		 * Emitted when the entity dies. Processes that are dependent on alive entities should listen
 		 * and handle this event.
@@ -23,12 +23,12 @@ export const healthComponent = new EcsComponent<
 		$death: Event;
 	}
 >(
-	(entity) => entity.$health instanceof ProgressingNumericValue && entity.$death instanceof Event,
+	(entity) => entity.health instanceof ProgressingNumericValue && entity.$death instanceof Event,
 	(entity, options) => {
-		const $health = new ProgressingNumericValue(
+		const health = new ProgressingNumericValue(
 			options.health,
 			{ delta: 0, granularity: 0.01, min: 0, max: 1 },
-			'healthComponent $health',
+			'healthComponent health',
 		);
 		const $death = new Event('healthComponent $death');
 
@@ -37,7 +37,7 @@ export const healthComponent = new EcsComponent<
 		});
 
 		Object.assign(entity, {
-			$health,
+			health,
 			$death,
 		});
 	},

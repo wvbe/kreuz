@@ -14,6 +14,7 @@ import { wealthComponent } from '../components/wealthComponent.ts';
 import { EcsEntity } from '../types.ts';
 import { Need } from '../../entities/Need.ts';
 import { ownerComponent } from '../components/ownerComponent.ts';
+import { byEcsComponents } from '../assert.ts';
 
 type GroceryPurchasingEntity = EcsEntity<
 	| typeof locationComponent
@@ -78,7 +79,7 @@ function scoreEntityVendorMaterialNeed(
 function scoreEntityVendor(entity: GroceryPurchasingEntity, vendor: GrocerySellingEntity) {
 	let desirability = 1;
 
-	const maximumDistanceWillingToTravel = 20,
+	const maximumDistanceWillingToTravel = 40,
 		distanceToJob = vendor.euclideanDistanceTo(entity.location.get()),
 		// 1 = very close job, 0 = infinitely far
 		distanceMultiplier = Math.max(
@@ -136,7 +137,7 @@ async function doGrocery(
 	need: Need,
 	{ vendor, material }: GroceryProposal,
 ) {
-	if (entity.$health.get() <= 0) {
+	if (entity.health.get() <= 0) {
 		throw new Error('Dead people cannot haul cargo');
 	}
 
@@ -163,7 +164,7 @@ async function doGrocery(
 		throw new Error(`Vendor "${vendor.id}" lives on a detached coordinate`);
 	}
 	await entity.walkToTile(game, vendorLocation);
-	if (entity.$health.get() <= 0) {
+	if (entity.health.get() <= 0) {
 		// Worker died to retrieve the cargo. There is now an inventory reservation that will never be fulfilled.
 		// @TODO release inventory reservations
 		return;
@@ -190,11 +191,19 @@ async function attachSystemToEntity(game: Game, entity: GroceryPurchasingEntity)
 		need.onBelow(0.5, () => {
 			const task = () => {
 				const deal = getMostAttractiveVendorForNeed(entity, game, need);
-
+				const label = `Buy ${deal?.material} for ${need.label}`;
 				if (!deal) {
-					return { execute: () => Promise.resolve(/* void */), score: 0 };
+					return {
+						label,
+						execute: () => Promise.resolve(/* void */),
+						score: 0,
+					};
 				}
-				return { execute: () => doGrocery(game, entity, need, deal), score: deal.score };
+				return {
+					label,
+					execute: () => doGrocery(game, entity, need, deal),
+					score: deal.score,
+				};
 			};
 			game.jobs.addPersonal(entity, task);
 
@@ -208,13 +217,15 @@ async function attachSystem(game: Game) {
 		await Promise.all(
 			entities
 				.filter(
-					(entity): entity is GroceryPurchasingEntity =>
-						healthComponent.test(entity) &&
-						inventoryComponent.test(entity) &&
-						locationComponent.test(entity) &&
-						needsComponent.test(entity) &&
-						pathingComponent.test(entity) &&
-						statusComponent.test(entity),
+					byEcsComponents([
+						healthComponent,
+						inventoryComponent,
+						locationComponent,
+						needsComponent,
+						pathingComponent,
+						statusComponent,
+						wealthComponent,
+					]),
 				)
 				.map((person) => attachSystemToEntity(game, person)),
 		);

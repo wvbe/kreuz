@@ -8,6 +8,11 @@ import { EventedValue } from '../events/EventedValue.ts';
 export class TimeLine extends EventedValue<number> {
 	#timers = new Map<number, CallbackFn[]>();
 
+	/**
+	 * The slow-motion factor of time. A higher number means game time progresses slower.
+	 */
+	public speed = new EventedValue<number>(1, 'TimeLine speed');
+
 	public constructor(initial: number = 0) {
 		super(initial, 'TimeLine');
 	}
@@ -46,6 +51,13 @@ export class TimeLine extends EventedValue<number> {
 		while (remaining-- > 0) {
 			await this.step();
 		}
+	}
+
+	/**
+	 * Performs the amount of steps necessary for the given delta time, and per the time dilation.
+	 */
+	public async stepsForDelta(delta: number): Promise<void> {
+		return this.steps(delta * this.speed.get());
 	}
 
 	/**

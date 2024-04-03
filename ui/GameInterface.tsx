@@ -17,14 +17,12 @@ import { InspectMaterialRoute } from './routes/InspectMaterialRoute.tsx';
 import { ListEntityRoute } from './routes/ListEntityRoute.tsx';
 import {
 	ROUTE_ENTITIES_DETAILS,
-	ROUTE_ENTITIES_FACTORIES,
-	ROUTE_ENTITIES_MARKETS,
 	ROUTE_ENTITIES_PEOPLE,
 	ROUTE_ENTITIES_PEOPLE_JOBS_DETAILS,
 	ROUTE_MATERIALS,
 	ROUTE_MATERIALS_DETAILS,
 	ROUTE_PRODUCTION,
-	ROUTE_PRODUCTION_DETAILS
+	ROUTE_PRODUCTION_DETAILS,
 } from './routes/ROUTES.ts';
 
 const ListPeopleEntities: FC<PropsWithChildren> = ({ children }) => (
@@ -68,8 +66,6 @@ export const GameInterface: FunctionComponent<{
 									path={ROUTE_ENTITIES_PEOPLE_JOBS_DETAILS}
 									Component={InspectEntityJobsRoute}
 								/>
-								<Route path={ROUTE_ENTITIES_FACTORIES} Component={ListFactoryEntities} />
-								<Route path={ROUTE_ENTITIES_MARKETS} Component={ListMarketEntities} />
 								<Route path={ROUTE_PRODUCTION} Component={ProductionList} />
 								<Route path={ROUTE_PRODUCTION_DETAILS} Component={InspectBlueprintRoute} />
 								<Route path={ROUTE_MATERIALS} Component={MaterialList} />

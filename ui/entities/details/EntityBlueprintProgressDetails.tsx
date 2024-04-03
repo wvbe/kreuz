@@ -6,7 +6,7 @@ import { useEventedValue } from '../../hooks/useEventedValue.ts';
 export const EntityBlueprintProgressDetails: FunctionComponent<{
 	entity: EcsEntity;
 }> = ({ entity }) => {
-	const $blueprint = (entity as EcsEntity<typeof productionComponent>).$blueprint;
+	const $blueprint = (entity as EcsEntity<typeof productionComponent>).blueprint;
 	const $$progress = (entity as EcsEntity<typeof productionComponent>).$$progress;
 	if (!$blueprint || !$$progress) {
 		return null;

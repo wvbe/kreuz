@@ -10,7 +10,7 @@ export function useEntitiesWithBlueprint(blueprint: Blueprint | null) {
 		(_added: EcsEntity[], _removed: EcsEntity[]) =>
 			game.entities
 				.filter<EcsEntity<typeof productionComponent>>((entity) => productionComponent.test(entity))
-				.filter((entity) => entity.$blueprint.get() === blueprint),
+				.filter((entity) => entity.blueprint.get() === blueprint),
 		[game.entities, blueprint],
 	);
 

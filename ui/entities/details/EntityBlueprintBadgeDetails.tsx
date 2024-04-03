@@ -9,7 +9,7 @@ import { ROUTE_PRODUCTION_DETAILS } from '../../routes/ROUTES.ts';
 export const EntityBlueprintBadgeDetails: FunctionComponent<{
 	entity: EcsEntity;
 }> = ({ entity }) => {
-	const $blueprint = (entity as EcsEntity<typeof productionComponent>).$blueprint;
+	const $blueprint = (entity as EcsEntity<typeof productionComponent>).blueprint;
 	if (!$blueprint) {
 		return null;
 	}

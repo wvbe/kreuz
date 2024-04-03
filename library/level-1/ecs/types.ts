@@ -15,7 +15,7 @@ type _EcsDataFromComponent<ComponentGeneric extends EcsComponent<any, any>> =
  * An entity, with the components as per the `ComponentGeneric` type parameter.
  */
 export type EcsEntity<ComponentGeneric extends EcsComponent<any, any> = EcsComponent> = {
-	id: string | number;
+	id: string;
 } & UnionToIntersection<_EcsDataFromComponent<ComponentGeneric>>;
 
 /**

@@ -6,6 +6,7 @@ import { EcsSystem } from '../classes/EcsSystem.ts';
 import { EcsEntity } from '../types.ts';
 import { statusComponent } from '../components/statusComponent.ts';
 import { visibilityComponent } from '../components/visibilityComponent.ts';
+import { byEcsComponents, hasEcsComponents } from '../assert.ts';
 
 /**
  * The amount of health deducted per tick, per need that is less than 10% satisfied.
@@ -21,13 +22,13 @@ type HealthSystemEntity = EcsEntity<typeof healthComponent | typeof needsCompone
  * Attaches the health system to an entity.
  */
 async function attachSystemToEntity(game: Game, entity: HealthSystemEntity) {
-	entity.$health.attach(game);
+	entity.health.attach(game);
 
-	entity.$health.onceBelow(
+	entity.health.onceBelow(
 		0,
 		() => {
-			entity.$health.detach();
-			entity.$health.setDelta(0);
+			entity.health.detach();
+			entity.health.setDelta(0);
 			entity.$death.emit();
 		},
 		true,
@@ -37,8 +38,8 @@ async function attachSystemToEntity(game: Game, entity: HealthSystemEntity) {
 		await need.attach(game);
 		// A "need" starts being detrimental to ones health when it is less than 10% satisfied
 		const stop1 = need.onBelow(0.1, () => {
-			const delta = entity.$health.delta - dyingSpeed;
-			entity.$health.setDelta(delta);
+			const delta = entity.health.delta - dyingSpeed;
+			entity.health.setDelta(delta);
 		});
 		// When the need is satisfied 10% or more again, the detrimental effect on health is removed.
 		// @TODO This is probably buggy for entities starting life with some needs set to less than
@@ -46,8 +47,8 @@ async function attachSystemToEntity(game: Game, entity: HealthSystemEntity) {
 		const stop2 = need.onAbove(
 			0.1,
 			() => {
-				const delta = entity.$health.delta + dyingSpeed;
-				entity.$health.setDelta(delta);
+				const delta = entity.health.delta + dyingSpeed;
+				entity.health.setDelta(delta);
 			},
 			true,
 		);
@@ -78,10 +79,7 @@ export const healthSystem = new EcsSystem([healthComponent, needsComponent], asy
 	game.entities.$add.on(async (entities) => {
 		await Promise.all(
 			entities
-				.filter(
-					(entity): entity is HealthSystemEntity =>
-						healthComponent.test(entity) && needsComponent.test(entity),
-				)
+				.filter(byEcsComponents([healthComponent, needsComponent]))
 				.map((entity) => attachSystemToEntity(game, entity)),
 		);
 	});

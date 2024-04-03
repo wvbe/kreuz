@@ -6,10 +6,17 @@ import { useSelectedEntity } from '../hooks/useSelectedEntity.tsx';
 
 import { EcsEntity, locationComponent } from '@lib';
 import { EntityBadge } from '../entities/EntityBadge.tsx';
+import { useMapTileContextMenu } from './MAP_TILE_CONTEXT_MENU.ts';
 
 const MapTileContextMenuItem: FC<
-	PropsWithChildren & { onClick?: () => void; isDisabled?: boolean }
-> = ({ children, onClick, isDisabled }) => {
+	PropsWithChildren & { onClick?: () => void; isDisabled?: boolean; entity: EcsEntity }
+> = ({ children, entity, onClick, isDisabled }) => {
+	const game = useGameContext();
+	const contextMenu = useMapTileContextMenu();
+	const items = useMemo(
+		() => game.assets.commands.toArray().filter((command) => command.isAllowed({ game, entity })),
+		[game, entity],
+	);
 	const className = useMemo(
 		() =>
 			[
@@ -22,11 +29,26 @@ const MapTileContextMenuItem: FC<
 		[isDisabled],
 	);
 	return (
-		<div className={className} onClick={(!isDisabled && onClick) || undefined}>
-			{children}
-		</div>
+		<>
+			<div className={className} onClick={(!isDisabled && onClick) || undefined}>
+				{children}
+			</div>
+			{items.map((command) => (
+				<div
+					key={command.label}
+					onClick={() => {
+						console.log('Execute command', command);
+						command.execute({ game, entity });
+						contextMenu.close();
+					}}
+				>
+					{command.label}
+				</div>
+			))}
+		</>
 	);
 };
+
 export const MapTileContextMenu: FC<{
 	tile: EcsEntity<typeof locationComponent>;
 }> = ({ tile }) => {
@@ -40,7 +62,7 @@ export const MapTileContextMenu: FC<{
 	);
 	return (
 		<div className="map-tile-context-menu">
-			<MapTileContextMenuItem>
+			<MapTileContextMenuItem entity={tile}>
 				{tile.location
 					.get()
 					.map((num) => num.toFixed(2))
@@ -51,7 +73,11 @@ export const MapTileContextMenu: FC<{
 					visibilityComponent.test(entity),
 				)
 				.map((entity) => (
-					<MapTileContextMenuItem key={entity.id} onClick={() => selectedEntity.set(entity)}>
+					<MapTileContextMenuItem
+						key={entity.id}
+						onClick={() => selectedEntity.set(entity)}
+						entity={entity}
+					>
 						<EntityBadge entity={entity} />
 					</MapTileContextMenuItem>
 				))}

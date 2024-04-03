@@ -3,7 +3,6 @@ import { EcsEntity } from '../../library/level-1/ecs/types.ts';
 
 export class BrowserDriver extends Driver implements DriverI {
 	game: Game | null = null;
-	gameSpeed = 10;
 	lastUpdate: number = Date.now();
 
 	private async animate(game: Game) {
@@ -17,7 +16,7 @@ export class BrowserDriver extends Driver implements DriverI {
 
 		const now = Date.now();
 		const delta = now - this.lastUpdate;
-		await game.time.steps(delta * this.gameSpeed);
+		await game.time.stepsForDelta(delta);
 		this.lastUpdate = now;
 		requestAnimationFrame(this.animate.bind(this, game));
 	}

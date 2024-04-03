@@ -1,5 +1,5 @@
 import Game from '../../Game.ts';
-import { JobPosting } from '../components/behaviorComponent/JobPosting.ts';
+import { JobPosting } from '../../classes/JobPosting.ts';
 import { EcsSystem } from '../classes/EcsSystem.ts';
 import { importExportComponent } from '../components/importExportComponent.ts';
 import { inventoryComponent } from '../components/inventoryComponent.ts';
@@ -13,6 +13,7 @@ import { healthComponent } from '../components/healthComponent.ts';
 import { pathingComponent } from '../components/pathingComponent.ts';
 import { statusComponent } from '../components/statusComponent.ts';
 import { assertEcsComponents } from '../assert.ts';
+import { byEcsComponents } from '../assert.ts';
 
 /**
  * Creates inventory reservations for the supplier and destination inventories, so that a transport
@@ -50,7 +51,7 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 			locationComponent,
 			inventoryComponent,
 		]);
-		if (entity.$health.get() <= 0) {
+		if (entity.health.get() <= 0) {
 			throw new Error('Dead people cannot haul cargo');
 		}
 		// Jobs are designed to have vacancies, that are taken and restored when the job finishes.
@@ -65,7 +66,7 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 			throw new Error(`Deal destination lives on a detached coordinate`);
 		}
 		await entity.walkToTile(game, supplier);
-		if (entity.$health.get() <= 0) {
+		if (entity.health.get() <= 0) {
 			// Worker died to retrieve the cargo. There is now an inventory reservation that will never be fulfilled.
 			// @TODO release inventory reservations
 			return;
@@ -95,7 +96,7 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 		}
 		await entity.walkToTile(game, destination);
 
-		if (entity.$health.get() <= 0) {
+		if (entity.health.get() <= 0) {
 			// Worker died on the way to deliver the cargo.
 			// @TODO Retrieve the cargo from their cold dead hands and deliver it?
 			return;
@@ -125,7 +126,7 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 		) {
 			return 0;
 		}
-		if (entity.$health.get() <= 0) {
+		if (entity.health.get() <= 0) {
 			// Dead people cannot haul cargo
 			return 0;
 		}
@@ -145,12 +146,16 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 
 		desirability *= distanceMultiplier;
 
+		// Give a small boost so that, all other things being equal, a transport job is preferred over
+		// a production job
+		desirability *= 1.1;
+
 		return desirability;
 	};
 
 	return new JobPosting(assignJobToEntity, {
 		vacancies: 1,
-		employer: deal.destination,
+		label: `Transport ${deal.material} for ${deal.destination}`,
 		score: scoreJobDesirability,
 		restoreVacancyWhenDone: false,
 	});
@@ -228,12 +233,7 @@ async function attachSystem(game: Game) {
 	game.entities.$add.on(async (entities) => {
 		await Promise.all(
 			entities
-				.filter(
-					(entity): entity is LogisticsEntity =>
-						importExportComponent.test(entity) &&
-						inventoryComponent.test(entity) &&
-						locationComponent.test(entity),
-				)
+				.filter(byEcsComponents([importExportComponent, inventoryComponent, locationComponent]))
 				.map((trader) => {
 					trader.inventory.$change.on(async () => {
 						postTransportJobs(game);

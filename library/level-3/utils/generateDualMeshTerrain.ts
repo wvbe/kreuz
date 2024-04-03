@@ -6,6 +6,7 @@ import {
 	outlineComponent,
 	pathableComponent,
 	surfaceComponent,
+	SurfaceType,
 	type SeedI,
 } from '@lib/core';
 import MeshBuilder from '@redblobgames/dual-mesh/create';
@@ -53,7 +54,7 @@ export function generateDualMeshTerrain(seed: SeedI, size: number, density: numb
 					.map((i: number) => [mesh.t_x(i) - x, mesh.t_y(i) - y, z]),
 			});
 			surfaceComponent.attach(entity, {
-				surfaceColor: z >= 0 ? 'red' : 'green',
+				surfaceType: z >= 0 ? SurfaceType.OPEN : SurfaceType.UNKNOWN,
 			});
 			pathableComponent.attach(entity, { walkability: z >= 0 ? 1 : 0 });
 			return entity as TileEntity;

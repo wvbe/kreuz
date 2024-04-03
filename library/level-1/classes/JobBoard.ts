@@ -1,10 +1,11 @@
-import { JobPosting } from '../ecs/components/behaviorComponent/JobPosting.ts';
+import { JobPosting } from './JobPosting.ts';
 import { Collection } from '../events/Collection.ts';
 import { EcsEntity } from '@lib/core';
 
-type JobCandidate = {
+export type JobCandidate = {
 	execute: () => Promise<void>;
 	score: number;
+	label: string;
 };
 
 export class JobBoard {
@@ -48,6 +49,7 @@ export class JobBoard {
 					return job.executeWithEntity(entity);
 				},
 				score: job.scoreForEntity(entity),
+				label: job.label,
 			})),
 			...(this.#personal.get(entity) || []),
 		];

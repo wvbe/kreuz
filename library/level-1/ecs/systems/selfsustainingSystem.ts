@@ -8,6 +8,7 @@ import { MaterialState } from '../../inventory/types.ts';
 import { Inventory } from '../components/inventoryComponent/Inventory.ts';
 import { EcsEntity } from '../types.ts';
 import { statusComponent } from '@lib/core';
+import { byEcsComponents } from '../assert.ts';
 
 type SelfSustainingEnitity = EcsEntity<typeof needsComponent | typeof inventoryComponent>;
 
@@ -109,10 +110,7 @@ async function attachSystem(game: Game) {
 	game.entities.$add.on(async (entities) => {
 		await Promise.all(
 			entities
-				.filter(
-					(entity): entity is SelfSustainingEnitity =>
-						needsComponent.test(entity) && inventoryComponent.test(entity),
-				)
+				.filter(byEcsComponents([needsComponent, inventoryComponent]))
 				.map((entity) => attachSystemToEntity(game, entity)),
 		);
 	});

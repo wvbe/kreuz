@@ -3,15 +3,18 @@ import {
 	DriverI,
 	Game,
 	behaviorComponent,
+	healthComponent,
 	inventoryComponent,
 	locationComponent,
 	materials,
 	pathingComponent,
 	personArchetype,
+	statusComponent,
 	visibilityComponent,
 } from '@lib';
 import { generateGridTerrainFromAscii } from '@test';
 import { createJobWorkBehavior } from '../library/level-2/behavior/reusable/nodes/createJobWorkBehavior.ts';
+import { civilianBehavior } from '../library/level-2/behavior.ts';
 
 export default async function (driver: DriverI) {
 	const terrain = generateGridTerrainFromAscii(`
@@ -45,11 +48,13 @@ export default async function (driver: DriverI) {
 			icon: '🤖',
 			name: `Excavator ${i + 1}`,
 		});
+		statusComponent.attach(entity, {});
 		locationComponent.attach(entity, { location: [10, 5, 0] });
 		pathingComponent.attach(entity, { walkSpeed: 10 });
 		behaviorComponent.attach(entity, {
 			behavior: createJobWorkBehavior(),
 		});
+		healthComponent.attach(entity, { health: 1 });
 		await game.entities.add(entity);
 	}
 

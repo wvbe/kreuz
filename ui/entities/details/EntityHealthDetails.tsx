@@ -5,7 +5,7 @@ import { FillBar } from '../../components/atoms/FillBar.tsx';
 import { useEventedValue, useMemoFromEvent } from '../../hooks/useEventedValue.ts';
 
 export const EntityHealthDetails: FunctionComponent<{ entity: EcsEntity }> = ({ entity }) => {
-	const health = (entity as EcsEntity<typeof healthComponent>).$health;
+	const health = (entity as EcsEntity<typeof healthComponent>).health;
 	if (!health) {
 		return null;
 	}

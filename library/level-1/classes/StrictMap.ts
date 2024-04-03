@@ -23,7 +23,8 @@ export class StrictMap<ItemGeneric> extends Map<string, ItemGeneric> {
 	public get(key: string): ItemGeneric {
 		const item = super.get(key);
 		if (!item) {
-			throw new Error(`Could not find key for missing item`);
+			console.log(key);
+			throw new Error(`Could not find item for key "${key}"`);
 		}
 		return item;
 	}

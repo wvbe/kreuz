@@ -27,6 +27,7 @@ export class EcsArchetype<
 
 	public create(options: OptionsGeneric): EcsEntity<ComponentGeneric> {
 		const entity: EcsEntity = {
+			// TODO not guaranteed to be unique this way:
 			id: `${identifier++}`,
 		};
 		this.#attachEntity(entity, options);

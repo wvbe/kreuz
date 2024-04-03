@@ -12,6 +12,9 @@ export const InspectEntityJobsRoute: React.FC = () => {
 		() => game.entities.getByKey(entityId!) as EcsArchetypeEntity<typeof personArchetype>,
 		[entityId],
 	);
+	if (!entity) {
+		return null;
+	}
 
 	return <JobList entity={entity} />;
 };

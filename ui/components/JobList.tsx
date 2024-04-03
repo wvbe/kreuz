@@ -3,10 +3,11 @@ import {
 	EcsArchetypeEntity,
 	EcsEntity,
 	Event,
+	JobCandidate,
 	locationComponent,
 	personArchetype,
 } from '@lib';
-import React, { FunctionComponent, useCallback, useMemo } from 'react';
+import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import { EventCombination } from '../../library/level-1/events/EventCombination.ts';
 import { useGameContext } from '../context/GameContext.tsx';
 import { useMemoFromEvent } from '../hooks/useEventedValue.ts';
@@ -34,30 +35,38 @@ export function useCombinedEventCollection<T>(
 }
 
 export const JobList: FunctionComponent<{
-	entity?: EcsArchetypeEntity<typeof personArchetype>;
+	entity: EcsArchetypeEntity<typeof personArchetype>;
 }> = ({ entity }) => {
 	const game = useGameContext();
+	const [jobs, setJobs] = useState<JobCandidate[]>([]);
 
-	const jobs = useCombinedEventCollection(game.jobs, entity?.location);
+	useEffect(() => {
+		const updateJobState = () => {
+			setJobs(
+				game.jobs
+					.forEntity(entity)
+					.map((ev) => ev())
+					.sort((a, b) => b.score - a.score),
+			);
+		};
+		const interval = setInterval(updateJobState, 1000);
+		updateJobState();
+		return () => {
+			clearInterval(interval);
+		};
+	}, [game, entity]);
+
 	const sortedJobs = useMemo(
 		() =>
-			jobs
-				.map((job) => ({
-					label: job.label,
-					vacancies: job.vacancies,
-					score: entity ? job.score({ game, entity }) : 0,
-				}))
-				.sort((a, b) => b.score - a.score)
-				.map((job, index) => (
-					<Row key={index}>
-						<Cell>
-							<TokenizedText text={job.label} />
-						</Cell>
-						<Cell>{job.vacancies}</Cell>
-						<Cell>{job.score}</Cell>
-					</Row>
-				)),
-		[jobs, entity],
+			jobs.map((job, index) => (
+				<Row key={index}>
+					<Cell>
+						<TokenizedText text={job.label} />
+					</Cell>
+					<Cell>{job.score.toFixed(4)}</Cell>
+				</Row>
+			)),
+		[jobs],
 	);
 
 	return (

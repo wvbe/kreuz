@@ -34,7 +34,7 @@ try {
 	console.log('    Time', game.time.now);
 	console.log(
 		'   Alive',
-		game.entities.filter((entity) => healthComponent.test(entity) && entity.$health.get() > 0)
+		game.entities.filter((entity) => healthComponent.test(entity) && entity.health.get() > 0)
 			.length,
 	);
 	console.groupEnd();

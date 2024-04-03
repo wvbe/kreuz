@@ -1,5 +1,5 @@
-import { productionComponent } from '../productionComponent.ts';
-import { EcsEntity } from '../../types.ts';
+import { productionComponent } from '../ecs/components/productionComponent.ts';
+import { EcsEntity } from '../ecs/types.ts';
 
 /**
  * A function that scores how desirable a job is for a person:
@@ -26,11 +26,9 @@ type JobPostingOptions = {
 	restoreVacancyWhenDone: boolean;
 
 	/**
-	 * Useful for cosmetic reasons, but not used in any of the actual computation (???)
-	 *
-	 * @deprecated Clumsy, too specific, not reusable. Need to figure something else out.
+	 * Useful for cosmetic reasons, but not used in any of the actual computation.
 	 */
-	employer?: EcsEntity;
+	label: string;
 };
 
 /**
@@ -41,14 +39,14 @@ export class JobPosting {
 
 	public vacancies: number;
 
-	#options: JobPostingOptions;
+	public readonly options: JobPostingOptions;
 
 	public constructor(
 		onAssign: (job: JobPosting, entity: EcsEntity) => Promise<void>,
 		options: JobPostingOptions,
 	) {
 		this.#onAssign = onAssign;
-		this.#options = options;
+		this.options = options;
 		this.vacancies = options.vacancies || 1;
 	}
 
@@ -56,7 +54,7 @@ export class JobPosting {
 		if (!this.vacancies) {
 			return 0;
 		}
-		return this.#options.score(entity);
+		return this.options.score(entity);
 	}
 
 	public async executeWithEntity(entity: EcsEntity) {
@@ -65,21 +63,12 @@ export class JobPosting {
 		}
 		this.vacancies--;
 		await this.#onAssign(this, entity);
-		if (this.#options.restoreVacancyWhenDone) {
+		if (this.options.restoreVacancyWhenDone) {
 			this.vacancies++;
 		}
 	}
 
 	public get label() {
-		const employer = this.#options.employer;
-		if (!employer) {
-			return 'Unknown job';
-		}
-		if (productionComponent.test(employer)) {
-			return `${employer}, ${
-				(employer as EcsEntity<typeof productionComponent>).$blueprint.get()?.name
-			}`;
-		}
-		return `${employer}`;
+		return this.options.label;
 	}
 }

@@ -98,7 +98,7 @@ export const ProductionList: FunctionComponent = () => {
 						const key = game.assets.blueprints.key(blueprint);
 						entitiesByBlueprint[key] = game.entities.filter(
 							(entity) =>
-								(entity as EcsEntity<typeof productionComponent>).$blueprint?.get() === blueprint,
+								(entity as EcsEntity<typeof productionComponent>).blueprint?.get() === blueprint,
 						);
 						return entitiesByBlueprint;
 					},

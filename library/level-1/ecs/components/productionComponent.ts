@@ -36,7 +36,7 @@ export const productionComponent = new EcsComponent<
 		/**
 		 * The manufacturing recipe that this entity is currently working on.
 		 */
-		$blueprint: EventedValue<Blueprint | null>;
+		blueprint: EventedValue<Blueprint | null>;
 		/**
 		 * The progress towards finishing one more production cycle. 0 means not started, 1 means finished.
 		 */
@@ -44,15 +44,15 @@ export const productionComponent = new EcsComponent<
 	}
 >(
 	(entity) =>
-		entity.$blueprint instanceof EventedValue &&
+		entity.blueprint instanceof EventedValue &&
 		entity.$workers instanceof Collection &&
 		entity.$$progress instanceof ProgressingNumericValue,
 	(entity, options) => {
 		entity.maxWorkers = options.maxWorkers;
 		entity.$workers = new Collection<EcsEntity>();
-		entity.$blueprint = new EventedValue<Blueprint | null>(
+		entity.blueprint = new EventedValue<Blueprint | null>(
 			options.blueprint,
-			`productionComponent $blueprint`,
+			`productionComponent blueprint`,
 			{
 				toJson: (context, current) =>
 					current

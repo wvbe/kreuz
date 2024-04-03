@@ -1,5 +1,6 @@
-import { type DEFAULT_ASSETS } from '../level-2/DEFAULT_ASSETS.ts';
 import { outlineComponent } from '@lib';
+import { type DEFAULT_ASSETS } from '../level-2/DEFAULT_ASSETS.ts';
+import { Command } from './classes/Command.ts';
 import { JobBoard } from './classes/JobBoard.ts';
 import { type StrictMap } from './classes/StrictMap.ts';
 import { TimeLine } from './classes/TimeLine.ts';
@@ -21,10 +22,10 @@ import { logisticsSystem } from './ecs/systems/logisticsSystem.ts';
 import { productionSystem } from './ecs/systems/productionSystem.ts';
 import { selfsustainingSystem } from './ecs/systems/selfsustainingSystem.ts';
 import { type EcsEntity } from './ecs/types.ts';
+import { Collection } from './events/Collection.ts';
 import { KeyedCollection } from './events/KeyedCollection.ts';
 import { UserInput } from './inputs/UserInput.ts';
 import { type Material } from './inventory/Material.ts';
-import { Terrain } from './terrain/Terrain.ts';
 import { type TerrainI } from './terrain/types.ts';
 import { type SavedGameJson } from './types-savedgame.ts';
 import { type SeedI } from './types.ts';
@@ -33,6 +34,7 @@ export type GameAssets = {
 	behaviorNodes: StrictMap<BehaviorTreeNodeI<EntityBlackboard>>;
 	materials: StrictMap<Material>;
 	blueprints: StrictMap<Blueprint>;
+	commands: StrictMap<Command<EntityBlackboard>>;
 };
 
 type GameTerrainTile = EcsEntity<
@@ -98,6 +100,8 @@ export default class Game {
 	 * See {@link GameAssets}.
 	 */
 	public readonly assets: GameAssets;
+
+	public readonly commands = new Collection<Command<EntityBlackboard>>();
 
 	public readonly inputs = new UserInput();
 

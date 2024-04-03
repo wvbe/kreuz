@@ -6,6 +6,7 @@ import { personArchetype } from '../archetypes/personArchetype.ts';
 import { behaviorComponent } from '../components/behaviorComponent.ts';
 import { EcsEntity } from '../types.ts';
 import { healthComponent } from '../components/healthComponent.ts';
+import { byEcsComponents } from '../assert.ts';
 
 /**
  * Loops through a behavior tree for a capable entity. The behavior tree will hopefully make the entity do stuff.
@@ -20,7 +21,7 @@ function attachSystemToEntity(
 		if (behaviorLoopEnabled) {
 			throw new Error('You should not start two behavior loops at once');
 		}
-		if (!entity.$health.get()) {
+		if (!entity.health.get()) {
 			// Exiting loop because entity is dead
 			return;
 		}
@@ -72,10 +73,7 @@ export const behaviorTreeSystem = new EcsSystem([], (game) => {
 	game.entities.$add.on(async (entities) => {
 		await Promise.all(
 			entities
-				.filter(
-					(entity): entity is EcsEntity<typeof behaviorComponent | typeof healthComponent> =>
-						behaviorComponent.test(entity) && healthComponent.test(entity),
-				)
+				.filter(byEcsComponents([behaviorComponent, healthComponent]))
 				.map((entity) => attachSystemToEntity(game, entity)),
 		);
 	});

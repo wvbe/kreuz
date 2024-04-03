@@ -8,11 +8,14 @@ export { SequenceNode } from './ecs/components/behaviorComponent/SequenceNode.ts
 export * from './ecs/components/behaviorComponent/types.ts';
 
 // Miscellaneous utilities:
+export { Command } from './classes/Command.ts';
+export { JobPosting } from './classes/JobPosting.ts';
 export { Random } from './classes/Random.ts';
 export { TimeLine } from './classes/TimeLine.ts';
 export { Collection } from './events/Collection.ts';
 export { Event } from './events/Event.ts';
 export { EventedValue } from './events/EventedValue.ts';
+export { type JobCandidate } from './classes/JobBoard.ts';
 
 // Drivers:
 export { Driver } from './drivers/Driver.ts';
@@ -44,6 +47,7 @@ export * from './utilities/ReplacementSpace.ts';
 export { type EcsArchetypeEntity, type EcsEntity } from './ecs/types.ts';
 
 // ECS helper classes
+export { assertEcsComponents, hasEcsComponents } from './ecs/assert.ts';
 export { EcsArchetype } from './ecs/classes/EcsArchetype.ts';
 export { EcsComponent } from './ecs/classes/EcsComponent.ts';
 export { EcsSystem } from './ecs/classes/EcsSystem.ts';
@@ -61,7 +65,7 @@ export { pathableComponent } from './ecs/components/pathableComponent.ts';
 export { pathingComponent } from './ecs/components/pathingComponent.ts';
 export { productionComponent } from './ecs/components/productionComponent.ts';
 export { statusComponent } from './ecs/components/statusComponent.ts';
-export { surfaceComponent } from './ecs/components/surfaceComponent.ts';
+export { surfaceComponent, SurfaceType } from './ecs/components/surfaceComponent.ts';
 export { vendorComponent } from './ecs/components/vendorComponent.ts';
 export { visibilityComponent } from './ecs/components/visibilityComponent.ts';
 export { wealthComponent } from './ecs/components/wealthComponent.ts';

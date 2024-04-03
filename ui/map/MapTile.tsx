@@ -1,7 +1,16 @@
-import { EcsEntity, Random, locationComponent, outlineComponent, pathableComponent } from '@lib';
+import {
+	EcsEntity,
+	Random,
+	SurfaceType,
+	locationComponent,
+	outlineComponent,
+	pathableComponent,
+	surfaceComponent,
+} from '@lib';
 import Color from 'color';
 import React, { MouseEventHandler, useCallback, useMemo, type FunctionComponent } from 'react';
 import { useMapTileContextMenu } from './MAP_TILE_CONTEXT_MENU.ts';
+import { useEventedValue } from '../hooks/useEventedValue.ts';
 
 // <palette>
 // 	<color name='dry-grass-patches-1' rgb='A09E55' r='160' g='158' b='84' />
@@ -16,16 +25,18 @@ const baseBlue = Color('#234A59');
 
 export const MapTile: FunctionComponent<{
 	zoom: number;
-	tile: EcsEntity<typeof pathableComponent | typeof outlineComponent | typeof locationComponent>;
+	tile: EcsEntity<
+		| typeof pathableComponent
+		| typeof outlineComponent
+		| typeof locationComponent
+		| typeof surfaceComponent
+	>;
 }> = ({ tile, zoom }) => {
-	const green = useMemo(
-		() =>
-			(tile.walkability ? baseGreen : baseBlue)
-				.lighten(Random.between(-0.05, 0.05, tile.toString(), 'lighten'))
-				.saturate(Random.between(-0.2, 0.2, tile.toString(), 'saturate')),
-		[],
+	const color = useEventedValue(tile.surfaceType, (surfaceType) =>
+		(surfaceType === SurfaceType.UNKNOWN ? baseBlue : baseGreen)
+			.lighten(Random.between(-0.05, 0.05, tile.toString(), 'lighten'))
+			.saturate(Random.between(-0.2, 0.2, tile.toString(), 'saturate')),
 	);
-
 	const contextMenu = useMapTileContextMenu();
 
 	const onRmb = useCallback<MouseEventHandler<SVGPolygonElement>>(
@@ -40,5 +51,5 @@ export const MapTile: FunctionComponent<{
 		.map(([x2, y2]) => `${(x1 + x2) * zoom},${(y1 + y2) * zoom}`)
 		.join(' ');
 
-	return <polygon points={points} fill={green.toString()} onContextMenu={onRmb} />;
+	return <polygon points={points} fill={color.toString()} onContextMenu={onRmb} />;
 };

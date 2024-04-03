@@ -1,9 +1,6 @@
 import { type AttachableI } from '../classes/Attachable.ts';
 import { Event } from './Event.ts';
-import {
-	EventedNumericValue,
-	type SaveEventedNumericValueJson,
-} from './EventedNumericValue.ts';
+import { EventedNumericValue, type SaveEventedNumericValueJson } from './EventedNumericValue.ts';
 import type Game from '../Game.ts';
 import { SaveJsonContext } from '../types-savedgame.ts';
 import { type DestroyerFn } from '../types.ts';
@@ -109,14 +106,16 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 			const setTimeout = (delay: number) => {
 				delay = Math.abs(delay);
 				if (delay < 1) {
-					console.warn(`Warning! Setting a very short timer of ${delay} ticks`);
+					console.warn(`Warning! Timer "${this.label}" has a very short delay of ${delay} ticks`);
 				} else if (delay === Infinity) {
 					// @NOTE This timer could have been avoided altogether. Whenever this warning is
 					// shown, please fix the root cause of the timer.
 					//
 					// For the time being we will also return early, rather than throw an error later.
 					console.warn(
-						`Warning! The timer is set to "never" (Infinity), with delta ${this.#delta}`,
+						`Warning! Timer "${this.label}" is set to "never" (Infinity), with delta ${
+							this.#delta
+						}`,
 					);
 					return;
 				}

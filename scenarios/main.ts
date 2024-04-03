@@ -128,7 +128,7 @@ export async function generateEntities(game: Game) {
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 	}
 
-	for (let i = 0; i < Random.between(6, 8, game.seed, 'guardamount'); i++) {
+	for (let i = 0; i < Random.between(160, 240, game.seed, 'guardamount'); i++) {
 		const id = `${game.seed}-person-${i}`;
 		const person = personArchetype.create({
 			location: Random.fromArray(walkableTiles, id).location.get(),

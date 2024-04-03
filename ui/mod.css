@@ -12,7 +12,7 @@
 @import url('./components/BehaviorTree.css');
 @import url('./components/createContextMenu.css');
 @import url('./map/MapEntity.css');
-@import url('./map/MapTileContextMenu.css');
+@import url('./context-menu/MapTileContextMenu.css');
 @import url('./application/GameClock.css');
 @import url('./application/GameMap.css');
 @import url('./application/GamePanels.css');

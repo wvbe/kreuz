@@ -9,7 +9,11 @@ import { ROUTE_ENTITIES_PEOPLE_JOBS_DETAILS } from './ROUTES.ts';
 export const InspectEntityRoute: FunctionComponent = () => {
 	const { entityId } = useParams<{ entityId: string }>();
 	const game = useGameContext();
-	const entity = useMemo(() => game.entities.getByKey(entityId!), [entityId]);
+	const entity = useMemo(
+		() =>
+			game.entities.getByKey(entityId!) || game.terrain.tiles.find((tile) => tile.id === entityId),
+		[entityId],
+	);
 	if (!entity) {
 		return null;
 	}

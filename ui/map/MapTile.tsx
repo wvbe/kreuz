@@ -9,7 +9,7 @@ import {
 } from '@lib';
 import Color from 'color';
 import React, { MouseEventHandler, useCallback, useMemo, type FunctionComponent } from 'react';
-import { useMapTileContextMenu } from './MAP_TILE_CONTEXT_MENU.ts';
+import { useMapTileContextMenu } from '../context-menu/MAP_TILE_CONTEXT_MENU.ts';
 import { useEventedValue } from '../hooks/useEventedValue.ts';
 
 // <palette>

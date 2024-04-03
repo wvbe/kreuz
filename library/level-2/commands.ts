@@ -1,1 +1,1 @@
-export { digTile } from './commands/digTile.ts';
+export { clearSpace } from './commands/clearSpace.ts';

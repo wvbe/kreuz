@@ -1,3 +1,4 @@
+import { tileArchetype } from '@lib/core';
 import {
 	EcsEntity,
 	Random,
@@ -45,20 +46,15 @@ export function generateDualMeshTerrain(seed: SeedI, size: number, density: numb
 	const mesh = meshBuilder.create();
 
 	const tiles = meshBuilder.points
-		.map<TileEntity>(([x, y, z], i) => {
-			const entity = { id: `dual-mesh-tile-${i}` };
-			locationComponent.attach(entity, { location: [x, y, z] });
-			outlineComponent.attach(entity, {
+		.map(([x, y, z], i) =>
+			tileArchetype.create({
+				location: [x, y, z],
 				outlineCoordinates: mesh
 					.r_circulate_t([], i)
 					.map((i: number) => [mesh.t_x(i) - x, mesh.t_y(i) - y, z]),
-			});
-			surfaceComponent.attach(entity, {
 				surfaceType: z >= 0 ? SurfaceType.OPEN : SurfaceType.UNKNOWN,
-			});
-			pathableComponent.attach(entity, { walkability: z >= 0 ? 1 : 0 });
-			return entity as TileEntity;
-		})
+			}),
+		)
 		.map((tile, i, tiles) => {
 			if (pathableComponent.test(tile)) {
 				tile.pathingNeighbours.push(

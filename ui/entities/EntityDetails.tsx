@@ -25,8 +25,3 @@ export const EntityDetails: FunctionComponent<{ entity: EcsEntity<any> }> = ({ e
 		</CollapsibleWindow>
 	);
 };
-
-export const SelectedEntityDetails: FunctionComponent = () => {
-	const selectedEntity = useSelectedEntity();
-	return <EntityDetails entity={selectedEntity.current} />;
-};

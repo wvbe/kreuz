@@ -71,7 +71,9 @@ export { visibilityComponent } from './ecs/components/visibilityComponent.ts';
 export { wealthComponent } from './ecs/components/wealthComponent.ts';
 
 // ECS archetypes
-export * from './ecs/archetypes/factoryArchetype.ts';
-export * from './ecs/archetypes/marketArchetype.ts';
-export * from './ecs/archetypes/personArchetype.ts';
+export { factoryArchetype } from './ecs/archetypes/factoryArchetype.ts';
+export { marketArchetype } from './ecs/archetypes/marketArchetype.ts';
+export { personArchetype } from './ecs/archetypes/personArchetype.ts';
+export { tileArchetype } from './ecs/archetypes/tileArchetype.ts';
+
 export { rejectBehaviorTreeWhenMissingEcsComponent } from './ecs/components/behaviorComponent/rejectBehaviorTreeWhenMissingEcsComponent.ts';

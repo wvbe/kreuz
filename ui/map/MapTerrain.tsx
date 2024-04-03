@@ -7,7 +7,7 @@ import {
 	visibilityComponent,
 } from '@lib';
 import React, { FunctionComponent, useMemo } from 'react';
-import { MapTileContextMenuHost } from './MAP_TILE_CONTEXT_MENU.ts';
+import { MapTileContextMenuHost } from '../context-menu/MAP_TILE_CONTEXT_MENU.ts';
 import { MapEntity } from './MapEntity.tsx';
 import { MapTile } from './MapTile.tsx';
 

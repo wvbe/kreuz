@@ -38,6 +38,11 @@ function attachSystemToEntity(
 				entity,
 			});
 		} catch (error: Error | BehaviorTreeSignal | unknown) {
+			if (error === undefined) {
+				// This happens for an unknown reason, sometimes (and only) when an entity has (just?)
+				// died. Good time to stop the behavior loop for it.
+				return;
+			}
 			if ((error as BehaviorTreeSignal)?.type !== 'fail') {
 				throw error;
 			}

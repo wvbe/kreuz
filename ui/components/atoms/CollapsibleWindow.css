@@ -10,7 +10,7 @@
 .collapsible-window > header {
 	flex: 0 0 auto;
 	margin: 3px;
-	backdrop-filter: blur(20px);
+	backdrop-filter: var(--panel-backdrop-filter);
 	cursor: pointer;
 	display: flex;
 	flex-direction: row;

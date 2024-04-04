@@ -9,6 +9,7 @@ export * from './ecs/components/behaviorComponent/types.ts';
 
 // Miscellaneous utilities:
 export { Command } from './classes/Command.ts';
+export { Prompt } from './classes/Prompt.ts';
 export { JobPosting } from './classes/JobPosting.ts';
 export { Random } from './classes/Random.ts';
 export { TimeLine } from './classes/TimeLine.ts';

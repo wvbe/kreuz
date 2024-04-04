@@ -16,7 +16,7 @@ export const MapTileContextMenu: FC<{
 			(entity as EcsEntity<typeof locationComponent>).equalsMapLocation(tile.location.get()),
 	);
 	return (
-		<div className="map-tile-context-menu">
+		<div className="panel map-tile-context-menu">
 			{[tile, ...tileEntities]
 				// .filter((entity): entity is EcsEntity<typeof visibilityComponent> =>
 				// 	visibilityComponent.test(entity),

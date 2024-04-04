@@ -7,10 +7,7 @@ import { EcsEntity } from '@lib';
 function allEntities(entity: EcsEntity) {
 	return true;
 }
-export const ListEntityRoute: FunctionComponent<{
-	label: string;
-	entityTest: (entity: EcsEntity) => boolean;
-}> = ({ label, entityTest }) => {
+export const ListEntityRoute: FunctionComponent = () => {
 	const game = useGameContext();
-	return <EntityList label={label} entities={game.entities} filter={allEntities} />;
+	return <EntityList label={'Entities'} entities={game.entities} filter={allEntities} />;
 };

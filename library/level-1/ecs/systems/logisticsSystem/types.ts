@@ -3,7 +3,7 @@ import { type locationComponent } from '../../components/locationComponent.ts';
 import { type importExportComponent } from '../../components/importExportComponent.ts';
 import { EcsEntity } from '../../types.ts';
 import { type Material } from '../../../inventory/Material.ts';
-import { healthComponent } from '@lib';
+
 
 export type LogisticsEntity = EcsEntity<
 	| typeof inventoryComponent

@@ -1,27 +1,15 @@
 .collapsible-window {
 	display: flex;
 	flex-direction: column;
-
-	border: 1px solid #999;
-	border-radius: var(--border-radius-medium);
-	background-color: var(--panel-background-color);
-	backdrop-filter: var(--panel-backdrop-filter);
 }
 .collapsible-window > header {
 	flex: 0 0 auto;
-	margin: 3px;
-	backdrop-filter: var(--panel-backdrop-filter);
 	cursor: pointer;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	min-height: var(--line-height);
 
-	padding: 0 3px;
-	font-size: 0.7em;
-	text-transform: uppercase;
-	letter-spacing: 1px;
-	font-weight: bold;
 }
 
 .collapsible-window > header:hover {

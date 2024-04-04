@@ -1,6 +1,6 @@
 import { JobPosting } from './JobPosting.ts';
 import { Collection } from '../events/Collection.ts';
-import { EcsEntity } from '@lib/core';
+import { EcsEntity } from '../ecs/types.ts';
 
 export type JobCandidate = {
 	execute: () => Promise<void>;

@@ -8,10 +8,6 @@
 	text-align: center;
 	cursor: pointer;
 
-	border: 1px solid #999;
-	border-radius: var(--border-radius-medium);
-	background-color: var(--panel-background-color);
-	backdrop-filter: var(--panel-backdrop-filter);
 }
 
 .game-navigation-button {

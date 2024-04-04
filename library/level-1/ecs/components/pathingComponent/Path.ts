@@ -6,7 +6,7 @@
 //   Includes Binary Heap (with modifications) from Marijn Haverbeke.
 //   http://eloquentjavascript.net/appendix2.html
 
-import { EcsEntity } from '@lib/core';
+import { EcsEntity } from '../../types.ts';
 import { locationComponent } from '../locationComponent.ts';
 import { pathableComponent } from '../pathableComponent.ts';
 import { BinaryHeap } from './BinaryHeap.ts';

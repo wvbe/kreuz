@@ -16,3 +16,5 @@ export * as heroes from './heroes/heroes.ts';
  * @deprecated Prefer to get from its registry in {@link DEFAULT_ASSETS}.
  */
 export * as materials from './materials.ts';
+
+export { PROMPT_CONSTRUCTION_JOB } from './commands/constructEntity.ts';

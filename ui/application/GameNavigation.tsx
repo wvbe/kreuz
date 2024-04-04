@@ -17,7 +17,7 @@ export const GameNavigationButton: FC<{
 		[path, params],
 	);
 	return (
-		<a onClick={onClick} className="game-navigation-button" title={tooltip}>
+		<a onClick={onClick} className="panel game-navigation-button" title={tooltip}>
 			{symbol}
 		</a>
 	);

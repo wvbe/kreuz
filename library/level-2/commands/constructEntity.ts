@@ -1,21 +1,31 @@
-import { Command, EcsEntity, EntityBlackboard, pathableComponent } from '@lib/core';
-
 import {
+	Command,
+	EcsEntity,
+	EntityBlackboard,
 	Game,
 	JobPosting,
+	Prompt,
+	SurfaceType,
 	assertEcsComponents,
 	inventoryComponent,
 	locationComponent,
+	pathableComponent,
 	pathingComponent,
+	surfaceComponent,
 } from '@lib/core';
 import { hasEcsComponents } from '../../level-1/ecs/assert.ts';
-import { SurfaceType } from '@lib/core';
-import { surfaceComponent } from '@lib/core';
 
 type TileEntity = EcsEntity<
 	typeof locationComponent | typeof surfaceComponent | typeof pathableComponent
 >;
-function createConstructionJob(game: Game, tile: TileEntity) {
+
+/**
+ * Identifier for the prompt that asks the user to select an entity to construct.
+ */
+export const PROMPT_CONSTRUCTION_JOB = new Prompt<{ entity: EcsEntity }>();
+
+async function createConstructionJob(game: Game, tile: TileEntity, buildTarget: EcsEntity) {
+	console.log('WANNA BUILD', buildTarget);
 	const assignJobToEntity = async (job: JobPosting, worker: EcsEntity) => {
 		assertEcsComponents(worker, [pathingComponent, locationComponent, inventoryComponent]);
 		await worker.walkToTile(game, tile);
@@ -51,13 +61,25 @@ function createConstructionJob(game: Game, tile: TileEntity) {
  */
 export const constructEntity = new Command<EntityBlackboard>(
 	'🚧 Build a thing here',
+
 	({ entity }) =>
 		// Only valid for tiles...
 		hasEcsComponents(entity, [locationComponent, pathableComponent, surfaceComponent]) &&
 		// ... that are not already cleared...
 		entity.surfaceType.get() === SurfaceType.OPEN,
-	({ game, entity: tile }) => {
+
+	async ({ game, entity: tile }) => {
 		assertEcsComponents(tile, [locationComponent, pathableComponent, surfaceComponent]);
-		createConstructionJob(game, tile);
+		try {
+			const { entity } = await game.prompt(PROMPT_CONSTRUCTION_JOB);
+			createConstructionJob(game, tile, entity);
+		} catch (error) {
+			if (error === undefined) {
+				// User cancelled prompt:
+				// Do nothing
+			} else {
+				throw error;
+			}
+		}
 	},
 );

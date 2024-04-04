@@ -1,4 +1,3 @@
-import { EcsSystem } from '@lib';
 import { EcsEntity } from '../types.ts';
 
 type EcsComponentFilter = (entity: EcsEntity) => boolean;

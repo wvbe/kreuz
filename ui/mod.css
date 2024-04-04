@@ -12,16 +12,20 @@
 @import url('./components/BehaviorTree.css');
 @import url('./components/createContextMenu.css');
 @import url('./map/MapEntity.css');
-@import url('./context-menu/MapTileContextMenu.css');
 @import url('./application/GameClock.css');
 @import url('./application/GameMap.css');
 @import url('./application/GamePanels.css');
 @import url('./application/GameNavigation.css');
-/* @import url('./components/EntityList.css'); */
+
+@import url('./context-menu/context-menu.css');
+@import url('./modals/modals.css');
+
+@import url('./prompts/EntityConstructionModal.css');
 
 :root {
 	--line-height: 18px;
 	--border-radius-medium: 6px;
+	--border-radius-small: 3px;
 
 	--panel-background-color: rgba(255, 255, 255, 0.5);
 	--panel-backdrop-filter: blur(20px);
@@ -38,4 +42,23 @@ body {
 * {
 	font-size: inherit;
 	text-align: inherit;
+}
+
+.panel {
+	border: 1px solid #999;
+	border-radius: var(--border-radius-medium);
+	background-color: var(--panel-background-color);
+	backdrop-filter: var(--panel-backdrop-filter);
+	box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+}
+
+.panel-header {
+	margin: 3px;
+	backdrop-filter: var(--panel-backdrop-filter);
+	border-radius: var(--border-radius-small);
+	padding: 0.25em 1em;
+	font-size: 0.7em;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-weight: bold;
 }

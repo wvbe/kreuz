@@ -3,10 +3,10 @@ import {
 	Material,
 	inventoryComponent,
 	locationComponent,
+	ownerComponent,
 	pathingComponent,
 	wealthComponent,
 } from '@lib/core';
-import { ownerComponent } from '@lib';
 
 type VendorEntity = EcsEntity<
 	| typeof inventoryComponent

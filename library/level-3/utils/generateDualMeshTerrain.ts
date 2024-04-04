@@ -1,13 +1,13 @@
-import { tileArchetype } from '@lib/core';
 import {
 	EcsEntity,
 	Random,
+	SurfaceType,
 	Terrain,
 	locationComponent,
 	outlineComponent,
 	pathableComponent,
 	surfaceComponent,
-	SurfaceType,
+	tileArchetype,
 	type SeedI,
 } from '@lib/core';
 import MeshBuilder from '@redblobgames/dual-mesh/create';

@@ -1,6 +1,6 @@
 import { Inventory } from './inventoryComponent/Inventory.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
-import { MaterialState } from '@lib';
+import { MaterialState } from '../../inventory/types.ts';
 
 /**
  * Entities with this component have a capacity to carry materials around.

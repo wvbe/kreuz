@@ -1,4 +1,4 @@
-import { EventedValue } from '@lib';
+import { EventedValue } from '../../events/EventedValue.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
 
 export enum SurfaceType {

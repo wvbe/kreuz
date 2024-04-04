@@ -11,7 +11,7 @@ const Application: FunctionComponent = () => {
 	const game = useGeneratedGame(demo, driver);
 
 	if (!game) {
-		return <p className="please-wait">Please wait…</p>;
+		return <p className="panel please-wait">Please wait…</p>;
 	}
 
 	return <GameInterface game={game} driver={driver} />;

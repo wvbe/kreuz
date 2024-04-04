@@ -1,6 +1,6 @@
-import { BehaviorTreeSignal } from '@lib/core';
 import { EcsComponent } from '../../classes/EcsComponent.ts';
 import { EcsEntity } from '../../types.ts';
+import { BehaviorTreeSignal } from './BehaviorTreeSignal.ts';
 
 /**
  * @deprecated Use `EcsComponent.test` instead

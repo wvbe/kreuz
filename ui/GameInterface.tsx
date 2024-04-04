@@ -1,4 +1,11 @@
-import { DriverI, Game, factoryArchetype, marketArchetype, personArchetype } from '@lib';
+import {
+	DriverI,
+	Game,
+	PROMPT_CONSTRUCTION_JOB,
+	factoryArchetype,
+	marketArchetype,
+	personArchetype,
+} from '@lib';
 import React, { FC, PropsWithChildren, type FunctionComponent } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import { GameClock } from './application/GameClock.tsx';
@@ -24,28 +31,10 @@ import {
 	ROUTE_PRODUCTION,
 	ROUTE_PRODUCTION_DETAILS,
 } from './routes/ROUTES.ts';
+import { ModalHost, registerUiForPrompt } from './modals/ModalHost.tsx';
+import { EntityConstructionModal } from './prompts/EntityConstructionModal.tsx';
 
-const ListPeopleEntities: FC<PropsWithChildren> = ({ children }) => (
-	<>
-		<ListEntityRoute label="People" entityTest={personArchetype.test.bind(personArchetype)} />
-		<Routes>{children}</Routes>
-	</>
-);
-const ListFactoryEntities: FC<PropsWithChildren> = ({ children }) => (
-	<>
-		<ListEntityRoute label="Factories" entityTest={factoryArchetype.test.bind(factoryArchetype)} />
-		<Routes>{children}</Routes>
-	</>
-);
-const ListMarketEntities: FC<PropsWithChildren> = ({ children }) => (
-	<>
-		<ListEntityRoute
-			label="Market places"
-			entityTest={marketArchetype.test.bind(marketArchetype)}
-		/>
-		<Routes>{children}</Routes>
-	</>
-);
+registerUiForPrompt(PROMPT_CONSTRUCTION_JOB, EntityConstructionModal);
 
 export const GameInterface: FunctionComponent<{
 	driver: DriverI;
@@ -60,7 +49,7 @@ export const GameInterface: FunctionComponent<{
 							<GameClock />
 							<GameMap />
 							<GamePanels>
-								<Route path={ROUTE_ENTITIES_PEOPLE} Component={ListPeopleEntities} />
+								<Route path={ROUTE_ENTITIES_PEOPLE} Component={ListEntityRoute} />
 								<Route path={ROUTE_ENTITIES_DETAILS} Component={InspectEntityRoute} />
 								<Route
 									path={ROUTE_ENTITIES_PEOPLE_JOBS_DETAILS}
@@ -71,6 +60,7 @@ export const GameInterface: FunctionComponent<{
 								<Route path={ROUTE_MATERIALS} Component={MaterialList} />
 								<Route path={ROUTE_MATERIALS_DETAILS} Component={InspectMaterialRoute} />
 							</GamePanels>
+							<ModalHost />
 						</SelectedEntityContextProvider>
 					</ReplacementSpaceContext>
 				</GameContext>

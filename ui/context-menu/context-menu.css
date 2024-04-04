@@ -1,8 +1,4 @@
 .map-tile-context-menu {
-	border: 1px solid #999;
-	border-radius: var(--border-radius-medium);
-	background-color: var(--panel-background-color);
-	backdrop-filter: var(--panel-backdrop-filter);
 }
 .map-tile-context-menu_section {
 	border-bottom: 1px solid #999;
@@ -17,7 +13,7 @@
 	cursor: pointer;
 }
 .map-tile-context-menu_item--interactive:hover {
-	background-color: antiquewhite;
+	background-color: var(--color-hover);
 }
 .map-tile-context-menu_item--disabled {
 	text-decoration: line-through;

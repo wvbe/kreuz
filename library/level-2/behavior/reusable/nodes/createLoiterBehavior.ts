@@ -1,18 +1,17 @@
 import {
-	Random,
+	BehaviorTreeSignal,
+	EntityBlackboard,
 	ExecutionNode,
+	Random,
 	SelectorNode,
 	SequenceNode,
-	EntityBlackboard,
-	BehaviorTreeSignal,
+	healthComponent,
+	locationComponent,
+	pathingComponent,
+	rejectBehaviorTreeWhenMissingEcsComponent,
+	statusComponent,
 } from '@lib/core';
 import { createWaitBehavior } from './createWaitBehavior.ts';
-import { needsComponent } from '@lib/core';
-import { rejectBehaviorTreeWhenMissingEcsComponent } from '@lib/core';
-import { statusComponent } from '@lib/core';
-import { locationComponent } from '@lib/core';
-import { pathingComponent } from '@lib/core';
-import { healthComponent } from '@lib/core';
 
 // Some "entropy" lolz0r
 let ticker = 0;

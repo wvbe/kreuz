@@ -1,4 +1,4 @@
-import { type SeedI, Random } from '@lib';
+import { type SeedI, Random } from '@lib/core';
 
 import FIRST_NAMES_F from './data/names-female.ts';
 import FIRST_NAMES_M from './data/names-male.ts';

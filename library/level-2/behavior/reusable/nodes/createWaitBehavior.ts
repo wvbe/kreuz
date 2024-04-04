@@ -1,8 +1,10 @@
-import { EcsComponent } from '@lib/core';
-import { rejectBehaviorTreeWhenMissingEcsComponent } from '@lib/core';
-import { statusComponent } from '@lib/core';
-import { EcsEntity } from '@lib/core';
-import { Random, ExecutionNode, EntityBlackboard } from '@lib/core';
+import {
+	EntityBlackboard,
+	ExecutionNode,
+	Random,
+	rejectBehaviorTreeWhenMissingEcsComponent,
+	statusComponent,
+} from '@lib/core';
 
 let ticker = 0;
 

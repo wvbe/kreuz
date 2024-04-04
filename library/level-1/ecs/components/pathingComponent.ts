@@ -1,4 +1,3 @@
-import { healthComponent } from '@lib/core';
 import type Game from '../../Game.ts';
 import { Event } from '../../events/Event.ts';
 import { EventedValue } from '../../events/EventedValue.ts';
@@ -6,6 +5,7 @@ import { SimpleCoordinate } from '../../terrain/types.ts';
 import { CallbackFn } from '../../types.ts';
 import { EcsComponent } from '../classes/EcsComponent.ts';
 import { EcsEntity } from '../types.ts';
+import { healthComponent } from './healthComponent.ts';
 import { locationComponent } from './locationComponent.ts';
 import { pathableComponent } from './pathableComponent.ts';
 import { Path } from './pathingComponent/Path.ts';

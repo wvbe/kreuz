@@ -1,5 +1,5 @@
-import { outlineComponent } from '@lib';
 import { type locationComponent } from '../ecs/components/locationComponent.ts';
+import { outlineComponent } from '../ecs/components/outlineComponent.ts';
 import { type pathableComponent } from '../ecs/components/pathableComponent.ts';
 import { EcsEntity } from '../ecs/types.ts';
 import { FilterFn } from '../types.ts';

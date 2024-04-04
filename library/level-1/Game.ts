@@ -1,7 +1,7 @@
-import { outlineComponent } from '@lib';
 import { type DEFAULT_ASSETS } from '../level-2/DEFAULT_ASSETS.ts';
 import { Command } from './classes/Command.ts';
 import { JobBoard } from './classes/JobBoard.ts';
+import { Prompt } from './classes/Prompt.ts';
 import { type StrictMap } from './classes/StrictMap.ts';
 import { TimeLine } from './classes/TimeLine.ts';
 import { type DriverI } from './drivers/types.ts';
@@ -13,6 +13,7 @@ import {
 	type EntityBlackboard,
 } from './ecs/components/behaviorComponent/types.ts';
 import { locationComponent } from './ecs/components/locationComponent.ts';
+import { outlineComponent } from './ecs/components/outlineComponent.ts';
 import { pathableComponent } from './ecs/components/pathableComponent.ts';
 import { type Blueprint } from './ecs/components/productionComponent/Blueprint.ts';
 import { behaviorTreeSystem } from './ecs/systems/behaviorTreeSystem.ts';
@@ -24,7 +25,6 @@ import { selfsustainingSystem } from './ecs/systems/selfsustainingSystem.ts';
 import { type EcsEntity } from './ecs/types.ts';
 import { Collection } from './events/Collection.ts';
 import { KeyedCollection } from './events/KeyedCollection.ts';
-import { UserInput } from './inputs/UserInput.ts';
 import { type Material } from './inventory/Material.ts';
 import { type TerrainI } from './terrain/types.ts';
 import { type SavedGameJson } from './types-savedgame.ts';
@@ -103,8 +103,6 @@ export default class Game {
 
 	public readonly commands = new Collection<Command<EntityBlackboard>>();
 
-	public readonly inputs = new UserInput();
-
 	constructor(
 		driver: DriverI,
 		seed: SeedI,
@@ -160,4 +158,12 @@ export default class Game {
 	// 	// );
 	// 	return game;
 	// }
+
+	public prompt<ReturnGeneric extends { [key: string]: any }>(
+		id: Prompt<ReturnGeneric>,
+	): Promise<ReturnGeneric> {
+		return new Promise<ReturnGeneric>((resolve, reject) => {
+			this.driver.$prompt.emit({ id, resolve, reject });
+		});
+	}
 }

@@ -1,17 +1,13 @@
 import {
 	EcsEntity,
-	TradeOrder,
 	inventoryComponent,
 	locationComponent,
+	ownerComponent,
 	pathingComponent,
 	wealthComponent,
 } from '@lib/core';
 import { type DesirabilityRecord, type VendorPurchaseScorer } from './types.ts';
-import { ownerComponent } from '@lib/core';
 
-/**
- * @todo Probably re-type this to match {@link TradeOrder} (eg. {@link TradeOrderConstructorParam})
- */
 export function selectMostDesirableItemFromVendors(
 	entity: EcsEntity<
 		| typeof inventoryComponent

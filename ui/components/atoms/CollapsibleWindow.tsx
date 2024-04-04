@@ -19,8 +19,10 @@ export const CollapsibleWindow: FunctionComponent<
 	}, [isCollapsed]);
 
 	return (
-		<aside className="collapsible-window" {...rest}>
-			<header onClick={toggleCollapse}>{label}</header>
+		<aside className="panel collapsible-window" {...rest}>
+			<header className="panel-header" onClick={toggleCollapse}>
+				{label}
+			</header>
 			{!isCollapsed && <div>{children}</div>}
 		</aside>
 	);

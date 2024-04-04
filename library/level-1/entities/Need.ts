@@ -31,4 +31,8 @@ export class Need extends ProgressingNumericValue {
 			id: this.id,
 		};
 	}
+
+	public toString() {
+		return this.label;
+	}
 }

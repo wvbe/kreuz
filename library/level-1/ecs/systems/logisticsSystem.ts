@@ -1,19 +1,16 @@
 import Game from '../../Game.ts';
 import { JobPosting } from '../../classes/JobPosting.ts';
+import { DestroyerFn } from '../../types.ts';
+import { assertEcsComponents, byEcsComponents, hasEcsComponents } from '../assert.ts';
 import { EcsSystem } from '../classes/EcsSystem.ts';
+import { eventLogComponent } from '../components/eventLogComponent.ts';
+import { healthComponent } from '../components/healthComponent.ts';
 import { importExportComponent } from '../components/importExportComponent.ts';
 import { inventoryComponent } from '../components/inventoryComponent.ts';
 import { locationComponent } from '../components/locationComponent.ts';
-
+import { pathingComponent } from '../components/pathingComponent.ts';
 import { LogisticsExchangeByMaterial } from './logisticsSystem/LogisticsExchangeByMaterial.ts';
 import { LogisticsDeal, LogisticsEntity } from './logisticsSystem/types.ts';
-import { EntityBlackboard } from '../components/behaviorComponent/types.ts';
-import { DestroyerFn } from '../../types.ts';
-import { healthComponent } from '../components/healthComponent.ts';
-import { pathingComponent } from '../components/pathingComponent.ts';
-import { statusComponent } from '../components/statusComponent.ts';
-import { assertEcsComponents } from '../assert.ts';
-import { byEcsComponents } from '../assert.ts';
 
 /**
  * Creates inventory reservations for the supplier and destination inventories, so that a transport
@@ -44,13 +41,11 @@ function createInventoryReservations(transportJobId: string, deal: LogisticsDeal
  */
 function createTransportJob(game: Game, transportJobId: string, deal: LogisticsDeal) {
 	const assignJobToEntity: ConstructorParameters<typeof JobPosting>[0] = async (job, entity) => {
-		assertEcsComponents(entity, [
-			healthComponent,
-			statusComponent,
-			pathingComponent,
-			locationComponent,
-			inventoryComponent,
-		]);
+		assertEcsComponents(
+			entity,
+			[healthComponent, pathingComponent, locationComponent, inventoryComponent],
+			[eventLogComponent],
+		);
 		if (entity.health.get() <= 0) {
 			throw new Error('Dead people cannot haul cargo');
 		}
@@ -59,7 +54,7 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 		// is done. Therefore, remove the job altogether.
 		game.jobs.removeGlobal(job);
 
-		await entity.$status.push(`Going to ${deal.supplier} for a hauling job`);
+		await entity.events?.add(`Going to ${deal.supplier} for a hauling job`);
 
 		const supplier = game.terrain.getTileEqualToLocation(deal.supplier.location.get());
 		if (!supplier) {
@@ -72,7 +67,7 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 			return;
 		}
 
-		await entity.$status.push(`Loading cargo`);
+		await entity.events?.add(`Loading cargo`);
 		deal.supplier.inventory.clearReservation(transportJobId);
 		await deal.supplier.inventory.change(deal.material, -deal.quantity);
 		await game.time.wait(1_000 * (deal.quantity / deal.material.stack));
@@ -88,7 +83,7 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 			{ material: deal.material, quantity: -deal.quantity },
 		]);
 
-		await entity.$status.push(`Delivering cargo to ${deal.destination}`);
+		await entity.events?.add(`Delivering cargo to ${deal.destination}`);
 
 		const destination = game.terrain.getTileEqualToLocation(deal.destination.location.get());
 		if (!destination) {
@@ -102,7 +97,7 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 			return;
 		}
 
-		await entity.$status.push(`Unloading cargo`);
+		await entity.events?.add(`Unloading cargo to ${deal.destination}`);
 		entity.inventory.clearReservation('transport-job');
 		// Skip emitting this event, because (due to the reservation made) nothing in the available
 		// materials changes.
@@ -113,16 +108,16 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 		await game.time.wait(1_000 * (deal.quantity / deal.material.stack));
 		deal.destination.inventory.clearReservation(transportJobId);
 		await deal.destination.inventory.change(deal.material, deal.quantity);
-
-		await entity.$status.pop();
 	};
 
 	const scoreJobDesirability: ConstructorParameters<typeof JobPosting>[1]['score'] = (entity) => {
 		if (
-			!inventoryComponent.test(entity) ||
-			!locationComponent.test(entity) ||
-			!healthComponent.test(entity) ||
-			!pathingComponent.test(entity)
+			!hasEcsComponents(entity, [
+				healthComponent,
+				pathingComponent,
+				locationComponent,
+				inventoryComponent,
+			])
 		) {
 			return 0;
 		}
@@ -246,4 +241,4 @@ async function attachSystem(game: Game) {
 	});
 }
 
-export const logisticsSystem = new EcsSystem([], attachSystem);
+export const logisticsSystem = new EcsSystem(attachSystem);

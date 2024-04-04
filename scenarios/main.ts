@@ -19,7 +19,7 @@ import {
 	pathingComponent,
 	visibilityComponent,
 	behaviorComponent,
-	statusComponent,
+	eventLogComponent,
 	healthComponent,
 	needsComponent,
 } from '@lib';
@@ -73,7 +73,7 @@ export async function generateEntities(game: Game) {
 		location: Random.fromArray(walkableTiles, 'dog').location.get(),
 	});
 	pathingComponent.attach(dog, { walkSpeed: 0.1 });
-	statusComponent.attach(dog, { status: 'Being a good boy' });
+	eventLogComponent.attach(dog, {});
 	healthComponent.attach(dog, { health: 1 });
 	behaviorComponent.attach(dog, { behavior: behavior.civilianBehavior });
 	game.entities.add(dog);

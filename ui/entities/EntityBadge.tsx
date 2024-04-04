@@ -1,23 +1,23 @@
+import { EcsComponent, EcsEntity, eventLogComponent, visibilityComponent } from '@lib';
 import React, { FunctionComponent } from 'react';
-import { useEventedValue } from '../hooks/useEventedValue.ts';
 import { Badge } from '../components/atoms/Badge.tsx';
 import { TokenizedText } from '../components/atoms/TokenizedText.tsx';
-import { EcsEntity } from '@lib';
-import { statusComponent } from '@lib';
-import { visibilityComponent } from '@lib';
+import { useCollection } from '../hooks/useEventedValue.ts';
 
 const InnerEntityBadge: FunctionComponent<{
-	entity: EcsEntity<typeof visibilityComponent | any>;
+	entity: EcsEntity<EcsComponent, typeof visibilityComponent | typeof eventLogComponent>;
 }> = ({ entity }) => {
-	const status = statusComponent.test(entity)
-		? useEventedValue(
-				(entity as EcsEntity<typeof statusComponent | typeof visibilityComponent>).$status,
-		  )
-		: null;
-	const icon = (entity as EcsEntity<typeof visibilityComponent>).icon || '👺';
-	const name = (entity as EcsEntity<typeof visibilityComponent>).name || entity.id;
-	return <Badge icon={icon} title={name} subtitle={<TokenizedText text={status || ''} />} />;
+	const status = eventLogComponent.test(entity) ? useCollection(entity.events) : [];
+	const icon = entity.icon || '👺';
+	const name = entity.name || entity.id;
+	return (
+		<Badge
+			icon={icon}
+			title={name}
+			subtitle={<TokenizedText text={status[status.length - 1] || ''} />}
+		/>
+	);
 };
 export const EntityBadge: FunctionComponent<{
-	entity?: EcsEntity<typeof visibilityComponent | any>;
+	entity: EcsEntity<EcsComponent, typeof visibilityComponent | typeof eventLogComponent>;
 }> = ({ entity }) => (entity ? <InnerEntityBadge entity={entity} /> : null);

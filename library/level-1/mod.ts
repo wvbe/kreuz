@@ -65,7 +65,7 @@ export { ownerComponent } from './ecs/components/ownerComponent.ts';
 export { pathableComponent } from './ecs/components/pathableComponent.ts';
 export { pathingComponent } from './ecs/components/pathingComponent.ts';
 export { productionComponent } from './ecs/components/productionComponent.ts';
-export { statusComponent } from './ecs/components/statusComponent.ts';
+export { eventLogComponent } from './ecs/components/eventLogComponent.ts';
 export { surfaceComponent, SurfaceType } from './ecs/components/surfaceComponent.ts';
 export { vendorComponent } from './ecs/components/vendorComponent.ts';
 export { visibilityComponent } from './ecs/components/visibilityComponent.ts';

@@ -11,10 +11,11 @@ import {
 	productionComponent,
 } from '../components/productionComponent.ts';
 import { Blueprint } from '../components/productionComponent/Blueprint.ts';
-import { statusComponent } from '../components/statusComponent.ts';
+import { eventLogComponent } from '../components/eventLogComponent.ts';
 import { wealthComponent } from '../components/wealthComponent.ts';
 import { EcsEntity } from '../types.ts';
 import { byEcsComponents } from '../assert.ts';
+import { hasEcsComponents } from '../assert.ts';
 
 /**
  * The minimal entity definition that can function as a factory building in this system.
@@ -23,7 +24,7 @@ import { byEcsComponents } from '../assert.ts';
  */
 type ProductionSystemFactoryEntity = EcsEntity<
 	| typeof productionComponent
-	| typeof statusComponent
+	| typeof eventLogComponent
 	| typeof locationComponent
 	| typeof inventoryComponent
 >;
@@ -96,7 +97,7 @@ async function assignWorkerToFactory(
 	if (worker.health.get() <= 0) {
 		throw new Error('Dead people cannot work');
 	}
-	await worker.$status.push(`Going to ${factory} for work`);
+	await worker.events.add(`Going to ${factory} for work`);
 	const tile = game.terrain.getTileEqualToLocation(factory.location.get());
 	if (!tile) {
 		throw new Error(`Entity "${factory.id}" lives on a detached coordinate`);
@@ -113,6 +114,7 @@ async function assignWorkerToFactory(
 		if (worker.health.delta > 0) {
 			return;
 		}
+		worker.events?.add(`Poor health, leaving job at ${factory}`);
 		factory.$workers.remove(worker);
 	});
 
@@ -129,7 +131,7 @@ async function assignWorkerToFactory(
 	// 	true,
 	// );
 
-	await worker.$status.push(`Working in ${factory}`);
+	await worker.events.add(`Working in ${factory}`);
 
 	// Finish job when the worker is removed from the worker list. factory happens
 	// when the factory is not productive for a while..
@@ -145,8 +147,6 @@ async function assignWorkerToFactory(
 			resolve();
 		});
 	});
-
-	await worker.$status.pop();
 }
 
 async function attachSystemToEntity(game: Game, factory: ProductionSystemFactoryEntity) {
@@ -173,7 +173,7 @@ async function attachSystemToEntity(game: Game, factory: ProductionSystemFactory
 		}
 		factory.$$progress.set(0);
 		factory.$$progress.setDelta(0);
-		void factory.$status.push('Idle…');
+		// void factory.events.add('Idle…');
 
 		// Workers wait around a little bit to see if theres no more work. After an hour of idleness, they go home.
 		if (!factory.$workers.length) {
@@ -203,7 +203,7 @@ async function attachSystemToEntity(game: Game, factory: ProductionSystemFactory
 		factory.inventory.makeReservation(factory, blueprint.products);
 		factory.$$progress.set(0);
 		factory.$$progress.setDelta(delta);
-		void factory.$status.push('Working…');
+		// void factory.events.add('Working…');
 	}
 
 	factory.blueprint.on((blueprint) => {
@@ -297,11 +297,12 @@ async function attachSystemToEntity(game: Game, factory: ProductionSystemFactory
 				label: `Working for ${factory}`,
 				score: (entity) => {
 					if (
-						!healthComponent.test(entity) ||
-						!wealthComponent.test(entity) ||
-						!locationComponent.test(entity) ||
-						!statusComponent.test(entity) ||
-						!pathingComponent.test(entity)
+						!hasEcsComponents(entity, [
+							healthComponent,
+							wealthComponent,
+							locationComponent,
+							pathingComponent,
+						])
 					) {
 						// Entities who are not interested in money, or entities who do not have a location,
 						// are never interested in this job.
@@ -354,7 +355,7 @@ async function attachSystem(game: Game) {
 				.filter(
 					byEcsComponents([
 						productionComponent,
-						statusComponent,
+						eventLogComponent,
 						locationComponent,
 						inventoryComponent,
 					]),
@@ -378,14 +379,4 @@ async function attachSystem(game: Game) {
  * When a production cycle is complete and there is still enough ingredients as well as avaialble space
  * in the inventory, and workers present, a new production cycle starts automatically.
  */
-export const productionSystem = new EcsSystem(
-	[
-		productionComponent,
-		statusComponent,
-		locationComponent,
-		inventoryComponent,
-		pathingComponent,
-		healthComponent,
-	],
-	attachSystem,
-);
+export const productionSystem = new EcsSystem(attachSystem);

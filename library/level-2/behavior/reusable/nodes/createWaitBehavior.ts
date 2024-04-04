@@ -3,7 +3,7 @@ import {
 	ExecutionNode,
 	Random,
 	rejectBehaviorTreeWhenMissingEcsComponent,
-	statusComponent,
+	eventLogComponent,
 } from '@lib/core';
 
 let ticker = 0;
@@ -14,14 +14,8 @@ export function createWaitBehavior(
 	statusUpdate?: string | null,
 ) {
 	return new ExecutionNode<EntityBlackboard>('Wait', async ({ game, entity }) => {
-		rejectBehaviorTreeWhenMissingEcsComponent(entity, [statusComponent]);
-
-		if (!statusComponent.test(entity)) {
-			return;
-		}
-
-		if (statusUpdate !== undefined) {
-			await entity.$status.push(statusUpdate);
+		if (statusUpdate && eventLogComponent.test(entity)) {
+			await entity.events.add(statusUpdate);
 		}
 		const timeout = Math.round(
 			Random.between(lowerBounary, upperBoundary, entity.id, 'wait bt', ++ticker),

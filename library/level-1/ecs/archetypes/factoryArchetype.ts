@@ -6,7 +6,7 @@ import { locationComponent } from '../components/locationComponent.ts';
 import { ownerComponent } from '../components/ownerComponent.ts';
 import { productionComponent } from '../components/productionComponent.ts';
 import { Blueprint } from '../components/productionComponent/Blueprint.ts';
-import { statusComponent } from '../components/statusComponent.ts';
+import { eventLogComponent } from '../components/eventLogComponent.ts';
 import { visibilityComponent } from '../components/visibilityComponent.ts';
 import { wealthComponent } from '../components/wealthComponent.ts';
 import { EcsEntity } from '../types.ts';
@@ -22,7 +22,7 @@ export const factoryArchetype = new EcsArchetype<
 		icon?: string;
 	},
 	| typeof inventoryComponent
-	| typeof statusComponent
+	| typeof eventLogComponent
 	| typeof locationComponent
 	| typeof ownerComponent
 	| typeof productionComponent
@@ -33,7 +33,7 @@ export const factoryArchetype = new EcsArchetype<
 		inventoryComponent,
 		locationComponent,
 		ownerComponent,
-		statusComponent,
+		eventLogComponent,
 		productionComponent,
 		visibilityComponent,
 		importExportComponent,
@@ -48,7 +48,7 @@ export const factoryArchetype = new EcsArchetype<
 		ownerComponent.attach(entity, {
 			owner: options.owner,
 		});
-		statusComponent.attach(entity, {});
+		eventLogComponent.attach(entity, {});
 		productionComponent.attach(entity, {
 			maxWorkers: options.maxWorkers,
 			blueprint: options.blueprint,

@@ -9,7 +9,7 @@ import {
 	locationComponent,
 	pathingComponent,
 	rejectBehaviorTreeWhenMissingEcsComponent,
-	statusComponent,
+	eventLogComponent,
 } from '@lib/core';
 import { createWaitBehavior } from './createWaitBehavior.ts';
 
@@ -21,7 +21,6 @@ export function createLoiterBehavior() {
 		new SequenceNode(
 			new ExecutionNode('Wander', async ({ game, entity }) => {
 				rejectBehaviorTreeWhenMissingEcsComponent(entity, [
-					statusComponent,
 					locationComponent,
 					pathingComponent,
 					healthComponent,
@@ -34,7 +33,9 @@ export function createLoiterBehavior() {
 				// if ((entity.needs.energy.get() || 0) < 0.2) {
 				// 	throw new BehaviorTreeSignal(`${entity} is too tired to wander around`);
 				// }
-				await entity.$status.push('Wandering around…');
+				if (eventLogComponent.test(entity)) {
+					await entity.events.add('Wandering around…');
+				}
 				const start = game.terrain.getTileEqualToLocation(entity.location.get());
 				if (!start) {
 					throw new Error(`Entity "${entity.id}" lives on a detached coordinate`);

@@ -74,7 +74,7 @@ function attachSystemToEntity(
 /**
  * A system that runs behavior trees for entities of the {@link personArchetype} archetype.
  */
-export const behaviorTreeSystem = new EcsSystem([], (game) => {
+export const behaviorTreeSystem = new EcsSystem((game) => {
 	game.entities.$add.on(async (entities) => {
 		await Promise.all(
 			entities

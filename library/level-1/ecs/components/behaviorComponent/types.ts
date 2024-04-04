@@ -1,16 +1,5 @@
 import Game from '../../../Game.ts';
-import { personArchetype } from '../../archetypes/personArchetype.ts';
 import { EcsEntity } from '../../types.ts';
-import { EcsArchetypeEntity } from '../../types.ts';
-import { behaviorComponent } from '../behaviorComponent.ts';
-import { healthComponent } from '../healthComponent.ts';
-import { inventoryComponent } from '../inventoryComponent.ts';
-import { locationComponent } from '../locationComponent.ts';
-import { pathingComponent } from '../pathingComponent.ts';
-import { statusComponent } from '../statusComponent.ts';
-import { visibilityComponent } from '../visibilityComponent.ts';
-import { wealthComponent } from '../wealthComponent.ts';
-import { needsComponent } from '../needsComponent.ts';
 
 export interface BehaviorTreeNodeI<
 	BlackboardGeneric extends Record<string, unknown> = Record<string, never>,

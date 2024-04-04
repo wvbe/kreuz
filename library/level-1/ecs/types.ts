@@ -14,9 +14,13 @@ type _EcsDataFromComponent<ComponentGeneric extends EcsComponent<any, any>> =
 /**
  * An entity, with the components as per the `ComponentGeneric` type parameter.
  */
-export type EcsEntity<ComponentGeneric extends EcsComponent<any, any> = EcsComponent> = {
+export type EcsEntity<
+	RequiredComponents extends EcsComponent<any, any> = EcsComponent,
+	OptionalComponents extends EcsComponent<any, any> = EcsComponent,
+> = {
 	id: string;
-} & UnionToIntersection<_EcsDataFromComponent<ComponentGeneric>>;
+} & UnionToIntersection<_EcsDataFromComponent<RequiredComponents>> &
+	UnionToIntersection<Partial<_EcsDataFromComponent<OptionalComponents>>>;
 
 /**
  * An entity with all the components of the `ArchetypeGeneric` type parameter archetype.

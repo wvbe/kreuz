@@ -9,7 +9,7 @@ import {
 	materials,
 	pathingComponent,
 	personArchetype,
-	statusComponent,
+	eventLogComponent,
 	visibilityComponent,
 } from '@lib';
 import { generateGridTerrainFromAscii } from '@test';
@@ -48,7 +48,7 @@ export default async function (driver: DriverI) {
 			icon: '🤖',
 			name: `Excavator ${i + 1}`,
 		});
-		statusComponent.attach(entity, {});
+		eventLogComponent.attach(entity, {});
 		locationComponent.attach(entity, { location: [10, 5, 0] });
 		pathingComponent.attach(entity, { walkSpeed: 10 });
 		behaviorComponent.attach(entity, {

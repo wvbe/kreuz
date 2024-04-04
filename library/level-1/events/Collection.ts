@@ -94,9 +94,9 @@ export class Collection<ItemGeneric> {
 	public map<X>(mapper: (item: ItemGeneric, index: number, all: ItemGeneric[]) => X): X[] {
 		return this.list.map(mapper);
 	}
-
-	public filter<X = ItemGeneric>(
-		filter: (item: ItemGeneric, index: number, array: ItemGeneric[]) => boolean,
+	// filter<S extends T>(predicate: (value: T, index: number, array: T[]) => value is S, thisArg?: any): S[]
+	public filter<X extends ItemGeneric = ItemGeneric>(
+		filter: (item: ItemGeneric, index: number, array: ItemGeneric[]) => item is X,
 	) {
 		return this.list.filter(filter) as unknown[] as X[];
 	}

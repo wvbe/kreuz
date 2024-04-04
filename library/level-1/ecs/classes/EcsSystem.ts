@@ -2,16 +2,10 @@ import Game from '../../Game.ts';
 
 type EcsSystemAttachor = (game: Game) => void | Promise<void>;
 
-export class EcsSystem<Dependencies extends unknown[]> {
-	/**
-	 * @deprecated Not used for anything, remove some time soon
-	 */
-	public readonly dependencies: Dependencies;
-
+export class EcsSystem {
 	public readonly attachGame: EcsSystemAttachor;
 
-	constructor(componentDependencies: Dependencies, onGameAttach: EcsSystemAttachor) {
-		this.dependencies = componentDependencies;
+	constructor(onGameAttach: EcsSystemAttachor) {
 		this.attachGame = onGameAttach;
 	}
 }

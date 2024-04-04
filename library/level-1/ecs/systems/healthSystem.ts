@@ -4,7 +4,7 @@ import { healthComponent } from '../components/healthComponent.ts';
 import { needsComponent } from '../components/needsComponent.ts';
 import { EcsSystem } from '../classes/EcsSystem.ts';
 import { EcsEntity } from '../types.ts';
-import { statusComponent } from '../components/statusComponent.ts';
+import { eventLogComponent } from '../components/eventLogComponent.ts';
 import { visibilityComponent } from '../components/visibilityComponent.ts';
 import { byEcsComponents, hasEcsComponents } from '../assert.ts';
 
@@ -16,7 +16,10 @@ const dyingSpeed = 1 / 1_000_000;
 /**
  * The entity type to which this system applies.
  */
-type HealthSystemEntity = EcsEntity<typeof healthComponent | typeof needsComponent>;
+type HealthSystemEntity = EcsEntity<
+	typeof healthComponent | typeof needsComponent,
+	typeof eventLogComponent
+>;
 
 /**
  * Attaches the health system to an entity.
@@ -38,6 +41,7 @@ async function attachSystemToEntity(game: Game, entity: HealthSystemEntity) {
 		await need.attach(game);
 		// A "need" starts being detrimental to ones health when it is less than 10% satisfied
 		const stop1 = need.onBelow(0.1, () => {
+			entity.events?.add(`${need} has started to affect ${entity}'s health`);
 			const delta = entity.health.delta - dyingSpeed;
 			entity.health.setDelta(delta);
 		});
@@ -60,9 +64,7 @@ async function attachSystemToEntity(game: Game, entity: HealthSystemEntity) {
 		});
 	}
 	entity.$death.once(() => {
-		if (statusComponent.test(entity)) {
-			entity.$status.push('Died of natural causes.');
-		}
+		entity.events?.add('Died of natural causes.');
 		if (visibilityComponent.test(entity)) {
 			entity.icon = '💀';
 		}
@@ -75,7 +77,7 @@ async function attachSystemToEntity(game: Game, entity: HealthSystemEntity) {
  *
  * @note Other systems, who depend on living entities, should listen for $death events.
  */
-export const healthSystem = new EcsSystem([healthComponent, needsComponent], async (game) => {
+export const healthSystem = new EcsSystem(async (game) => {
 	game.entities.$add.on(async (entities) => {
 		await Promise.all(
 			entities

@@ -27,7 +27,7 @@ export const GameClock: FunctionComponent = () => {
 	}, []);
 
 	return (
-		<div className="game-ui__clock">
+		<div className="panel game-ui__clock" style={{ padding: '3px' }}>
 			<button onClick={pause} disabled={!isAnimating}>
 				Pause
 			</button>

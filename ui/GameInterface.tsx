@@ -20,6 +20,7 @@ import { SelectedEntityContextProvider } from './hooks/useSelectedEntity.tsx';
 import { InspectBlueprintRoute } from './routes/InspectBlueprintRoute.tsx';
 import { InspectEntityJobsRoute } from './routes/InspectEntityJobsRoute.tsx';
 import { InspectEntityRoute } from './routes/InspectEntityRoute.tsx';
+import { InspectEntityEventLogRoute } from './routes/InspectEntityEventLogRoute.tsx';
 import { InspectMaterialRoute } from './routes/InspectMaterialRoute.tsx';
 import { ListEntityRoute } from './routes/ListEntityRoute.tsx';
 import {
@@ -33,6 +34,7 @@ import {
 } from './routes/ROUTES.ts';
 import { ModalHost, registerUiForPrompt } from './modals/ModalHost.tsx';
 import { EntityConstructionModal } from './prompts/EntityConstructionModal.tsx';
+import { ROUTE_ENTITIES_EVENTS_DETAILS } from './routes/ROUTES.ts';
 
 registerUiForPrompt(PROMPT_CONSTRUCTION_JOB, EntityConstructionModal);
 
@@ -54,6 +56,10 @@ export const GameInterface: FunctionComponent<{
 								<Route
 									path={ROUTE_ENTITIES_PEOPLE_JOBS_DETAILS}
 									Component={InspectEntityJobsRoute}
+								/>
+								<Route
+									path={ROUTE_ENTITIES_EVENTS_DETAILS}
+									Component={InspectEntityEventLogRoute}
 								/>
 								<Route path={ROUTE_PRODUCTION} Component={ProductionList} />
 								<Route path={ROUTE_PRODUCTION_DETAILS} Component={InspectBlueprintRoute} />

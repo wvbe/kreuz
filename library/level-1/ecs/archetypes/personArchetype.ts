@@ -8,7 +8,7 @@ import { inventoryComponent } from '../components/inventoryComponent.ts';
 import { locationComponent } from '../components/locationComponent.ts';
 import { needsComponent } from '../components/needsComponent.ts';
 import { pathingComponent } from '../components/pathingComponent.ts';
-import { statusComponent } from '../components/statusComponent.ts';
+import { eventLogComponent } from '../components/eventLogComponent.ts';
 import { visibilityComponent } from '../components/visibilityComponent.ts';
 import { wealthComponent } from '../components/wealthComponent.ts';
 
@@ -25,7 +25,7 @@ export const personArchetype = new EcsArchetype<
 	| typeof locationComponent
 	| typeof needsComponent
 	| typeof pathingComponent
-	| typeof statusComponent
+	| typeof eventLogComponent
 	| typeof visibilityComponent
 	| typeof wealthComponent
 >(
@@ -36,7 +36,7 @@ export const personArchetype = new EcsArchetype<
 		locationComponent,
 		needsComponent,
 		pathingComponent,
-		statusComponent,
+		eventLogComponent,
 		wealthComponent,
 	],
 	(entity, options) => {
@@ -59,7 +59,7 @@ export const personArchetype = new EcsArchetype<
 		pathingComponent.attach(entity, {
 			walkSpeed: 1 / 1000,
 		});
-		statusComponent.attach(entity, {});
+		eventLogComponent.attach(entity, {});
 		visibilityComponent.attach(entity, {
 			name: options.name,
 			icon: options.icon,

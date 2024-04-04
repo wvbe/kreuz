@@ -8,7 +8,7 @@ import { locationComponent } from '../components/locationComponent.ts';
 import { pathingComponent } from '../components/pathingComponent.ts';
 import { productionComponent } from '../components/productionComponent.ts';
 import { Blueprint } from '../components/productionComponent/Blueprint.ts';
-import { statusComponent } from '../components/statusComponent.ts';
+import { eventLogComponent } from '../components/eventLogComponent.ts';
 import { vendorComponent } from '../components/vendorComponent.ts';
 import { wealthComponent } from '../components/wealthComponent.ts';
 import { EcsEntity } from '../types.ts';
@@ -22,14 +22,16 @@ type GroceryPurchasingEntity = EcsEntity<
 	| typeof inventoryComponent
 	| typeof wealthComponent
 	| typeof healthComponent
-	| typeof needsComponent
+	| typeof needsComponent,
+	typeof eventLogComponent
 >;
 
 type GrocerySellingEntity = EcsEntity<
 	| typeof locationComponent
 	| typeof inventoryComponent
 	| typeof vendorComponent
-	| typeof ownerComponent
+	| typeof ownerComponent,
+	typeof eventLogComponent
 >;
 
 type GroceryProposal = {
@@ -37,15 +39,6 @@ type GroceryProposal = {
 	material: Material;
 	score: number;
 };
-
-function isGrocerySellingEntity(entity: EcsEntity): entity is GrocerySellingEntity {
-	return (
-		locationComponent.test(entity) &&
-		inventoryComponent.test(entity) &&
-		vendorComponent.test(entity) &&
-		ownerComponent.test(entity)
-	);
-}
 
 type MaterialVendorScore = {
 	material: Material;
@@ -107,7 +100,9 @@ function getMostAttractiveVendorForNeed(
 ): GroceryProposal | null {
 	return (
 		game.entities
-			.filter<GrocerySellingEntity>(isGrocerySellingEntity)
+			.filter(
+				byEcsComponents([locationComponent, inventoryComponent, vendorComponent, ownerComponent]),
+			)
 			.map((vendor) => ({
 				vendor,
 				score: scoreEntityVendor(entity, vendor),
@@ -157,7 +152,7 @@ async function doGrocery(
 	entity.inventory.makeReservation(reservationId, [{ material, quantity: purchaseQuantity }]);
 	vendor.inventory.makeReservation(reservationId, [{ material, quantity: -purchaseQuantity }]);
 
-	// await entity.$status.push(`Going to ${deal.vendor} to get some supplies
+	await entity.events?.add(`Going to ${vendor} to buy some ${material}`);
 
 	const vendorLocation = game.terrain.getTileEqualToLocation(vendor.location.get());
 	if (!vendorLocation) {
@@ -171,14 +166,18 @@ async function doGrocery(
 	}
 
 	// Money changes hands first, and instantly
-	entity.wallet.set(entity.wallet.get() - purchaseQuantity * costPerItem);
-	vendor.owner.wallet.set(vendor.owner.wallet.get() + purchaseQuantity * costPerItem);
+	const totalPurchaseCost = purchaseQuantity * costPerItem;
+	await entity.wallet.set(entity.wallet.get() - totalPurchaseCost);
+	await vendor.owner.wallet.set(vendor.owner.wallet.get() + purchaseQuantity * costPerItem);
 
 	vendor.inventory.clearReservation(reservationId);
-	vendor.inventory.change(material, -purchaseQuantity);
+	await vendor.inventory.change(material, -purchaseQuantity);
 	await game.time.wait(1_000 * (purchaseQuantity / material.stack));
 	entity.inventory.clearReservation(reservationId);
-	entity.inventory.change(material, purchaseQuantity);
+	await entity.inventory.change(material, purchaseQuantity);
+	await entity.events?.add(
+		`Purchased ${purchaseQuantity} of ${material} for 💰${totalPurchaseCost} at ${vendor}`,
+	);
 }
 
 async function attachSystemToEntity(game: Game, entity: GroceryPurchasingEntity) {
@@ -188,7 +187,8 @@ async function attachSystemToEntity(game: Game, entity: GroceryPurchasingEntity)
 	})[] = [];
 
 	Object.values(entity.needs).forEach((need) => {
-		need.onBelow(0.5, () => {
+		need.onBelow(0.5, async () => {
+			await entity.events?.add(`Looking to buy some supplies to satisfy ${need}`);
 			const task = () => {
 				const deal = getMostAttractiveVendorForNeed(entity, game, need);
 				const label = `Buy ${deal?.material} for ${need.label}`;
@@ -217,15 +217,17 @@ async function attachSystem(game: Game) {
 		await Promise.all(
 			entities
 				.filter(
-					byEcsComponents([
-						healthComponent,
-						inventoryComponent,
-						locationComponent,
-						needsComponent,
-						pathingComponent,
-						statusComponent,
-						wealthComponent,
-					]),
+					byEcsComponents(
+						[
+							healthComponent,
+							inventoryComponent,
+							locationComponent,
+							needsComponent,
+							pathingComponent,
+							wealthComponent,
+						],
+						[eventLogComponent],
+					),
 				)
 				.map((person) => attachSystemToEntity(game, person)),
 		);
@@ -246,14 +248,4 @@ async function attachSystem(game: Game) {
  * When a production cycle is complete and there is still enough ingredients as well as avaialble space
  * in the inventory, and workers present, a new production cycle starts automatically.
  */
-export const grocerySystem = new EcsSystem(
-	[
-		productionComponent,
-		statusComponent,
-		locationComponent,
-		inventoryComponent,
-		pathingComponent,
-		healthComponent,
-	],
-	attachSystem,
-);
+export const grocerySystem = new EcsSystem(attachSystem);

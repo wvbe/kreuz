@@ -5,15 +5,13 @@ import { Blueprint, SaveBlueprintJson } from './productionComponent/Blueprint.ts
 import { EcsComponent } from '../classes/EcsComponent.ts';
 import { EcsEntity } from '../types.ts';
 import { type locationComponent } from './locationComponent.ts';
-import { type statusComponent } from './statusComponent.ts';
+import { type eventLogComponent } from './eventLogComponent.ts';
 import { type pathingComponent } from './pathingComponent.ts';
 import { healthComponent } from './healthComponent.ts';
 
 export type ProductionComponentWorkerEntity = EcsEntity<
-	| typeof statusComponent
-	| typeof locationComponent
-	| typeof pathingComponent
-	| typeof healthComponent
+	typeof locationComponent | typeof pathingComponent | typeof healthComponent,
+	typeof eventLogComponent
 >;
 
 /**

@@ -9,7 +9,7 @@ export const GameMap: FunctionComponent = () => {
 	return (
 		<div className="game-viewport">
 			<MapViewport>
-				<MapTerrain terrain={game.terrain} entities={game.entities} />
+				<MapTerrain terrain={game.terrain} entities={game.entities.living} />
 			</MapViewport>
 		</div>
 	);

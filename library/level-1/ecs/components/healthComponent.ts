@@ -32,10 +32,6 @@ export const healthComponent = new EcsComponent<
 		);
 		const $death = new Event('healthComponent $death');
 
-		$death.on(() => {
-			console.log(`${entity} died`);
-		});
-
 		Object.assign(entity, {
 			health,
 			$death,

@@ -24,7 +24,6 @@ export const MapTileContextMenuSection: FC<
 					<MapTileContextMenuItem
 						key={command.label}
 						onClick={() => {
-							console.log('Execute command', command);
 							command.execute({ game, entity });
 							contextMenu.close();
 						}}

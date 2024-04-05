@@ -25,10 +25,16 @@ import { selfsustainingSystem } from './ecs/systems/selfsustainingSystem.ts';
 import { type EcsEntity } from './ecs/types.ts';
 import { Collection } from './events/Collection.ts';
 import { KeyedCollection } from './events/KeyedCollection.ts';
+import { CollectionBucket } from './events/CollectionBucket.ts';
 import { type Material } from './inventory/Material.ts';
 import { type TerrainI } from './terrain/types.ts';
 import { type SavedGameJson } from './types-savedgame.ts';
 import { type SeedI } from './types.ts';
+import { personArchetype } from './ecs/archetypes/personArchetype.ts';
+import { factoryArchetype } from './ecs/archetypes/factoryArchetype.ts';
+import { marketArchetype } from './ecs/archetypes/marketArchetype.ts';
+import { tileArchetype } from './ecs/archetypes/tileArchetype.ts';
+import { EcsArchetypeEntity, Terrain } from '@lib/core';
 
 export type GameAssets = {
 	behaviorNodes: StrictMap<BehaviorTreeNodeI<EntityBlackboard>>;
@@ -37,10 +43,22 @@ export type GameAssets = {
 	commands: StrictMap<Command<EntityBlackboard>>;
 };
 
-type GameTerrainTile = EcsEntity<
-	typeof locationComponent | typeof pathableComponent | typeof outlineComponent
->;
-
+function createEntitiesCollections() {
+	const entities = new KeyedCollection<'id', EcsEntity>('id');
+	return Object.assign(entities, {
+		living: new CollectionBucket(
+			entities,
+			(
+				entity,
+			): entity is EcsArchetypeEntity<
+				typeof personArchetype | typeof factoryArchetype | typeof marketArchetype
+			> =>
+				personArchetype.test(entity) ||
+				factoryArchetype.test(entity) ||
+				marketArchetype.test(entity),
+		),
+	});
+}
 /**
  * Represents one game world, where entities interact with eachother and things around them.
  *
@@ -53,7 +71,7 @@ export default class Game {
 	 * {@link KeyedCollection.filter} this list and use {@link EcsComponent.test} or {@link EcsArchetype.test}
 	 * methods select the entities you're interested in.
 	 */
-	public readonly entities = new KeyedCollection<'id', EcsEntity>('id');
+	public readonly entities = createEntitiesCollections();
 
 	/**
 	 * The global understanding of the passage of time. Has some helper methods such as {@link TimeLine.setTimeout}
@@ -82,7 +100,7 @@ export default class Game {
 	/**
 	 * The geography in which all game events supposedly take place. A magical land.
 	 */
-	public readonly terrain: TerrainI<GameTerrainTile>;
+	public readonly terrain: TerrainI<EcsArchetypeEntity<typeof tileArchetype>>;
 
 	/**
 	 * A seed number or string to help create semi-random things.
@@ -103,16 +121,14 @@ export default class Game {
 
 	public readonly commands = new Collection<Command<EntityBlackboard>>();
 
-	constructor(
-		driver: DriverI,
-		seed: SeedI,
-		terrain: TerrainI<GameTerrainTile>,
-		assets: GameAssets,
-	) {
+	constructor(driver: DriverI, seed: SeedI, assets: GameAssets) {
 		this.driver = driver;
 
 		this.seed = seed;
-		this.terrain = terrain;
+
+		this.terrain = new Terrain<EcsArchetypeEntity<typeof tileArchetype>>(
+			new CollectionBucket(this.entities, tileArchetype.test.bind(tileArchetype)),
+		);
 		this.assets = assets;
 
 		productionSystem.attachGame(this);

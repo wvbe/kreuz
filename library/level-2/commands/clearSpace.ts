@@ -12,6 +12,7 @@ import {
 	surfaceComponent,
 } from '@lib/core';
 import { hasEcsComponents } from '../../level-1/ecs/assert.ts';
+import { eventLogComponent } from '@lib/core';
 
 type TileEntity = EcsEntity<
 	typeof locationComponent | typeof surfaceComponent | typeof pathableComponent
@@ -40,7 +41,12 @@ export const clearSpace = new Command<EntityBlackboard>(
 		game.jobs.addGlobal(
 			new JobPosting(
 				async (job, worker) => {
-					assertEcsComponents(worker, [pathingComponent, locationComponent, inventoryComponent]);
+					assertEcsComponents(
+						worker,
+						[pathingComponent, locationComponent, inventoryComponent],
+						[eventLogComponent],
+					);
+					await worker.events?.add('Excavating a space');
 					await worker.walkToTile(game, tile);
 					await game.time.wait(30_000);
 					tile.walkability = 1;

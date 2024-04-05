@@ -10,9 +10,15 @@ export class Driver extends Attachable<[Game]> implements DriverI {
 	public readonly $resume = new Event('Driver $resume');
 	public readonly $pause = new Event('Driver $pause');
 	public readonly $end = new Event('Driver $end');
-	public readonly $prompt = new Event<[Prompt<any>, (result: any) => void, (error: Error) => void]>(
-		'Driver $prompt',
-	);
+	public readonly $prompt = new Event<
+		[
+			{
+				id: Prompt<any>;
+				resolve: (result: any) => void;
+				reject: (error?: Error) => void;
+			},
+		]
+	>('Driver $prompt');
 
 	/**
 	 * @TODO should not return a promise, more like return destroyer

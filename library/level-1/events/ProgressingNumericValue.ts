@@ -108,6 +108,7 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 				if (delay < 1) {
 					console.warn(`Warning! Timer "${this.label}" has a very short delay of ${delay} ticks`);
 				} else if (delay === Infinity) {
+					debugger;
 					// @NOTE This timer could have been avoided altogether. Whenever this warning is
 					// shown, please fix the root cause of the timer.
 					//
@@ -154,7 +155,10 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 			});
 
 			const stopListeningForDecayChanges = this.$recalibrate.on(() => {
-				setTimeout(cancelInterval?.() || granularity / this.#delta);
+				const timeLeft = cancelInterval?.() || granularity / this.#delta;
+				if (timeLeft < Infinity) {
+					setTimeout(timeLeft);
+				}
 			});
 
 			if (this.#delta !== 0) {

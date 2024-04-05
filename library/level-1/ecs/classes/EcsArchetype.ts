@@ -1,4 +1,3 @@
-import Game from '../../Game.ts';
 import { EcsEntity } from '../types.ts';
 import { EcsComponent } from './EcsComponent.ts';
 
@@ -38,7 +37,7 @@ export class EcsArchetype<
 		return entity as EcsEntity<ComponentGeneric>;
 	}
 
-	public test(entity: EcsEntity) {
+	public test(entity: EcsEntity): entity is EcsEntity<ComponentGeneric> {
 		for (const component of this.components) {
 			if (!component.test(entity)) {
 				return false;

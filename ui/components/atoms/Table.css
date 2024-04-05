@@ -1,7 +1,7 @@
 tr.clickable {
 	cursor: pointer;
 }
-tr.clickable:hover {
+tr.clickable:hover, tr.selected {
 	background-color: var(--color-hover);
 }
 

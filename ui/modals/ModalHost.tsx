@@ -8,7 +8,7 @@ const registry = new Map<Prompt<any>, PromptModal<any>>();
 
 export function registerUiForPrompt<Data extends { [key: string]: unknown }>(
 	key: Prompt<Data>,
-	ui: PromptModal<Data>,
+	ui: PromptModal<Prompt<Data>>,
 ) {
 	registry.set(key, ui);
 }

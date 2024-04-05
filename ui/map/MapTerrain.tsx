@@ -10,12 +10,13 @@ import React, { FunctionComponent, useMemo } from 'react';
 import { MapTileContextMenuHost } from '../context-menu/MAP_TILE_CONTEXT_MENU.ts';
 import { MapEntity } from './MapEntity.tsx';
 import { MapTile } from './MapTile.tsx';
+import { byEcsComponents } from '../../library/level-1/ecs/assert.ts';
 
 const SVG_PADDING = 25;
 
 export const MapTerrain: FunctionComponent<{
 	terrain: Game['terrain'];
-	entities: Collection<EcsEntity>;
+	entities: Collection<EcsEntity<any>>;
 }> = ({ terrain, entities }) => {
 	const zoom = 32;
 
@@ -49,9 +50,7 @@ export const MapTerrain: FunctionComponent<{
 	const entities2 = useMemo(
 		() =>
 			entities
-				.filter<EcsEntity<typeof locationComponent | typeof visibilityComponent>>(
-					(entity) => locationComponent.test(entity) && visibilityComponent.test(entity),
-				)
+				.filter(byEcsComponents([locationComponent, visibilityComponent]))
 				.map((entity, i) => <MapEntity key={entity.id} entity={entity} zoom={zoom} />),
 		[],
 	);

@@ -2,6 +2,7 @@ import { type locationComponent } from '../ecs/components/locationComponent.ts';
 import { outlineComponent } from '../ecs/components/outlineComponent.ts';
 import { type pathableComponent } from '../ecs/components/pathableComponent.ts';
 import { EcsEntity } from '../ecs/types.ts';
+import { Collection } from '../events/Collection.ts';
 import { FilterFn } from '../types.ts';
 import { type SimpleCoordinate, type TerrainI } from './types.ts';
 export type SaveTerrainJson = {
@@ -12,31 +13,28 @@ export type SaveTerrainJson = {
 	}>;
 	size: number;
 };
-type TileEcs = EcsEntity<
-	typeof pathableComponent | typeof locationComponent | typeof outlineComponent
->;
 
-export class Terrain implements TerrainI<TileEcs> {
-	readonly #tiles: TileEcs[] = [];
+export class Terrain<
+	TileGeneric extends EcsEntity<
+		typeof pathableComponent | typeof locationComponent | typeof outlineComponent
+	>,
+> implements TerrainI<TileGeneric>
+{
+	readonly tiles: Collection<TileGeneric>;
 
-	public readonly size: number;
-
-	constructor(size: number, tiles: TileEcs[]) {
-		this.#tiles = tiles;
-		this.size = size;
+	constructor(tiles: TileGeneric[] | Collection<TileGeneric>) {
+		if (tiles instanceof Collection) {
+			this.tiles = tiles;
+		} else {
+			this.tiles = new Collection();
+			this.tiles.add(...tiles);
+		}
 	}
 
-	/**
-	 * Array of all tiles that make up this terrain.
-	 */
-	get tiles(): TileEcs[] {
-		return this.#tiles;
-	}
-
-	public getTileEqualToLocation(location: SimpleCoordinate, lax?: false): TileEcs;
-	public getTileEqualToLocation(location: SimpleCoordinate, lax?: true): TileEcs | null;
+	public getTileEqualToLocation(location: SimpleCoordinate, lax?: false): TileGeneric;
+	public getTileEqualToLocation(location: SimpleCoordinate, lax?: true): TileGeneric | null;
 	public getTileEqualToLocation(location: SimpleCoordinate, lax?: boolean) {
-		const tile = this.#tiles.find((tile) => tile.equalsMapLocation(location)) || null;
+		const tile = this.tiles.find((tile) => tile.equalsMapLocation(location)) || null;
 		if (!tile && !lax) {
 			throw new Error(`No tile matches coordinate ${location} exactly`);
 		}
@@ -47,16 +45,16 @@ export class Terrain implements TerrainI<TileEcs> {
 	 * Array of all tiles that make up this terrain.
 	 */
 	public selectContiguousTiles(
-		start: TileEcs,
-		selector: FilterFn<TileEcs> = (tile) => tile.walkability > 0,
+		start: TileGeneric,
+		selector: FilterFn<TileGeneric> = (tile) => tile.walkability > 0,
 		inclusive = true,
-	): TileEcs[] {
-		const island: TileEcs[] = [];
-		const seen: TileEcs[] = [];
-		const queue: TileEcs[] = [start];
+	): TileGeneric[] {
+		const island: TileGeneric[] = [];
+		const seen: TileGeneric[] = [];
+		const queue: TileGeneric[] = [start];
 
 		while (queue.length) {
-			const current = queue.shift() as TileEcs;
+			const current = queue.shift() as TileGeneric;
 			if (inclusive || current !== start) {
 				island.push(current);
 			}
@@ -71,7 +69,7 @@ export class Terrain implements TerrainI<TileEcs> {
 	/**
 	 * Get the tiles closest to the starting tile (not counting the starting tile itself).
 	 */
-	public selectClosestTiles(start: SimpleCoordinate, maxDistance: number): TileEcs[] {
+	public selectClosestTiles(start: SimpleCoordinate, maxDistance: number): TileGeneric[] {
 		return this.selectContiguousTiles(
 			this.getTileClosestToXy(start[0], start[1]),
 			(tile) => tile.walkability > 0 && tile.euclideanDistanceTo(start) <= maxDistance,
@@ -79,23 +77,25 @@ export class Terrain implements TerrainI<TileEcs> {
 		);
 	}
 
-	#islands: Map<FilterFn<TileEcs>, TileEcs[][]> = new Map();
+	#islands: Map<FilterFn<TileGeneric>, TileGeneric[][]> = new Map();
 
 	/**
 	 * Get a list of contigious groups of tiles, aka a list of islands.
 	 *
 	 * @note Only public for testing purposes.
 	 */
-	public getIslands(selector: FilterFn<TileEcs> = (tile) => tile.walkability > 0): TileEcs[][] {
+	public getIslands(
+		selector: FilterFn<TileGeneric> = (tile) => tile.walkability > 0,
+	): TileGeneric[][] {
 		const fromCache = this.#islands.get(selector);
 		if (fromCache) {
 			return fromCache;
 		}
 
-		let open = this.#tiles.slice();
+		let open = this.tiles.slice();
 		const islands = [];
 		while (open.length) {
-			const next = open.shift() as TileEcs;
+			const next = open.shift() as TileGeneric;
 			if (!selector(next)) {
 				continue;
 			}
@@ -113,12 +113,12 @@ export class Terrain implements TerrainI<TileEcs> {
 	 * .getTileClosestToXy actually finds the _wrong_ tile -- because its neighbor is closer than
 	 * the proximity to z=0.
 	 */
-	public getTileClosestToXy(x: number, y: number): TileEcs {
-		if (!this.#tiles.length) {
+	public getTileClosestToXy(x: number, y: number): TileGeneric {
+		if (!this.tiles.length) {
 			throw new Error('Terrain is empty');
 		}
 		let closestDistance = Infinity;
-		return this.#tiles.reduce<TileEcs>((last, tile) => {
+		return this.tiles.reduce<TileGeneric>((last, tile) => {
 			const distance = tile.euclideanDistanceTo([x, y, 0]);
 			if (distance < closestDistance) {
 				closestDistance = distance;
@@ -126,14 +126,14 @@ export class Terrain implements TerrainI<TileEcs> {
 			} else {
 				return last;
 			}
-		}, this.#tiles[0]);
+		}, this.tiles.get(0));
 	}
 
 	/**
 	 * Get the tiles that are adjacent to another tile.
 	 */
-	public getNeighborTiles(center: TileEcs): TileEcs[] {
+	public getNeighborTiles(center: TileGeneric): TileGeneric[] {
 		// @TODO not coerce to TileEcs
-		return center.pathingNeighbours as TileEcs[];
+		return center.pathingNeighbours as TileGeneric[];
 	}
 }

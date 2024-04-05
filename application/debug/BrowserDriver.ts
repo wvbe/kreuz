@@ -1,5 +1,6 @@
 import { Driver, pathingComponent, type DriverI, type Game } from '@lib';
 import { EcsEntity } from '../../library/level-1/ecs/types.ts';
+import { byEcsComponents } from '../../library/level-1/ecs/assert.ts';
 
 export class BrowserDriver extends Driver implements DriverI {
 	game: Game | null = null;
@@ -75,26 +76,22 @@ export class BrowserDriver extends Driver implements DriverI {
 		);
 
 		const listenToPersonEntityMovement = (entities: EcsEntity[]) => {
-			entities
-				.filter((entity): entity is EcsEntity<typeof pathingComponent> =>
-					pathingComponent.test(entity),
-				)
-				.forEach((entity) => {
-					const destroy = entity.$stepStart.on((step) => {
-						if (step === null) {
-							return;
-						}
-						game.time.setTimeout(step.done, step.duration);
-					});
-					this.$detach.once(destroy);
-
-					// Perform initial step if it was set before driver was attached to game:
-					const step = entity.$stepStart.get();
+			entities.filter(byEcsComponents([pathingComponent])).forEach((entity) => {
+				const destroy = entity.$stepStart.on((step) => {
 					if (step === null) {
 						return;
 					}
 					game.time.setTimeout(step.done, step.duration);
 				});
+				this.$detach.once(destroy);
+
+				// Perform initial step if it was set before driver was attached to game:
+				const step = entity.$stepStart.get();
+				if (step === null) {
+					return;
+				}
+				game.time.setTimeout(step.done, step.duration);
+			});
 		};
 		// Whenever an entity starts to move, make sure that the "animation" ends at some point too.
 		this.$detach.once(

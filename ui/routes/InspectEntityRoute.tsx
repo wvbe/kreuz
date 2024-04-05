@@ -10,11 +10,7 @@ import { eventLogComponent } from '@lib';
 export const InspectEntityRoute: FunctionComponent = () => {
 	const { entityId } = useParams<{ entityId: string }>();
 	const game = useGameContext();
-	const entity = useMemo(
-		() =>
-			game.entities.getByKey(entityId!) || game.terrain.tiles.find((tile) => tile.id === entityId),
-		[entityId],
-	);
+	const entity = useMemo(() => game.entities.getByKey(entityId!), [entityId]);
 	if (!entity) {
 		return null;
 	}

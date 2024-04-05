@@ -9,5 +9,5 @@ function allEntities(entity: EcsEntity) {
 }
 export const ListEntityRoute: FunctionComponent = () => {
 	const game = useGameContext();
-	return <EntityList label={'Entities'} entities={game.entities} filter={allEntities} />;
+	return <EntityList label={'Entities'} entities={game.entities.living} filter={allEntities} />;
 };

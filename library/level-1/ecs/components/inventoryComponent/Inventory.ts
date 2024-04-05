@@ -204,7 +204,6 @@ export class Inventory {
 		const requiredStackSpace = getRequiredStackSpace([
 			...cargo,
 			...this.getAvailableItems(),
-			// Possibly this causes the bug asserted in the last test of Inventory.test.ts?
 			...this.getReservedIncomingItems(),
 			...this.getReservedOutgoingItems(),
 		]);

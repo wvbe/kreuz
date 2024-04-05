@@ -2,7 +2,8 @@ import { CallbackFn, SortFn } from '../types.ts';
 import { Event } from './Event.ts';
 
 /**
- * A list of {@link ItemGeneric} things. Emits events when items are added or removed.
+ * A list of {@link ItemGeneric} things. Emits events when items are added or removed. Has most of the methods
+ * that you would find on normal {@link Array}s.
  */
 export class Collection<ItemGeneric> {
 	protected readonly list: Array<ItemGeneric> = [];
@@ -103,5 +104,17 @@ export class Collection<ItemGeneric> {
 
 	public includes(item: ItemGeneric): boolean {
 		return this.list.includes(item);
+	}
+
+	public reduce<ReduceGeneric>(
+		callbackfn: (
+			previousValue: ReduceGeneric,
+			currentValue: ItemGeneric,
+			currentIndex: number,
+			array: ItemGeneric[],
+		) => ReduceGeneric,
+		initialValue: ReduceGeneric,
+	): ReduceGeneric {
+		return this.list.reduce<ReduceGeneric>(callbackfn, initialValue);
 	}
 }

@@ -24,7 +24,7 @@ import {
 	needsComponent,
 } from '@lib';
 import { headOfState } from '../library/level-2/heroes/heroes.ts';
-import { generateDualMeshTerrain } from '../library/level-3/utils/generateDualMeshTerrain.ts';
+import { generateDualMeshTiles } from '../library/level-3/utils/generateDualMeshTiles.ts';
 import { generatePassport } from '../library/level-3/utils/generatePassport.ts';
 import { EcsArchetypeEntity } from '../library/level-1/ecs/types.ts';
 
@@ -83,23 +83,21 @@ export async function generateEntities(game: Game) {
 		const tile = Random.fromArray(walkableTiles, id);
 		const blueprint = Random.fromArray(Object.values(blueprints), id, 'blueprint');
 		const factory = factoryArchetype.create({
-			location: tile.location.get(),
-			owner: headOfState,
 			blueprint,
-			maxWorkers: 1 * blueprint.options.workersRequired,
-			maxStackSpace: 8,
-			name: blueprint.options.buildingName,
 			icon: blueprint.products[0].material.symbol,
+			location: tile.location.get(),
+			maxStackSpace: 8,
+			maxWorkers: 1 * blueprint.options.workersRequired,
+			name: blueprint.options.buildingName,
+			owner: headOfState,
 		});
-		await Promise.all(
-			blueprint.ingredients.map(async ({ material }) => {
+		await Promise.all([
+			...blueprint.ingredients.map(async ({ material }) => {
 				await factory.inventory.set(
 					material,
 					Math.round(material.stack * Random.between(0.2, 1, id)),
 				);
 			}),
-		);
-		await Promise.all([
 			...blueprint.products.map(async ({ material }) => {
 				await factory.inventory.set(
 					material,
@@ -141,7 +139,8 @@ export async function generateEntities(game: Game) {
 }
 
 export default async function (driver: DriverI) {
-	const game = new Game(driver, 1, generateDualMeshTerrain(1, 40, 1), DEFAULT_ASSETS);
+	const game = new Game(driver, 1, DEFAULT_ASSETS);
+	await game.entities.add(...generateDualMeshTiles(1, 40, 1));
 	await generateEntities(game);
 	await generateRandomInventories(game);
 	return game;

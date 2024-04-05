@@ -13,6 +13,7 @@
 
 import { TestDriver } from '@test';
 import { Game, healthComponent } from '@lib';
+import { byEcsComponents } from '../../library/level-1/ecs/assert.ts';
 
 console.group('Importing demo');
 const demo = await import(self.Deno.args[0]);
@@ -34,8 +35,9 @@ try {
 	console.log('    Time', game.time.now);
 	console.log(
 		'   Alive',
-		game.entities.filter((entity) => healthComponent.test(entity) && entity.health.get() > 0)
-			.length,
+		game.entities
+			.filter(byEcsComponents([healthComponent]))
+			.filter((entity) => entity.health.get() > 0).length,
 	);
 	console.groupEnd();
 } catch (e: unknown) {

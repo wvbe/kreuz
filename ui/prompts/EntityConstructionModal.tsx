@@ -8,6 +8,21 @@ import { Cell, Row, Table } from '../components/atoms/Table.tsx';
 import { useGameContext } from '../context/GameContext.tsx';
 import { InventoryBag } from '../inventory/InventoryUI.tsx';
 
+const buildingTypes = [
+	{
+		id: 'factory',
+		icon: '🏭',
+		title: 'Factory',
+		subtitle: 'Factories produce stuff',
+	},
+	{
+		id: 'market-stall',
+		icon: '🏪',
+		title: 'Market stall',
+		subtitle: 'Market stalls sell stuff',
+	},
+] as const;
+
 export const EntityConstructionModal: PromptModal<typeof PROMPT_CONSTRUCTION_JOB> = ({
 	onCancel,
 	onSubmit: $onSubmit,
@@ -32,7 +47,10 @@ export const EntityConstructionModal: PromptModal<typeof PROMPT_CONSTRUCTION_JOB
 			return (
 				<Table>
 					{game.assets.blueprints.toArray().map((blueprint) => (
-						<Row onClick={() => setBuildingFocus(blueprint)}>
+						<Row
+							onClick={() => setBuildingFocus(blueprint)}
+							aria-selected={buildingFocus === blueprint}
+						>
 							<Cell>
 								<Badge
 									icon={blueprint.products[0].material.symbol}
@@ -49,7 +67,10 @@ export const EntityConstructionModal: PromptModal<typeof PROMPT_CONSTRUCTION_JOB
 			return (
 				<Table>
 					{game.assets.materials.toArray().map((material) => (
-						<Row onClick={() => setBuildingFocus(material)}>
+						<Row
+							onClick={() => setBuildingFocus(material)}
+							aria-selected={buildingFocus === material}
+						>
 							<Cell>
 								<Badge icon={material.symbol} title={material.label} subtitle={''} />
 							</Cell>
@@ -58,21 +79,22 @@ export const EntityConstructionModal: PromptModal<typeof PROMPT_CONSTRUCTION_JOB
 				</Table>
 			);
 		}
-	}, [buildingType]);
+	}, [buildingType, buildingFocus]);
 	return (
 		<Modal onCancel={onCancel} onSubmit={onSubmit} title="What are we building today?">
 			<div className="entity-construction-modal__column">
 				<Table>
-					<Row onClick={() => setBuildingType('factory')}>
-						<Cell>
-							<Badge icon={'🏭'} title="Factory" subtitle="Factories produce stuff" />
-						</Cell>
-					</Row>
-					<Row onClick={() => setBuildingType('market-stall')}>
-						<Cell>
-							<Badge icon={'🏪'} title="Market stall" subtitle="Market stalls sell stuff" />
-						</Cell>
-					</Row>
+					{buildingTypes.map((type) => (
+						<Row
+							key={type.id}
+							onClick={() => setBuildingType(type.id)}
+							aria-selected={buildingType === type.id}
+						>
+							<Cell>
+								<Badge icon={type.icon} title={type.title} subtitle={type.subtitle} />
+							</Cell>
+						</Row>
+					))}
 				</Table>
 			</div>
 			<div className="entity-construction-modal__column">{secondColumn}</div>

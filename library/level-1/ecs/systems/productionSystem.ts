@@ -97,7 +97,9 @@ async function assignWorkerToFactory(
 	if (worker.health.get() <= 0) {
 		throw new Error('Dead people cannot work');
 	}
-	await worker.events.add(`Going to ${factory} for work`);
+
+	await worker.events?.add(`Going to ${factory} for work`);
+
 	const tile = game.terrain.getTileEqualToLocation(factory.location.get());
 	if (!tile) {
 		throw new Error(`Entity "${factory.id}" lives on a detached coordinate`);
@@ -131,7 +133,7 @@ async function assignWorkerToFactory(
 	// 	true,
 	// );
 
-	await worker.events.add(`Working in ${factory}`);
+	await worker.events?.add(`Working in ${factory}`);
 
 	// Finish job when the worker is removed from the worker list. factory happens
 	// when the factory is not productive for a while..

@@ -1,4 +1,5 @@
 import {
+	EcsArchetypeEntity,
 	EcsEntity,
 	Random,
 	SurfaceType,
@@ -20,7 +21,11 @@ type TileEntity = EcsEntity<
 	| typeof pathableComponent
 >;
 
-export function generateDualMeshTerrain(seed: SeedI, size: number, density: number = 1) {
+export function generateDualMeshTiles(
+	seed: SeedI,
+	size: number,
+	density: number = 1,
+): EcsArchetypeEntity<typeof tileArchetype>[] {
 	// Use @redblobgames/dual-mesh to generate tiles and relationships.
 	// More information:
 	// - https://redblobgames.github.io/dual-mesh/
@@ -67,7 +72,5 @@ export function generateDualMeshTerrain(seed: SeedI, size: number, density: numb
 			return tile;
 		});
 
-	const terrain = new Terrain(size, tiles);
-
-	return terrain;
+	return tiles;
 }

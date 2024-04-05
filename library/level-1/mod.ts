@@ -14,6 +14,7 @@ export { JobPosting } from './classes/JobPosting.ts';
 export { Random } from './classes/Random.ts';
 export { TimeLine } from './classes/TimeLine.ts';
 export { Collection } from './events/Collection.ts';
+export { CollectionBucket } from './events/CollectionBucket.ts';
 export { Event } from './events/Event.ts';
 export { EventedValue } from './events/EventedValue.ts';
 export { type JobCandidate } from './classes/JobBoard.ts';

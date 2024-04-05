@@ -1,6 +1,5 @@
-import { type SaveTileJson } from '../types-savedgame.ts';
+import { type Collection } from '../events/Collection.ts';
 import { type FilterFn } from '../types.ts';
-import { SaveTerrainJson } from './Terrain.ts';
 
 export type GameDistance = number;
 
@@ -20,5 +19,5 @@ export interface TerrainI<TileGeneric> {
 		inclusive?: boolean,
 	): TileGeneric[];
 	// toSaveJson(): SaveTerrainJson;
-	tiles: TileGeneric[];
+	tiles: Collection<TileGeneric>;
 }

@@ -17,6 +17,7 @@ import { PopOnUpdateSpan } from './atoms/PopOnUpdateSpan.tsx';
 import { Cell, Row, Table } from './atoms/Table.tsx';
 import { EcsEntity } from '@lib';
 import { productionComponent } from '@lib';
+import { byEcsComponents } from '../../library/level-1/ecs/assert.ts';
 
 function getTotalDelta(entities: EcsEntity<typeof productionComponent>[]) {
 	return entities.reduce((total, entity) => (total += entity.$$progress.delta), 0);
@@ -96,10 +97,9 @@ export const ProductionList: FunctionComponent = () => {
 				.reduce<Record<string, EcsEntity<typeof productionComponent>[]>>(
 					(entitiesByBlueprint, blueprint) => {
 						const key = game.assets.blueprints.key(blueprint);
-						entitiesByBlueprint[key] = game.entities.filter(
-							(entity) =>
-								(entity as EcsEntity<typeof productionComponent>).blueprint?.get() === blueprint,
-						);
+						entitiesByBlueprint[key] = game.entities
+							.filter(byEcsComponents([productionComponent]))
+							.filter((entity) => entity.blueprint?.get() === blueprint);
 						return entitiesByBlueprint;
 					},
 					{},

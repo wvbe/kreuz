@@ -1,12 +1,4 @@
-import {
-	Collection,
-	EcsArchetypeEntity,
-	EcsEntity,
-	Event,
-	JobCandidate,
-	locationComponent,
-	personArchetype,
-} from '@lib';
+import { Collection, EcsArchetypeEntity, Event, JobCandidate, personArchetype } from '@lib';
 import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import { EventCombination } from '../../library/level-1/events/EventCombination.ts';
 import { useGameContext } from '../context/GameContext.tsx';

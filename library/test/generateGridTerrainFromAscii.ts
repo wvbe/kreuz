@@ -1,12 +1,13 @@
 import {
+	EcsArchetypeEntity,
 	EcsEntity,
+	SurfaceType,
 	locationComponent,
 	outlineComponent,
 	pathableComponent,
 	surfaceComponent,
+	tileArchetype,
 } from '@lib/core';
-import { Terrain } from '../level-1/terrain/Terrain.ts';
-import { SurfaceType } from '@lib/core';
 
 const adjacency = [
 	[-1, 0],
@@ -21,7 +22,9 @@ type TileEntity = EcsEntity<
 	| typeof surfaceComponent
 	| typeof pathableComponent
 >;
-export function generateGridTerrainFromAscii(ascii: string) {
+export function generateGridTerrainFromAscii(
+	ascii: string,
+): EcsArchetypeEntity<typeof tileArchetype>[] {
 	const datas = ascii
 		.trim()
 		.split('\n')
@@ -31,23 +34,18 @@ export function generateGridTerrainFromAscii(ascii: string) {
 	}
 
 	const tiles = datas.map((data, y) =>
-		data.map((character, x) => {
-			const entity = { id: String(x) };
-			locationComponent.attach(entity, { location: [x, y, character === '-' ? -1 : 1] });
-			pathableComponent.attach(entity, { walkability: character === '-' ? 0 : 1 });
-			outlineComponent.attach(entity, {
+		data.map((character, x) =>
+			tileArchetype.create({
+				location: [x, y, character === '-' ? -1 : 1],
 				outlineCoordinates: [
 					[-0.5, -0.5, 0],
 					[0.5, -0.5, 0],
 					[0.5, 0.5, 0],
 					[-0.5, 0.5, 0],
 				],
-			});
-			surfaceComponent.attach(entity, {
 				surfaceType: character === '-' ? SurfaceType.UNKNOWN : SurfaceType.OPEN,
-			});
-			return entity as TileEntity;
-		}),
+			}),
+		),
 	);
 
 	tiles.forEach((tilesInRow, y) =>
@@ -58,10 +56,5 @@ export function generateGridTerrainFromAscii(ascii: string) {
 		}),
 	);
 
-	const terrain = new Terrain(
-		0,
-		tiles.reduce((flat, row) => flat.concat(row), []),
-	);
-
-	return terrain;
+	return tiles.reduce((flat, row) => flat.concat(row), []);
 }

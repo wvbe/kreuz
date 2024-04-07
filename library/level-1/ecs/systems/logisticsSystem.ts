@@ -67,7 +67,13 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 			return;
 		}
 
-		await entity.events?.add(`Loading cargo`);
+		await entity.events?.add(
+			`Loading ${deal.quantity} of ${deal.material} from ${deal.supplier} for transport to ${deal.destination}`,
+		);
+		await deal.supplier.events?.add(
+			`Giving ${deal.quantity} of ${deal.material} to ${entity} for transport to ${deal.destination}`,
+		);
+
 		deal.supplier.inventory.clearReservation(transportJobId);
 		await deal.supplier.inventory.change(deal.material, -deal.quantity);
 		await game.time.wait(1_000 * (deal.quantity / deal.material.stack));
@@ -98,6 +104,9 @@ function createTransportJob(game: Game, transportJobId: string, deal: LogisticsD
 		}
 
 		await entity.events?.add(`Unloading cargo to ${deal.destination}`);
+		deal.destination.events?.add(
+			`Received ${deal.quantity} of ${deal.material} from ${deal.supplier} transported by ${entity}`,
+		);
 		entity.inventory.clearReservation('transport-job');
 		// Skip emitting this event, because (due to the reservation made) nothing in the available
 		// materials changes.

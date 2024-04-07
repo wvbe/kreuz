@@ -139,12 +139,14 @@ async function doGrocery(
 	const costPerItem = material.value + vendor.profitMargin * material.value;
 
 	const reservationId = `groceries-${identifier++}`;
-	const purchaseQuantity = Math.min(
-		material.stack,
-		entity.inventory.amountAdditionallyAllocatableTo(material),
-		vendor.inventory.availableOf(material),
-		Math.floor(entity.wallet.get() / costPerItem),
-		(1 / material[need.id]) * 2,
+	const purchaseQuantity = Math.floor(
+		Math.min(
+			material.stack,
+			entity.inventory.amountAdditionallyAllocatableTo(material),
+			vendor.inventory.availableOf(material),
+			Math.floor(entity.wallet.get() / costPerItem),
+			(1 / material[need.id]) * 2,
+		),
 	);
 	if (purchaseQuantity < 1) {
 		throw new Error('This shoulda been impossible');
@@ -177,6 +179,9 @@ async function doGrocery(
 	await entity.inventory.change(material, purchaseQuantity);
 	await entity.events?.add(
 		`Purchased ${purchaseQuantity} of ${material} for 💰${totalPurchaseCost} at ${vendor}`,
+	);
+	await vendor.events?.add(
+		`Sold ${purchaseQuantity} of ${material} for 💰${totalPurchaseCost} to ${entity}`,
 	);
 }
 

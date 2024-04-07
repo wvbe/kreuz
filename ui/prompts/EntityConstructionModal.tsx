@@ -1,6 +1,13 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { Blueprint, Material, PROMPT_CONSTRUCTION_JOB } from '@lib';
+import {
+	Blueprint,
+	EcsArchetype,
+	Material,
+	PROMPT_CONSTRUCTION_JOB,
+	factoryArchetype,
+	marketArchetype,
+} from '@lib';
 import { PromptModal } from './types.ts';
 import { Modal } from '../modals/Modal.tsx';
 import { Badge } from '../components/atoms/Badge.tsx';
@@ -10,13 +17,13 @@ import { InventoryBag } from '../inventory/InventoryUI.tsx';
 
 const buildingTypes = [
 	{
-		id: 'factory',
+		archetype: factoryArchetype,
 		icon: '🏭',
 		title: 'Factory',
 		subtitle: 'Factories produce stuff',
 	},
 	{
-		id: 'market-stall',
+		archetype: marketArchetype,
 		icon: '🏪',
 		title: 'Market stall',
 		subtitle: 'Market stalls sell stuff',
@@ -27,27 +34,33 @@ export const EntityConstructionModal: PromptModal<typeof PROMPT_CONSTRUCTION_JOB
 	onCancel,
 	onSubmit: $onSubmit,
 }) => {
-	const game = useGameContext();
-	const onSubmit = useCallback(() => {
-		$onSubmit({
-			entity: {
-				id: 'ddddrrrrpppppptptpt',
-			},
-		});
-	}, [$onSubmit]);
-
-	const [buildingType, setBuildingType] = useState<'factory' | 'market-stall' | null>(null);
+	const [buildingType, setBuildingType] = useState<EcsArchetype<any, any> | null>(null);
 	const [buildingFocus, setBuildingFocus] = useState<Blueprint | Material | null>(null);
+	const game = useGameContext();
+	const canSubmit = useMemo(
+		() => buildingType !== null && buildingFocus !== null,
+		[buildingType, buildingFocus],
+	);
+	const onSubmit = useCallback(() => {
+		if (!canSubmit) {
+			return;
+		}
+		$onSubmit({
+			buildingType: buildingType!,
+			buildingFocus: buildingFocus!,
+		});
+	}, [$onSubmit, canSubmit]);
 
 	const secondColumn = useMemo(() => {
 		if (!buildingType) {
 			return null;
 		}
-		if (buildingType === 'factory') {
+		if (buildingType === factoryArchetype) {
 			return (
 				<Table>
-					{game.assets.blueprints.toArray().map((blueprint) => (
+					{game.assets.blueprints.toArray().map((blueprint, index) => (
 						<Row
+							key={index}
 							onClick={() => setBuildingFocus(blueprint)}
 							aria-selected={buildingFocus === blueprint}
 						>
@@ -63,11 +76,12 @@ export const EntityConstructionModal: PromptModal<typeof PROMPT_CONSTRUCTION_JOB
 				</Table>
 			);
 		}
-		if (buildingType === 'market-stall') {
+		if (buildingType === marketArchetype) {
 			return (
 				<Table>
-					{game.assets.materials.toArray().map((material) => (
+					{game.assets.materials.toArray().map((material, index) => (
 						<Row
+							key={index}
 							onClick={() => setBuildingFocus(material)}
 							aria-selected={buildingFocus === material}
 						>
@@ -81,14 +95,19 @@ export const EntityConstructionModal: PromptModal<typeof PROMPT_CONSTRUCTION_JOB
 		}
 	}, [buildingType, buildingFocus]);
 	return (
-		<Modal onCancel={onCancel} onSubmit={onSubmit} title="What are we building today?">
+		<Modal
+			onCancel={onCancel}
+			onSubmit={onSubmit}
+			canSubmit={canSubmit}
+			title="What are we building today?"
+		>
 			<div className="entity-construction-modal__column">
 				<Table>
-					{buildingTypes.map((type) => (
+					{buildingTypes.map((type, index) => (
 						<Row
-							key={type.id}
-							onClick={() => setBuildingType(type.id)}
-							aria-selected={buildingType === type.id}
+							key={index}
+							onClick={() => setBuildingType(type.archetype)}
+							aria-selected={buildingType === type.archetype}
 						>
 							<Cell>
 								<Badge icon={type.icon} title={type.title} subtitle={type.subtitle} />

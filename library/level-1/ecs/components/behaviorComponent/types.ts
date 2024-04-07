@@ -1,5 +1,7 @@
-import Game from '../../../Game.ts';
-import { EcsEntity } from '../../types.ts';
+import type Game from '../../../Game.ts';
+import { type eventLogComponent } from '../eventLogComponent.ts';
+import { type EcsComponent } from '../../classes/EcsComponent.ts';
+import { type EcsEntity } from '../../types.ts';
 
 export interface BehaviorTreeNodeI<
 	BlackboardGeneric extends Record<string, unknown> = Record<string, never>,
@@ -21,6 +23,6 @@ export type ExecutionNodeFn<B extends Record<string, unknown>> = (
 ) => void | Promise<void>;
 
 export type EntityBlackboard = {
-	entity: EcsEntity;
+	entity: EcsEntity<EcsComponent, typeof eventLogComponent>;
 	game: Game;
 };

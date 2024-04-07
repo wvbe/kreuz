@@ -21,6 +21,10 @@ export const productionComponent = new EcsComponent<
 	{
 		blueprint: Blueprint | null;
 		maxWorkers: number;
+		/**
+		 * A callback to fire when a production cycle is complete.
+		 */
+		onComplete?: () => Promise<void>;
 	},
 	{
 		/**
@@ -39,6 +43,11 @@ export const productionComponent = new EcsComponent<
 		 * The progress towards finishing one more production cycle. 0 means not started, 1 means finished.
 		 */
 		$$progress: ProgressingNumericValue;
+
+		/**
+		 * A callback to fire when a production cycle is complete.
+		 */
+		onComplete?: () => Promise<void>;
 	}
 >(
 	(entity) =>
@@ -46,6 +55,7 @@ export const productionComponent = new EcsComponent<
 		entity.$workers instanceof Collection &&
 		entity.$$progress instanceof ProgressingNumericValue,
 	(entity, options) => {
+		entity.onComplete = options.onComplete;
 		entity.maxWorkers = options.maxWorkers;
 		entity.$workers = new Collection<EcsEntity>();
 		entity.blueprint = new EventedValue<Blueprint | null>(

@@ -5,8 +5,9 @@ export const Modal: FC<
 		title: string;
 		onCancel: () => void;
 		onSubmit: () => void;
+		canSubmit?: boolean;
 	}>
-> = ({ title, children, onCancel, onSubmit }) => {
+> = ({ title, children, onCancel, onSubmit, canSubmit }) => {
 	return (
 		<div className="panel modal">
 			<div className="panel-header modal-header">
@@ -19,7 +20,9 @@ export const Modal: FC<
 					<button onClick={onCancel}>Cancel</button>
 				</div>
 				<div>
-					<button onClick={onSubmit}>Submit</button>
+					<button onClick={onSubmit} disabled={canSubmit === false}>
+						Submit
+					</button>
 				</div>
 			</div>
 		</div>

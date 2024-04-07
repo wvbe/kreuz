@@ -10,6 +10,7 @@ import { eventLogComponent } from '../components/eventLogComponent.ts';
 import { visibilityComponent } from '../components/visibilityComponent.ts';
 import { wealthComponent } from '../components/wealthComponent.ts';
 import { EcsEntity } from '../types.ts';
+import { Random } from '../../classes/Random.ts';
 
 export const factoryArchetype = new EcsArchetype<
 	{
@@ -21,22 +22,22 @@ export const factoryArchetype = new EcsArchetype<
 		name?: string;
 		icon?: string;
 	},
-	| typeof inventoryComponent
 	| typeof eventLogComponent
+	| typeof importExportComponent
+	| typeof inventoryComponent
 	| typeof locationComponent
 	| typeof ownerComponent
 	| typeof productionComponent
 	| typeof visibilityComponent
-	| typeof importExportComponent
 >(
 	[
+		eventLogComponent,
+		importExportComponent,
 		inventoryComponent,
 		locationComponent,
 		ownerComponent,
-		eventLogComponent,
 		productionComponent,
 		visibilityComponent,
-		importExportComponent,
 	],
 	(entity, options) => {
 		inventoryComponent.attach(entity, {
@@ -69,3 +70,34 @@ export const factoryArchetype = new EcsArchetype<
 		});
 	},
 );
+
+export async function createFactoryForBlueprint(
+	blueprint: Blueprint,
+	owner: EcsEntity<typeof wealthComponent | typeof inventoryComponent>,
+	location: SimpleCoordinate,
+) {
+	const factory = factoryArchetype.create({
+		blueprint,
+		location,
+		owner,
+		icon: blueprint.products[0].material.symbol,
+		maxStackSpace: 8,
+		maxWorkers: 1 * blueprint.options.workersRequired,
+		name: blueprint.options.buildingName,
+	});
+	await Promise.all([
+		...blueprint.ingredients.map(async ({ material }) => {
+			await factory.inventory.set(
+				material,
+				Math.round(material.stack * Random.between(0.2, 1, factory.id)),
+			);
+		}),
+		...blueprint.products.map(async ({ material }) => {
+			await factory.inventory.set(
+				material,
+				Math.round(material.stack * Random.between(0.2, 1, factory.id)),
+			);
+		}),
+	]);
+	return factory;
+}

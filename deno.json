@@ -10,6 +10,8 @@
 		"build": "deno run -A application/debug/build.ts _site/index.html",
 		"watch": "npx chokidar-cli \"library/**/*\" \"ui/**/*\" \"application/**/*\" \"scenarios/**/*\" --command \"deno task build\"",
 		"dev": "deno task build && deno task watch",
+		"material-stats": "deno run -A application/dump.ts",
+		"dev-material-stats": "deno task material-stats && npx chokidar-cli \"library/level-2/materials/**/*\" --command \"deno task material-stats\"",
 		"test": "deno test",
 		"coverage": "TMP=$(mktemp -d) && deno task test --coverage=$TMP && deno coverage $TMP --lcov > $TMP/lcov.lcov && genhtml -o coverage $TMP/lcov.lcov"
 	}

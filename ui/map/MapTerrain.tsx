@@ -11,6 +11,7 @@ import { MapTileContextMenuHost } from '../context-menu/MAP_TILE_CONTEXT_MENU.ts
 import { MapEntity } from './MapEntity.tsx';
 import { MapTile } from './MapTile.tsx';
 import { byEcsComponents } from '../../library/level-1/ecs/assert.ts';
+import { useCollection } from '../hooks/useEventedValue.ts';
 
 const SVG_PADDING = 25;
 
@@ -47,12 +48,13 @@ export const MapTerrain: FunctionComponent<{
 		[terrain.tiles],
 	);
 
+	const entitiesCollection = useCollection(entities);
 	const entities2 = useMemo(
 		() =>
-			entities
+			entitiesCollection
 				.filter(byEcsComponents([locationComponent, visibilityComponent]))
 				.map((entity, i) => <MapEntity key={entity.id} entity={entity} zoom={zoom} />),
-		[],
+		[entitiesCollection],
 	);
 
 	const [terrainCss, svgProps, overlayCss] = useMemo(() => {

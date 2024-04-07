@@ -19,6 +19,14 @@ export const bread = new Material('Bread', {
 	stackSize: 100,
 
 	value: 3,
+	nutrition: 0.3,
+});
+
+export const pancakes = new Material('Pancake', {
+	symbol: '🥞',
+	stackSize: 100,
+
+	value: 5,
 	nutrition: 0.8,
 });
 
@@ -73,6 +81,6 @@ export const saltWater = new Material('Salt water', {
 	stackSize: 100,
 
 	value: 0.1,
-	hydration: 0.5,
+	hydration: 0.25,
 	toxicity: 0.25,
 });

@@ -73,8 +73,8 @@ export { visibilityComponent } from './ecs/components/visibilityComponent.ts';
 export { wealthComponent } from './ecs/components/wealthComponent.ts';
 
 // ECS archetypes
-export { factoryArchetype } from './ecs/archetypes/factoryArchetype.ts';
-export { marketArchetype } from './ecs/archetypes/marketArchetype.ts';
+export { factoryArchetype, createFactoryForBlueprint } from './ecs/archetypes/factoryArchetype.ts';
+export { marketArchetype, createMarketForMaterial } from './ecs/archetypes/marketArchetype.ts';
 export { personArchetype } from './ecs/archetypes/personArchetype.ts';
 export { tileArchetype } from './ecs/archetypes/tileArchetype.ts';
 

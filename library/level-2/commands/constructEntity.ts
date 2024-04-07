@@ -1,19 +1,23 @@
 import {
+	Blueprint,
 	Command,
+	EcsArchetype,
 	EcsEntity,
 	EntityBlackboard,
-	Game,
-	JobPosting,
+	Material,
 	Prompt,
 	SurfaceType,
 	assertEcsComponents,
-	inventoryComponent,
+	createFactoryForBlueprint,
+	createMarketForMaterial,
+	factoryArchetype,
+	hasEcsComponents,
 	locationComponent,
+	marketArchetype,
 	pathableComponent,
-	pathingComponent,
 	surfaceComponent,
 } from '@lib/core';
-import { hasEcsComponents } from '../../level-1/ecs/assert.ts';
+import { headOfState } from '../heroes/heroes.ts';
 
 type TileEntity = EcsEntity<
 	typeof locationComponent | typeof surfaceComponent | typeof pathableComponent
@@ -22,38 +26,10 @@ type TileEntity = EcsEntity<
 /**
  * Identifier for the prompt that asks the user to select an entity to construct.
  */
-export const PROMPT_CONSTRUCTION_JOB = new Prompt<{ entity: EcsEntity }>();
-
-async function createConstructionJob(game: Game, tile: TileEntity, buildTarget: EcsEntity) {
-	console.log('WANNA BUILD', buildTarget);
-	const assignJobToEntity = async (job: JobPosting, worker: EcsEntity) => {
-		assertEcsComponents(worker, [pathingComponent, locationComponent, inventoryComponent]);
-		await worker.walkToTile(game, tile);
-		await game.time.wait(30_000);
-
-		// TODO Add new entity to the game here
-
-		game.jobs.removeGlobal(job);
-	};
-
-	game.jobs.addGlobal(
-		new JobPosting(assignJobToEntity, {
-			label: 'Clear a space',
-			score: (worker) => {
-				// @TODO keep in mind that the entity must be able to reach (a neighbor) of the tile
-				if (!hasEcsComponents(worker, [pathingComponent, locationComponent, inventoryComponent])) {
-					return 0;
-				}
-				if (!worker.inventory.availableOf(game.assets.materials.get('pickaxe')!)) {
-					return 0;
-				}
-				return 1;
-			},
-			vacancies: 1,
-			restoreVacancyWhenDone: false,
-		}),
-	);
-}
+export const PROMPT_CONSTRUCTION_JOB = new Prompt<{
+	buildingType: EcsArchetype<any, any>;
+	buildingFocus: Blueprint | Material;
+}>();
 
 /**
  * A command that queues an unknown surface area for excavation by a worker. Excavating it will make
@@ -71,8 +47,33 @@ export const constructEntity = new Command<EntityBlackboard>(
 	async ({ game, entity: tile }) => {
 		assertEcsComponents(tile, [locationComponent, pathableComponent, surfaceComponent]);
 		try {
-			const { entity } = await game.prompt(PROMPT_CONSTRUCTION_JOB);
-			createConstructionJob(game, tile, entity);
+			const { buildingType, buildingFocus } = await game.prompt(PROMPT_CONSTRUCTION_JOB);
+			// TODO:
+			// Create a "construction site" entity
+			// ... which `await deliveryByAnyon(buildingMaterials)`
+			// ... then passes some time and requirs some workers with specific tools
+			// .. and finally creates a factory or market.
+			// For now, just create the factory/market right away:
+			if (buildingType === factoryArchetype) {
+				game.entities.add(
+					await createFactoryForBlueprint(
+						buildingFocus as Blueprint,
+						headOfState,
+						tile.location.get(),
+					),
+				);
+			} else if (buildingType === marketArchetype) {
+				game.entities.add(
+					await createMarketForMaterial(
+						buildingFocus as Material,
+						headOfState,
+						tile.location.get(),
+					),
+				);
+			} else {
+				debugger;
+				throw new Error('Unknown building type');
+			}
 		} catch (error) {
 			if (error === undefined) {
 				// User cancelled prompt:

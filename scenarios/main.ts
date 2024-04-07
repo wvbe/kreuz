@@ -5,28 +5,24 @@
 import {
 	DEFAULT_ASSETS,
 	DriverI,
-	EcsEntity,
+	EcsArchetypeEntity,
 	Game,
 	Random,
 	behavior,
-	blueprints,
-	marketArchetype,
-	personArchetype,
-	inventoryComponent,
-	materials,
-	factoryArchetype,
-	locationComponent,
-	pathingComponent,
-	visibilityComponent,
 	behaviorComponent,
+	blueprints,
+	createFactoryForBlueprint,
+	createMarketForMaterial,
 	eventLogComponent,
 	healthComponent,
-	needsComponent,
+	locationComponent,
+	pathingComponent,
+	personArchetype,
+	visibilityComponent,
 } from '@lib';
 import { headOfState } from '../library/level-2/heroes/heroes.ts';
 import { generateDualMeshTiles } from '../library/level-3/utils/generateDualMeshTiles.ts';
 import { generatePassport } from '../library/level-3/utils/generatePassport.ts';
-import { EcsArchetypeEntity } from '../library/level-1/ecs/types.ts';
 
 const TOOLS = [
 	DEFAULT_ASSETS.materials.get('axe'),
@@ -82,30 +78,9 @@ export async function generateEntities(game: Game) {
 		const id = `${game.seed}-factory-${i}`;
 		const tile = Random.fromArray(walkableTiles, id);
 		const blueprint = Random.fromArray(Object.values(blueprints), id, 'blueprint');
-		const factory = factoryArchetype.create({
-			blueprint,
-			icon: blueprint.products[0].material.symbol,
-			location: tile.location.get(),
-			maxStackSpace: 8,
-			maxWorkers: 1 * blueprint.options.workersRequired,
-			name: blueprint.options.buildingName,
-			owner: headOfState,
-		});
-		await Promise.all([
-			...blueprint.ingredients.map(async ({ material }) => {
-				await factory.inventory.set(
-					material,
-					Math.round(material.stack * Random.between(0.2, 1, id)),
-				);
-			}),
-			...blueprint.products.map(async ({ material }) => {
-				await factory.inventory.set(
-					material,
-					Math.round(material.stack * Random.between(0.2, 1, id)),
-				);
-			}),
-			game.entities.add(factory),
-		]);
+
+		const factory = await createFactoryForBlueprint(blueprint, headOfState, tile.location.get());
+		await game.entities.add(factory);
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 	}
 
@@ -113,15 +88,7 @@ export async function generateEntities(game: Game) {
 		const id = `${game.seed}-market-stall-${i}`;
 		const tile = Random.fromArray(walkableTiles, id);
 		const material = Random.fromArray(FOODS, id, '-mat');
-		const market = marketArchetype.create({
-			location: tile.location.get(),
-			materials: [material],
-			owner: headOfState,
-			maxStackSpace: 6,
-			name: `${material.label} stall`,
-			icon: material.symbol,
-		});
-		await market.inventory.set(material, Math.round(material.stack * Random.between(1, 4, id)));
+		const market = await createMarketForMaterial(material, headOfState, tile.location.get());
 		await game.entities.add(market);
 		walkableTiles.splice(walkableTiles.indexOf(tile), 1);
 	}

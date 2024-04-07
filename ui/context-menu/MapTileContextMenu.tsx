@@ -1,4 +1,4 @@
-import { EcsEntity, locationComponent } from '@lib';
+import { EcsEntity, locationComponent, tileArchetype } from '@lib';
 import React, { FC } from 'react';
 import { useGameContext } from '../context/GameContext.tsx';
 import { useSelectedEntity } from '../hooks/useSelectedEntity.tsx';
@@ -13,6 +13,7 @@ export const MapTileContextMenu: FC<{
 	const tileEntities = game.entities.filter(
 		(entity) =>
 			locationComponent.test(entity) &&
+			!tileArchetype.test(entity) &&
 			(entity as EcsEntity<typeof locationComponent>).equalsMapLocation(tile.location.get()),
 	);
 	return (

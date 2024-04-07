@@ -34,7 +34,7 @@ export function createLoiterBehavior() {
 				// 	throw new BehaviorTreeSignal(`${entity} is too tired to wander around`);
 				// }
 				if (eventLogComponent.test(entity)) {
-					await entity.events.add('Wandering around…');
+					await entity.events?.add('Wandering around…');
 				}
 				const start = game.terrain.getTileEqualToLocation(entity.location.get());
 				if (!start) {

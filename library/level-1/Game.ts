@@ -48,14 +48,7 @@ function createEntitiesCollections() {
 	return Object.assign(entities, {
 		living: new CollectionBucket(
 			entities,
-			(
-				entity,
-			): entity is EcsArchetypeEntity<
-				typeof personArchetype | typeof factoryArchetype | typeof marketArchetype
-			> =>
-				personArchetype.test(entity) ||
-				factoryArchetype.test(entity) ||
-				marketArchetype.test(entity),
+			(entity): entity is EcsEntity => !tileArchetype.test(entity),
 		),
 	});
 }

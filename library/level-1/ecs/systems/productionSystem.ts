@@ -255,12 +255,14 @@ async function attachSystemToEntity(game: Game, factory: ProductionSystemFactory
 
 	factory.$$progress.onAbove(
 		1,
-		() => {
+		async () => {
 			const blueprint = factory.blueprint.get();
 			if (!blueprint) {
 				// Indicative of a bug somewhere!
 				throw new Error('Blueprint is somehow unset while the cycle is completing');
 			}
+
+			await factory.onComplete?.();
 
 			if (!canAllocateProducts()) {
 				stopBlueprintCycle(factory);

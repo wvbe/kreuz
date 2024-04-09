@@ -4,33 +4,30 @@ import createBasementDemo from './basement.ts';
 
 import { DriverI, Game, personArchetype, type EcsArchetypeEntity } from '@lib';
 
-describe('"The basement"', async () => {
-	let game: Game, driver: DriverI, melanie: EcsArchetypeEntity<typeof personArchetype>;
-	beforeAll(async () => {
-		driver = new TestDriver();
-		game = await createBasementDemo(driver);
-		melanie = game.entities.get(0);
-	});
+Deno.test('"The basement"', async (test) => {
+	const driver = new TestDriver(),
+		game = await createBasementDemo(driver),
+		melanie = game.entities.find((entity) => personArchetype.test(entity)) as EcsArchetypeEntity<
+			typeof personArchetype
+		>;
 
-	it('Melanie is called Melanie, and she has needs', () => {
+	await test.step('Melanie is called Melanie, and she has needs', () => {
 		expect(melanie.name).toBe('Ro-bot');
 		Object.values(melanie.needs).forEach((need) => {
 			expect(need.get()).toBeGreaterThan(0);
 		});
 	});
 
-	it('The game finishes by itself', async () => {
+	await test.step('The game finishes by itself', async () => {
 		expect(await driver.startUntilStop()).toBeUndefined();
 
 		expect(game.time.getNextEventAbsoluteTime()).toBe(Infinity);
 		expect(game.time.now).toBeGreaterThan(0);
 	});
 
-	it("All of Melanie's needs are depleted", () => {
+	await test.step("All of Melanie's needs are depleted", () => {
 		Object.values(melanie.needs).forEach((need) => {
 			expect(need.get()).toBe(0);
 		});
 	});
 });
-
-run();

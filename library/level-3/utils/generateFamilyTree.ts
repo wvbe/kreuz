@@ -1,10 +1,10 @@
-import { Random, TimeLine } from '@lib/core';
+import { Random, Time } from '@lib/core';
 
 type Sexuality = 'hetero' | 'homo' | 'bi';
 // type TraditionalGender = 'm' | 'f';
 
 export async function generateFamilyTree(seed: number, dateMax: number) {
-	const TIME = new TimeLine();
+	const TIME = new Time();
 	let seedIncrement = seed;
 	const events: string[] = [];
 

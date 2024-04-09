@@ -11,6 +11,8 @@ const defaultEmptyGameMap = `
 	XXXXX
 `;
 
-export function generateEmptyGame(ascii: string = defaultEmptyGameMap) {
-	return new Game(new TestDriver(), '1', generateGridTerrainFromAscii(ascii), DEFAULT_ASSETS);
+export async function generateEmptyGame(ascii: string = defaultEmptyGameMap): Promise<Game> {
+	const game = new Game(new TestDriver(), '1', DEFAULT_ASSETS);
+	await game.entities.add(...generateGridTerrainFromAscii(ascii));
+	return game;
 }

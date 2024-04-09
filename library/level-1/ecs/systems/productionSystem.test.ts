@@ -5,7 +5,7 @@ import { growWheat } from '../../../level-2/blueprints.ts';
 import { wheat } from '../../../level-2/materials.ts';
 
 Deno.test('System: productionSystem', async (test) => {
-	const game = generateEmptyGame();
+	const game = await generateEmptyGame();
 	const worker = personArchetype.create({
 		location: [0, 0, 1],
 		icon: '🤖',

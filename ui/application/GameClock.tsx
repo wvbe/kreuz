@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useCallback, useState } from 'react';
+import { timeToString } from '@lib';
 import { FillBar } from '../components/atoms/FillBar.tsx';
 import { useDriverContext } from '../context/DriverContext.tsx';
 import { useGameContext } from '../context/GameContext.tsx';
@@ -37,7 +38,7 @@ export const GameClock: FunctionComponent = () => {
 			<input type="number" size={3} value={gameSpeed} onChange={onGameSpeedChange} />
 			<FillBar
 				ratio={(time % (1000 * 24)) / (1000 * 24)}
-				label={`${Math.ceil(time / 1000)} hours since start of the game`}
+				label={`${timeToString(time)} hours since start of the game`}
 			/>
 
 			{game.time.getNextEventAbsoluteTime() === Infinity ? (

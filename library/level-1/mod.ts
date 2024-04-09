@@ -7,12 +7,14 @@ export { SelectorNode } from './ecs/components/behaviorComponent/SelectorNode.ts
 export { SequenceNode } from './ecs/components/behaviorComponent/SequenceNode.ts';
 export * from './ecs/components/behaviorComponent/types.ts';
 
+export { Time } from './time/Time.ts';
+export { timeToString } from './time/timeToString.ts';
+
 // Miscellaneous utilities:
 export { Command } from './classes/Command.ts';
 export { Prompt } from './classes/Prompt.ts';
 export { JobPosting } from './classes/JobPosting.ts';
 export { Random } from './classes/Random.ts';
-export { TimeLine } from './classes/TimeLine.ts';
 export { Collection } from './events/Collection.ts';
 export { CollectionBucket } from './events/CollectionBucket.ts';
 export { Event } from './events/Event.ts';

@@ -1,12 +1,12 @@
 import { expect, it, describe, run, mock } from '@test';
-import { TimeLine } from './TimeLine.ts';
+import { Time } from './Time.ts';
 
 function noop() {
 	/* no-op */
 }
-describe('TimeLine', () => {
+describe('Time', () => {
 	it('.steps()', async () => {
-		const time = new TimeLine();
+		const time = new Time();
 		expect(time.now).toBe(0);
 		await time.steps(3);
 		expect(time.now).toBe(3);
@@ -14,7 +14,7 @@ describe('TimeLine', () => {
 
 	describe('.setTimeout()', () => {
 		it('happy flow', async () => {
-			const time = new TimeLine();
+			const time = new Time();
 			const fn = mock.fn();
 
 			time.setTimeout(fn, 10);
@@ -26,7 +26,7 @@ describe('TimeLine', () => {
 			expect(time.getNextEventAbsoluteTime()).toBe(Infinity);
 		});
 		it('overlapping timeouts', async () => {
-			const time = new TimeLine();
+			const time = new Time();
 			const fn1 = mock.fn();
 			const fn2 = mock.fn();
 			time.setTimeout(fn1, 3);
@@ -37,7 +37,7 @@ describe('TimeLine', () => {
 		});
 		it('cancelling', async () => {
 			const fn = mock.fn();
-			const time = new TimeLine();
+			const time = new Time();
 
 			const destroy = time.setTimeout(fn, 10);
 			expect(fn).toHaveBeenCalledTimes(0);
@@ -51,7 +51,7 @@ describe('TimeLine', () => {
 			expect(fn).toHaveBeenCalledTimes(0);
 		});
 		it('cancelling + overlapping timeouts', async () => {
-			const time = new TimeLine();
+			const time = new Time();
 			const fn1 = mock.fn();
 			const fn2 = mock.fn();
 			time.setTimeout(fn1, 3);
@@ -64,14 +64,14 @@ describe('TimeLine', () => {
 	});
 
 	it('.jump()', async () => {
-		const time = new TimeLine();
+		const time = new Time();
 		time.setTimeout(noop, 10);
 		await time.jump();
 		expect(time.now).toBe(10);
 	});
 
 	it('.getNextEventAbsoluteTime()', async () => {
-		const time = new TimeLine();
+		const time = new Time();
 		expect(time.getNextEventAbsoluteTime()).toBe(Infinity);
 		time.setTimeout(noop, 10);
 		expect(time.getNextEventAbsoluteTime()).toBe(10);

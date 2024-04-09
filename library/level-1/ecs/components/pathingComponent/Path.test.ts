@@ -10,15 +10,13 @@ describe('Path', () => {
 			XXX
 		`);
 
-		expect(
-			new Path({ closest: false }).findPathBetween(terrain.tiles[0], terrain.tiles[2]),
-		).toEqual([
-			terrain.tiles[3],
-			terrain.tiles[6],
-			terrain.tiles[7],
-			terrain.tiles[8],
-			terrain.tiles[5],
-			terrain.tiles[2],
+		expect(new Path({ closest: false }).findPathBetween(terrain[0], terrain[2])).toEqual([
+			terrain[3],
+			terrain[6],
+			terrain[7],
+			terrain[8],
+			terrain[5],
+			terrain[2],
 		]);
 	});
 });

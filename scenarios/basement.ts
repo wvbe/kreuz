@@ -12,20 +12,21 @@ import { factoryArchetype, Game, generateGridTerrainFromAscii } from '@lib/core'
 import { headOfState } from '../library/level-2/heroes/heroes.ts';
 
 export default async function (driver: DriverI) {
-	const terrain = generateGridTerrainFromAscii(`
-		XXXXXXXXXXXX
-		XXXXXXXXXXXX
-		XXXXXXXXXXXX
-		XXXXXXXXXXXX
-		XXXXXXXXXXXX
-		XXXXXXXXXXXX
-		XXXXXXXXXXXX
-	`);
-
-	const game = new Game(driver, '1', terrain, DEFAULT_ASSETS);
+	const game = new Game(driver, '1', DEFAULT_ASSETS);
+	await game.entities.add(
+		...generateGridTerrainFromAscii(`
+			XXXXXXXXXXXX
+			XXXXXXXXXXXX
+			XXXXXXXXXXXX
+			XXXXXXXXXXXX
+			XXXXXXXXXXXX
+			XXXXXXXXXXXX
+			XXXXXXXXXXXX
+		`),
+	);
 
 	const entity = personArchetype.create({
-		location: terrain.getTileClosestToXy(0, 0).location.get(),
+		location: game.terrain.getTileClosestToXy(0, 0).location.get(),
 		name: 'Ro-bot',
 		icon: '🤖',
 		behavior: null,
@@ -35,7 +36,7 @@ export default async function (driver: DriverI) {
 	await game.entities.add(entity);
 
 	const well = factoryArchetype.create({
-		location: terrain.getTileClosestToXy(3, 3).location.get(),
+		location: game.terrain.getTileClosestToXy(3, 3).location.get(),
 		owner: headOfState,
 		blueprint: blueprints.getWaterFromWell,
 		maxWorkers: 0,

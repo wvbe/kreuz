@@ -5,7 +5,7 @@ import { EventedValue } from '../events/EventedValue.ts';
 /**
  * Controls the flow of time in a game.
  */
-export class TimeLine extends EventedValue<number> {
+export class Time extends EventedValue<number> {
 	#timers = new Map<number, CallbackFn[]>();
 
 	/**

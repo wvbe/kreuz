@@ -1,10 +1,11 @@
+import { EcsArchetypeEntity, Terrain } from '@lib/core';
 import { type DEFAULT_ASSETS } from '../level-2/DEFAULT_ASSETS.ts';
 import { Command } from './classes/Command.ts';
 import { JobBoard } from './classes/JobBoard.ts';
 import { Prompt } from './classes/Prompt.ts';
 import { type StrictMap } from './classes/StrictMap.ts';
-import { TimeLine } from './classes/TimeLine.ts';
 import { type DriverI } from './drivers/types.ts';
+import { tileArchetype } from './ecs/archetypes/tileArchetype.ts';
 import { type EcsArchetype } from './ecs/classes/EcsArchetype.ts';
 import { type EcsComponent } from './ecs/classes/EcsComponent.ts';
 import { type EcsSystem } from './ecs/classes/EcsSystem.ts';
@@ -12,9 +13,6 @@ import {
 	type BehaviorTreeNodeI,
 	type EntityBlackboard,
 } from './ecs/components/behaviorComponent/types.ts';
-import { locationComponent } from './ecs/components/locationComponent.ts';
-import { outlineComponent } from './ecs/components/outlineComponent.ts';
-import { pathableComponent } from './ecs/components/pathableComponent.ts';
 import { type Blueprint } from './ecs/components/productionComponent/Blueprint.ts';
 import { behaviorTreeSystem } from './ecs/systems/behaviorTreeSystem.ts';
 import { grocerySystem } from './ecs/systems/grocerySystem.ts';
@@ -24,17 +22,14 @@ import { productionSystem } from './ecs/systems/productionSystem.ts';
 import { selfsustainingSystem } from './ecs/systems/selfsustainingSystem.ts';
 import { type EcsEntity } from './ecs/types.ts';
 import { Collection } from './events/Collection.ts';
-import { KeyedCollection } from './events/KeyedCollection.ts';
 import { CollectionBucket } from './events/CollectionBucket.ts';
+import { KeyedCollection } from './events/KeyedCollection.ts';
 import { type Material } from './inventory/Material.ts';
 import { type TerrainI } from './terrain/types.ts';
+import { Time } from './time/Time.ts';
+import { type timeToString } from './time/timeToString.ts';
 import { type SavedGameJson } from './types-savedgame.ts';
 import { type SeedI } from './types.ts';
-import { personArchetype } from './ecs/archetypes/personArchetype.ts';
-import { factoryArchetype } from './ecs/archetypes/factoryArchetype.ts';
-import { marketArchetype } from './ecs/archetypes/marketArchetype.ts';
-import { tileArchetype } from './ecs/archetypes/tileArchetype.ts';
-import { EcsArchetypeEntity, Terrain } from '@lib/core';
 
 export type GameAssets = {
 	behaviorNodes: StrictMap<BehaviorTreeNodeI<EntityBlackboard>>;
@@ -67,15 +62,20 @@ export default class Game {
 	public readonly entities = createEntitiesCollections();
 
 	/**
-	 * The global understanding of the passage of time. Has some helper methods such as {@link TimeLine.setTimeout}
-	 * and {@link TimeLine.wait} to link game events to time passed. Has other methods ({@link TimeLine.step},
-	 * {@link TimeLine.steps} or {@link TimeLine.jump}) to move time forward.
+	 * The global understanding of the passage of time. Has some helper methods such as {@link Time.setTimeout}
+	 * and {@link Time.wait} to link game events to time passed. Has other methods ({@link Time.step},
+	 * {@link Time.steps} or {@link Time.jump}) to move time forward.
 	 *
 	 * A {@link DriverI} is responsible for linking the passage of time to animation frames or other.
 	 *
-	 * We pretend that a thousand "time" is "one hour". The current time is always {@link TimeLine.now}.
+	 * We pretend that one time is one real-world second. According to {@link timeToString}, there are;
+	 * - 60 seconds in a minute
+	 * - 60 minutes in an hour
+	 * - 24 hours in a day
+	 * - 30 days in a month
+	 * - 12 months in a year
 	 */
-	public readonly time = new TimeLine();
+	public readonly time = new Time();
 
 	/**
 	 * The global jobboard, where capable entities can find a new activity to do. Jobs may be posted
@@ -115,14 +115,13 @@ export default class Game {
 	public readonly commands = new Collection<Command<EntityBlackboard>>();
 
 	constructor(driver: DriverI, seed: SeedI, assets: GameAssets) {
-		this.driver = driver;
-
 		this.seed = seed;
-
+		this.assets = assets;
+		this.driver = driver;
 		this.terrain = new Terrain<EcsArchetypeEntity<typeof tileArchetype>>(
 			new CollectionBucket(this.entities, tileArchetype.test.bind(tileArchetype)),
 		);
-		this.assets = assets;
+
 
 		productionSystem.attachGame(this);
 		behaviorTreeSystem.attachGame(this);

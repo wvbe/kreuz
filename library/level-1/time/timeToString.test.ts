@@ -1,4 +1,4 @@
-import { expect, it } from '@test';
+import { expect } from '@test';
 import { timeToString } from './timeToString.ts';
 
 Deno.test('timeToString', async (test) => {

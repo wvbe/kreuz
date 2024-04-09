@@ -1,14 +1,14 @@
-import { expect, it, describe, run } from '@test';
+import { expect } from '@test';
 import { Random } from './Random.ts';
 
-describe('Random', () => {
-	it('.float()', () => {
+Deno.test('Random', async (test) => {
+	await test.step('.float()', () => {
 		expect(Random.float('x')).toBe(0.9080614664401105);
 		expect(Random.float('y')).toBe(0.2992396904514766);
 		expect(Random.float('z')).toBe(0.5205114627512043);
 		expect(Random.float('z')).toBe(0.5205114627512043);
 	});
-	it('.normal()', () => {
+	await test.step('.normal()', () => {
 		expect(Random.normal('x')).toBe(0.4509135135199306);
 		expect(Random.normal('y')).toBe(0.469344606863022);
 		expect(Random.normal('z')).toBe(0.4121183286769527);
@@ -35,7 +35,7 @@ describe('Random', () => {
 		expect(moreThanHalf).toBeGreaterThan(4950);
 	});
 
-	it('.fromArray()', () => {
+	await test.step('.fromArray()', () => {
 		const arr = ['apple', 'mango', 'banana', 'cucumber', 'avocado'];
 		expect(Random.fromArray(arr, 'x')).toBe('avocado');
 		expect(Random.fromArray(arr, 'y')).toBe('mango');
@@ -43,7 +43,7 @@ describe('Random', () => {
 		expect(Random.fromArray(arr, 'z')).toBe('banana');
 	});
 
-	it('.poisson()', () => {
+	await test.step('.poisson()', () => {
 		expect(Random.poisson(5, 5, 2, 'x')).toEqual([
 			[2.642138200031032, 1.6077739770904964],
 			[2.263746251114599, 3.676522807819503],
@@ -76,5 +76,3 @@ describe('Random', () => {
 		]);
 	});
 });
-
-run();

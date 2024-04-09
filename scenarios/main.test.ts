@@ -1,6 +1,6 @@
-import { TestDriver, beforeAll, describe, expect, it, run } from '@test';
+import { TestDriver, expect } from '@test';
 
-import { Game, factoryArchetype, personArchetype } from '@lib';
+import { factoryArchetype, personArchetype } from '@lib';
 import createGeneratorDemo from './main.ts';
 
 Deno.test('Default generator', async (test) => {

@@ -1,4 +1,5 @@
 import { type Need } from '../entities/Need.ts';
+import { DAY } from '../time/constants.ts';
 
 export type PersonNeedId = 'nutrition' | 'hydration';
 // | 'energy' | 'hygiene' | 'ideology';
@@ -14,7 +15,8 @@ export const PERSON_NEEDS: Array<{
 	{
 		id: 'nutrition',
 		label: '🍴',
-		decay: -1 / 350_000,
+		// It takes 14 days to become completely malnutritioned:
+		decay: -1 / (14 * DAY),
 		moods: [
 			{ upUntil: 5 / 100, label: 'literally starving' },
 			{ upUntil: 15 / 100, label: 'very hungry' },
@@ -27,7 +29,8 @@ export const PERSON_NEEDS: Array<{
 	{
 		id: 'hydration',
 		label: '💦',
-		decay: -1 / 200_000,
+		// It takes 3 days to become completely dehydrated:
+		decay: -1 / (3 * DAY),
 		moods: [
 			{ upUntil: 5 / 100, label: 'dying from dehydration' },
 			{ upUntil: 15 / 100, label: 'parched' },
@@ -37,44 +40,4 @@ export const PERSON_NEEDS: Array<{
 			{ upUntil: Infinity, label: 'had too much' },
 		],
 	},
-	// {
-	// 	id: 'energy',
-	// 	label: '💤',
-	// 	decay: -1 / 500_000,
-	// 	moods: [
-	// 		{ upUntil: 1 / 100, label: 'dead tired' },
-	// 		{ upUntil: 5 / 100, label: 'passing out' },
-	// 		{ upUntil: 15 / 100, label: 'very tired' },
-	// 		{ upUntil: 30 / 100, label: "lil' energy" },
-	// 		{ upUntil: 75 / 100, label: null },
-	// 		{ upUntil: 90 / 100, label: 'rested' },
-	// 		{ upUntil: Infinity, label: 'rejuvenated' },
-	// 	],
-	// },
-	// {
-	// 	id: 'hygiene',
-	// 	label: '🛁',
-	// 	decay: -1 / 750_000,
-	// 	moods: [
-	// 		{ upUntil: 1 / 100, label: 'smells like a dead body' },
-	// 		{ upUntil: 20 / 100, label: 'filthy' },
-	// 		{ upUntil: 33 / 100, label: 'uncomfortable' },
-	// 		{ upUntil: 60 / 100, label: null },
-	// 		{ upUntil: 90 / 100, label: 'fortified' },
-	// 		{ upUntil: Infinity, label: 'squeeky clean' },
-	// 	],
-	// },
-	// {
-	// 	id: 'ideology',
-	// 	label: '🙏',
-	// 	decay: -1 / 1_000_000,
-	// 	moods: [
-	// 		{ upUntil: 1 / 100, label: 'dead inside' },
-	// 		{ upUntil: 20 / 100, label: 'existential dread' },
-	// 		{ upUntil: 33 / 100, label: 'depressed' },
-	// 		{ upUntil: 60 / 100, label: 'plagued by guilt' },
-	// 		{ upUntil: 90 / 100, label: null },
-	// 		{ upUntil: Infinity, label: 'reassured' },
-	// 	],
-	// },
 ];

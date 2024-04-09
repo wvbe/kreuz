@@ -1,4 +1,4 @@
-import { expect, it, describe, run, mock } from '@test';
+import { expect, mock } from '@test';
 import { Collection } from './Collection.ts';
 
 function createMocks<T>() {
@@ -21,8 +21,8 @@ const obj1 = { id: 1 };
 const obj2 = { id: 2 };
 const obj3 = { id: 3 };
 
-describe('Collection', () => {
-	it('.add()', async () => {
+Deno.test('Collection', async (test) => {
+	await test.step('.add()', async () => {
 		const { collection, onAdd, onRemove, onChange } = createMocks<{ id: number }>();
 		expect(onAdd).toHaveBeenCalledTimes(0);
 		expect(onRemove).toHaveBeenCalledTimes(0);
@@ -41,14 +41,14 @@ describe('Collection', () => {
 		expect(collection.length).toBe(3);
 	});
 
-	it('.get()', async () => {
+	await test.step('.get()', async () => {
 		const collection = new Collection<{ id: number }>();
 		await collection.add(obj1);
 		expect(collection.get(0)).toBe(obj1);
 		expect(() => collection.get(1)).toThrow();
 	});
 
-	it('.remove()', async () => {
+	await test.step('.remove()', async () => {
 		const { collection, onAdd, onRemove, onChange } = createMocks<{ id: number }>();
 		await collection.add(obj1);
 		expect(onAdd).toHaveBeenCalledTimes(1);
@@ -68,7 +68,7 @@ describe('Collection', () => {
 		expect(collection.length).toBe(0);
 	});
 
-	it('.change()', async () => {
+	await test.step('.change()', async () => {
 		const { collection, onAdd, onRemove, onChange } = createMocks<{ id: number }>();
 		expect(onAdd).toHaveBeenCalledTimes(0);
 		expect(onRemove).toHaveBeenCalledTimes(0);
@@ -93,4 +93,3 @@ describe('Collection', () => {
 		expect(collection.length).toBe(1);
 	});
 });
-run();

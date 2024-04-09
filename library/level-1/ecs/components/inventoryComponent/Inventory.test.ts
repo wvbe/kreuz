@@ -1,6 +1,5 @@
-import { describe, expect, it, mock, run } from '@test';
-import { Material } from '../../../inventory/Material.ts';
-import { Inventory } from './Inventory.ts';
+import { expect, mock } from '@test';
+import { Material, Inventory } from '@lib';
 
 const test1 = new Material('wheat', { symbol: '🌾', stackSize: 25 });
 const test2 = new Material('barley', { symbol: '𐂏', stackSize: 33 });
@@ -9,15 +8,15 @@ const godInventory = new Inventory();
 await godInventory.change(test1, Infinity);
 await godInventory.change(test2, Infinity);
 
-describe('Inventory', () => {
-	it('.availableOf()', async () => {
+Deno.test('Inventory', async (test) => {
+	await test.step('.availableOf()', async () => {
 		const inventory = new Inventory();
 		await inventory.set(test1, 100);
 		await inventory.set(test2, 420);
 		expect(inventory.availableOf(test1)).toBe(100);
 		expect(inventory.availableOf(test2)).toBe(420);
 	});
-	it('.getAvailableItems()', async () => {
+	await test.step('.getAvailableItems()', async () => {
 		const inventory = new Inventory();
 		await inventory.set(test1, 100);
 		await inventory.set(test2, 420);
@@ -28,14 +27,14 @@ describe('Inventory', () => {
 			{ material: test2, quantity: 420 },
 		]);
 	});
-	it('.reservedIncomingOf()', () => {
+	await test.step('.reservedIncomingOf()', () => {
 		const inventory = new Inventory(1);
 		inventory.makeReservation('test', [{ material: test1, quantity: 10 }]);
 		expect(inventory.reservedIncomingOf(test1)).toBe(10);
 		expect(inventory.availableOf(test1)).toBe(0);
 		expect(inventory.amountAllocatableTo(test1)).toBe(25);
 	});
-	it('.reservedOutgoingOf()', async () => {
+	await test.step('.reservedOutgoingOf()', async () => {
 		const inventory = new Inventory(1);
 		await inventory.set(test1, 15);
 		inventory.makeReservation('test', [{ material: test1, quantity: -10 }]);
@@ -43,7 +42,7 @@ describe('Inventory', () => {
 		expect(inventory.availableOf(test1)).toBe(5);
 		expect(inventory.amountAllocatableTo(test1)).toBe(25);
 	});
-	it('.getReservedIncomingItems()', () => {
+	await test.step('.getReservedIncomingItems()', () => {
 		const inventory = new Inventory();
 		inventory.changeMultiple([
 			{ material: test1, quantity: 99 },
@@ -58,7 +57,7 @@ describe('Inventory', () => {
 			{ material: test2, quantity: 1 },
 		]);
 	});
-	it('.getStacks()', async () => {
+	await test.step('.getStacks()', async () => {
 		const inventory = new Inventory();
 		await inventory.set(test1, 10);
 		await inventory.set(test2, 100);
@@ -70,19 +69,19 @@ describe('Inventory', () => {
 			{ material: test2, quantity: 1 },
 		]);
 	});
-	it('.getStacks() with a single item stack size', async () => {
+	await test.step('.getStacks() with a single item stack size', async () => {
 		const test3 = new Material('barley', { symbol: '𐂏', stackSize: 1 });
 		const inventory = new Inventory();
 		await inventory.set(test3, 1);
 		expect(inventory.getStacks()).toEqual([{ material: test3, quantity: 1 }]);
 	});
-	it('.getUsedStackSpace()', async () => {
+	await test.step('.getUsedStackSpace()', async () => {
 		const inventory = new Inventory();
 		await inventory.set(test1, 10);
 		await inventory.set(test2, 100);
 		expect(inventory.getUsedStackSpace()).toBe(5);
 	});
-	it('.isEverythingAllocatable()', async () => {
+	await test.step('.isEverythingAllocatable()', async () => {
 		const inventory = new Inventory(2);
 		expect(
 			inventory.isEverythingAdditionallyAllocatable([
@@ -99,7 +98,7 @@ describe('Inventory', () => {
 			]),
 		).toBeFalsy();
 	});
-	it('.isEverythingAllocatable() with reservation', async () => {
+	await test.step('.isEverythingAllocatable() with reservation', async () => {
 		const inventory = new Inventory(2);
 		const additionalItems = [
 			{ material: test1, quantity: 25 },
@@ -119,7 +118,7 @@ describe('Inventory', () => {
 		inventory.clearReservation('test');
 		expect(inventory.isEverythingAdditionallyAllocatable(additionalItems)).toBeTruthy();
 	});
-	it('.set()', async () => {
+	await test.step('.set()', async () => {
 		const inventory = new Inventory(2);
 		await inventory.set(test2, 33);
 		expect(inventory.availableOf(test2)).toBe(33);
@@ -134,7 +133,7 @@ describe('Inventory', () => {
 		await inventory.change(test2, -33);
 		expect(inventory.availableOf(test2)).toBe(0);
 	});
-	it('.changeMultiple()', async () => {
+	await test.step('.changeMultiple()', async () => {
 		const inventory = new Inventory(2);
 		const cb = mock.fn();
 		inventory.$change.on(cb);
@@ -146,8 +145,8 @@ describe('Inventory', () => {
 	});
 });
 
-describe('Issues', () => {
-	it('.set() does not allow setting to beyond half the available space', async () => {
+Deno.test('Issues', async (test) => {
+	await test.step('.set() does not allow setting to beyond half the available space', async () => {
 		// Reproduction case is to fill the inventory with an item half-way, and then add one more:
 		const inventory = new Inventory(2);
 		await inventory.set(test2, 33);
@@ -157,7 +156,7 @@ describe('Issues', () => {
 		expect(inventory.availableOf(test2)).toBe(34);
 	});
 
-	it('.isEverythingAllocatable() responds false while .additionalyAllocatableTo doesnt', async () => {
+	await test.step('.isEverythingAllocatable() responds false while .additionalyAllocatableTo doesnt', async () => {
 		const inventory = new Inventory(8);
 
 		const copper = new Material('Copper ingot', { symbol: 'C', stackSize: 30 });
@@ -177,36 +176,3 @@ describe('Issues', () => {
 		);
 	});
 });
-
-run();
-
-// describe('getRequiredStackSpace', () => {
-// 	it('should return 0 for an empty cargo', () => {
-// 		const cargo: MaterialState[] = [];
-// 		const result = getRequiredStackSpace(cargo);
-// 		expect(result).toBe(0);
-// 	});
-
-// 	it('should return the correct stack space for a single material', () => {
-// 		const cargo: MaterialState[] = [
-// 			{ material: test1, quantity: 10 },
-// 			{ material: test1, quantity: 15 },
-// 			{ material: test1, quantity: 5 },
-// 		];
-// 		const result = getRequiredStackSpace(cargo);
-// 		expect(result).toBe(2); // 10 + 15 + 5 = 30, 30 / 25 = 1.2, ceil(1.2) = 2
-// 	});
-
-// 	it('should return the correct stack space for multiple materials', () => {
-// 		const cargo: MaterialState[] = [
-// 			{ material: test1, quantity: 10 },
-// 			{ material: test2, quantity: 33 },
-// 			{ material: test1, quantity: 25 },
-// 			{ material: test2, quantity: 20 },
-// 		];
-// 		const result = getRequiredStackSpace(cargo);
-// 		expect(result).toBe(5); // 10 + 25 = 35, 35 / 25 = 1.4, ceil(1.4) = 2
-// 		// 33 + 20 = 53, 53 / 33 = 1.606, ceil(1.606) = 2
-// 		// Total: 2 + 2 = 4
-// 	});
-// });

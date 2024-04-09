@@ -1,7 +1,7 @@
-import { describe, expect, it, run } from '@test';
-import { Blueprint } from './Blueprint.ts';
-import { Inventory } from '../inventoryComponent/Inventory.ts';
+import { expect } from '@test';
 import { Material } from '../../../inventory/Material.ts';
+import { Inventory } from '../inventoryComponent/Inventory.ts';
+import { Blueprint } from './Blueprint.ts';
 
 export const tinIngot = new Material('Tin ingot', {
 		symbol: 'Ti',
@@ -29,8 +29,8 @@ export const tinIngot = new Material('Tin ingot', {
 		},
 	);
 
-describe('Blueprint', () => {
-	it('.transferIngredients()', async () => {
+Deno.test('Blueprint', async (test) => {
+	await test.step('.transferIngredients()', async () => {
 		const source = new Inventory();
 		await source.change(tinIngot, 10);
 		await source.change(copperIngot, 10);
@@ -42,7 +42,7 @@ describe('Blueprint', () => {
 		expect(destination.availableOf(tinIngot)).toBe(0.12);
 	});
 
-	it('.hasAllIngredients()', async () => {
+	await test.step('.hasAllIngredients()', async () => {
 		const source = new Inventory();
 		await source.change(tinIngot, 10);
 		expect(bronzeIngotProduction.hasAllIngredients(source)).toBeFalsy();
@@ -50,5 +50,3 @@ describe('Blueprint', () => {
 		expect(bronzeIngotProduction.hasAllIngredients(source)).toBeTruthy();
 	});
 });
-
-run();

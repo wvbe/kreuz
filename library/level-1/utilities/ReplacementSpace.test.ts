@@ -1,7 +1,7 @@
-import { describe, expect, it, run } from '@test';
+import { expect } from '@test';
 import { ReplacementSpace } from './ReplacementSpace.ts';
 
-it('replace', () => {
+Deno.test('replace', () => {
 	const objects: Record<string, Record<string, { id: string; toString: () => string }>> = {
 		foo: {
 			a: { id: 'a', toString: () => 'A' },
@@ -32,5 +32,3 @@ it('replace', () => {
 		' baz',
 	]);
 });
-
-run();

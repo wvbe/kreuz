@@ -1,19 +1,19 @@
-import { expect, it, describe, run, mock } from '@test';
+import { expect, mock } from '@test';
 import { Time } from './Time.ts';
 
 function noop() {
 	/* no-op */
 }
-describe('Time', () => {
-	it('.steps()', async () => {
+Deno.test('Time', async (test) => {
+	await test.step('.steps()', async () => {
 		const time = new Time();
 		expect(time.now).toBe(0);
 		await time.steps(3);
 		expect(time.now).toBe(3);
 	});
 
-	describe('.setTimeout()', () => {
-		it('happy flow', async () => {
+	await test.step('.setTimeout()', async (test) => {
+		await test.step('happy flow', async () => {
 			const time = new Time();
 			const fn = mock.fn();
 
@@ -25,7 +25,7 @@ describe('Time', () => {
 			expect(fn).toHaveBeenCalledTimes(1);
 			expect(time.getNextEventAbsoluteTime()).toBe(Infinity);
 		});
-		it('overlapping timeouts', async () => {
+		await test.step('overlapping timeouts', async () => {
 			const time = new Time();
 			const fn1 = mock.fn();
 			const fn2 = mock.fn();
@@ -35,7 +35,7 @@ describe('Time', () => {
 			expect(fn1).toHaveBeenCalledTimes(1);
 			expect(fn2).toHaveBeenCalledTimes(1);
 		});
-		it('cancelling', async () => {
+		await test.step('cancelling', async () => {
 			const fn = mock.fn();
 			const time = new Time();
 
@@ -50,7 +50,7 @@ describe('Time', () => {
 			await time.steps(10);
 			expect(fn).toHaveBeenCalledTimes(0);
 		});
-		it('cancelling + overlapping timeouts', async () => {
+		await test.step('cancelling + overlapping timeouts', async () => {
 			const time = new Time();
 			const fn1 = mock.fn();
 			const fn2 = mock.fn();
@@ -63,14 +63,14 @@ describe('Time', () => {
 		});
 	});
 
-	it('.jump()', async () => {
+	await test.step('.jump()', async () => {
 		const time = new Time();
 		time.setTimeout(noop, 10);
 		await time.jump();
 		expect(time.now).toBe(10);
 	});
 
-	it('.getNextEventAbsoluteTime()', async () => {
+	await test.step('.getNextEventAbsoluteTime()', async () => {
 		const time = new Time();
 		expect(time.getNextEventAbsoluteTime()).toBe(Infinity);
 		time.setTimeout(noop, 10);
@@ -82,4 +82,3 @@ describe('Time', () => {
 		expect(time.getNextEventAbsoluteTime()).toBe(Infinity);
 	});
 });
-run();

@@ -1,14 +1,13 @@
 import { SimpleCoordinate } from '../../terrain/types.ts';
 import { EcsArchetype } from '../classes/EcsArchetype.ts';
 import { behaviorComponent } from '../components/behaviorComponent.ts';
-import { EntityBlackboard } from '../components/behaviorComponent/types.ts';
-import { BehaviorTreeNodeI } from '../components/behaviorComponent/types.ts';
+import { BehaviorTreeNodeI, EntityBlackboard } from '../components/behaviorComponent/types.ts';
+import { eventLogComponent } from '../components/eventLogComponent.ts';
 import { healthComponent } from '../components/healthComponent.ts';
 import { inventoryComponent } from '../components/inventoryComponent.ts';
 import { locationComponent } from '../components/locationComponent.ts';
 import { needsComponent } from '../components/needsComponent.ts';
 import { pathingComponent } from '../components/pathingComponent.ts';
-import { eventLogComponent } from '../components/eventLogComponent.ts';
 import { visibilityComponent } from '../components/visibilityComponent.ts';
 import { wealthComponent } from '../components/wealthComponent.ts';
 

@@ -1,8 +1,8 @@
-import { TestDriver, beforeAll, describe, expect, it, run } from '@test';
+import { TestDriver, expect } from '@test';
 
 import createBasementDemo from './basement.ts';
 
-import { DriverI, Game, personArchetype, type EcsArchetypeEntity } from '@lib';
+import { personArchetype, type EcsArchetypeEntity } from '@lib';
 
 Deno.test('"The basement"', async (test) => {
 	const driver = new TestDriver(),
@@ -25,9 +25,7 @@ Deno.test('"The basement"', async (test) => {
 		expect(game.time.now).toBeGreaterThan(0);
 	});
 
-	await test.step("All of Melanie's needs are depleted", () => {
-		Object.values(melanie.needs).forEach((need) => {
-			expect(need.get()).toBe(0);
-		});
+	await test.step('Melanie is dead', () => {
+		expect(melanie.health.get()).toBe(0);
 	});
 });

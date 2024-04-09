@@ -1,5 +1,5 @@
 import { personArchetype } from '@lib';
-import { beforeAll, describe, expect, generateEmptyGame, it, mock, run } from '@test';
+import { expect, generateEmptyGame, mock } from '@test';
 
 import { createLoiterBehavior } from './reusable/nodes/createLoiterBehavior.ts';
 

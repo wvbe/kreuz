@@ -1,8 +1,8 @@
-import { expect, it, describe, run, generateGridTerrainFromAscii } from '@test';
+import { expect, generateGridTerrainFromAscii } from '@test';
 import { Path } from './Path.ts';
 
-describe('Path', () => {
-	it('.find()', () => {
+Deno.test('Path', async (test) => {
+	await test.step('.find()', () => {
 		// Where "x" is walkable, top-left is start and top-right is end.
 		const terrain = generateGridTerrainFromAscii(`
 			X-X
@@ -20,5 +20,3 @@ describe('Path', () => {
 		]);
 	});
 });
-
-run();

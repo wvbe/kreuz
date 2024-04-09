@@ -1,15 +1,15 @@
-import { expect, it, describe, mock, run } from '@test';
+import { expect, mock } from '@test';
 import { SaveJsonContext } from '../types-savedgame.ts';
 import { EventedNumericValue } from './EventedNumericValue.ts';
 
-describe('EventedNumericValue', () => {
-	it('Save/load round-robins to an equal object', async () => {
+Deno.test('EventedNumericValue', async (test) => {
+	await test.step('Save/load round-robins to an equal object', async () => {
 		const value = new EventedNumericValue(5, 'test');
 		expect(value).toEqual(
 			await EventedNumericValue.fromSaveJson(value.toSaveJson({} as SaveJsonContext)),
 		);
 	});
-	it('.onBetween()', async () => {
+	await test.step('.onBetween()', async () => {
 		const value = new EventedNumericValue(0, 'test');
 		const cb = mock.fn();
 		value.onBetween(2, 5, cb, { min: false, max: false });
@@ -43,7 +43,7 @@ describe('EventedNumericValue', () => {
 		expect(cb).toHaveBeenCalledTimes(2);
 	});
 
-	it('.onceBetween()', async () => {
+	await test.step('.onceBetween()', async () => {
 		const value = new EventedNumericValue(0, 'test');
 		const cb = mock.fn();
 		value.onceBetween(2, 5, cb, { min: false, max: false });
@@ -77,5 +77,3 @@ describe('EventedNumericValue', () => {
 		expect(cb).toHaveBeenCalledTimes(1);
 	});
 });
-
-run();

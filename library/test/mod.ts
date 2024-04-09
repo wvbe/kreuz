@@ -1,14 +1,4 @@
-export {
-	describe,
-	expect,
-	it,
-	run,
-	beforeAll,
-	beforeEach,
-	afterAll,
-	afterEach,
-	mock,
-} from 'tincan';
+export { expect, mock } from 'tincan';
 
 export { TestDriver } from './TestDriver.ts';
 export { generateEmptyGame } from './generateEmptyGame.ts';

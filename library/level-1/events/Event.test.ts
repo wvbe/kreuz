@@ -1,9 +1,9 @@
-import { expect, it, describe, mock, run } from '@test';
+import { expect, mock } from '@test';
 import { CallbackFn } from '../types.ts';
 import { Event } from './Event.ts';
 
-describe('Event', () => {
-	it('.on()', async () => {
+Deno.test('Event', async (test) => {
+	await test.step('.on()', async () => {
 		const event = new Event('test');
 		const cb = mock.fn();
 		event.on(cb);
@@ -16,7 +16,7 @@ describe('Event', () => {
 		expect(() => event.on(null as unknown as CallbackFn)).toThrow();
 	});
 
-	it('.on() destroyer', () => {
+	await test.step('.on() destroyer', () => {
 		console.warn = mock.fn();
 		const event = new Event('test');
 		const destroyer = event.on(() => {});
@@ -26,7 +26,7 @@ describe('Event', () => {
 		expect(() => destroyer()).toThrow(/memory leak/i);
 	});
 
-	it('.once()', async () => {
+	await test.step('.once()', async () => {
 		const event = new Event('test');
 		const cb = mock.fn();
 		event.once(cb);
@@ -39,7 +39,7 @@ describe('Event', () => {
 		expect(() => event.once(null as unknown as CallbackFn)).toThrow();
 	});
 
-	it('.once() destroyer', () => {
+	await test.step('.once() destroyer', () => {
 		console.warn = mock.fn();
 		const event = new Event('test');
 		const destroyer = event.once(() => {});
@@ -49,7 +49,7 @@ describe('Event', () => {
 		expect(() => destroyer()).toThrow(/memory leak/i);
 	});
 
-	it('.clear()', () => {
+	await test.step('.clear()', () => {
 		const event = new Event('test');
 		event.on(() => {});
 		event.once(() => {});
@@ -58,7 +58,7 @@ describe('Event', () => {
 		expect(event.$$$listeners).toBe(0);
 	});
 
-	it('static .onAny', async () => {
+	await test.step('static .onAny', async () => {
 		const event1 = new Event('test 1');
 		const event2 = new Event('test 2');
 		const cb = mock.fn();
@@ -78,7 +78,7 @@ describe('Event', () => {
 		expect(event2.$$$listeners).toBe(0);
 	});
 
-	it('static .onceFirst', async () => {
+	await test.step('static .onceFirst', async () => {
 		const event1 = new Event('test 1');
 		const event2 = new Event('test 2');
 		const cb1 = mock.fn();
@@ -106,8 +106,8 @@ describe('Event', () => {
 	});
 });
 
-describe('Fixed issues', () => {
-	it('.once() does not fire if other onces are registered', async () => {
+Deno.test('Fixed issues', async (test) => {
+	await test.step('.once() does not fire if other onces are registered', async () => {
 		const event = new Event('test');
 		const cb = mock.fn();
 		event.once(() => {
@@ -119,5 +119,3 @@ describe('Fixed issues', () => {
 		expect(cb).toHaveBeenCalledTimes(1);
 	});
 });
-
-run();

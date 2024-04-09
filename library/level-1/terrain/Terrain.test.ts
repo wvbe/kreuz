@@ -1,8 +1,8 @@
-import { expect, it, describe, run } from '@test';
-import { Terrain } from './Terrain.ts';
+import { expect } from '@test';
 import { generateGridTerrainFromAscii } from '../../test/generateGridTerrainFromAscii.ts';
+import { Terrain } from './Terrain.ts';
 
-describe('Terrain', () => {
+Deno.test('Terrain', async (test) => {
 	// it('Save/load round-robins to an equal object', () => {
 	// 	const terrain = generateGridTerrainFromAscii(
 	// 		`
@@ -14,8 +14,8 @@ describe('Terrain', () => {
 	// 	);
 	// 	expect(terrain).toEqual(Terrain.fromSaveJson(terrain.toSaveJson()));
 	// });
-	describe('.getIslands()', () => {
-		it('Finds the correct amount of islands', () => {
+	await test.step('.getIslands()', async (test) => {
+		await test.step('Finds the correct amount of islands', () => {
 			const islands = new Terrain(
 				generateGridTerrainFromAscii(
 					`
@@ -30,7 +30,7 @@ describe('Terrain', () => {
 			expect(islands[0]).toHaveLength(5);
 			expect(islands[1]).toHaveLength(7);
 		});
-		it('Returns empty array when nothing selects', () => {
+		await test.step('Returns empty array when nothing selects', () => {
 			const islands = new Terrain(
 				generateGridTerrainFromAscii(
 					`
@@ -44,5 +44,3 @@ describe('Terrain', () => {
 		});
 	});
 });
-
-run();

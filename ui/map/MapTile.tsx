@@ -33,9 +33,11 @@ export const MapTile: FunctionComponent<{
 	>;
 }> = ({ tile, zoom }) => {
 	const color = useEventedValue(tile.surfaceType, (surfaceType) =>
-		(surfaceType === SurfaceType.UNKNOWN ? baseBlue : baseGreen)
-			.lighten(Random.between(-0.05, 0.05, tile.toString(), 'lighten'))
-			.saturate(Random.between(-0.2, 0.2, tile.toString(), 'saturate')),
+		surfaceType === SurfaceType.UNKNOWN
+			? baseBlue
+			: baseGreen
+					.lighten(Random.between(-0.05, 0.05, tile.toString(), 'lighten'))
+					.saturate(Random.between(-0.2, 0.2, tile.toString(), 'saturate')),
 	);
 	const contextMenu = useMapTileContextMenu();
 

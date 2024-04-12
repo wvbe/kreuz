@@ -13,6 +13,7 @@ import {
 } from '@lib/core';
 import { hasEcsComponents } from '../../level-1/ecs/assert.ts';
 import { eventLogComponent } from '@lib/core';
+import { mapMarkerArchetype } from '@lib/core';
 
 type TileEntity = EcsEntity<
 	typeof locationComponent | typeof surfaceComponent | typeof pathableComponent
@@ -22,7 +23,7 @@ type TileEntity = EcsEntity<
  * A command that queues an unknown surface area for excavation by a worker. Excavating it will make
  * the surface walkable/pathable.
  */
-export const clearSpace = new Command<EntityBlackboard>(
+export const excavateTile = new Command<EntityBlackboard>(
 	'⛏️ Clear this space',
 	({ entity }) =>
 		// Only valid for tiles...
@@ -34,9 +35,15 @@ export const clearSpace = new Command<EntityBlackboard>(
 			(neighbour) =>
 				(neighbour as EcsEntity<typeof surfaceComponent>).surfaceType?.get() === SurfaceType.OPEN,
 		),
-	({ game, entity: tile }) => {
+	async ({ game, entity: tile }) => {
 		assertEcsComponents(tile, [locationComponent, pathableComponent, surfaceComponent]);
 
+		const marker = mapMarkerArchetype.create({
+			location: tile.location.get(),
+			icon: '⛏️',
+			name: 'Excavation site',
+		});
+		await game.entities.add(marker);
 		// When the command is executed, create a job for a worker to do the rest:
 		game.jobs.addGlobal(
 			new JobPosting(
@@ -52,6 +59,7 @@ export const clearSpace = new Command<EntityBlackboard>(
 					tile.walkability = 1;
 					tile.surfaceType.set(SurfaceType.OPEN);
 					game.jobs.removeGlobal(job);
+					await game.entities.remove(marker);
 				},
 				{
 					label: 'Clear a space',

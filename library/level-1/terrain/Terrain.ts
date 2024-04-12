@@ -15,14 +15,12 @@ export type SaveTerrainJson = {
 };
 
 export class Terrain<
-	TileGeneric extends EcsEntity<
-		typeof pathableComponent | typeof locationComponent | typeof outlineComponent
-	>,
+	TileGeneric extends EcsEntity<typeof pathableComponent | typeof locationComponent>,
 > implements TerrainI<TileGeneric>
 {
-	readonly tiles: Collection<TileGeneric>;
+	public readonly tiles: Collection<TileGeneric>;
 
-	constructor(tiles: TileGeneric[] | Collection<TileGeneric>) {
+	public constructor(tiles: TileGeneric[] | Collection<TileGeneric>) {
 		if (tiles instanceof Collection) {
 			this.tiles = tiles;
 		} else {
@@ -33,6 +31,15 @@ export class Terrain<
 
 	public getTileEqualToLocation(location: SimpleCoordinate, lax?: false): TileGeneric;
 	public getTileEqualToLocation(location: SimpleCoordinate, lax?: true): TileGeneric | null;
+
+	/**
+	 * Retrieves the tile that matches the given location.
+	 *
+	 * @param location - The location to match the tile against.
+	 * @param lax - Optional. If set to true, allows for lax matching.
+	 * @returns The tile that matches the location, or null if no match is found and lax is true.
+	 * @throws Error if no tile matches the location exactly and lax is false.
+	 */
 	public getTileEqualToLocation(location: SimpleCoordinate, lax?: boolean) {
 		const tile = this.tiles.find((tile) => tile.equalsMapLocation(location)) || null;
 		if (!tile && !lax) {

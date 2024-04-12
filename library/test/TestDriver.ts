@@ -30,7 +30,6 @@ export class TestDriver extends Driver implements DriverI {
 				while (this.$$animating.get() && game.time.hasNextEvent()) {
 					await game.time.step();
 				}
-				await this.stop();
 				await this.$end.emit();
 			}),
 		);

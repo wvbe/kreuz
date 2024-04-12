@@ -50,7 +50,16 @@ export function createContextMenu<Props extends {}>(Component: FC<Props>) {
 					const boundingBox = node.getBoundingClientRect();
 					offset.x += (node as HTMLElement).offsetLeft - boundingBox.width / 2;
 					offset.y += (node as HTMLElement).offsetTop - boundingBox.height / 2;
+				} else if (node instanceof SVGElement) {
+					const style = window.getComputedStyle(node);
+					if (style.left !== 'auto') {
+						offset.x += parseInt(style.left);
+					}
+					if (style.top !== 'auto') {
+						offset.y += parseInt(style.top);
+					}
 				}
+
 				node = node.parentElement;
 			}
 			setState({

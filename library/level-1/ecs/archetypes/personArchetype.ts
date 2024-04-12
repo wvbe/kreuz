@@ -17,6 +17,7 @@ export const personArchetype = new EcsArchetype<
 		name: string;
 		icon: string;
 		behavior: BehaviorTreeNodeI<EntityBlackboard> | null;
+		wealth?: number;
 	},
 	| typeof behaviorComponent
 	| typeof healthComponent
@@ -64,7 +65,7 @@ export const personArchetype = new EcsArchetype<
 			icon: options.icon,
 		});
 		wealthComponent.attach(entity, {
-			wealth: 0,
+			wealth: options.wealth || 0,
 		});
 	},
 );

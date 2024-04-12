@@ -44,7 +44,10 @@ export class EcsComponent<
 		return entity as EcsEntity<this>;
 	}
 
-	public test(entity: EcsEntity): entity is EcsEntity<this> {
+	public test(entity: any): entity is EcsEntity<this> {
+		if (!entity || entity.id === undefined) {
+			return false;
+		}
 		return this.#test(entity);
 	}
 }

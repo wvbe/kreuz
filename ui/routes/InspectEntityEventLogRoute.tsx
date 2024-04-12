@@ -2,7 +2,7 @@ import { EcsEntity, eventLogComponent, type Collection, type TradeOrder } from '
 import React, { useMemo, type FunctionComponent } from 'react';
 import { useCollection } from '../hooks/useEventedValue.ts';
 import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow.tsx';
-import { Table } from '../components/atoms/Table.tsx';
+import { Cell, Row, Table } from '../components/atoms/Table.tsx';
 import { TokenizedText } from '../components/atoms/TokenizedText.tsx';
 import { useParams } from 'react-router-dom';
 import { useGameContext } from '../context/GameContext.tsx';
@@ -22,15 +22,24 @@ export const InspectEntityEventLogRoute: FunctionComponent = () => {
 			<Table>
 				{items.length ? (
 					items
-						.reduce<string[]>(
-							(arr, item, index, all) => (item === all[index - 1] ? arr : [...arr, item]),
-							[],
-						)
+						.reduce((arr, message, index) => {
+							if (arr[arr.length - 1]?.message === message) {
+								arr[arr.length - 1].count++;
+							} else {
+								arr.push({ message, count: 1 });
+							}
+							return arr;
+						}, [] as { message: string; count: number }[])
 						.reverse()
-						.map((item, i) => (
-							<p key={i}>
-								<TokenizedText text={item} />
-							</p>
+						.map(({ message, count }, i) => (
+							<Row key={i}>
+								<Cell>{count > 1 ? `${count}×` : null}</Cell>
+								<Cell>
+									<p key={i}>
+										<TokenizedText text={message} />
+									</p>
+								</Cell>
+							</Row>
 						))
 				) : (
 					<p>Nothing logged</p>

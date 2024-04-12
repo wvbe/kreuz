@@ -21,8 +21,8 @@ import {
 	visibilityComponent,
 } from '@lib';
 import { headOfState } from '../library/level-2/heroes/heroes.ts';
-import { generateDualMeshTiles } from '../library/level-3/utils/generateDualMeshTiles.ts';
-import { generatePassport } from '../library/level-3/utils/generatePassport.ts';
+import { generateDualMeshTiles } from '../library/level-3/generators/generateDualMeshTiles.ts';
+import { generatePassport } from '../library/level-3/generators/generatePassport.ts';
 
 const TOOLS = [
 	DEFAULT_ASSETS.materials.get('axe'),
@@ -99,8 +99,8 @@ export async function generateEntities(game: Game) {
 			location: Random.fromArray(walkableTiles, id).location.get(),
 			...generatePassport([id]),
 			behavior: behavior.civilianBehavior,
+			wealth: Random.between(20, 500, id, 'munnie'),
 		});
-		await person.wallet.set(Random.between(20, 500, id, 'munnie'));
 		await game.entities.add(person);
 	}
 }

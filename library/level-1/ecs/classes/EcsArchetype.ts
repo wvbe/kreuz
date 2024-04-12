@@ -37,7 +37,13 @@ export class EcsArchetype<
 		return entity as EcsEntity<ComponentGeneric>;
 	}
 
-	public test(entity: EcsEntity): entity is EcsEntity<ComponentGeneric> {
+	public test(entity: any): entity is EcsEntity<ComponentGeneric> {
+		if (!entity) {
+			return false;
+		}
+		if (entity.id === undefined) {
+			return false;
+		}
 		for (const component of this.components) {
 			if (!component.test(entity)) {
 				return false;

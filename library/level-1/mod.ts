@@ -51,7 +51,12 @@ export * from './utilities/ReplacementSpace.ts';
 export { type EcsArchetypeEntity, type EcsEntity } from './ecs/types.ts';
 
 // ECS helper classes
-export { assertEcsComponents, hasEcsComponents } from './ecs/assert.ts';
+export {
+	assertEcsComponents,
+	hasEcsComponents,
+	byEcsArchetype,
+	byEcsComponents,
+} from './ecs/assert.ts';
 export { EcsArchetype } from './ecs/classes/EcsArchetype.ts';
 export { EcsComponent } from './ecs/classes/EcsComponent.ts';
 export { EcsSystem } from './ecs/classes/EcsSystem.ts';
@@ -77,6 +82,7 @@ export { wealthComponent } from './ecs/components/wealthComponent.ts';
 // ECS archetypes
 export { factoryArchetype, createFactoryForBlueprint } from './ecs/archetypes/factoryArchetype.ts';
 export { marketArchetype, createMarketForMaterial } from './ecs/archetypes/marketArchetype.ts';
+export { mapMarkerArchetype } from './ecs/archetypes/mapMarkerArchetype.ts';
 export { personArchetype } from './ecs/archetypes/personArchetype.ts';
 export { tileArchetype } from './ecs/archetypes/tileArchetype.ts';
 

@@ -11,6 +11,7 @@ export class BrowserDriver extends Driver implements DriverI {
 			return;
 		}
 		if (!game.time.hasNextEvent()) {
+			await this.stop();
 			await this.$end.emit();
 			return;
 		}

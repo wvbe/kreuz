@@ -20,9 +20,10 @@ Deno.test('"The basement"', async (test) => {
 
 	await test.step('The game finishes by itself', async () => {
 		expect(await driver.startUntilStop()).toBeUndefined();
+		expect(game.time.hasNextEvent()).toBeFalsy();
+		expect(game.time.now).toBeGreaterThan(116000);
 
 		expect(game.time.getNextEventAbsoluteTime()).toBe(Infinity);
-		expect(game.time.now).toBeGreaterThan(0);
 	});
 
 	await test.step('Melanie is dead', () => {

@@ -1,5 +1,6 @@
+import { EcsArchetype } from './classes/EcsArchetype.ts';
 import { EcsComponent } from './classes/EcsComponent.ts';
-import { EcsEntity } from './types.ts';
+import { type EcsEntity, type EcsArchetypeEntity } from './types.ts';
 
 /**
  * Returns true if the entity has all of the required components.
@@ -30,7 +31,7 @@ export function byEcsComponents<
 >(
 	requiredComponents: RequiredComponents[],
 	optionalComponents: OptionalComponents[] = [],
-): (entity: EcsEntity) => entity is EcsEntity<RequiredComponents, OptionalComponents> {
+): (entity: any) => entity is EcsEntity<RequiredComponents, OptionalComponents> {
 	return (entity: EcsEntity): entity is EcsEntity<RequiredComponents, OptionalComponents> => {
 		return hasEcsComponents(entity, requiredComponents, optionalComponents);
 	};
@@ -52,4 +53,12 @@ export function assertEcsComponents<
 		debugger;
 		throw new Error('Programmer error, entity does not have the required component');
 	}
+}
+
+export function byEcsArchetype<ArcetypeGeneric extends EcsArchetype<any, any>>(
+	archetype: ArcetypeGeneric,
+): (entity: any) => entity is EcsArchetypeEntity<ArcetypeGeneric> {
+	return (entity: EcsEntity): entity is EcsArchetypeEntity<ArcetypeGeneric> => {
+		return archetype.test(entity);
+	};
 }

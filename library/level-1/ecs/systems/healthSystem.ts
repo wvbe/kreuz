@@ -7,11 +7,12 @@ import { EcsEntity } from '../types.ts';
 import { eventLogComponent } from '../components/eventLogComponent.ts';
 import { visibilityComponent } from '../components/visibilityComponent.ts';
 import { byEcsComponents, hasEcsComponents } from '../assert.ts';
+import { DAY } from '../../time/constants.ts';
 
 /**
  * The amount of health deducted per tick, per need that is less than 10% satisfied.
  */
-const dyingSpeed = 1 / 1_000_000;
+const dyingSpeed = 1 / (2 * DAY);
 
 /**
  * The entity type to which this system applies.

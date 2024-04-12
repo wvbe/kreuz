@@ -2,7 +2,7 @@ import React, { type FunctionComponent } from 'react';
 import { createRoot } from 'react-dom';
 
 import { GameInterface, useGeneratedGame } from '@ui';
-import { basement as demo } from '@scenarios';
+import { cave as demo } from '@scenarios';
 import { BrowserDriver } from './BrowserDriver.ts';
 
 const driver = new BrowserDriver();

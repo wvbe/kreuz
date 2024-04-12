@@ -10,7 +10,7 @@ import { ROUTE_ENTITIES_DETAILS } from '../routes/ROUTES.ts';
 
 export const MapTileContextMenuSection: FC<
 	PropsWithChildren & { onClick?: () => void; isDisabled?: boolean; entity: EcsEntity }
-> = ({ children, entity, onClick, isDisabled }) => {
+> = ({ entity }) => {
 	const game = useGameContext();
 	const contextMenu = useMapTileContextMenu();
 	const navigate = useNavigation();

@@ -1,4 +1,3 @@
-export { generateDualMeshTiles } from './generators/generateDualMeshTiles.ts';
 export { generateFamilyTree } from './generators/generateFamilyTree.ts';
 export { generatePassport } from './generators/generatePassport.ts';
 export { generateSettlementName } from './generators/generateSettlementName.ts';

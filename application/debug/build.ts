@@ -57,7 +57,7 @@ export async function createPage() {
 			<body>
 				<div id="root"/>
 
-				<script type="text/javascript">
+				<script type="module">
 					// <![CDATA[
 						${(await buildJavascriptFiles())
 							.replace(/"<!\[CDATA\["/g, `"<![CDA" + "TA["`)

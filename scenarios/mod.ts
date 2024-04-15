@@ -1,4 +1,3 @@
-export { default as dualMesh } from './dual-mesh.ts';
 export { default as basement } from './basement.ts';
 export { default as transportTest } from './transport-test.ts';
 export { default as cave } from './cave.ts';

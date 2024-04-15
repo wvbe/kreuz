@@ -1,4 +1,4 @@
-import Poisson from 'poisson-disk-sampling';
+import Poisson from 'https://esm.sh/poisson-disk-sampling@2.3.1';
 
 //https://www.npmjs.com/package/seedrandom
 import seedrandom from 'seedrandom';

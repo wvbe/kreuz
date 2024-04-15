@@ -9,9 +9,6 @@
 		"@ui": "./ui/mod.ts",
 
 		"seedrandom": "./vendor/seedrandom.js",
-		"poisson-disk-sampling": "https://raw.githubusercontent.com/wvbe/poisson-disk-sampling/deno-rc.1/mod.ts",
-		"@redblobgames/dual-mesh": "https://raw.githubusercontent.com/wvbe/dual-mesh/deno-rc.2/mod.ts",
-		"@redblobgames/dual-mesh/create": "https://raw.githubusercontent.com/wvbe/dual-mesh/deno-rc.2/src/MeshBuilder.ts",
 		"panzoom": "https://esm.sh/panzoom@9.4.3?pin=v118",
 		"color": "https://esm.sh/color@4.2.3?pin=v118",
 

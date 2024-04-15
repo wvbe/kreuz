@@ -9,14 +9,12 @@ The current latest iteration
 - [Board](https://github.com/users/wvbe/projects/4/)
 - [Milestones](https://github.com/wvbe/kreuzzeug-im-nagelhosen/milestones)
 
-Keywords: Poisson distribution, dual-mesh tile-based terrain, behavior tree.
-
 ### Setup
 
 This is a [Deno](https://deno.land) project. The `library/` folder is everything you need to run
-this game pretty much "headless", eg. without UI. A front-end like HTML (`deploy/`) or ThreeJS will
-make the game a lot more fun, and a `Driver` specialization can bind a lot of the events that you
-need for that.
+this game pretty much "headless", eg. without UI. A front-end like CLI (`/application/cli`), HTML
+(`application/debug/`) or ThreeJS will make the game a lot more fun, and a `Driver` specialization
+can bind a lot of the events that you need for that.
 
 ### Scripts
 

@@ -18,8 +18,8 @@ export class BrowserDriver extends Driver implements DriverI {
 
 		const now = Date.now();
 		const delta = now - this.lastUpdate;
-		await game.time.stepsForDelta(delta);
 		this.lastUpdate = now;
+		await game.time.stepsForDelta(delta);
 		requestAnimationFrame(this.animate.bind(this, game));
 	}
 

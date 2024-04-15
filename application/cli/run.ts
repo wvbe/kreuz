@@ -16,7 +16,7 @@ import { Game, healthComponent } from '@lib';
 import { byEcsComponents } from '../../library/level-1/ecs/assert.ts';
 
 console.group('Importing demo');
-const demo = await import(self.Deno.args[0]);
+const demo = await import(Deno.cwd() + '/' + self.Deno.args[0]);
 const driver = new TestDriver();
 console.groupEnd();
 

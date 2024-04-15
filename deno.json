@@ -6,6 +6,7 @@
 		"jsx": "react-jsx"
 	},
 	"tasks": {
+		"cli": "deno run -A application/cli/run.ts",
 		"debug": "deno run --allow-all --inspect-brk",
 		"build": "deno run -A application/debug/build.ts _site/index.html",
 		"watch": "npx chokidar-cli \"library/**/*\" \"ui/**/*\" \"application/**/*\" \"scenarios/**/*\" --command \"deno task build\"",

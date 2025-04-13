@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
-import { productionComponent } from 'src/lib/level-1/ecs/components/productionComponent';
-import { EcsEntity } from 'src/lib/level-1/ecs/types';
+import { productionComponent } from '../../../lib/level-1/ecs/components/productionComponent';
+import { EcsEntity } from '../../../lib/level-1/ecs/types';
 import { BlueprintInputOutput } from '../../components/BlueprintInputOutput';
 import { useGameContext } from '../../context/GameContext';
 import { useEventedValue } from '../../hooks/useEventedValue';

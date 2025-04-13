@@ -6,18 +6,18 @@ import React, {
 	useMemo,
 	useState,
 } from 'react';
-import { useNavigation } from '../hooks/useNavigation';
-import { byEcsComponents } from 'src/lib/level-1/ecs/assert';
-import { productionComponent } from 'src/lib/level-1/ecs/components/productionComponent';
-import { Blueprint } from 'src/lib/level-1/ecs/components/productionComponent/Blueprint';
-import { EcsEntity } from 'src/lib/level-1/ecs/types';
+import { byEcsComponents } from '../../lib/level-1/ecs/assert';
+import { productionComponent } from '../../lib/level-1/ecs/components/productionComponent';
+import { Blueprint } from '../../lib/level-1/ecs/components/productionComponent/Blueprint';
+import { EcsEntity } from '../../lib/level-1/ecs/types';
 import { useGameContext } from '../context/GameContext';
 import { useCollection } from '../hooks/useEventedValue';
+import { useNavigation } from '../hooks/useNavigation';
 import { ROUTE_PRODUCTION_DETAILS } from '../routes/ROUTES';
 import { Badge } from './atoms/Badge';
 import { CollapsibleWindow } from './atoms/CollapsibleWindow';
 import { PopOnUpdateSpan } from './atoms/PopOnUpdateSpan';
-import { Row, Cell, Table } from './atoms/Table';
+import { Cell, Row, Table } from './atoms/Table';
 
 function getTotalDelta(entities: EcsEntity<typeof productionComponent>[]) {
 	return entities.reduce((total, entity) => (total += entity.$$progress.delta), 0);
@@ -94,15 +94,16 @@ export const ProductionList: FunctionComponent = () => {
 		() =>
 			game.assets.blueprints
 				.toArray()
-				.reduce<
-					Record<string, EcsEntity<typeof productionComponent>[]>
-				>((entitiesByBlueprint, blueprint) => {
-					const key = game.assets.blueprints.key(blueprint);
-					entitiesByBlueprint[key] = game.entities
-						.filter(byEcsComponents([productionComponent]))
-						.filter((entity) => entity.blueprint?.get() === blueprint);
-					return entitiesByBlueprint;
-				}, {}),
+				.reduce<Record<string, EcsEntity<typeof productionComponent>[]>>(
+					(entitiesByBlueprint, blueprint) => {
+						const key = game.assets.blueprints.key(blueprint);
+						entitiesByBlueprint[key] = game.entities
+							.filter(byEcsComponents([productionComponent]))
+							.filter((entity) => entity.blueprint?.get() === blueprint);
+						return entitiesByBlueprint;
+					},
+					{},
+				),
 		[entities],
 	);
 

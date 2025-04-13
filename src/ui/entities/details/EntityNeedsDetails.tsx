@@ -1,9 +1,9 @@
 import React, { FunctionComponent, useMemo } from 'react';
 
-import { PERSON_NEEDS } from 'src/lib/level-1/constants/needs';
-import { needsComponent } from 'src/lib/level-1/ecs/components/needsComponent';
-import { EcsEntity } from 'src/lib/level-1/ecs/types';
-import { Need } from 'src/lib/level-1/entities/Need';
+import { PERSON_NEEDS } from '../../../lib/level-1/constants/needs';
+import { needsComponent } from '../../../lib/level-1/ecs/components/needsComponent';
+import { EcsEntity } from '../../../lib/level-1/ecs/types';
+import { Need } from '../../../lib/level-1/entities/Need';
 import { FillBar } from '../../components/atoms/FillBar';
 import { useEventedValue } from '../../hooks/useEventedValue';
 

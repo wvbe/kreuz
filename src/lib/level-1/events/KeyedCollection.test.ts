@@ -3,7 +3,7 @@ import { KeyedCollection } from './KeyedCollection';
 
 describe('KeyedCollection', () => {
 	const collection = new KeyedCollection<'id', { id: number; name: string }>('id');
-	beforeEach(async () => {
+	beforeAll(async () => {
 		await collection.add({ id: 1, name: 'One' });
 	});
 

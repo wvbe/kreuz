@@ -1,17 +1,17 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { PromptModal } from './types';
-import { factoryArchetype } from 'src/lib/level-1/ecs/archetypes/factoryArchetype';
-import { marketArchetype } from 'src/lib/level-1/ecs/archetypes/marketArchetype';
-import { EcsArchetype } from 'src/lib/level-1/ecs/classes/EcsArchetype';
-import { Blueprint } from 'src/lib/level-1/ecs/components/productionComponent/Blueprint';
-import { Material } from 'src/lib/level-1/inventory/Material';
-import { PROMPT_CONSTRUCTION_JOB } from 'src/lib/level-2/commands/constructEntity';
+import { factoryArchetype } from '../../lib/level-1/ecs/archetypes/factoryArchetype';
+import { marketArchetype } from '../../lib/level-1/ecs/archetypes/marketArchetype';
+import { EcsArchetype } from '../../lib/level-1/ecs/classes/EcsArchetype';
+import { Blueprint } from '../../lib/level-1/ecs/components/productionComponent/Blueprint';
+import { Material } from '../../lib/level-1/inventory/Material';
+import { PROMPT_CONSTRUCTION_JOB } from '../../lib/level-2/commands/constructEntity';
 import { Badge } from '../components/atoms/Badge';
-import { Table, Row, Cell } from '../components/atoms/Table';
+import { Cell, Row, Table } from '../components/atoms/Table';
 import { useGameContext } from '../context/GameContext';
 import { InventoryBag } from '../inventory/InventoryUI';
 import { Modal } from '../modals/Modal';
+import { PromptModal } from './types';
 
 const buildingTypes = [
 	{

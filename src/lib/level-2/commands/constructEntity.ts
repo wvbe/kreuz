@@ -1,23 +1,22 @@
-import { factoryArchetype } from '../../level-1/ecs/archetypes/factoryArchetype';
-import { marketArchetype } from '../../level-1/ecs/archetypes/marketArchetype';
+import { Command } from '../../level-1/classes/Command';
+import { Prompt } from '../../level-1/classes/Prompt';
 import {
-	locationComponent,
-	pathableComponent,
-	surfaceComponent,
-} from '../../level-1/ecs/components';
-import { type EntityBlackboard } from '../../level-1/ecs/components/behaviorComponent/types';
-import { Command } from '../../level-1/ecs/components/commandComponent';
-import { Prompt } from '../../level-1/ecs/components/promptComponent';
-import { SurfaceType } from '../../level-1/ecs/components/surfaceComponent';
-import { createFactoryForBlueprint } from '../../level-1/ecs/factories/createFactoryForBlueprint';
-import { createMarketForMaterial } from '../../level-1/ecs/factories/createMarketForMaterial';
+	createFactoryForBlueprint,
+	factoryArchetype,
+} from '../../level-1/ecs/archetypes/factoryArchetype';
 import {
-	type Blueprint,
-	type EcsArchetype,
-	type EcsEntity,
-	type Material,
-} from '../../level-1/ecs/types';
-import { assertEcsComponents, hasEcsComponents } from '../../level-1/ecs/utils';
+	createMarketForMaterial,
+	marketArchetype,
+} from '../../level-1/ecs/archetypes/marketArchetype';
+import { assertEcsComponents, hasEcsComponents } from '../../level-1/ecs/assert';
+import { EcsArchetype } from '../../level-1/ecs/classes/EcsArchetype';
+import { EntityBlackboard } from '../../level-1/ecs/components/behaviorComponent/types';
+import { locationComponent } from '../../level-1/ecs/components/locationComponent';
+import { pathableComponent } from '../../level-1/ecs/components/pathableComponent';
+import { Blueprint } from '../../level-1/ecs/components/productionComponent/Blueprint';
+import { surfaceComponent, SurfaceType } from '../../level-1/ecs/components/surfaceComponent';
+import { EcsEntity } from '../../level-1/ecs/types';
+import { Material } from '../../level-1/inventory/Material';
 import { headOfState } from '../heroes/heroes';
 
 type TileEntity = EcsEntity<

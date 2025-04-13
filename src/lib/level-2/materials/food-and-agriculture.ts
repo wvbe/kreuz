@@ -1,4 +1,4 @@
-import { Material } from '../../level-1/ecs/types';
+import { Material } from '../../level-1/inventory/Material';
 
 // A grassy plant whose seed is a worldwide staple food.
 export const wheat = new Material('Wheat', {

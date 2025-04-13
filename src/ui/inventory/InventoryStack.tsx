@@ -1,9 +1,9 @@
 import React, { FunctionComponent, useCallback } from 'react';
-import { useNavigation } from '../hooks/useNavigation';
-import { ROUTE_MATERIALS_DETAILS } from '../routes/ROUTES';
-import { Material } from 'src/lib/level-1/inventory/Material';
+import { Material } from '../../lib/level-1/inventory/Material';
 import { PopOnUpdateSpan } from '../components/atoms/PopOnUpdateSpan';
 import { useGameContext } from '../context/GameContext';
+import { useNavigation } from '../hooks/useNavigation';
+import { ROUTE_MATERIALS_DETAILS } from '../routes/ROUTES';
 
 export const InventoryStack: FunctionComponent<{
 	material: Material | null;

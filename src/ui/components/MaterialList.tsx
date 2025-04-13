@@ -1,20 +1,19 @@
 import React, { FunctionComponent, useMemo } from 'react';
-import { useNavigation } from '../hooks/useNavigation';
 import { useGameContext } from '../context/GameContext';
+import { useNavigation } from '../hooks/useNavigation';
 import { InventoryStack } from '../inventory/InventoryStack';
 import { MoneyBag } from '../inventory/InventoryUI';
 import { ROUTE_MATERIALS_DETAILS } from '../routes/ROUTES';
 import { CollapsibleWindow } from './atoms/CollapsibleWindow';
-import { Row, Cell, Table } from './atoms/Table';
-
-const materialsList = Object.keys(materials).map((key) => materials[key as keyof typeof materials]);
+import { Cell, Row, Table } from './atoms/Table';
 
 export const MaterialList: FunctionComponent = () => {
 	const navigate = useNavigation();
 	const game = useGameContext();
+
 	const items = useMemo(
 		() =>
-			materialsList.map((material, i) => (
+			game.assets.materials.toArray().map((material, i) => (
 				<Row
 					key={i}
 					onClick={(event) => {

@@ -1,6 +1,6 @@
-import { generateEmptyGame } from '@test';
 import { createJobWorkBehavior } from '../../../level-2/behavior/reusable/nodes/createJobWorkBehavior';
 import { wheat } from '../../../level-2/materials';
+import { generateEmptyGame } from '../../../test/generateEmptyGame';
 import { type SimpleCoordinate } from '../../terrain/types';
 import { personArchetype } from '../archetypes/personArchetype';
 import { importExportComponent } from '../components/importExportComponent';
@@ -27,7 +27,7 @@ function createChestEntity(
 }
 
 export default async function () {
-	const game = await generateEmptyGame();
+	const { game } = await generateEmptyGame();
 	const worker = personArchetype.create({
 		location: [0, 0, 1],
 		icon: '🤖',

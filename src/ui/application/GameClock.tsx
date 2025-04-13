@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useCallback, useState } from 'react';
-import { timeToString } from 'src/lib/level-1/time/timeToString.js';
+import { timeToString } from '../../lib/level-1/time/timeToString.js';
 import { FillBar } from '../components/atoms/FillBar';
 import { useDriverContext } from '../context/DriverContext';
 import { useGameContext } from '../context/GameContext';

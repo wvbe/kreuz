@@ -1,4 +1,4 @@
-import { Material } from '../../level-1/ecs/types';
+import { Material } from '../../level-1/inventory/Material';
 
 export const hammer = new Material('Hammer', {
 	symbol: '🔨',

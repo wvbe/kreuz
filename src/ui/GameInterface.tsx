@@ -1,9 +1,26 @@
 import React, { type FunctionComponent } from 'react';
 import { HashRouter, Route } from 'react-router-dom';
 
-import { DriverI } from 'src/lib/level-1/drivers/types.js';
-import Game from 'src/lib/level-1/Game.js';
-import { PROMPT_CONSTRUCTION_JOB } from 'src/lib/level-2/commands/constructEntity.js';
+import { DriverI } from '../lib/level-1/drivers/types.js';
+import Game from '../lib/level-1/Game.js';
+import { PROMPT_CONSTRUCTION_JOB } from '../lib/level-2/commands/constructEntity.js';
+import { GameClock } from './application/GameClock';
+import { GameMap } from './application/GameMap';
+import { GamePanels } from './application/GamePanels';
+import { MaterialList } from './components/MaterialList';
+import { ProductionList } from './components/ProductionList';
+import { DriverContext } from './context/DriverContext';
+import { GameContext } from './context/GameContext';
+import { ReplacementSpaceContext } from './context/ReplacementSpaceContext';
+import { SelectedEntityContextProvider } from './hooks/useSelectedEntity';
+import { ModalHost, registerUiForPrompt } from './modals/ModalHost';
+import { EntityConstructionModal } from './prompts/EntityConstructionModal';
+import { InspectBlueprintRoute } from './routes/InspectBlueprintRoute';
+import { InspectEntityEventLogRoute } from './routes/InspectEntityEventLogRoute';
+import { InspectEntityJobsRoute } from './routes/InspectEntityJobsRoute';
+import { InspectEntityRoute } from './routes/InspectEntityRoute';
+import { InspectMaterialRoute } from './routes/InspectMaterialRoute';
+import { ListEntityRoute } from './routes/ListEntityRoute';
 import {
 	ROUTE_ENTITIES_DETAILS,
 	ROUTE_ENTITIES_EVENTS_DETAILS,
@@ -14,23 +31,6 @@ import {
 	ROUTE_PRODUCTION,
 	ROUTE_PRODUCTION_DETAILS,
 } from './routes/ROUTES';
-import { GameClock } from './application/GameClock';
-import { GameMap } from './application/GameMap';
-import { GamePanels } from './application/GamePanels';
-import { MaterialList } from './components/MaterialList';
-import { ProductionList } from './components/ProductionList';
-import { DriverContext } from './context/DriverContext';
-import { GameContext } from './context/GameContext';
-import { ReplacementSpaceContext } from './context/ReplacementSpaceContext';
-import { SelectedEntityContextProvider } from './hooks/useSelectedEntity';
-import { registerUiForPrompt, ModalHost } from './modals/ModalHost';
-import { EntityConstructionModal } from './prompts/EntityConstructionModal';
-import { InspectBlueprintRoute } from './routes/InspectBlueprintRoute';
-import { InspectEntityEventLogRoute } from './routes/InspectEntityEventLogRoute';
-import { InspectEntityJobsRoute } from './routes/InspectEntityJobsRoute';
-import { InspectEntityRoute } from './routes/InspectEntityRoute';
-import { InspectMaterialRoute } from './routes/InspectMaterialRoute';
-import { ListEntityRoute } from './routes/ListEntityRoute';
 
 registerUiForPrompt(PROMPT_CONSTRUCTION_JOB, EntityConstructionModal);
 

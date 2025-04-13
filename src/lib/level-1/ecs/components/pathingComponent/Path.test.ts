@@ -1,5 +1,5 @@
 import { expect } from '@jest/globals';
-import { generateGridTerrainFromAscii } from 'src/lib/test/generateGridTerrainFromAscii';
+import { generateGridTerrainFromAscii } from '../../../../test/generateGridTerrainFromAscii';
 import { Path } from './Path';
 
 describe('Path', () => {

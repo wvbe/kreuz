@@ -1,7 +1,7 @@
 import React, { useCallback, type FC } from 'react';
 
-import { visibilityComponent } from 'src/lib/level-1/ecs/components/visibilityComponent';
-import { EcsEntity } from 'src/lib/level-1/ecs/types';
+import { visibilityComponent } from '../../lib/level-1/ecs/components/visibilityComponent';
+import { EcsEntity } from '../../lib/level-1/ecs/types';
 import { useSelectedEntity } from '../hooks/useSelectedEntity';
 
 export const EntityLink: FC<{

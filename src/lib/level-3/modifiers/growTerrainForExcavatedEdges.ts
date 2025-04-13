@@ -1,7 +1,8 @@
-import { byEcsArchetype, tileArchetype } from '../../level-1/ecs/archetypes';
-import { EcsArchetypeEntity } from '../../level-1/ecs/ecs';
-import { Game } from '../../level-1/game';
-import { SurfaceType } from '../../level-1/terrain';
+import { tileArchetype } from '../../level-1/ecs/archetypes/tileArchetype';
+import { byEcsArchetype } from '../../level-1/ecs/assert';
+import { SurfaceType } from '../../level-1/ecs/components/surfaceComponent';
+import { EcsArchetypeEntity } from '../../level-1/ecs/types';
+import Game from '../../level-1/Game';
 
 function hallucinateMissingNeighbors(
 	game: Game,

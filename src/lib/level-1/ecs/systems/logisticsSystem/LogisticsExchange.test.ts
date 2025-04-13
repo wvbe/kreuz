@@ -1,7 +1,7 @@
 import { expect } from '@jest/globals';
 import { LogisticsExchange } from './LogisticsExchange';
-import { personArchetype } from '../../../lib';
-import { importExportComponent } from '../../components/importExportComponent';
+import { Material } from '../../../inventory/Material';
+import { EcsEntity } from '../../types';
 
 const material = new Material(`TestMaterial`, {
 	symbol: `📦`,

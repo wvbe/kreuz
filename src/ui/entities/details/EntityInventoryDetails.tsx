@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from 'react';
 
+import { inventoryComponent } from '../../../lib/level-1/ecs/components/inventoryComponent';
+import { wealthComponent } from '../../../lib/level-1/ecs/components/wealthComponent';
+import { EcsEntity } from '../../../lib/level-1/ecs/types';
 import { InventoryUI } from '../../inventory/InventoryUI';
-import { inventoryComponent } from 'src/lib/level-1/ecs/components/inventoryComponent';
-import { wealthComponent } from 'src/lib/level-1/ecs/components/wealthComponent';
-import { EcsEntity } from 'src/lib/level-1/ecs/types';
 
 export const EntityInventoryDetails: FunctionComponent<{
 	entity: EcsEntity;

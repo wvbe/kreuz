@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
+import { tileArchetype } from '../../lib/level-1/ecs/archetypes/tileArchetype';
+import { locationComponent } from '../../lib/level-1/ecs/components/locationComponent';
+import { EcsEntity } from '../../lib/level-1/ecs/types';
 import { useGameContext } from '../context/GameContext';
 import { useSelectedEntity } from '../hooks/useSelectedEntity';
 import { MapTileContextMenuSection } from './MapTileContextMenuSection';
-import { tileArchetype } from 'src/lib/level-1/ecs/archetypes/tileArchetype';
-import { locationComponent } from 'src/lib/level-1/ecs/components/locationComponent';
-import { EcsEntity } from 'src/lib/level-1/ecs/types';
 
 export const MapTileContextMenu: FC<{
 	tile: EcsEntity<typeof locationComponent>;

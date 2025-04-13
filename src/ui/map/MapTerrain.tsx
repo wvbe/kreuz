@@ -1,10 +1,10 @@
 import React, { FunctionComponent, useMemo } from 'react';
-import { byEcsComponents } from 'src/lib/level-1/ecs/assert';
-import { locationComponent } from 'src/lib/level-1/ecs/components/locationComponent';
-import { visibilityComponent } from 'src/lib/level-1/ecs/components/visibilityComponent';
-import { EcsEntity } from 'src/lib/level-1/ecs/types';
-import { Collection } from 'src/lib/level-1/events/Collection';
-import Game from 'src/lib/level-1/Game';
+import { byEcsComponents } from '../../lib/level-1/ecs/assert';
+import { locationComponent } from '../../lib/level-1/ecs/components/locationComponent';
+import { visibilityComponent } from '../../lib/level-1/ecs/components/visibilityComponent';
+import { EcsEntity } from '../../lib/level-1/ecs/types';
+import { Collection } from '../../lib/level-1/events/Collection';
+import Game from '../../lib/level-1/Game';
 import { MapTileContextMenuHost } from '../context-menu/MAP_TILE_CONTEXT_MENU';
 import { useCollection } from '../hooks/useEventedValue';
 import { MapEntity } from './MapEntity';
@@ -23,6 +23,7 @@ export const MapTerrain: FunctionComponent<{
 		() => tileCollection.map((tile) => <MapTile key={tile.id} zoom={zoom} tile={tile} />),
 		[tileCollection],
 	);
+
 	const boundaries = useMemo(() => {
 		const boundaries = tileCollection.reduce(
 			(b, tile) => {

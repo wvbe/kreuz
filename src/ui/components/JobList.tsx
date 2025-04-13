@@ -1,9 +1,9 @@
 import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
-import { JobCandidate } from 'src/lib/level-1/classes/JobBoard';
-import { personArchetype } from 'src/lib/level-1/ecs/archetypes/personArchetype';
-import { EcsArchetypeEntity } from 'src/lib/level-1/ecs/types';
-import { Collection } from 'src/lib/level-1/events/Collection';
-import { EventCombination } from 'src/lib/level-1/events/EventCombination';
+import { JobCandidate } from '../../lib/level-1/classes/JobBoard';
+import { personArchetype } from '../../lib/level-1/ecs/archetypes/personArchetype';
+import { EcsArchetypeEntity } from '../../lib/level-1/ecs/types';
+import { Collection } from '../../lib/level-1/events/Collection';
+import { EventCombination } from '../../lib/level-1/events/EventCombination';
 import { useGameContext } from '../context/GameContext';
 import { useMemoFromEvent } from '../hooks/useEventedValue';
 import { CollapsibleWindow } from './atoms/CollapsibleWindow';
@@ -22,11 +22,8 @@ export function useCombinedEventCollection<T>(
 				: collection.$change,
 		[],
 	);
-	return useMemoFromEvent<any[], T[]>(
-		combinedEvent,
-		collection.slice(),
-		useCallback(() => collection.slice(), [collection]),
-	);
+	const transform = useCallback(() => collection.slice(), [collection]);
+	return useMemoFromEvent<any[], T[]>(combinedEvent, collection.slice(), transform);
 }
 
 export const JobList: FunctionComponent<{

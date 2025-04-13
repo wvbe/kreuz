@@ -1,5 +1,5 @@
-import { Random } from 'src/lib/level-1/classes/Random';
-import { Time } from 'src/lib/level-1/time/Time';
+import { Random } from '../../level-1/classes/Random';
+import { Time } from '../../level-1/time/Time';
 
 type Sexuality = 'hetero' | 'homo' | 'bi';
 // type TraditionalGender = 'm' | 'f';

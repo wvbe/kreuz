@@ -1,18 +1,15 @@
+import { Command } from '../../level-1/classes/Command';
+import { JobPosting } from '../../level-1/classes/JobPosting';
 import { mapMarkerArchetype } from '../../level-1/ecs/archetypes/mapMarkerArchetype';
-import {
-	eventLogComponent,
-	inventoryComponent,
-	locationComponent,
-	pathableComponent,
-	pathingComponent,
-	surfaceComponent,
-} from '../../level-1/ecs/components';
-import { type EntityBlackboard } from '../../level-1/ecs/components/behaviorComponent/types';
-import { Command } from '../../level-1/ecs/components/commandComponent';
-import { JobPosting } from '../../level-1/ecs/components/jobComponent';
-import { SurfaceType } from '../../level-1/ecs/components/surfaceComponent';
-import { type EcsEntity } from '../../level-1/ecs/types';
-import { assertEcsComponents, hasEcsComponents } from '../../level-1/ecs/utils';
+import { assertEcsComponents, hasEcsComponents } from '../../level-1/ecs/assert';
+import { EntityBlackboard } from '../../level-1/ecs/components/behaviorComponent/types';
+import { eventLogComponent } from '../../level-1/ecs/components/eventLogComponent';
+import { inventoryComponent } from '../../level-1/ecs/components/inventoryComponent';
+import { locationComponent } from '../../level-1/ecs/components/locationComponent';
+import { pathableComponent } from '../../level-1/ecs/components/pathableComponent';
+import { pathingComponent } from '../../level-1/ecs/components/pathingComponent';
+import { surfaceComponent, SurfaceType } from '../../level-1/ecs/components/surfaceComponent';
+import { EcsEntity } from '../../level-1/ecs/types';
 
 type TileEntity = EcsEntity<
 	typeof locationComponent | typeof surfaceComponent | typeof pathableComponent

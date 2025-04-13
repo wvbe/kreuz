@@ -1,11 +1,11 @@
 import React, { useMemo, type FunctionComponent } from 'react';
 import { useParams } from 'react-router-dom';
-import { useCollection } from '../hooks/useEventedValue';
-import { eventLogComponent } from 'src/lib/level-1/ecs/components/eventLogComponent';
+import { eventLogComponent } from '../../lib/level-1/ecs/components/eventLogComponent';
 import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow';
-import { Table, Row, Cell } from '../components/atoms/Table';
+import { Cell, Row, Table } from '../components/atoms/Table';
 import { TokenizedText } from '../components/atoms/TokenizedText';
 import { useGameContext } from '../context/GameContext';
+import { useCollection } from '../hooks/useEventedValue';
 
 export const InspectEntityEventLogRoute: FunctionComponent = () => {
 	const { entityId } = useParams<{ entityId: string }>();
@@ -22,17 +22,14 @@ export const InspectEntityEventLogRoute: FunctionComponent = () => {
 			<Table>
 				{items.length ? (
 					items
-						.reduce(
-							(arr, message, index) => {
-								if (arr[arr.length - 1]?.message === message) {
-									arr[arr.length - 1].count++;
-								} else {
-									arr.push({ message, count: 1 });
-								}
-								return arr;
-							},
-							[] as { message: string; count: number }[],
-						)
+						.reduce((arr, message, index) => {
+							if (arr[arr.length - 1]?.message === message) {
+								arr[arr.length - 1].count++;
+							} else {
+								arr.push({ message, count: 1 });
+							}
+							return arr;
+						}, [] as { message: string; count: number }[])
 						.reverse()
 						.map(({ message, count }, i) => (
 							<Row key={i}>

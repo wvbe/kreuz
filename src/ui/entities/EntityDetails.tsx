@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { EcsEntity } from 'src/lib/level-1/ecs/types';
+import { EcsEntity } from '../../lib/level-1/ecs/types';
 import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow';
 import { EntityBadge } from './EntityBadge';
 import { EntityBlueprintBadgeDetails } from './details/EntityBlueprintBadgeDetails';

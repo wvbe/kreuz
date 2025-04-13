@@ -12,8 +12,15 @@ type SelfSustainingEnitity = EcsEntity<
 	typeof eventLogComponent
 >;
 
+/**
+ * Entities with this system will satisfy a given need to at least 90% over time by consuming
+ * the inventory items that satisfy this need the most.
+ *
+ * @bug If a need is below 30% and being satisfied and the inventory changes while the need is
+ * still below 30%, the satisfyOverTime loop runs in twice in parallel.
+ */
 function attachSystemToEntityNeed(game: Game, entity: SelfSustainingEnitity, need: Need) {
-	const satisfy = async () => {
+	const satisfyOverTime = async () => {
 		while (need.get() < 0.9) {
 			const stock = entity.inventory
 				.getAvailableItems()
@@ -21,20 +28,27 @@ function attachSystemToEntityNeed(game: Game, entity: SelfSustainingEnitity, nee
 				.sort((a, b) => a.material[need.id] - b.material[need.id])
 				.shift();
 			if (!stock) {
-				break;
+				return;
 			}
 
 			entity.events?.add(`Satisfying ${need.id} with ${stock.material}`);
 
+			// Remove the item from the inventory.
 			await entity.inventory.change(stock.material, -1);
+
+			// Wait for the item to be consumed.
 			await game.time.wait(1 * 1_000);
+
+			// Satisfy the need.
 			need.set(Math.min(1, need.get() + stock.material[need.id]));
 		}
 	};
-	need.onBelow(0.3, satisfy);
+
+	need.onBelow(0.3, satisfyOverTime);
+
 	entity.inventory.$change.on(() => {
 		if (need.get() < 0.3) {
-			satisfy();
+			satisfyOverTime();
 		}
 	});
 }

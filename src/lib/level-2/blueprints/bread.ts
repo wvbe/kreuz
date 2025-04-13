@@ -1,4 +1,4 @@
-import { Blueprint } from '../../level-1/ecs/types';
+import { Blueprint } from '../../level-1/ecs/components/productionComponent/Blueprint';
 import * as materials from '../materials';
 
 export const milling = new Blueprint(

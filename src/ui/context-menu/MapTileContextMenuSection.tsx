@@ -1,6 +1,6 @@
 import React, { FC, PropsWithChildren, useCallback, useMemo } from 'react';
 
-import { EcsEntity } from 'src/lib/level-1/ecs/types';
+import { EcsEntity } from '../../lib/level-1/ecs/types';
 import { useGameContext } from '../context/GameContext';
 import { EntityBadge } from '../entities/EntityBadge';
 import { useNavigation } from '../hooks/useNavigation';

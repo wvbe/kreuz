@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useCallback } from 'react';
-import { Inventory } from 'src/lib/level-1/ecs/components/inventoryComponent/Inventory';
-import { EventedValue } from 'src/lib/level-1/events/EventedValue';
-import { MaterialState } from 'src/lib/level-1/inventory/types.js';
+import { Inventory } from '../../lib/level-1/ecs/components/inventoryComponent/Inventory';
+import { EventedValue } from '../../lib/level-1/events/EventedValue';
+import { MaterialState } from '../../lib/level-1/inventory/types.js';
 import { PopOnUpdateSpan } from '../components/atoms/PopOnUpdateSpan';
 import { useEventedValue, useMemoFromEvent } from '../hooks/useEventedValue';
 import { InventoryStack } from './InventoryStack';
@@ -31,7 +31,7 @@ export const InventoryBag: FunctionComponent<{
 						quantity={-Infinity}
 						isGhost
 					/>
-				))
+			  ))
 			: null}
 	</div>
 );
@@ -64,11 +64,8 @@ export const InventoryUI: FunctionComponent<{
 	wallet?: EventedValue<number>;
 	inventory: Inventory;
 }> = ({ wallet, inventory }) => {
-	const stacks = useMemoFromEvent(
-		inventory.$change,
-		inventory.getStacks(),
-		useCallback(() => inventory.getStacks(), [inventory]),
-	);
+	const transform = useCallback(() => inventory.getStacks(), [inventory]);
+	const stacks = useMemoFromEvent(inventory.$change, inventory.getStacks(), transform);
 
 	return (
 		<>

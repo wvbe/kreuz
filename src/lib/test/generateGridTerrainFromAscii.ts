@@ -1,12 +1,9 @@
-import {
-	SurfaceType,
-	locationComponent,
-	outlineComponent,
-	pathableComponent,
-	surfaceComponent,
-	tileArchetype,
-} from '../level-1/ecs/components';
-import { EcsArchetypeEntity, EcsEntity } from '../level-1/ecs/ecs';
+import { tileArchetype } from '../level-1/ecs/archetypes/tileArchetype';
+import { locationComponent } from '../level-1/ecs/components/locationComponent';
+import { outlineComponent } from '../level-1/ecs/components/outlineComponent';
+import { pathableComponent } from '../level-1/ecs/components/pathableComponent';
+import { surfaceComponent, SurfaceType } from '../level-1/ecs/components/surfaceComponent';
+import { EcsArchetypeEntity, EcsEntity } from '../level-1/ecs/types';
 
 const adjacency = [
 	[-1, 0],

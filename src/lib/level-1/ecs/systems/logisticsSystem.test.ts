@@ -1,7 +1,7 @@
 import { expect } from '@jest/globals';
-import { generateEmptyGame } from 'src/lib/test/generateEmptyGame';
 import { createJobWorkBehavior } from '../../../level-2/behavior/reusable/nodes/createJobWorkBehavior';
 import { wheat } from '../../../level-2/materials';
+import { generateEmptyGame } from '../../../test/generateEmptyGame';
 import { MaterialState } from '../../inventory/types';
 import { SimpleCoordinate } from '../../terrain/types';
 import { personArchetype } from '../archetypes/personArchetype';
@@ -35,27 +35,34 @@ function getLastEventLog(entity: EcsEntity<typeof eventLogComponent>) {
 }
 
 describe('System: logisticsSystem', () => {
-	const game = await generateEmptyGame();
-	const worker = personArchetype.create({
-		location: [0, 0, 1],
-		icon: '🤖',
-		name: 'R-bot',
-		behavior: createJobWorkBehavior(),
+	const { game, initGame } = generateEmptyGame();
+	let worker: ReturnType<typeof personArchetype.create>;
+	let providerChest: ReturnType<typeof createChestEntity>;
+	let requesterChest: ReturnType<typeof createChestEntity>;
+
+	beforeAll(async () => {
+		await initGame();
+		worker = personArchetype.create({
+			location: [0, 0, 1],
+			icon: '🤖',
+			name: 'R-bot',
+			behavior: createJobWorkBehavior(),
+		});
+		await game.entities.add(worker);
+
+		providerChest = createChestEntity([2, 2, 1], [], [{ material: wheat, quantity: 100 }]);
+		await game.entities.add(providerChest);
+
+		requesterChest = createChestEntity([2, 0, 1], [{ material: wheat, quantity: 1000 }], []);
+		await game.entities.add(requesterChest);
+
+		await providerChest.inventory.change(wheat, 1000);
 	});
-	await game.entities.add(worker);
-
-	const providerChest = createChestEntity([2, 2, 1], [], [{ material: wheat, quantity: 100 }]);
-	await game.entities.add(providerChest);
-
-	const requesterChest = createChestEntity([2, 0, 1], [{ material: wheat, quantity: 1000 }], []);
-	await game.entities.add(requesterChest);
-
-	await providerChest.inventory.change(wheat, 1000);
 
 	// Useful to debug the timestamps for various actions:
 	// getLastEventLog(worker)status) => console.log(`Updated status at t=${game.time.now}: ${status}`));
 
-	it('Opening scenario', async (test) => {
+	describe('Opening scenario', () => {
 		it('Time is zero', () => {
 			expect(game.time.now).toBe(0);
 		});
@@ -80,10 +87,10 @@ describe('System: logisticsSystem', () => {
 		});
 	});
 
-	it('When the timeout before a transport job is posted has not expired', async (test) => {
-		await game.time.steps(9_000);
-		expect(game.time.now).toBe(9_000);
-		it('Person is still in their starting position', () => {
+	describe('When the timeout before a transport job is posted has not expired', () => {
+		it('Person is still in their starting position', async () => {
+			await game.time.steps(9_000);
+			expect(game.time.now).toBe(9_000);
 			expect(worker.location.get()).toEqual([0, 0, 1]);
 		});
 		it('There is a job posting', () => {
@@ -91,10 +98,10 @@ describe('System: logisticsSystem', () => {
 		});
 	});
 
-	it('As soon as the transport job is posted, the worker takes it', async (test) => {
-		await game.time.steps(1_000);
-		expect(game.time.now).toBe(10_000);
-		it('Person is still in their starting position', () => {
+	describe('As soon as the transport job is posted, the worker takes it', () => {
+		it('Person is still in their starting position', async () => {
+			await game.time.steps(1_000);
+			expect(game.time.now).toBe(10_000);
 			expect(worker.location.get()).toEqual([0, 0, 1]);
 		});
 		it('Worker has a status update', () => {
@@ -123,11 +130,11 @@ describe('System: logisticsSystem', () => {
 		});
 	});
 
-	it('When the worker arrives at the pick-up location', async (test) => {
-		await game.time.steps(4_001);
-		expect(game.time.now).toBe(14_001);
-		expect(worker.inventory.reservedOutgoingOf(wheat)).toBe(0);
-		it('Person location is same as provider chest', () => {
+	describe('When the worker arrives at the pick-up location', () => {
+		it('Person location is same as provider chest', async () => {
+			await game.time.steps(4_001);
+			expect(game.time.now).toBe(14_001);
+			expect(worker.inventory.reservedOutgoingOf(wheat)).toBe(0);
 			expect(worker.location.get()).toEqual(providerChest.location.get());
 		});
 		it('Checking all the inventory numbers', () => {
@@ -150,10 +157,10 @@ describe('System: logisticsSystem', () => {
 		});
 	});
 
-	it('When the worker leaves the pick-up location', async (test) => {
-		await game.time.steps(1_001);
-		expect(game.time.now).toBe(15_002);
-		it('Worker has a status update', () => {
+	describe('When the worker leaves the pick-up location', () => {
+		it('Worker has a status update', async () => {
+			await game.time.steps(1_001);
+			expect(game.time.now).toBe(15_002);
 			expect(getLastEventLog(worker)).toBe('Delivering cargo to #{entity:chest-2/0/1}');
 		});
 		it('Checking all the inventory numbers', () => {
@@ -163,10 +170,10 @@ describe('System: logisticsSystem', () => {
 		});
 	});
 
-	it('When the worker arrives at the drop-off location', async (test) => {
-		await game.time.steps(2_000);
-		expect(game.time.now).toBe(17_002);
-		it('Worker has a status update', () => {
+	describe('When the worker arrives at the drop-off location', () => {
+		it('Worker has a status update', async () => {
+			await game.time.steps(2_000);
+			expect(game.time.now).toBe(17_002);
 			expect(getLastEventLog(worker)).toBe('Unloading cargo to #{entity:chest-2/0/1}');
 		});
 		it('Worker no longer hanging on to the cargo', () => {
@@ -187,10 +194,10 @@ describe('System: logisticsSystem', () => {
 		});
 	});
 
-	it('When the cargo transfer is complete', async (test) => {
-		await game.time.steps(1_002);
-		expect(game.time.now).toBe(18_004);
-		it('Requester has received all', () => {
+	describe('When the cargo transfer is complete', () => {
+		it('Requester has received all', async () => {
+			await game.time.steps(1_002);
+			expect(game.time.now).toBe(18_004);
 			expect(worker.inventory.reservedIncomingOf(wheat)).toBe(0);
 			expect(requesterChest.inventory.availableOf(wheat)).toBe(100);
 		});

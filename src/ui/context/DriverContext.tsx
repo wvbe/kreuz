@@ -1,5 +1,5 @@
 import React, { type FunctionComponent, type ReactNode, createContext, useContext } from 'react';
-import { DriverI } from 'src/lib/level-1/drivers/types';
+import { DriverI } from '../../lib/level-1/drivers/types';
 
 const _DriverContext = createContext<DriverI | null>(null);
 

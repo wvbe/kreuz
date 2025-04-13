@@ -1,31 +1,38 @@
 import { expect } from '@jest/globals';
-import { generateEmptyGame } from 'src/lib/test/generateEmptyGame';
 import { createJobWorkBehavior } from '../../../level-2/behavior/reusable/nodes/createJobWorkBehavior';
 import { growWheat } from '../../../level-2/blueprints';
 import { wheat } from '../../../level-2/materials';
+import { generateEmptyGame } from '../../../test/generateEmptyGame';
 import { factoryArchetype } from '../archetypes/factoryArchetype';
 import { personArchetype } from '../archetypes/personArchetype';
+import { EcsArchetypeEntity } from '../types';
 
 describe('System: productionSystem', () => {
-	const game = await generateEmptyGame();
-	const worker = personArchetype.create({
-		location: [0, 0, 1],
-		icon: '🤖',
-		name: 'R-bot',
-		behavior: createJobWorkBehavior(),
-	});
-	const factory = factoryArchetype.create({
-		location: [3, 0, 1],
-		owner: worker,
-		blueprint: growWheat,
-		maxStackSpace: 1,
-		maxWorkers: 1,
+	const { game, initGame } = generateEmptyGame();
+	let worker: EcsArchetypeEntity<typeof personArchetype>;
+	let factory: EcsArchetypeEntity<typeof factoryArchetype>;
+
+	beforeAll(async () => {
+		await initGame();
+		worker = personArchetype.create({
+			location: [0, 0, 1],
+			icon: '🤖',
+			name: 'R-bot',
+			behavior: createJobWorkBehavior(),
+		});
+		factory = factoryArchetype.create({
+			location: [3, 0, 1],
+			owner: worker,
+			blueprint: growWheat,
+			maxStackSpace: 1,
+			maxWorkers: 1,
+		});
+
+		await game.entities.add(worker);
+		await game.entities.add(factory);
 	});
 
-	await game.entities.add(worker);
-	await game.entities.add(factory);
-
-	it('Opening scenario', async (test) => {
+	describe('Opening scenario', () => {
 		it('Time is zero', () => {
 			expect(game.time.now).toBe(0);
 		});
@@ -40,9 +47,11 @@ describe('System: productionSystem', () => {
 		});
 	});
 
-	it('When the worker arrives', async (test) => {
+	describe('When the worker arrives', () => {
 		// This shoulda been done after t=3000
-		await game.time.steps(3004);
+		beforeAll(async () => {
+			await game.time.steps(3004);
+		});
 		it('Time is just over 3000', () => {
 			expect(game.time.now).toBe(3004);
 		});
@@ -61,8 +70,10 @@ describe('System: productionSystem', () => {
 		});
 	});
 
-	it('When the worker has been around for a bit', async (test) => {
-		await game.time.steps(500);
+	describe('When the worker has been around for a bit', () => {
+		beforeAll(async () => {
+			await game.time.steps(500);
+		});
 		it('Time is just over 3500', () => {
 			expect(game.time.now).toBe(3504);
 		});
@@ -76,8 +87,10 @@ describe('System: productionSystem', () => {
 		});
 	});
 
-	it('When the worker has been around long enough for 1 production cycle', async (test) => {
-		await game.time.steps(16496);
+	describe('When the worker has been around long enough for 1 production cycle', () => {
+		beforeAll(async () => {
+			await game.time.steps(16496);
+		});
 		it('Time is at 20000', () => {
 			expect(game.time.now).toBe(20_000);
 		});
@@ -91,8 +104,10 @@ describe('System: productionSystem', () => {
 		});
 	});
 
-	it('When the worker has been around long enough for 1 production cycle', async (test) => {
-		await game.time.steps(10_000);
+	describe('When the worker has been around long enough for 1 production cycle', () => {
+		beforeAll(async () => {
+			await game.time.steps(10_000);
+		});
 		it('Time is at 20000', () => {
 			expect(game.time.now).toBe(30_000);
 		});

@@ -1,8 +1,8 @@
 import React, { FunctionComponent, useCallback } from 'react';
+import { healthComponent } from '../../../lib/level-1/ecs/components/healthComponent';
+import { EcsEntity } from '../../../lib/level-1/ecs/types';
 import { FillBar } from '../../components/atoms/FillBar';
 import { useEventedValue, useMemoFromEvent } from '../../hooks/useEventedValue';
-import { healthComponent } from 'src/lib/level-1/ecs/components/healthComponent';
-import { EcsEntity } from 'src/lib/level-1/ecs/types';
 
 export const EntityHealthDetails: FunctionComponent<{ entity: EcsEntity }> = ({ entity }) => {
 	const health = (entity as EcsEntity<typeof healthComponent>).health;

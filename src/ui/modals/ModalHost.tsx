@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
-import { Prompt } from 'src/lib/level-1/classes/Prompt';
-import { DriverI } from 'src/lib/level-1/drivers/types';
+import { Prompt } from '../../lib/level-1/classes/Prompt';
+import { DriverI } from '../../lib/level-1/drivers/types';
 import { useDriverContext } from '../context/DriverContext';
 import { PromptModal } from '../prompts/types';
 

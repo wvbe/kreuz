@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { EcsEntity } from 'src/lib/level-1/ecs/types';
+import { EcsEntity } from '../../lib/level-1/ecs/types';
 import { useGameContext } from '../context/GameContext';
 import { EntityList } from '../entities/EntityList';
 

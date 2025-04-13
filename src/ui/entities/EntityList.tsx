@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useMemo } from 'react';
-import { EcsEntity } from 'src/lib/level-1/ecs/types';
-import { Collection } from 'src/lib/level-1/events/Collection';
+import { EcsEntity } from '../../lib/level-1/ecs/types';
+import { Collection } from '../../lib/level-1/events/Collection';
 import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow';
 import { Cell, Row, Table } from '../components/atoms/Table';
 import { useCollection } from '../hooks/useEventedValue';

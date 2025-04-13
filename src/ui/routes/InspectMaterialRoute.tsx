@@ -1,15 +1,15 @@
 import React, { FunctionComponent, useMemo } from 'react';
 
 import { useParams } from 'react-router-dom';
-import { useNavigation } from '../hooks/useNavigation';
-import { ROUTE_PRODUCTION_DETAILS } from './ROUTES';
-import { PERSON_NEEDS } from 'src/lib/level-1/constants/needs';
-import Game from 'src/lib/level-1/Game';
-import { Material } from 'src/lib/level-1/inventory/Material';
+import { PERSON_NEEDS } from '../../lib/level-1/constants/needs';
+import Game from '../../lib/level-1/Game';
+import { Material } from '../../lib/level-1/inventory/Material';
 import { Badge } from '../components/atoms/Badge';
 import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow';
 import { FillBar } from '../components/atoms/FillBar';
 import { useGameContext } from '../context/GameContext';
+import { useNavigation } from '../hooks/useNavigation';
+import { ROUTE_PRODUCTION_DETAILS } from './ROUTES';
 
 function createListItemsForMaterialToBlueprintRelationship(
 	game: Game,

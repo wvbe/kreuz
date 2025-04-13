@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FC, PropsWithChildren, createContext, useContext, useMemo, useState } from 'react';
-import { EcsEntity } from 'src/lib/level-1/ecs/types';
+import { EcsEntity } from '../../lib/level-1/ecs/types';
 import { ROUTE_ENTITIES_DETAILS } from '../routes/ROUTES';
 import { useNavigation } from './useNavigation';
 

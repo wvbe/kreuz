@@ -5,9 +5,9 @@ import React, {
 	MouseEventHandler,
 	useCallback,
 } from 'react';
-import { locationComponent } from 'src/lib/level-1/ecs/components/locationComponent';
-import { visibilityComponent } from 'src/lib/level-1/ecs/components/visibilityComponent';
-import { EcsEntity } from 'src/lib/level-1/ecs/types';
+import { locationComponent } from '../../lib/level-1/ecs/components/locationComponent';
+import { visibilityComponent } from '../../lib/level-1/ecs/components/visibilityComponent';
+import { EcsEntity } from '../../lib/level-1/ecs/types';
 import { useMapTileContextMenu } from '../context-menu/MAP_TILE_CONTEXT_MENU';
 import { useGameContext } from '../context/GameContext';
 import { useEventedValue } from '../hooks/useEventedValue';

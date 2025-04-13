@@ -1,13 +1,12 @@
+import { Command } from '../level-1/classes/Command';
+import { StrictMap } from '../level-1/classes/StrictMap';
 import {
-	Blueprint,
-	Command,
-	Material,
-	StrictMap,
-	type BehaviorTreeNodeI,
-	type EntityBlackboard,
-	type GameAssets,
-} from '../level-1/ecs/types';
-
+	BehaviorTreeNodeI,
+	EntityBlackboard,
+} from '../level-1/ecs/components/behaviorComponent/types';
+import { Blueprint } from '../level-1/ecs/components/productionComponent/Blueprint';
+import { GameAssets } from '../level-1/Game';
+import { Material } from '../level-1/inventory/Material';
 import * as bt from './behavior';
 import * as blueprints from './blueprints';
 import * as commands from './commands';

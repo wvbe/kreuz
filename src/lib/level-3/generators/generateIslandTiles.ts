@@ -1,7 +1,8 @@
-import { tileArchetype } from '../../level-1/ecs/archetypes';
-import { EcsArchetypeEntity } from '../../level-1/ecs/ecs';
-import { Random, SeedI } from '../../level-1/random';
-import { SurfaceType } from '../../level-1/terrain';
+import { Random } from '../../level-1/classes/Random';
+import { tileArchetype } from '../../level-1/ecs/archetypes/tileArchetype';
+import { SurfaceType } from '../../level-1/ecs/components/surfaceComponent';
+import { EcsArchetypeEntity } from '../../level-1/ecs/types';
+import { SeedI } from '../../level-1/types';
 
 type Tile = EcsArchetypeEntity<typeof tileArchetype>;
 

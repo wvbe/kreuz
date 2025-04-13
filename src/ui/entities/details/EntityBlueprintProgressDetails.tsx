@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from 'react';
+import { productionComponent } from '../../../lib/level-1/ecs/components/productionComponent';
+import { EcsEntity } from '../../../lib/level-1/ecs/types';
 import { FillBar } from '../../components/atoms/FillBar';
 import { useEventedValue } from '../../hooks/useEventedValue';
-import { productionComponent } from 'src/lib/level-1/ecs/components/productionComponent';
-import { EcsEntity } from 'src/lib/level-1/ecs/types';
 
 export const EntityBlueprintProgressDetails: FunctionComponent<{
 	entity: EcsEntity;

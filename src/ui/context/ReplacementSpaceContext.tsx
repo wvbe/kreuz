@@ -5,10 +5,10 @@ import React, {
 	type FunctionComponent,
 	type ReactNode,
 } from 'react';
+import { visibilityComponent } from '../../lib/level-1/ecs/components/visibilityComponent';
+import { EcsEntity } from '../../lib/level-1/ecs/types';
+import { ReplacementSpace } from '../../lib/level-1/utilities/ReplacementSpace';
 import { useGameContext } from './GameContext';
-import { visibilityComponent } from 'src/lib/level-1/ecs/components/visibilityComponent';
-import { EcsEntity } from 'src/lib/level-1/ecs/types';
-import { ReplacementSpace } from 'src/lib/level-1/utilities/ReplacementSpace';
 
 type RepSpaceBuckets = {
 	entity: EcsEntity<typeof visibilityComponent>;

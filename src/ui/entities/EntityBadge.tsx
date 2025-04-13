@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from 'react';
-import { EcsComponent } from 'src/lib/level-1/ecs/classes/EcsComponent';
-import { eventLogComponent } from 'src/lib/level-1/ecs/components/eventLogComponent';
-import { visibilityComponent } from 'src/lib/level-1/ecs/components/visibilityComponent';
-import { EcsEntity } from 'src/lib/level-1/ecs/types';
+import { EcsComponent } from '../../lib/level-1/ecs/classes/EcsComponent';
+import { eventLogComponent } from '../../lib/level-1/ecs/components/eventLogComponent';
+import { visibilityComponent } from '../../lib/level-1/ecs/components/visibilityComponent';
+import { EcsEntity } from '../../lib/level-1/ecs/types';
 import { Badge } from '../components/atoms/Badge';
 import { TokenizedText } from '../components/atoms/TokenizedText';
 import { useCollection } from '../hooks/useEventedValue';

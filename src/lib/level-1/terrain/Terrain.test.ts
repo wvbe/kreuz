@@ -14,7 +14,7 @@ describe('Terrain', () => {
 	// 	);
 	// 	expect(terrain).toEqual(Terrain.fromSaveJson(terrain.toSaveJson()));
 	// });
-	it('.getIslands()', async (test) => {
+	describe('.getIslands()', () => {
 		it('Finds the correct amount of islands', () => {
 			const islands = new Terrain(
 				generateGridTerrainFromAscii(

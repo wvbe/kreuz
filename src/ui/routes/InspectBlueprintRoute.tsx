@@ -1,9 +1,9 @@
 import React, { FunctionComponent, useMemo } from 'react';
 
 import { useParams } from 'react-router-dom';
-import { productionComponent } from 'src/lib/level-1/ecs/components/productionComponent';
-import { visibilityComponent } from 'src/lib/level-1/ecs/components/visibilityComponent';
-import { EcsEntity } from 'src/lib/level-1/ecs/types';
+import { productionComponent } from '../../lib/level-1/ecs/components/productionComponent';
+import { visibilityComponent } from '../../lib/level-1/ecs/components/visibilityComponent';
+import { EcsEntity } from '../../lib/level-1/ecs/types';
 import { Badge } from '../components/atoms/Badge';
 import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow';
 import { BlueprintInputOutput } from '../components/BlueprintInputOutput';

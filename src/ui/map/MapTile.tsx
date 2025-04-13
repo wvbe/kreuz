@@ -1,5 +1,11 @@
 import Color from 'color';
-import React, { MouseEventHandler, useCallback, type FunctionComponent } from 'react';
+import React, { MouseEventHandler, useCallback, useMemo, type FunctionComponent } from 'react';
+import { Random } from '../../lib/level-1/classes/Random';
+import { locationComponent } from '../../lib/level-1/ecs/components/locationComponent';
+import { outlineComponent } from '../../lib/level-1/ecs/components/outlineComponent';
+import { pathableComponent } from '../../lib/level-1/ecs/components/pathableComponent';
+import { surfaceComponent, SurfaceType } from '../../lib/level-1/ecs/components/surfaceComponent';
+import { EcsEntity } from '../../lib/level-1/ecs/types';
 import { useMapTileContextMenu } from '../context-menu/MAP_TILE_CONTEXT_MENU';
 import { useEventedValue } from '../hooks/useEventedValue';
 
@@ -23,13 +29,19 @@ export const MapTile: FunctionComponent<{
 		| typeof surfaceComponent
 	>;
 }> = ({ tile, zoom }) => {
-	const color = useEventedValue(tile.surfaceType, (surfaceType) =>
-		surfaceType === SurfaceType.UNKNOWN
+	const colorTransform = useCallback((surfaceType) => {
+		const loc = tile.location.get();
+		if (loc[0] === 0 && loc[1] === 0) {
+			console.log(surfaceType);
+		}
+		return surfaceType === SurfaceType.UNKNOWN
 			? baseBlue
 			: baseGreen
 					.lighten(Random.between(-0.05, 0.05, tile.toString(), 'lighten'))
-					.saturate(Random.between(-0.2, 0.2, tile.toString(), 'saturate')),
-	);
+					.saturate(Random.between(-0.2, 0.2, tile.toString(), 'saturate'));
+	}, []);
+	const color = useEventedValue(tile.surfaceType, colorTransform);
+
 	const contextMenu = useMapTileContextMenu();
 
 	const onRmb = useCallback<MouseEventHandler<SVGPolygonElement>>(
@@ -40,9 +52,13 @@ export const MapTile: FunctionComponent<{
 	);
 
 	const [x1, y1] = tile.location.get();
-	const points = tile.outlineCoordinates
-		.map(([x2, y2]) => `${(x1 + x2) * zoom},${(y1 + y2) * zoom}`)
-		.join(' ');
+	const points = useMemo(
+		() =>
+			tile.outlineCoordinates
+				.map(([x2, y2]) => `${(x1 + x2) * zoom},${(y1 + y2) * zoom}`)
+				.join(' '),
+		[],
+	);
 
 	return <polygon points={points} fill={color.toString()} onContextMenu={onRmb} />;
 };

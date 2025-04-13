@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Collection } from 'src/lib/level-1/events/Collection';
-import { EventedValue } from 'src/lib/level-1/events/EventedValue';
-import { EventEmitterI } from 'src/lib/level-1/events/types';
+import { Collection } from '../../lib/level-1/events/Collection';
+import { EventedValue } from '../../lib/level-1/events/EventedValue';
+import { EventEmitterI } from '../../lib/level-1/events/types';
 
 function noTransformSingle<T, O = T>(value: T): O {
 	// Shut the fuck up, TypeScript.
@@ -26,12 +26,13 @@ export function useEventedValue<T = void, OutputGeneric = T>(
 	eventedValue: EventedValue<T>,
 	transform: (value: T) => OutputGeneric = noTransformSingle,
 ): OutputGeneric {
-	const values = useMemoFromEvent<[T], [OutputGeneric]>(
+	const t = useCallback((value: T): OutputGeneric => transform(value), [transform]);
+	const values = useMemoFromEvent<[T], OutputGeneric>(
 		eventedValue,
-		[transform(eventedValue.get())],
-		useCallback((value: T): [OutputGeneric] => [transform(value)], [transform]),
+		transform(eventedValue.get()),
+		t,
 	);
-	return values[0];
+	return values;
 }
 
 function noTransformMultiple<T extends unknown[], O = T>(...value: T): O {

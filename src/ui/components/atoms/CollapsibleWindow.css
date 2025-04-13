@@ -1,0 +1,32 @@
+.collapsible-window {
+	display: flex;
+	flex-direction: column;
+}
+.collapsible-window > header {
+	flex: 0 0 auto;
+	cursor: pointer;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	min-height: var(--line-height);
+}
+
+.collapsible-window > header:hover {
+	background-color: #7a7ae933;
+}
+.collapsible-window > header > * + * {
+	margin-left: 3px;
+}
+.collapsible-window > header :hover {
+	cursor: pointer;
+	background-color: #eee;
+}
+
+.collapsible-window > div {
+	flex: 1 1 auto;
+	overflow: auto;
+	margin: 3px;
+}
+.collapsible-window > div > :not(section) + * {
+	margin-top: 3px;
+}

@@ -1,0 +1,36 @@
+.game-ui,
+.game-viewport {
+	user-select: none;
+}
+
+.game-ui {
+	/* z-index: 100; */
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.game-ui__info,
+.game-ui__workspace {
+	position: absolute;
+	/* z-index: 100; */
+}
+.game-ui__workspace > *:not(:first-child) {
+	margin-top: var(--line-height);
+}
+.game-ui__workspace > .collapsible-window > header {
+	flex-direction: row-reverse;
+}
+.game-ui__info {
+	bottom: var(--line-height);
+	left: var(--line-height);
+	max-width: calc(24 * var(--line-height));
+}
+.game-ui__workspace {
+	/* font-size: 10px; */
+	top: var(--line-height);
+	bottom: var(--line-height);
+	right: var(--line-height);
+	max-width: 33%;
+	overflow-y: auto;
+}

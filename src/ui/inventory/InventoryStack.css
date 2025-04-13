@@ -1,0 +1,36 @@
+.inventory-stack {
+	display: inline-flex;
+	flex-direction: row;
+	width: 48px;
+	line-height: calc(var(--line-height) * 4 / 3);
+
+	border: 1px solid black;
+	border-radius: 3px;
+	position: relative;
+	overflow: hidden;
+	margin-right: 3px;
+}
+.inventory-stack--ghost,
+.inventory-stack--ghost .inventory-stack__quantity {
+	border-color: lightgray;
+	color: #999;
+}
+.inventory-stack--ghost .inventory-stack__symbol {
+	opacity: 0.5;
+}
+.inventory-stack__symbol,
+.inventory-stack__quantity {
+	text-align: center;
+	flex: 0 0 50%;
+	box-sizing: border-box;
+}
+
+.inventory-stack__quantity {
+	border-left: 1px solid darkgray;
+	font-size: 0.75em;
+}
+
+.inventory-stack:hover {
+	background-color: var(--color-hover);
+	cursor: pointer;
+}

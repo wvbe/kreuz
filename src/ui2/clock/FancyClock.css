@@ -1,0 +1,836 @@
+/*
+https://codepen.io/alexandrevacassin/pen/wBvVvLX
+*/
+
+.clock-container {
+  --zoom-factor: 0.4;
+  position: relative;
+  width: calc(280px * var(--zoom-factor));
+  height: calc(280px * var(--zoom-factor));
+  margin: 0 auto;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: calc(40px * var(--zoom-factor));
+  font-family: sans-serif;
+}
+
+.clock-face {
+  position: absolute;
+  width: calc(280px * var(--zoom-factor));
+  height: calc(280px * var(--zoom-factor));
+  border-radius: 50%;
+}
+
+.hour-marks {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.hour-mark {
+  position: absolute;
+  left: 50%;
+  transform-origin: 0 calc(140px * var(--zoom-factor));
+}
+
+.minute-mark {
+  position: absolute;
+  left: 50%;
+  transform-origin: 0 calc(140px * var(--zoom-factor));
+}
+
+.hour-number {
+  position: absolute;
+  text-align: center;
+  transform-origin: center;
+}
+
+.hand {
+  position: absolute;
+  transform-origin: bottom center;
+  bottom: calc(140px * var(--zoom-factor));
+  left: calc(140px * var(--zoom-factor));
+}
+
+
+.skeuomorphic .clock-container {
+  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+  box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
+    0 2px 5px rgba(0, 0, 0, 0.3);
+  border: calc(8px * var(--zoom-factor)) solid #fff;
+  border-radius: 50%;
+}
+
+.skeuomorphic .clock-face {
+  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2), inset 0 0 20px rgba(0, 0, 0, 0.1),
+    0 2px 5px rgba(0, 0, 0, 0.3);
+
+}
+
+.skeuomorphic .clock-reflection {
+  position: absolute;
+  width: calc(260px * var(--zoom-factor));
+  height: calc(130px * var(--zoom-factor));
+  top: calc(20px * var(--zoom-factor));
+  left: calc(10px * var(--zoom-factor));
+  border-radius: calc(130px * var(--zoom-factor)) calc(130px * var(--zoom-factor)) 0 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
+  z-index: 11;
+}
+
+.skeuomorphic .clock-center {
+  position: absolute;
+  width: calc(14px * var(--zoom-factor));
+  height: calc(14px * var(--zoom-factor));
+  background: #333;
+  border-radius: 50%;
+  /* top: 50%;
+  left: 50%; */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+.skeuomorphic .clock-center::after {
+  content: "";
+  position: absolute;
+  width: calc(6px * var(--zoom-factor));
+  height: calc(6px * var(--zoom-factor));
+  background: #888;
+  border-radius: 50%;
+  top: calc(4px * var(--zoom-factor));
+  left: calc(4px * var(--zoom-factor));
+}
+
+.skeuomorphic .hour-mark {
+  width: calc(4px * var(--zoom-factor));
+  height: calc(12px * var(--zoom-factor));
+  background: #333;
+  margin-left: calc(-2px * var(--zoom-factor));
+}
+
+.skeuomorphic .minute-mark {
+  width: calc(2px * var(--zoom-factor));
+  height: calc(6px * var(--zoom-factor));
+  background: #666;
+  margin-left: calc(-1px * var(--zoom-factor));
+}
+
+.skeuomorphic .hour-number {
+  font-size: calc(24px * var(--zoom-factor));
+  font-weight: 500;
+  color: #333;
+  width: calc(40px * var(--zoom-factor));
+  height: calc(40px * var(--zoom-factor));
+  line-height: calc(40px * var(--zoom-factor));
+}
+
+.skeuomorphic .hour-hand {
+  width: calc(8px * var(--zoom-factor));
+  height: calc(75px * var(--zoom-factor));
+  background: #333;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 2px 0px 7px rgba(0, 0, 0, 0.5);
+  z-index: 7;
+  margin-left: calc(-4px * var(--zoom-factor));
+}
+
+.skeuomorphic .minute-hand {
+  width: calc(6px * var(--zoom-factor));
+  height: calc(105px * var(--zoom-factor));
+  background: #444;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 2px 0px 6px rgba(0, 0, 0, 0.5);
+  z-index: 8;
+  margin-left: calc(-3px * var(--zoom-factor));
+}
+
+.skeuomorphic .second-hand {
+  width: calc(2px * var(--zoom-factor));
+  height: calc(115px * var(--zoom-factor));
+  background: #c00;
+  box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.5);
+  z-index: 9;
+}
+
+.skeuomorphic .clock-bezel {
+  position: absolute;
+  width: calc(290px * var(--zoom-factor));
+  height: calc(290px * var(--zoom-factor));
+  top: calc(-5px * var(--zoom-factor));
+  left: calc(-5px * var(--zoom-factor));
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d0d0d0 0%, #f8f8f8 100%);
+  z-index: -1;
+}
+
+.flat-design {
+  background: #f2f2f7
+}
+
+.flat-design .clock-face {
+  background: #ffffff;
+  border: 3px solid #191919
+}
+
+.flat-design .clock-center {
+  position: absolute;
+  width: calc(12px * var(--zoom-factor));
+  height: calc(12px * var(--zoom-factor));
+  background: #ffcd50;
+  border-radius: 50%;
+  top: calc(134px * var(--zoom-factor));
+  left: calc(134px * var(--zoom-factor));
+  z-index: 10;
+}
+
+.flat-design .hour-mark {
+  width: calc(3px * var(--zoom-factor));
+  height: calc(10px * var(--zoom-factor));
+  background: #555;
+}
+
+.flat-design .minute-mark {
+  width: calc(2px * var(--zoom-factor));
+  height: calc(8px * var(--zoom-factor));
+  background: #bcbcbc;
+}
+
+.flat-design .hour-number {
+  font-size: calc(24px * var(--zoom-factor));
+  font-weight: 400;
+  color: #555;
+  width: calc(40px * var(--zoom-factor));
+  height: calc(40px * var(--zoom-factor));
+  line-height: calc(40px * var(--zoom-factor));
+}
+
+.flat-design .hour-hand {
+  width: calc(6px * var(--zoom-factor));
+  height: calc(70px * var(--zoom-factor));
+  background: #555;
+  z-index: 7;
+  margin-left: calc(-3px * var(--zoom-factor));
+}
+
+.flat-design .minute-hand {
+  width: calc(4px * var(--zoom-factor));
+  height: calc(95px * var(--zoom-factor));
+  background: #777;
+  z-index: 8;
+  margin-left: calc(-2px * var(--zoom-factor));
+}
+
+.flat-design .second-hand {
+  width: calc(2px * var(--zoom-factor));
+  height: calc(110px * var(--zoom-factor));
+  background: #ffcd50;
+  z-index: 9;
+}
+
+.material-design {
+ background: #EDE7F6;
+}
+
+.material-design .clock-face {
+  background: #512da8;
+box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;}
+
+.material-design .clock-face-inner {
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: #7E57C2;
+box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+  z-index:2;
+  display:flex;
+  align-items: center;
+  justify-content: center
+}
+
+.material-design .clock-center {
+  position: absolute;
+  width: calc(12px * var(--zoom-factor));
+  height: calc(12px * var(--zoom-factor));
+  background: #f44336;
+  border-radius: 50%;
+  top: calc(134px * var(--zoom-factor));
+  left: calc(134px * var(--zoom-factor));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+}
+
+.material-design .hour-number {
+  font-size: calc(20px * var(--zoom-factor));
+  font-weight: 500;
+  color: #EDE7F6;
+  width: calc(40px * var(--zoom-factor));
+  height: calc(40px * var(--zoom-factor));
+  line-height: calc(40px * var(--zoom-factor));
+  text-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+.material-design .hour-hand {
+  width: calc(6px * var(--zoom-factor));
+  height: calc(60px * var(--zoom-factor));
+  background: #fff;
+  border-radius: 4px;
+  z-index: 7;
+  margin-left: calc(-2px * var(--zoom-factor));
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+.material-design .minute-hand {
+  width: calc(6px * var(--zoom-factor));
+  height: calc(98px * var(--zoom-factor));
+  background: #EDE7F6;
+  border-radius: 4px;
+  z-index: 8;
+  margin-left: calc(-2px * var(--zoom-factor));
+    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+
+}
+
+.material-design .second-hand {
+  width: calc(2px * var(--zoom-factor));
+  height: calc(110px * var(--zoom-factor));
+  background: #f44336;
+  z-index: 9;
+      box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+
+}
+
+.neumorphism {
+  border-radius: 30px;
+  background: #e8eaf6;
+  box-shadow: 10px 10px 20px #d1d1d1, -10px -10px 20px #ffffff;
+}
+
+.neumorphism .clock-face {
+  border-radius: 50%;
+background: linear-gradient(145deg, #d1d3dd, #f8faff);
+box-shadow:  20px 20px 60px #c5c7d1,
+             -20px -20px 60px #ffffff;
+}
+
+.neumorphism .clock-face-inner {
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  z-index:1;
+  background: #e8eaf6;
+box-shadow:  20px 20px 40px #b0b2bb,
+             -20px -20px 40px #ffffff;
+}
+
+.neumorphism .clock-center {
+  position: absolute;
+  width: calc(15px * var(--zoom-factor));
+  height: calc(15px * var(--zoom-factor));
+  border-radius: 50%;
+  top: calc(132.5px * var(--zoom-factor));
+  left: calc(132.5px * var(--zoom-factor));
+background: linear-gradient(145deg, #f8faff, #d1d3dd);
+box-shadow:  1px 1px 2px #797a80,
+             -1px -1px 2px #ffffff;
+
+  z-index: 10;
+}
+
+.neumorphism .hour-mark {
+  width: calc(2px * var(--zoom-factor));
+  height: calc(24px * var(--zoom-factor));
+}
+
+.neumorphism .hour-mark::after {
+  content: '';
+  display:block;
+  position: absolute;
+  bottom: 0;
+  width: calc(2px * var(--zoom-factor));
+  height: calc(16px * var(--zoom-factor));
+  border-radius: 10px;
+  background: #e8eaf6;
+box-shadow: inset 1px 1px 7px #bec0ca,
+            inset -1px -1px 7px #ffffff;
+}
+
+.neumorphism .minute-mark {
+  display:none
+}
+
+.neumorphism .hour-number {
+  display:none
+}
+
+.neumorphism .hour-hand {
+  width: calc(6px * var(--zoom-factor));
+  height: calc(70px * var(--zoom-factor));
+  background: #030943;
+  border-radius: 3px;
+  z-index: 7;
+  margin-left: calc(-2px * var(--zoom-factor));
+}
+
+.neumorphism .minute-hand {
+  width: calc(4px * var(--zoom-factor));
+  height: calc(95px * var(--zoom-factor));
+  background: #536089;
+  border-radius: 2px;
+  z-index: 8;
+  margin-left: calc(-1px * var(--zoom-factor));
+}
+
+.neumorphism .second-hand {
+  width: calc(2px * var(--zoom-factor));
+  height: calc(110px * var(--zoom-factor));
+  background: #dd0f2e;
+  border-radius: 1px;
+  z-index: 9;
+}
+
+.glassmorphism {
+  background: linear-gradient(45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  overflow: hidden
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.glassmorphism .clock-face {
+   backdrop-filter: blur(8px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.33);
+    border: 1px solid rgba(209, 213, 219, 0.6);
+  overflow: hidden
+}
+
+.glassmorphism .clock-face::after {
+  background-color: rgba(255, 255, 255, .05);
+    bottom: 0;
+    content: '';
+    filter: blur(4px);
+    left: -99px;
+    position: absolute;
+    right: .865%;
+    top: -300px;
+    transform: rotate(45deg);
+    z-index: 1;
+}
+
+.glassmorphism .clock-center {
+  position: absolute;
+  width: calc(12px * var(--zoom-factor));
+  height: calc(12px * var(--zoom-factor));
+  background: white;
+  border-radius: 50%;
+  top: calc(134px * var(--zoom-factor));
+  left: calc(134px * var(--zoom-factor));
+  z-index: 10;
+  border: 10 solid rgba(0,0,0,0.5)
+}
+
+.glassmorphism .hour-mark {
+  width: calc(4px * var(--zoom-factor));
+  height: calc(18px * var(--zoom-factor));
+  margin-left: calc(-1px * var(--zoom-factor));
+}
+
+.glassmorphism .hour-mark::after {
+  content: '';
+  display:block;
+  position: absolute;
+  bottom: 0;
+  width: calc(4px * var(--zoom-factor));
+  height: calc(4px * var(--zoom-factor));
+  border-radius: 50%;
+  background: #fff;
+}
+
+.glassmorphism .minute-mark {
+  width: calc(1px * var(--zoom-factor));
+  height: calc(16px * var(--zoom-factor));
+  margin-left: calc(-0.5px * var(--zoom-factor));
+  border-radius: 50%;
+}
+
+.glassmorphism .minute-mark::after {
+  content: '';
+  display:block;
+  position: absolute;
+  bottom: 0;
+  width: calc(1px * var(--zoom-factor));
+  height: calc(1px * var(--zoom-factor));
+  border-radius: 50%;
+  background: #fff;
+}
+
+.glassmorphism .hour-number {
+  font-size: calc(20px * var(--zoom-factor));
+  font-weight: 400;
+  color: white;
+  width: calc(40px * var(--zoom-factor));
+  height: calc(40px * var(--zoom-factor));
+  line-height: calc(40px * var(--zoom-factor));
+  display: none
+}
+
+.glassmorphism .hour-hand {
+  width: calc(5px * var(--zoom-factor));
+  height: calc(70px * var(--zoom-factor));
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 2.5px;
+  z-index: 7;
+  margin-left: calc(-2px * var(--zoom-factor));
+}
+
+.glassmorphism .minute-hand {
+  width: calc(3px * var(--zoom-factor));
+  height: calc(95px * var(--zoom-factor));
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 1.5px;
+  z-index: 8;
+  margin-left: calc(-1px * var(--zoom-factor));
+}
+
+.glassmorphism .second-hand {
+  width: calc(2px * var(--zoom-factor));
+  height: calc(110px * var(--zoom-factor));
+  background: rgba(255, 255, 255, 1);
+  z-index: 9;
+}
+
+.glassmorphism .shapes-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.glassmorphism .shapes-container::after {
+  background-color: rgba(255, 255, 255, .05);
+    bottom: 0;
+    content: '';
+    filter: blur(4px);
+    left: -99px;
+    position: absolute;
+    right: .865%;
+    top: -480px;
+    transform: rotate(45deg);
+    z-index: 1;
+}
+
+.glassmorphism .shape {
+  position: absolute;
+  opacity: 0.6;
+  animation: float 20s infinite ease-in-out;
+}
+
+.glassmorphism .shape.circle {
+  width: 120px;
+  height: 120px;
+    backdrop-filter: blur(5px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.38);
+    border: 1px solid rgba(209, 213, 219, 0.8);
+  border-radius: 50%;
+  top: 20%;
+  left: 10%;
+  animation-duration: 10s;
+}
+
+.glassmorphism .shape.rounded-square {
+  width: 100px;
+  height: 100px;
+  backdrop-filter: blur(5px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.38);
+    border: 1px solid rgba(209, 213, 219, 0.8);
+  border-radius: 25px;
+  top: 70%;
+  left: 60%;
+  animation-duration: 16s;
+}
+
+@keyframes float {
+  0%   { transform: translateY(0px) translateX(0px) rotate(0deg); }
+  50%  { transform: translateY(-25px) translateX(15px) rotate(180deg); }
+  100% { transform: translateY(0px) translateX(0px) rotate(360deg); }
+}
+
+.claymorphism {
+  border-radius: 30px;
+  background: #f4f4fc;
+  box-shadow: 35px 35px 68px 0px rgba(145, 192, 255, 0.5), inset -2px -2px 16px 0px rgba(145, 192, 255, 0.6), inset 0px 11px 28px 0px rgb(255, 255, 255);
+}
+
+.claymorphism .clock-face {
+  background: #f4f4fc;
+  border-radius: 50%;
+  box-shadow: 35px 35px 68px 0px rgba(145, 192, 255, 0.5), inset -7px -7px 16px 0px rgba(145, 192, 255, 0.6), inset 0px 11px 28px 0px rgb(255, 255, 255);
+}
+
+.claymorphism .clock-center {
+  position: absolute;
+  width: calc(18px * var(--zoom-factor));
+  height: calc(18px * var(--zoom-factor));
+  background: #6457f9;
+  border-radius: 50%;
+  top: calc(131px * var(--zoom-factor));
+  left: calc(131px * var(--zoom-factor));
+  box-shadow: 3px 3px 6px rgba(10, 10, 40, 0.2);
+  z-index: 10;
+}
+
+.claymorphism .hour-mark {
+  width: calc(4px * var(--zoom-factor));
+  height: calc(12px * var(--zoom-factor));
+  background: #9c92ff;
+  margin-left: calc(-2px * var(--zoom-factor));
+  border-radius: 2px;
+}
+
+.claymorphism .minute-mark {
+  width: calc(2px * var(--zoom-factor));
+  height: calc(6px * var(--zoom-factor));
+  background: #c4beff;
+  margin-left: calc(-1px * var(--zoom-factor));
+  border-radius: 1px;
+}
+
+.claymorphism .hour-number {
+  font-size: calc(22px * var(--zoom-factor));
+  font-weight: 600;
+  color: #6457f9;
+  width: calc(40px * var(--zoom-factor));
+  height: calc(40px * var(--zoom-factor));
+  line-height: calc(40px * var(--zoom-factor));
+}
+
+.claymorphism .hour-hand {
+  width: calc(8px * var(--zoom-factor));
+  height: calc(70px * var(--zoom-factor));
+  background: #6457f9;
+  border-radius: 4px;
+  z-index: 7;
+  margin-left: calc(-3px * var(--zoom-factor));
+}
+
+.claymorphism .minute-hand {
+  width: calc(6px * var(--zoom-factor));
+  height: calc(95px * var(--zoom-factor));
+  background: #9c92ff;
+  border-radius: 3px;
+  z-index: 8;
+  margin-left: calc(-2px * var(--zoom-factor));
+}
+
+.claymorphism .second-hand {
+  width: calc(3px * var(--zoom-factor));
+  height: calc(110px * var(--zoom-factor));
+  background: #ff6b6b;
+  border-radius: 1.5px;
+  z-index: 9;
+}
+
+.brutalism {
+  background: #fff;
+}
+
+.brutalism {
+  border-radius: 0;
+  background: #c0f7fe;
+  box-shadow: none;
+  border: 4px solid #000;
+  transition: all 0.1s;
+  padding: 25px;
+}
+
+.brutalism .clock-face {
+  background: #91a8ee;
+  border: 2px solid black;
+  box-shadow:  -16px 0px 0px #000 ;
+}
+
+.brutalism .clock-face-inner {
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
+  height: 90%;
+  border: 2px solid black;
+  border-radius: 50%;
+  z-index:1;
+  background: #fe90e8;
+box-shadow:  -8px 0px 0px #000 inset;
+}
+
+.brutalism .clock-face-inner-2 {
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  z-index:2;
+  background: #ffff19;
+box-shadow:  -4px 0px 0px #000 inset;
+}
+
+.brutalism .clock-center {
+  position: absolute;
+  width: calc(16px * var(--zoom-factor));
+  height: calc(16px * var(--zoom-factor));
+  background: #000;
+  border-radius: 50%;
+  top: calc(132px * var(--zoom-factor));
+  left: calc(132px * var(--zoom-factor));
+  z-index: 10;
+}
+
+.brutalism .hour-mark {
+  width: calc(1px * var(--zoom-factor));
+  height: calc(50px * var(--zoom-factor));
+  margin-left: calc(-5px * var(--zoom-factor));
+  z-index: 12
+}
+
+.brutalism .hour-mark::after {
+  content: '';
+  display:block;
+  position: absolute;
+  bottom: 0;
+  width: calc(1px * var(--zoom-factor));
+  height: calc(24px * var(--zoom-factor));
+  border-radius: 50%;
+  background: #000;
+}
+
+.brutalism .minute-mark {
+  display: none
+}
+
+.brutalism .hour-hand {
+  width: calc(8px * var(--zoom-factor));
+  height: calc(40px * var(--zoom-factor));
+  background: #000;
+  z-index: 7;
+  border-radius: 5px;
+  margin-left: calc(-4px * var(--zoom-factor));
+}
+
+.brutalism .minute-hand {
+  width: calc(8px * var(--zoom-factor));
+  height: calc(64px * var(--zoom-factor));
+  background: #000;
+  z-index: 8;
+  border-radius: 5px;
+  margin-left: calc(-4px * var(--zoom-factor));
+}
+
+.brutalism .second-hand {
+  display:none
+}
+
+.brutalism .hour-number {
+  display:none
+}
+
+
+.minimalism .clock-face {
+  background: #ffffff;
+  box-shadow: 0 calc(5px * var(--zoom-factor)) calc(20px * var(--zoom-factor)) rgba(0, 0, 0, 0.05);
+}
+
+.minimalism .clock-center {
+  position: absolute;
+  width: calc(8px * var(--zoom-factor));
+  height: calc(8px * var(--zoom-factor));
+  background: #111;
+  border-radius: 50%;
+  top: calc(136px * var(--zoom-factor));
+  left: calc(136px * var(--zoom-factor));
+  z-index: 10;
+}
+
+.minimalism .hour-mark {
+  width: calc(1px * var(--zoom-factor));
+  height: calc(8px * var(--zoom-factor));
+  background: #111;
+  margin-left: calc(-0.5px * var(--zoom-factor));
+  opacity: 0.2;
+}
+
+.minimalism .minute-mark {
+  width: calc(1px * var(--zoom-factor));
+  height: calc(4px * var(--zoom-factor));
+  background: #111;
+  margin-left: calc(-0.5px * var(--zoom-factor));
+  opacity: 0.1;
+}
+
+.minimalism .hour-number {
+  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: calc(18px * var(--zoom-factor));
+  font-weight: 300;
+  color: #111;
+  width: calc(40px * var(--zoom-factor));
+  height: calc(40px * var(--zoom-factor));
+  line-height: calc(40px * var(--zoom-factor));
+  opacity: 0.5;
+}
+
+.minimalism .hour-number:nth-child(3n) {
+  opacity: 1;
+}
+
+.minimalism .hour-hand {
+  width: calc(3px * var(--zoom-factor));
+  height: calc(65px * var(--zoom-factor));
+  background: #111;
+  border-radius: 1.5px;
+  z-index: 7;
+}
+
+.minimalism .minute-hand {
+  width: calc(2px * var(--zoom-factor));
+  height: calc(90px * var(--zoom-factor));
+  background: #111;
+  border-radius: 1px;
+  z-index: 8;
+}
+
+.minimalism .second-hand {
+  width: calc(1px * var(--zoom-factor));
+  height: calc(110px * var(--zoom-factor));
+  background: #ff3b30;
+  z-index: 9;
+}
+
+@media (min-width: 699px) and (max-width: 705px) {
+	.card {
+		transform: scale(0.45);
+		margin: calc(-140px * var(--zoom-factor)) calc(-120px * var(--zoom-factor));
+	}
+	h1 {
+		font-size: calc(1.25em * var(--zoom-factor));
+	}
+}

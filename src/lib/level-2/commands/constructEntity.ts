@@ -15,13 +15,8 @@ import { locationComponent } from '../../level-1/ecs/components/locationComponen
 import { pathableComponent } from '../../level-1/ecs/components/pathableComponent';
 import { Blueprint } from '../../level-1/ecs/components/productionComponent/Blueprint';
 import { surfaceComponent, SurfaceType } from '../../level-1/ecs/components/surfaceComponent';
-import { EcsEntity } from '../../level-1/ecs/types';
 import { Material } from '../../level-1/inventory/Material';
 import { headOfState } from '../heroes/heroes';
-
-type TileEntity = EcsEntity<
-	typeof locationComponent | typeof surfaceComponent | typeof pathableComponent
->;
 
 /**
  * Identifier for the prompt that asks the user to select an entity to construct.

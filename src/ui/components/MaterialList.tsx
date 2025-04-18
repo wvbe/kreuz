@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useMemo } from 'react';
-import { useGameContext } from '../context/GameContext';
+import { useGameContext } from '../../ui2/contexts/GameContext';
 import { useNavigation } from '../hooks/useNavigation';
 import { InventoryStack } from '../inventory/InventoryStack';
 import { MoneyBag } from '../inventory/InventoryUI';

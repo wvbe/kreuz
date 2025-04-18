@@ -1,0 +1,40 @@
+.entity-controls {
+	display: flex;
+	height: 8em;
+}
+
+.entity-preview-container {
+	font-size: 8em;
+}
+
+.entity-preview {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid red;
+	border-radius: 50%;
+	overflow: hidden;
+}
+
+.entity-info-container {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.entity-info {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	padding: 1em;
+}
+
+.entity-actions {
+	display: flex;
+	justify-content: flex-start;
+	gap: 1em;
+	padding: 0 1em 1em 1em;
+}

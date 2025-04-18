@@ -2,8 +2,8 @@ import React, { FunctionComponent, useMemo } from 'react';
 
 import { useParams } from 'react-router-dom';
 import { eventLogComponent } from '../../lib/level-1/ecs/components/eventLogComponent';
+import { useGameContext } from '../../ui2/contexts/GameContext';
 import { GameNavigation, GameNavigationButton } from '../application/GameNavigation';
-import { useGameContext } from '../context/GameContext';
 import { EntityDetails } from '../entities/EntityDetails';
 import { ROUTE_ENTITIES_EVENTS_DETAILS, ROUTE_ENTITIES_PEOPLE_JOBS_DETAILS } from './ROUTES';
 

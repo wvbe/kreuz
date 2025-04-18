@@ -67,6 +67,7 @@ export function createContextMenu<Props extends {}>(Component: FC<Props>) {
 				y: offset.y,
 				props,
 			});
+
 			event.preventDefault();
 			event.stopPropagation();
 		}, []);
@@ -85,11 +86,12 @@ export function createContextMenu<Props extends {}>(Component: FC<Props>) {
 
 		return (
 			<_ContextMenuContext.Provider value={value}>
-				{children}
+				<div data-context-menu-role='canvas'>{children}</div>
 				{state && (
 					<div
 						className='context-menu'
 						style={{
+							position: 'absolute',
 							top: state.y,
 							left: state.x,
 						}}

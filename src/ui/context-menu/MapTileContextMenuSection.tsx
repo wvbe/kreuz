@@ -1,7 +1,7 @@
 import React, { FC, PropsWithChildren, useCallback, useMemo } from 'react';
 
 import { EcsEntity } from '../../lib/level-1/ecs/types';
-import { useGameContext } from '../context/GameContext';
+import { useGameContext } from '../../ui2/contexts/GameContext';
 import { EntityBadge } from '../entities/EntityBadge';
 import { useNavigation } from '../hooks/useNavigation';
 import { ROUTE_ENTITIES_DETAILS } from '../routes/ROUTES';

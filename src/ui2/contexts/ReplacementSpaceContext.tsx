@@ -23,14 +23,8 @@ export const ReplacementSpaceContext: FunctionComponent<{
 	const space = useMemo(
 		() =>
 			new ReplacementSpace<RepSpaceBuckets>({
-				entity: (id) => {
-					if (id === heroes.headOfState.id) {
-						return heroes.headOfState;
-					}
-					return game.entities.getByKey(id) as EcsEntity<
-						typeof visibilityComponent
-					> | null;
-				},
+				entity: (id) =>
+					game.entities.getByKey(id) as EcsEntity<typeof visibilityComponent> | null,
 			}),
 		[game],
 	);

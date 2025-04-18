@@ -20,7 +20,8 @@ const InnerEntityBadge: FunctionComponent<{
 			subtitle={<TokenizedText text={status[status.length - 1] || ''} />}
 		/>
 	);
-};
+	};
+
 export const EntityBadge: FunctionComponent<{
 	entity: EcsEntity<EcsComponent, typeof visibilityComponent | typeof eventLogComponent>;
 }> = ({ entity }) => (entity ? <InnerEntityBadge entity={entity} /> : null);

@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from 'react';
 import { productionComponent } from '../../../lib/level-1/ecs/components/productionComponent';
 import { EcsEntity } from '../../../lib/level-1/ecs/types';
+import { useGameContext } from '../../../ui2/contexts/GameContext';
 import { BlueprintInputOutput } from '../../components/BlueprintInputOutput';
-import { useGameContext } from '../../context/GameContext';
 import { useEventedValue } from '../../hooks/useEventedValue';
 import { useNavigation } from '../../hooks/useNavigation';
 import { ROUTE_PRODUCTION_DETAILS } from '../../routes/ROUTES';

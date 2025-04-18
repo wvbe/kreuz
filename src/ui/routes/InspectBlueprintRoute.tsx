@@ -4,11 +4,11 @@ import { useParams } from 'react-router-dom';
 import { productionComponent } from '../../lib/level-1/ecs/components/productionComponent';
 import { visibilityComponent } from '../../lib/level-1/ecs/components/visibilityComponent';
 import { EcsEntity } from '../../lib/level-1/ecs/types';
+import { useGameContext } from '../../ui2/contexts/GameContext';
 import { Badge } from '../components/atoms/Badge';
 import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow';
 import { BlueprintInputOutput } from '../components/BlueprintInputOutput';
 import { useEntitiesWithBlueprint } from '../components/useFactoriesWithBlueprint';
-import { useGameContext } from '../context/GameContext';
 import { EntityLink } from '../entities/EntityLink';
 export const InspectBlueprintRoute: FunctionComponent = () => {
 	const { blueprintId } = useParams<{ blueprintId: string }>();

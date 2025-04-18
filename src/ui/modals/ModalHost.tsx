@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { Prompt } from '../../lib/level-1/classes/Prompt';
 import { DriverI } from '../../lib/level-1/drivers/types';
-import { useDriverContext } from '../context/DriverContext';
+import { useDriverContext } from '../../ui2/contexts/DriverContext';
 import { PromptModal } from '../prompts/types';
 
 const registry = new Map<Prompt<any>, PromptModal<any>>();

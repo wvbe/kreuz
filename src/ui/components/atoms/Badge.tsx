@@ -1,6 +1,8 @@
 import React, { type FunctionComponent, type ReactNode } from 'react';
 import { PopOnUpdateSpan } from './PopOnUpdateSpan';
 
+import './badge.css';
+
 export const Badge: FunctionComponent<{
 	icon: string | ReactNode;
 	title: ReactNode;

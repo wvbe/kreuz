@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useCallback } from 'react';
 import { Material } from '../../lib/level-1/inventory/Material';
+import { useGameContext } from '../../ui2/contexts/GameContext';
 import { PopOnUpdateSpan } from '../components/atoms/PopOnUpdateSpan';
-import { useGameContext } from '../context/GameContext';
 import { useNavigation } from '../hooks/useNavigation';
 import { ROUTE_MATERIALS_DETAILS } from '../routes/ROUTES';
 

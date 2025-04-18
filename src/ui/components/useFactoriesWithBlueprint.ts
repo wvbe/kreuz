@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { productionComponent } from '../../lib/level-1/ecs/components/productionComponent.js';
 import { Blueprint } from '../../lib/level-1/ecs/components/productionComponent/Blueprint.js';
 import { EcsEntity } from '../../lib/level-1/ecs/types.js';
-import { useGameContext } from '../context/GameContext';
+import { useGameContext } from '../../ui2/contexts/GameContext.js';
 import { useMemoFromEvent } from '../hooks/useEventedValue';
 
 export function useEntitiesWithBlueprint(blueprint: Blueprint | null) {

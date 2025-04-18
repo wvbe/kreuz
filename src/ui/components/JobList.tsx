@@ -4,7 +4,7 @@ import { personArchetype } from '../../lib/level-1/ecs/archetypes/personArchetyp
 import { EcsArchetypeEntity } from '../../lib/level-1/ecs/types';
 import { Collection } from '../../lib/level-1/events/Collection';
 import { EventCombination } from '../../lib/level-1/events/EventCombination';
-import { useGameContext } from '../context/GameContext';
+import { useGameContext } from '../../ui2/contexts/GameContext';
 import { useMemoFromEvent } from '../hooks/useEventedValue';
 import { CollapsibleWindow } from './atoms/CollapsibleWindow';
 import { Cell, Row, Table } from './atoms/Table';

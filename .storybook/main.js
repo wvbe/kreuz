@@ -8,7 +8,6 @@ const config = {
 				docs: false,
 			},
 		},
-		'@storybook/addon-onboarding',
 		'@chromatic-com/storybook',
 		'@storybook/experimental-addon-test',
 	],

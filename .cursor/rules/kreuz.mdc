@@ -1,0 +1,21 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+This project should use TypeScript where it can replace JavaScript.
+This is for a browser-based game set in a dwarven-like underground colony.
+The map is made up of square  terrain tiles that are either an excavated space, or not.
+Excavated tiles are used by the NPCs as tunnels or rooms. When seen from above you can see the floor of it, which is made of different materials: dirt, wood, pebbles, stones, concrete slab
+Unexcavated tiles are unknown, mysterious. They are made of different materials: granite, limestone, clay, dirt.
+
+There may be other objects in the map.
+
+The game is populated by entities in an ECS architecture. The ECS components that are associated with an ECS entity decide what the entity actually is, and what's interesting about them.
+
+The game instance is usually called simply `game` and contains all the stable API to interact with entities, events and so on.
+
+Code style:
+- Most React components should have Storybook stories.
+- All React components, classes, class methods and public properties must have TSDoc documentation.
+- All functions that emit an event should document which event and when.

@@ -8,21 +8,25 @@ import React, {
 import { locationComponent } from '../../lib/level-1/ecs/components/locationComponent';
 import { visibilityComponent } from '../../lib/level-1/ecs/components/visibilityComponent';
 import { EcsEntity } from '../../lib/level-1/ecs/types';
-import { useMapTileContextMenu } from '../context-menu/MAP_TILE_CONTEXT_MENU';
-import { useGameContext } from '../context/GameContext';
-import { useEventedValue } from '../hooks/useEventedValue';
-import { useSelectedEntity } from '../hooks/useSelectedEntity';
+import { useMapTileContextMenu } from '../../ui/context-menu/MAP_TILE_CONTEXT_MENU';
+import { useEventedValue } from '../../ui/hooks/useEventedValue';
+import { useControlsContext } from '../contexts/ControlsContext';
+import { useGameContext } from '../contexts/GameContext';
+import { MapLocation } from '../map/MapLocation';
 
-export const MapEntity: FunctionComponent<
+export const GameMapEntity: FunctionComponent<
 	{
 		entity: EcsEntity<typeof locationComponent | typeof visibilityComponent>;
-		zoom: number;
 	} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>
-> = ({ entity, zoom, ...rest }) => {
-	const selectedEntity = useSelectedEntity();
-	const isSelected = selectedEntity.current === entity;
+> = ({ entity, ...rest }) => {
+	const { state, selectEntity } = useControlsContext();
+
+	const isSelected = state.selectedEntity === entity;
+
 	const contextMenu = useMapTileContextMenu();
+
 	const game = useGameContext();
+
 	const onRmb = useCallback<MouseEventHandler<HTMLDivElement>>(
 		(event) => {
 			const tile = game.terrain.getTileEqualToLocation(entity.location.get());
@@ -35,15 +39,16 @@ export const MapEntity: FunctionComponent<
 	);
 
 	const [x, y] = useEventedValue(entity.location);
+
 	return (
-		<div
-			className={`meta--emoji-symbols map-entity ${isSelected ? `map-entity--selected` : ''}`}
-			onClick={() => selectedEntity.set(entity)}
+		<MapLocation
+			x={x}
+			y={y}
+			onClick={() => selectEntity(entity)}
 			onContextMenu={onRmb}
-			style={{ top: `${y * zoom}px`, left: `${x * zoom}px` }}
 			{...rest}
 		>
-			{entity.icon}
-		</div>
+			<div style={{ fontSize: `${entity.iconSize}em` }}>{entity.icon}</div>
+		</MapLocation>
 	);
 };

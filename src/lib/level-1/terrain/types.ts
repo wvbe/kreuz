@@ -3,6 +3,9 @@ import { type FilterFn } from '../types';
 
 export type GameDistance = number;
 
+/**
+ * A tuple of x, y, z coordinates.
+ */
 export type SimpleCoordinate = [GameDistance, GameDistance, GameDistance];
 
 /**

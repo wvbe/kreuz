@@ -1,8 +1,8 @@
 import React, { FunctionComponent, useCallback, useState } from 'react';
 import { timeToString } from '../../lib/level-1/time/timeToString.js';
+import { useDriverContext } from '../../ui2/contexts/DriverContext.js';
+import { useGameContext } from '../../ui2/contexts/GameContext.js';
 import { FillBar } from '../components/atoms/FillBar';
-import { useDriverContext } from '../context/DriverContext';
-import { useGameContext } from '../context/GameContext';
 import { useEventedValue } from '../hooks/useEventedValue';
 
 export const GameClock: FunctionComponent = () => {
@@ -14,6 +14,7 @@ export const GameClock: FunctionComponent = () => {
 	const pause = useCallback(async () => {
 		await driver.stop();
 	}, []);
+	
 	const resume = useCallback(async () => {
 		await driver.start();
 	}, []);

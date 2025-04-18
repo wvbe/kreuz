@@ -4,10 +4,10 @@ import { useParams } from 'react-router-dom';
 import { PERSON_NEEDS } from '../../lib/level-1/constants/needs';
 import Game from '../../lib/level-1/Game';
 import { Material } from '../../lib/level-1/inventory/Material';
+import { useGameContext } from '../../ui2/contexts/GameContext';
 import { Badge } from '../components/atoms/Badge';
 import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow';
 import { FillBar } from '../components/atoms/FillBar';
-import { useGameContext } from '../context/GameContext';
 import { useNavigation } from '../hooks/useNavigation';
 import { ROUTE_PRODUCTION_DETAILS } from './ROUTES';
 

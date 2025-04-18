@@ -1,6 +1,7 @@
 import { type SimpleCoordinate } from '../../terrain/types';
 import { EcsArchetype } from '../classes/EcsArchetype';
 import { locationComponent } from '../components/locationComponent';
+import { mineralContentsComponent } from '../components/mineralContentsComponent';
 import { outlineComponent } from '../components/outlineComponent';
 import { pathableComponent } from '../components/pathableComponent';
 import { surfaceComponent, SurfaceType } from '../components/surfaceComponent';
@@ -17,8 +18,16 @@ export const tileArchetype = new EcsArchetype<
 	| typeof outlineComponent
 	| typeof surfaceComponent
 	| typeof pathableComponent
+	| typeof mineralContentsComponent
 >(
-	[visibilityComponent, locationComponent, outlineComponent, surfaceComponent, pathableComponent],
+	[
+		visibilityComponent,
+		locationComponent,
+		outlineComponent,
+		surfaceComponent,
+		pathableComponent,
+		mineralContentsComponent,
+	],
 	(entity, options) => {
 		locationComponent.attach(entity, {
 			location: options.location,
@@ -27,6 +36,9 @@ export const tileArchetype = new EcsArchetype<
 			outlineCoordinates: options.outlineCoordinates,
 		});
 		surfaceComponent.attach(entity, { surfaceType: options.surfaceType });
+		mineralContentsComponent.attach(entity, {
+			location: options.location,
+		});
 		pathableComponent.attach(entity, {
 			walkability: options.surfaceType === SurfaceType.OPEN ? 1 : 0,
 		});

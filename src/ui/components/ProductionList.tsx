@@ -10,7 +10,7 @@ import { byEcsComponents } from '../../lib/level-1/ecs/assert';
 import { productionComponent } from '../../lib/level-1/ecs/components/productionComponent';
 import { Blueprint } from '../../lib/level-1/ecs/components/productionComponent/Blueprint';
 import { EcsEntity } from '../../lib/level-1/ecs/types';
-import { useGameContext } from '../context/GameContext';
+import { useGameContext } from '../../ui2/contexts/GameContext';
 import { useCollection } from '../hooks/useEventedValue';
 import { useNavigation } from '../hooks/useNavigation';
 import { ROUTE_PRODUCTION_DETAILS } from '../routes/ROUTES';

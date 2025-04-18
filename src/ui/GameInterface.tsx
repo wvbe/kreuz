@@ -1,17 +1,20 @@
 import React, { type FunctionComponent } from 'react';
 import { HashRouter, Route } from 'react-router-dom';
 
-import { DriverI } from '../lib/level-1/drivers/types.js';
-import Game from '../lib/level-1/Game.js';
-import { PROMPT_CONSTRUCTION_JOB } from '../lib/level-2/commands/constructEntity.js';
+import { DriverI } from '../lib/level-1/drivers/types';
+import Game from '../lib/level-1/Game';
+import { PROMPT_CONSTRUCTION_JOB } from '../lib/level-2/commands/constructEntity';
+import { DriverContext } from '../ui2/contexts/DriverContext';
+import { GameContext } from '../ui2/contexts/GameContext';
+import { ReplacementSpaceContext } from '../ui2/contexts/ReplacementSpaceContext';
+import { HtmlMapTerrain } from '../ui2/game/HtmlMapTerrain';
+import { HtmlMapEntities } from '../ui2/map/HtmlMapEntities';
+import { PanZoomable } from '../ui2/util/PanZoomable';
 import { GameClock } from './application/GameClock';
-import { GameMap } from './application/GameMap';
 import { GamePanels } from './application/GamePanels';
 import { MaterialList } from './components/MaterialList';
 import { ProductionList } from './components/ProductionList';
-import { DriverContext } from './context/DriverContext';
-import { GameContext } from './context/GameContext';
-import { ReplacementSpaceContext } from './context/ReplacementSpaceContext';
+import { MapTileContextMenuHost } from './context-menu/MAP_TILE_CONTEXT_MENU';
 import { SelectedEntityContextProvider } from './hooks/useSelectedEntity';
 import { ModalHost, registerUiForPrompt } from './modals/ModalHost';
 import { EntityConstructionModal } from './prompts/EntityConstructionModal';
@@ -45,7 +48,14 @@ export const GameInterface: FunctionComponent<{
 					<ReplacementSpaceContext>
 						<SelectedEntityContextProvider>
 							<GameClock />
-							<GameMap />
+							<PanZoomable>
+								<MapTileContextMenuHost>
+									<div style={{ position: 'absolute', top: '50%', left: '50%' }}>
+										<HtmlMapTerrain terrain={game.terrain} />
+										<HtmlMapEntities entities={game.entities} />
+									</div>
+								</MapTileContextMenuHost>
+							</PanZoomable>
 							<GamePanels>
 								<Route path={ROUTE_ENTITIES_PEOPLE} Component={ListEntityRoute} />
 								<Route

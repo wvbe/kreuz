@@ -1,10 +1,10 @@
 import React, { useMemo, type FunctionComponent } from 'react';
 import { useParams } from 'react-router-dom';
 import { eventLogComponent } from '../../lib/level-1/ecs/components/eventLogComponent';
+import { useGameContext } from '../../ui2/contexts/GameContext';
 import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow';
 import { Cell, Row, Table } from '../components/atoms/Table';
 import { TokenizedText } from '../components/atoms/TokenizedText';
-import { useGameContext } from '../context/GameContext';
 import { useCollection } from '../hooks/useEventedValue';
 
 export const InspectEntityEventLogRoute: FunctionComponent = () => {

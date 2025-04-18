@@ -1,4 +1,5 @@
 import React, { type FunctionComponent, type ReactNode, createContext, useContext } from 'react';
+import Game from '../../lib/level-1/Game';
 
 const _GameContext = createContext<Game | null>(null);
 

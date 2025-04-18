@@ -13,6 +13,11 @@ export const visibilityComponent = new EcsComponent<{
 	 * The icon of the entity. Often an emoji.
 	 */
 	icon: string;
+
+	/**
+	 * The size modifier of this icon. Probably a bad practice to have here, but gotta get shit done.
+	 */
+	iconSize?: number;
 }>(
 	(entity) => entity.name !== undefined && entity.icon !== undefined,
 	(entity, options) => {

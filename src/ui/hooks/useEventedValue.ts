@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Collection } from '../../lib/level-1/events/Collection';
+import { CollectionBucket } from '../../lib/level-1/events/CollectionBucket';
 import { EventedValue } from '../../lib/level-1/events/EventedValue';
 import { EventEmitterI } from '../../lib/level-1/events/types';
 
@@ -8,11 +9,21 @@ function noTransformSingle<T, O = T>(value: T): O {
 	return value as unknown as O;
 }
 
-export function useCollection<T>(collection: Collection<T>) {
+/**
+ * A hook that returns a reactive array from the provided collection.
+ *
+ * If the second argument is provided, the original collection is split to a {@link CollectionBucket}
+ * with that filter for efficient updates.
+ */
+export function useCollection<T>(collection: Collection<T>, filter?: (item: T) => item is T) {
+	const coll = useMemo(
+		() => (filter ? new CollectionBucket(collection, filter) : collection),
+		[collection, filter],
+	);
 	return useMemoFromEvent<[T[], T[]], T[]>(
-		collection.$change,
-		collection.slice(),
-		useCallback(() => collection.slice(), [collection]),
+		coll.$change,
+		coll.slice(),
+		useCallback(() => coll.slice(), [coll]),
 	);
 }
 

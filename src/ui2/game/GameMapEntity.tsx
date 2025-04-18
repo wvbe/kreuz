@@ -13,6 +13,7 @@ import { useEventedValue } from '../../ui/hooks/useEventedValue';
 import { useControlsContext } from '../contexts/ControlsContext';
 import { useGameContext } from '../contexts/GameContext';
 import { MapLocation } from '../map/MapLocation';
+import { GameEntityIcon } from './GameEntityIcon';
 
 export const GameMapEntity: FunctionComponent<
 	{
@@ -48,7 +49,9 @@ export const GameMapEntity: FunctionComponent<
 			onContextMenu={onRmb}
 			{...rest}
 		>
-			<div style={{ fontSize: `${entity.iconSize}em` }}>{entity.icon}</div>
+			<div style={{ fontSize: `${entity.iconSize}em` }}>
+				<GameEntityIcon entity={entity} />
+			</div>
 		</MapLocation>
 	);
 };

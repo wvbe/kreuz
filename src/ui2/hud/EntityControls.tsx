@@ -2,23 +2,17 @@ import React from 'react';
 import './EntityControls.css';
 import { RoundGlass } from './RoundGlass';
 
-interface EntityInfo {
-	key: string;
-	value: string;
-}
-
-interface ButtonAction {
-	label: string;
-	onClick: () => void;
-}
-
-interface EntityControlsProps {
+const EntityControls: React.FC<{
 	visual: React.ReactNode;
-	entityInfo: EntityInfo[];
-	actions?: ButtonAction[];
-}
-
-const EntityControls: React.FC<EntityControlsProps> = ({ visual, entityInfo, actions }) => {
+	entityInfo: {
+		key: string;
+		value: string;
+	}[];
+	actions?: {
+		label: string;
+		onClick: () => void;
+	}[];
+}> = ({ visual, entityInfo, actions }) => {
 	return (
 		<div className='entity-controls'>
 			<div className='entity-preview-container'>

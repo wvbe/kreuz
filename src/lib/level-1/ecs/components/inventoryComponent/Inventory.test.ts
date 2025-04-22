@@ -1,5 +1,13 @@
 import { expect } from '@jest/globals';
+import { Command } from '../../../classes/Command';
+import { StrictMap } from '../../../classes/StrictMap';
+import {
+	type BehaviorTreeNodeI,
+	type EntityBlackboard,
+} from '../../../ecs/components/behaviorComponent/types';
+import { type Blueprint } from '../../../ecs/components/productionComponent/Blueprint';
 import { Material } from '../../../inventory/Material';
+import { SaveJsonContext } from '../../../types-savedgame';
 import { Inventory } from './Inventory';
 
 const test1 = new Material('wheat', { symbol: '🌾', stackSize: 25 });
@@ -11,6 +19,21 @@ beforeAll(async () => {
 	await godInventory.change(test1, Infinity);
 	await godInventory.change(test2, Infinity);
 });
+
+// Create a mock GameAssets object
+const mockGameAssets = {
+	behaviorNodes: new StrictMap<BehaviorTreeNodeI<EntityBlackboard>>(),
+	materials: new StrictMap<Material>(),
+	blueprints: new StrictMap<Blueprint>(),
+	commands: new StrictMap<Command<EntityBlackboard>>(),
+};
+
+// Add materials to the mock StrictMap
+mockGameAssets.materials.set('🌾', test1);
+mockGameAssets.materials.set('𐂏', test2);
+
+// Use the mock GameAssets in the tests
+const mockContext: SaveJsonContext = mockGameAssets;
 
 describe('Inventory', () => {
 	it('.availableOf()', async () => {
@@ -184,5 +207,62 @@ describe('Issues', () => {
 		expect(
 			inventory.isEverythingAdditionallyAllocatable([{ material: copper, quantity: 5 }]),
 		).toBe(inventory.isAdditionallyAllocatableTo(copper, 5));
+	});
+});
+
+describe('Additional Tests for Inventory', () => {
+	it('should throw an error when making a reservation with an existing key', () => {
+		const inventory = new Inventory();
+		inventory.makeReservation('test', [{ material: test1, quantity: 10 }]);
+		expect(() => {
+			inventory.makeReservation('test', [{ material: test1, quantity: 5 }]);
+		}).toThrow('A reservation for already exists for this key');
+	});
+
+	it('should throw an error when making a reservation with insufficient material', () => {
+		const inventory = new Inventory();
+		expect(() => {
+			inventory.makeReservation('test', [{ material: test1, quantity: -10 }]);
+		}).toThrow('Not enough available material to make a reservation');
+	});
+
+	it('should throw an error when clearing a non-existent reservation', () => {
+		const inventory = new Inventory();
+		expect(() => {
+			inventory.clearReservation('non-existent-key');
+		}).toThrow('No such reservation');
+	});
+
+	it('should not change inventory when change is called with zero delta', async () => {
+		const inventory = new Inventory();
+		await inventory.set(test1, 10);
+		await inventory.change(test1, 0);
+		expect(inventory.availableOf(test1)).toBe(10);
+	});
+
+	it('should not change inventory when changeMultiple is called with an empty array', async () => {
+		const inventory = new Inventory();
+		await inventory.set(test1, 10);
+		await inventory.changeMultiple([]);
+		expect(inventory.availableOf(test1)).toBe(10);
+	});
+
+	it('should correctly convert to and from SaveJson', async () => {
+		const inventory = new Inventory(2);
+		await inventory.set(test1, 10);
+		const saveJson = inventory.toSaveJson(mockContext);
+		expect(saveJson).toEqual({ capacity: 2, items: [{ material: '🌾', quantity: 10 }] });
+
+		const newInventory = new Inventory(2);
+		await newInventory.overwriteFromSaveJson(mockContext, saveJson);
+		expect(newInventory.availableOf(test1)).toBe(10);
+	});
+
+	it('should throw an error when overwriting with a different capacity', async () => {
+		const inventory = new Inventory(2);
+		const saveJson = { capacity: 3, items: [{ material: '🌾', quantity: 10 }] };
+		await expect(inventory.overwriteFromSaveJson(mockContext, saveJson)).rejects.toThrow(
+			'Cannot overwrite an existing inventory with a saved inventory of a different size.',
+		);
 	});
 });

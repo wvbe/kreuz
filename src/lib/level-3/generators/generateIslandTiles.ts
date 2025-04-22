@@ -65,7 +65,7 @@ export function generateIslandTiles(seed: SeedI[]) {
 		if (nextGenerationTiles.length && iterationsRemaining > 0) {
 			grow(nextGenerationTiles, --iterationsRemaining);
 		}
-	})(tiles, 10);
+	})(tiles, 30);
 
 	tiles.forEach((tile) => {
 		const [x, y] = tile.location.get();

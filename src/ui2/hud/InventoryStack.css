@@ -1,14 +1,13 @@
 .inventory-stack {
 	display: inline-flex;
 	flex-direction: row;
-	width: 48px;
-	line-height: calc(var(--line-height) * 4 / 3);
+	width: 3em;
+	line-height: 1em;
 
 	border: 1px solid black;
 	border-radius: 3px;
 	position: relative;
 	overflow: hidden;
-	margin-right: 3px;
 }
 .inventory-stack--ghost,
 .inventory-stack--ghost .inventory-stack__quantity {
@@ -20,17 +19,21 @@
 }
 .inventory-stack__symbol,
 .inventory-stack__quantity {
-	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	flex: 0 0 50%;
 	box-sizing: border-box;
 }
 
+.inventory-stack__symbol {
+	font-size: 0.8em;
+}
 .inventory-stack__quantity {
 	border-left: 1px solid darkgray;
-	font-size: 0.75em;
+	font-size: 0.8em;
 }
 
 .inventory-stack:hover {
 	background-color: var(--color-hover);
-	cursor: pointer;
 }

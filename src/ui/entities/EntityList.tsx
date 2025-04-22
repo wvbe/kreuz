@@ -1,11 +1,11 @@
 import React, { FunctionComponent, useMemo } from 'react';
 import { EcsEntity } from '../../lib/level-1/ecs/types';
 import { Collection } from '../../lib/level-1/events/Collection';
+import { EntityBadge } from '../../ui2/hud/EntityBadge';
 import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow';
 import { Cell, Row, Table } from '../components/atoms/Table';
 import { useCollection } from '../hooks/useEventedValue';
 import { useSelectedEntity } from '../hooks/useSelectedEntity';
-import { EntityBadge } from './EntityBadge';
 
 export const EntityList: FunctionComponent<{
 	label: string;

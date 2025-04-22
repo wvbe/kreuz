@@ -1,0 +1,17 @@
+.definition-table {
+	display: flex;
+	flex-direction: column;
+}
+
+.definition-row {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.definition-key {
+	flex: 1;
+}
+
+.definition-value {
+	flex: 2;
+}

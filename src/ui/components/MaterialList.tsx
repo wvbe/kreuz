@@ -1,8 +1,8 @@
 import React, { FunctionComponent, useMemo } from 'react';
 import { useGameContext } from '../../ui2/contexts/GameContext';
+import { MoneyBag } from '../../ui2/game/GameInventory';
+import { InventoryStack } from '../../ui2/hud/InventoryStack';
 import { useNavigation } from '../hooks/useNavigation';
-import { InventoryStack } from '../inventory/InventoryStack';
-import { MoneyBag } from '../inventory/InventoryUI';
 import { ROUTE_MATERIALS_DETAILS } from '../routes/ROUTES';
 import { CollapsibleWindow } from './atoms/CollapsibleWindow';
 import { Cell, Row, Table } from './atoms/Table';

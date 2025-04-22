@@ -7,9 +7,9 @@ import { Blueprint } from '../../lib/level-1/ecs/components/productionComponent/
 import { Material } from '../../lib/level-1/inventory/Material';
 import { PROMPT_CONSTRUCTION_JOB } from '../../lib/level-2/commands/constructEntity';
 import { useGameContext } from '../../ui2/contexts/GameContext';
+import { InventoryBag } from '../../ui2/game/GameInventory';
 import { Badge } from '../components/atoms/Badge';
 import { Cell, Row, Table } from '../components/atoms/Table';
-import { InventoryBag } from '../inventory/InventoryUI';
 import { Modal } from '../modals/Modal';
 import { PromptModal } from './types';
 

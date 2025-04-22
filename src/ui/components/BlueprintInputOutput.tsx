@@ -1,6 +1,6 @@
 import React, { FunctionComponent, MouseEventHandler } from 'react';
 import { Blueprint } from '../../lib/level-1/ecs/components/productionComponent/Blueprint';
-import { InventoryBag } from '../inventory/InventoryUI';
+import { InventoryBag } from '../../ui2/game/GameInventory';
 import { Cell, Row, Table } from './atoms/Table';
 
 export const BlueprintInputOutput: FunctionComponent<{

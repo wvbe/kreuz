@@ -7,6 +7,7 @@ import { PROMPT_CONSTRUCTION_JOB } from '../lib/level-2/commands/constructEntity
 import { DriverContext } from '../ui2/contexts/DriverContext';
 import { GameContext } from '../ui2/contexts/GameContext';
 import { ReplacementSpaceContext } from '../ui2/contexts/ReplacementSpaceContext';
+import { GameContextMenuHost } from '../ui2/game/GameContextMenu';
 import { HtmlMapTerrain } from '../ui2/game/HtmlMapTerrain';
 import { HtmlMapEntities } from '../ui2/map/HtmlMapEntities';
 import { PanZoomable } from '../ui2/util/PanZoomable';
@@ -14,7 +15,6 @@ import { GameClock } from './application/GameClock';
 import { GamePanels } from './application/GamePanels';
 import { MaterialList } from './components/MaterialList';
 import { ProductionList } from './components/ProductionList';
-import { MapTileContextMenuHost } from './context-menu/MAP_TILE_CONTEXT_MENU';
 import { SelectedEntityContextProvider } from './hooks/useSelectedEntity';
 import { ModalHost, registerUiForPrompt } from './modals/ModalHost';
 import { EntityConstructionModal } from './prompts/EntityConstructionModal';
@@ -49,12 +49,12 @@ export const GameInterface: FunctionComponent<{
 						<SelectedEntityContextProvider>
 							<GameClock />
 							<PanZoomable>
-								<MapTileContextMenuHost>
+								<GameContextMenuHost>
 									<div style={{ position: 'absolute', top: '50%', left: '50%' }}>
 										<HtmlMapTerrain terrain={game.terrain} />
 										<HtmlMapEntities entities={game.entities} />
 									</div>
-								</MapTileContextMenuHost>
+								</GameContextMenuHost>
 							</PanZoomable>
 							<GamePanels>
 								<Route path={ROUTE_ENTITIES_PEOPLE} Component={ListEntityRoute} />

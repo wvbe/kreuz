@@ -3,7 +3,8 @@
 }
 
 .entity-preview-container {
-	font-size: 8em;
+	/* Set to the size of the FancyClock component, it cannot scale to us so we must scale to them */
+	font-size: 118px;
 }
 
 .entity-preview {
@@ -22,18 +23,17 @@
 	flex: 1;
 	flex-direction: column;
 	justify-content: space-between;
+	gap: 1em;
 }
 
 .entity-info {
 	display: flex;
 	flex-direction: column;
 	flex: 1;
-	padding: 1em;
 }
 
-.entity-actions {
+.entity-tabs {
 	display: flex;
 	justify-content: flex-start;
 	gap: 1em;
-	padding: 0 1em 1em 1em;
 }

@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { EcsEntity } from '../../lib/level-1/ecs/types';
+import { EntityBadge } from '../../ui2/hud/EntityBadge';
 import { CollapsibleWindow } from '../components/atoms/CollapsibleWindow';
-import { EntityBadge } from './EntityBadge';
 import { EntityBlueprintBadgeDetails } from './details/EntityBlueprintBadgeDetails';
 import { EntityBlueprintProgressDetails } from './details/EntityBlueprintProgressDetails';
 import { EntityHealthDetails } from './details/EntityHealthDetails';

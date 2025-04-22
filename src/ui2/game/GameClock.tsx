@@ -6,12 +6,18 @@ import { useGameContext } from '../contexts/GameContext';
 import { FancyClock } from '../clock/FancyClock';
 import './game-ui.css';
 
+/**
+ * A component that maps the game time to a presentational clock component.
+ *
+ * This component uses the {@link FancyClock} presentational component to display the current game time.
+ */
 export const GameClock: FC = () => {
 	const driver = useDriverContext();
 	const game = useGameContext();
 	const time = useEventedValue(game.time);
 	const [gameSpeed, setGameSpeed] = useState(game.time.speed.get());
 	const isAnimating = useEventedValue(driver.$$animating);
+
 	const pause = useCallback(async () => {
 		await driver.stop();
 	}, []);
@@ -19,26 +25,19 @@ export const GameClock: FC = () => {
 	const resume = useCallback(async () => {
 		await driver.start();
 	}, []);
+
 	const faster = useCallback(async () => {
 		setGameSpeed((current) => {
 			game.time.speed.set(current * 2);
 			return current * 2;
 		});
 	}, []);
+
 	const slower = useCallback(async () => {
 		setGameSpeed((current) => {
 			game.time.speed.set(Math.ceil(current / 2));
 			return Math.ceil(current / 2);
 		});
-	}, []);
-
-	const onGameSpeedChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>((event) => {
-		const timeDilation = parseFloat(event.target.value);
-		if (isNaN(timeDilation) || timeDilation < 0) {
-			return;
-		}
-		game.time.speed.set(timeDilation);
-		setGameSpeed(timeDilation);
 	}, []);
 
 	return (
@@ -50,7 +49,6 @@ export const GameClock: FC = () => {
 					// so the arbitrary number here decides how long that is
 					time / 300
 				}
-				onTimeSpeedChange={() => {}}
 			/>
 			<aside>
 				<button onClick={slower}>🐢</button>

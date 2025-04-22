@@ -10,10 +10,10 @@ import { locationComponent } from './locationComponent';
 import { pathableComponent } from './pathableComponent';
 import { Path } from './pathingComponent/Path';
 
-type WalkableEntity = EcsEntity<typeof locationComponent | typeof pathingComponent>;
-type WalkableTile = EcsEntity<typeof locationComponent | typeof pathableComponent>;
+type PathingEntity = EcsEntity<typeof locationComponent | typeof pathingComponent>;
+export type PathableTileEntity = EcsEntity<typeof locationComponent | typeof pathableComponent>;
 
-async function animateTo(entity: WalkableEntity, destination: SimpleCoordinate) {
+async function animateTo(entity: PathingEntity, destination: SimpleCoordinate) {
 	const distance = entity.euclideanDistanceTo(destination);
 	await entity.$stepStart.set({
 		destination,
@@ -22,7 +22,7 @@ async function animateTo(entity: WalkableEntity, destination: SimpleCoordinate) 
 	});
 }
 
-async function walkToTile(entity: WalkableEntity, game: Game, destination: WalkableTile) {
+async function walkToTile(entity: PathingEntity, game: Game, destination: PathableTileEntity) {
 	if (!locationComponent.test(entity) || !pathingComponent.test(entity)) {
 		throw new Error(`Entity ${entity} is unable to walk`);
 	}
@@ -51,15 +51,16 @@ async function walkToTile(entity: WalkableEntity, game: Game, destination: Walka
 		return;
 	}
 
-	await entity.$pathStart.emit(path);
+	await entity.$path.set(path);
 
+	let nextStepIndex = 0;
 	const unlisten = entity.$stepEnd.on(async (coordinate) => {
 		entity.location.set(coordinate);
-		const nextStep = path.shift();
+		const nextStep = path[nextStepIndex++];
 		if (!nextStep) {
 			unlisten();
 			unlistenNewPath();
-			await entity.$pathEnd.emit();
+			await entity.$path.set(null);
 		} else {
 			await animateTo(entity, nextStep.location.get());
 		}
@@ -67,29 +68,33 @@ async function walkToTile(entity: WalkableEntity, game: Game, destination: Walka
 
 	// If another .walkAlongPath call interrupts us, stop listening for our own $stepEnd events.
 	// @TODO this is untested
-	const unlistenNewPath = entity.$pathStart.once(() => {
-		unlisten();
+	const unlistenNewPath = entity.$path.once((path) => {
+		if (path) {
+			unlistenNewPath();
+			unlisten();
+		}
 	});
 
 	const promise = new Promise<void>((resolve, reject) => {
-		const stopListeningForFinish = entity.$pathEnd.once(() => {
-			stopListeningForInterrupt();
-			stopListeningForDeath();
-			resolve();
+		const stopListeningForDeath =
+			// Walking around may be stopped by death, ie. there is a dependency on healthComponent,
+			// but having health is not a prerequisite.
+			(entity as unknown as EcsEntity<typeof healthComponent>).$death?.on(() => {
+				cancelWalk();
+			});
+
+		const stopListeningForFinish = entity.$path.on((path) => {
+			if (path === null) {
+				stopListeningForFinish();
+				stopListeningForDeath();
+				resolve();
+			}
 		});
 		const cancelWalk = () => {
 			stopListeningForFinish();
 			stopListeningForDeath();
 			reject();
 		};
-		const stopListeningForDeath =
-			// Walking around may be stopped by death, ie. there is a dependency on healthComponent,
-			// but having health is not a prerequisite.
-			(entity as unknown as EcsEntity<typeof healthComponent>).$death?.on(() => {
-				cancelWalk();
-				stopListeningForInterrupt();
-			});
-		const stopListeningForInterrupt = entity.$pathStart.once(cancelWalk);
 	});
 
 	// Take the first step to kick off this event chain;
@@ -109,19 +114,15 @@ export const pathingComponent = new EcsComponent<
 		/**
 		 * A method to make this entity find a path towards the given tile and animate towards it.
 		 */
-		walkToTile(game: Game, tile: WalkableTile): Promise<void>;
+		walkToTile(game: Game, tile: PathableTileEntity): Promise<void>;
 		/**
 		 * The distance covered per game time.
 		 */
 		walkSpeed: number;
 		/**
-		 * Emitted when the entity starts walking along a path.
+		 * The path that this entity is currently walking along, so long as it is walking.
 		 */
-		$pathStart: Event<[WalkableTile[]]>;
-		/**
-		 * Emitted when the entity stops walking along a path.
-		 */
-		$pathEnd: Event<[]>;
+		$path: EventedValue<PathableTileEntity[] | null>;
 		/**
 		 * Emitted when the entity starts a new step in the path.
 		 */
@@ -148,23 +149,22 @@ export const pathingComponent = new EcsComponent<
 	}
 >(
 	(entity) =>
-		entity.$pathStart instanceof Event &&
-		entity.$pathEnd instanceof Event &&
+		entity.$path instanceof Event &&
 		entity.$stepStart instanceof EventedValue &&
 		entity.$stepEnd instanceof Event &&
 		typeof entity.walkToTile === 'function',
 	(entity, options) => {
-		Object.assign(entity, {
-			walkToTile: walkToTile.bind(null, entity as WalkableEntity),
+		const events = {
+			walkToTile: walkToTile.bind(null, entity as PathingEntity),
 			walkSpeed: options.walkSpeed,
-			$pathStart: new Event<[]>('pathingComponent $pathStart'),
-			$pathEnd: new Event<[]>('pathingComponent $pathEnd'),
+			$path: new EventedValue(null, 'pathingComponent $path'),
 			$stepStart: new EventedValue<{
 				destination: SimpleCoordinate;
 				duration: number;
 				done: CallbackFn;
 			} | null>(null, 'pathingComponent $stepStart'),
 			$stepEnd: new Event<[SimpleCoordinate]>('pathingComponent $stepEnd'),
-		});
+		};
+		Object.assign(entity, events);
 	},
 );

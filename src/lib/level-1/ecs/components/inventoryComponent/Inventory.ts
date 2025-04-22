@@ -1,8 +1,3 @@
-/**
- * @file
- * https://github.com/wvbe/experimental-factory-game/blob/master/src/classes/Inventory.ts
- */
-
 import { Event } from '../../../events/Event';
 import { Material } from '../../../inventory/Material';
 import { type MaterialState } from '../../../inventory/types';
@@ -332,7 +327,7 @@ export class Inventory {
 			throw new Error('Not enough available space to make a reservation');
 		}
 		const removed = exchanged.filter(({ quantity }) => quantity < 0);
-		if (!removed.every(({ material, quantity }) => this.availableOf(material) >= quantity)) {
+		if (!removed.every(({ material, quantity }) => this.availableOf(material) >= -quantity)) {
 			throw new Error('Not enough available material to make a reservation');
 		}
 		this.reservations.set(key, exchanged);

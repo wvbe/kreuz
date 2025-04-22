@@ -2,15 +2,15 @@ import React, { FunctionComponent, useCallback } from 'react';
 import { Inventory } from '../../lib/level-1/ecs/components/inventoryComponent/Inventory';
 import { EventedValue } from '../../lib/level-1/events/EventedValue';
 import { MaterialState } from '../../lib/level-1/inventory/types.js';
-import { PopOnUpdateSpan } from '../components/atoms/PopOnUpdateSpan';
-import { useEventedValue, useMemoFromEvent } from '../hooks/useEventedValue';
-import { InventoryStack } from './InventoryStack';
+import { useEventedValue, useMemoFromEvent } from '../../ui/hooks/useEventedValue';
+import { InventoryStack } from '../hud/InventoryStack';
+import { PopOnUpdateSpan } from '../util/PopOnUpdateSpan';
 
 export const InventoryBag: FunctionComponent<{
 	stacks: MaterialState[];
 	capacity?: number;
 }> = ({ stacks, capacity }) => (
-	<div className='inventory'>
+	<div>
 		<p style={{ margin: 0 }}>
 			<MoneyBag
 				value={stacks.reduce(
@@ -21,13 +21,19 @@ export const InventoryBag: FunctionComponent<{
 			item value
 		</p>
 		{stacks.map((state, index) => (
-			<InventoryStack key={index} {...state} />
+			<InventoryStack
+				key={index}
+				icon={state.material.symbol}
+				label={state.material.label}
+				quantity={state.quantity}
+			/>
 		))}
 		{capacity && capacity !== Infinity && stacks.length < capacity
 			? Array.from(new Array(capacity - stacks.length)).map((_, i) => (
 					<InventoryStack
 						key={`ghost-${i}`}
-						material={null}
+						icon={null}
+						label={null}
 						quantity={-Infinity}
 						isGhost
 					/>
@@ -46,6 +52,7 @@ export const MoneyBag: FunctionComponent<{
 		return <MoneyBagInner value={value} />;
 	}
 };
+
 export const MoneyBagWallet: FunctionComponent<{
 	wallet: EventedValue<number>;
 }> = ({ wallet }) => {
@@ -60,12 +67,12 @@ export const MoneyBagInner: FunctionComponent<{
 	);
 };
 
-export const InventoryUI: FunctionComponent<{
+export const GameInventory: FunctionComponent<{
 	wallet?: EventedValue<number>;
 	inventory: Inventory;
 }> = ({ wallet, inventory }) => {
 	const transform = useCallback(() => inventory.getStacks(), [inventory]);
-	const stacks = useMemoFromEvent(inventory.$change, inventory.getStacks(), transform);
+	const stacks = useMemoFromEvent(inventory.$change, transform(), transform);
 
 	return (
 		<>

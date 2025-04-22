@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { PopOnUpdateSpan } from './PopOnUpdateSpan';
+import { PopOnUpdateSpan } from '../../../ui2/util/PopOnUpdateSpan';
 
 export const FillBar: FunctionComponent<{
 	ratio: number;

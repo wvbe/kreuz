@@ -5,41 +5,26 @@ import { RoundGlass } from './RoundGlass';
 export default {
 	title: 'UI/RoundGlass',
 	component: RoundGlass,
+	args: {
+		size: '128px',
+	},
 } as Meta;
 
 const Template: StoryFn = (args: any) => <RoundGlass {...args} />;
 
-export const WithEmojis = Template.bind({});
-WithEmojis.args = {
-	children: <>😊</>,
+export const Empty = Template.bind({});
+Empty.args = {
+	children: <></>,
 };
 
-export const WithRocket = Template.bind({});
-WithRocket.args = {
-	background: 'linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%)',
-	children: (
-		<span style={{ fontSize: '80px', lineHeight: '80px' }} role='img' aria-label='rocket'>
-			🚀
-		</span>
-	),
+export const WithRandomEmoji = Template.bind({});
+WithRandomEmoji.args = {
+	background: 'linear-gradient(0deg,rgb(206, 101, 105) 0%, #fad0c4 100%)',
+	children: <>🏔️</>,
 };
 
-export const WithStar = Template.bind({});
-WithStar.args = {
+export const WithEntity = Template.bind({});
+WithEntity.args = {
 	background: 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)',
-	children: (
-		<span style={{ fontSize: '80px', lineHeight: '80px' }} role='img' aria-label='star'>
-			⭐
-		</span>
-	),
-};
-
-export const WithHeart = Template.bind({});
-WithHeart.args = {
-	background: 'linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)',
-	children: (
-		<span style={{ fontSize: '80px', lineHeight: '80px' }} role='img' aria-label='heart'>
-			❤️
-		</span>
-	),
+	children: <span style={{ fontSize: '0.4em' }}>🧔‍♂️</span>,
 };

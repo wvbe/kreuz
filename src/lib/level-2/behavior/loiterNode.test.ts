@@ -19,8 +19,7 @@ describe('BT: createLoiterBehavior()', () => {
 
 		const pathStart = jest.fn((path: any) => {});
 		const pathEnd = jest.fn();
-		entity.$pathStart.on(pathStart);
-		entity.$pathEnd.on(pathEnd);
+		entity.$path.on((path) => (path ? pathStart(path) : pathEnd()));
 
 		await game.time.steps(500_000);
 		expect(game.time.now).toBe(500_000);

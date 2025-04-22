@@ -2,10 +2,10 @@ import React, { FC, PropsWithChildren, useCallback, useMemo } from 'react';
 
 import { EcsEntity } from '../../lib/level-1/ecs/types';
 import { useGameContext } from '../../ui2/contexts/GameContext';
-import { EntityBadge } from '../entities/EntityBadge';
+import { useGameContextMenuOpener } from '../../ui2/game/GameContextMenu';
+import { EntityBadge } from '../../ui2/hud/EntityBadge';
 import { useNavigation } from '../hooks/useNavigation';
 import { ROUTE_ENTITIES_DETAILS } from '../routes/ROUTES';
-import { useMapTileContextMenu } from './MAP_TILE_CONTEXT_MENU';
 import { MapTileContextMenuItem } from './MapTileContextMenuItem';
 
 export const MapTileContextMenuSection: FC<
@@ -16,7 +16,7 @@ export const MapTileContextMenuSection: FC<
 	}
 > = ({ entity }) => {
 	const game = useGameContext();
-	const contextMenu = useMapTileContextMenu();
+	const contextMenu = useGameContextMenuOpener();
 	const navigate = useNavigation();
 
 	const items = useMemo(

@@ -3,7 +3,7 @@ import React, { FunctionComponent } from 'react';
 import { inventoryComponent } from '../../../lib/level-1/ecs/components/inventoryComponent';
 import { wealthComponent } from '../../../lib/level-1/ecs/components/wealthComponent';
 import { EcsEntity } from '../../../lib/level-1/ecs/types';
-import { InventoryUI } from '../../inventory/InventoryUI';
+import { InventoryView } from '../../../ui2/game/GameInventory';
 
 export const EntityInventoryDetails: FunctionComponent<{
 	entity: EcsEntity;
@@ -13,7 +13,7 @@ export const EntityInventoryDetails: FunctionComponent<{
 		return null;
 	}
 	return (
-		<InventoryUI
+		<InventoryView
 			inventory={inventory}
 			wallet={(entity as EcsEntity<typeof wealthComponent>).wallet}
 		/>

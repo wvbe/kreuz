@@ -6,6 +6,9 @@ import { EcsEntity } from '../../lib/level-1/ecs/types';
 import { ProgressingNumericValue } from '../../lib/level-1/events/ProgressingNumericValue';
 import { useEventedValue } from '../../ui/hooks/useEventedValue';
 
+/**
+ * If the entity is in a non-living state, display a skull instead of the entity.
+ */
 const DeathOrChildren: FC<
 	PropsWithChildren<{
 		health: ProgressingNumericValue;
@@ -15,6 +18,11 @@ const DeathOrChildren: FC<
 	return h ? children : '☠️';
 };
 
+/**
+ * A component that maps an entity from the game to a presentational component.
+ *
+ * This component takes an {@link EcsEntity} and displays it using the {@link DeathOrChildren} presentational component.
+ */
 export const GameEntityIcon: React.FC<{
 	entity: EcsEntity;
 }> = ({ entity }) => {
@@ -22,7 +30,7 @@ export const GameEntityIcon: React.FC<{
 		if (hasEcsComponents(entity, [visibilityComponent])) {
 			return entity.icon;
 		}
-		return null;
+		return '❓';
 	}, [entity]);
 	const outer = useMemo(
 		() =>
@@ -31,7 +39,7 @@ export const GameEntityIcon: React.FC<{
 			) : (
 				inner
 			),
-		[],
+		[entity, inner],
 	);
 	return outer;
 };

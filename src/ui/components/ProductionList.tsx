@@ -11,12 +11,12 @@ import { productionComponent } from '../../lib/level-1/ecs/components/production
 import { Blueprint } from '../../lib/level-1/ecs/components/productionComponent/Blueprint';
 import { EcsEntity } from '../../lib/level-1/ecs/types';
 import { useGameContext } from '../../ui2/contexts/GameContext';
+import { PopOnUpdateSpan } from '../../ui2/util/PopOnUpdateSpan';
 import { useCollection } from '../hooks/useEventedValue';
 import { useNavigation } from '../hooks/useNavigation';
 import { ROUTE_PRODUCTION_DETAILS } from '../routes/ROUTES';
 import { Badge } from './atoms/Badge';
 import { CollapsibleWindow } from './atoms/CollapsibleWindow';
-import { PopOnUpdateSpan } from './atoms/PopOnUpdateSpan';
 import { Cell, Row, Table } from './atoms/Table';
 
 function getTotalDelta(entities: EcsEntity<typeof productionComponent>[]) {

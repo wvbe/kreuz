@@ -1,5 +1,6 @@
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React from 'react';
+import { Tab } from '../util/TabbedSlider';
 import EntityControls from './EntityControls';
 
 export default {
@@ -7,7 +8,26 @@ export default {
 	component: EntityControls,
 } as Meta;
 
-const Template: Story = (args) => <EntityControls {...args} />;
+const Template: StoryFn = (args: any) => <EntityControls {...args} />;
+
+const exampleTabs: Tab[] = [
+	{
+		label: 'Tab 1',
+		Content: ({ isActive, isVisible }) => (
+			<div>
+				Tab 1 Content - Active: {isActive.toString()}, Visible: {isVisible.toString()}
+			</div>
+		),
+	},
+	{
+		label: 'Tab 2',
+		Content: ({ isActive, isVisible }) => (
+			<div>
+				Tab 2 Content - Active: {isActive.toString()}, Visible: {isVisible.toString()}
+			</div>
+		),
+	},
+];
 
 export const Frodo = Template.bind({});
 Frodo.args = {
@@ -17,10 +37,7 @@ Frodo.args = {
 		{ key: 'Race', value: 'Hobbit' },
 		{ key: 'Role', value: 'Ring Bearer' },
 	],
-	actions: [
-		{ label: 'Inspect', onClick: () => alert('Inspecting Frodo') },
-		{ label: 'Follow', onClick: () => alert('Following Frodo') },
-	],
+	tabs: exampleTabs,
 };
 
 export const Gandalf = Template.bind({});
@@ -31,10 +48,7 @@ Gandalf.args = {
 		{ key: 'Race', value: 'Maia' },
 		{ key: 'Role', value: 'Wizard' },
 	],
-	actions: [
-		{ label: 'Inspect', onClick: () => alert('Inspecting Gandalf') },
-		{ label: 'Follow', onClick: () => alert('Following Gandalf') },
-	],
+	tabs: exampleTabs,
 };
 
 export const Aragorn = Template.bind({});
@@ -45,8 +59,5 @@ Aragorn.args = {
 		{ key: 'Race', value: 'Human' },
 		{ key: 'Role', value: 'King of Gondor' },
 	],
-	actions: [
-		{ label: 'Inspect', onClick: () => alert('Inspecting Aragorn') },
-		{ label: 'Follow', onClick: () => alert('Following Aragorn') },
-	],
+	tabs: exampleTabs,
 };

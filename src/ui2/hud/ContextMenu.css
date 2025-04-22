@@ -1,0 +1,64 @@
+/* Basic styling for the context menu */
+.context-menu {
+	position: relative;
+	background-color: #f0f0f0;
+	border: 1px solid #ccc;
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+	width: 200px;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	font-size: 14px;
+	color: #333;
+}
+
+.context-menu__header {
+	padding: 8px 12px;
+	font-weight: bold;
+	background-color: #e0e0e0;
+	border-bottom: 1px solid #ccc;
+}
+
+.context-menu__items {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.context-menu__item {
+	padding: 8px 12px;
+	cursor: pointer;
+	transition: background-color 0.2s ease-in-out;
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.context-menu__item:hover {
+	background-color: #d0d0d0;
+}
+
+.context-menu__submenu {
+	position: absolute;
+	left: 100%;
+	top: 0;
+	z-index: 1000;
+	background-color: #f0f0f0;
+	border: 1px solid #ccc;
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+	width: 180px;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	transform: none;
+}
+
+.context-menu__submenu-item {
+	padding: 8px 12px;
+	cursor: pointer;
+	transition: background-color 0.2s ease-in-out;
+}
+
+.context-menu__submenu-item:hover {
+	background-color: #d0d0d0;
+}

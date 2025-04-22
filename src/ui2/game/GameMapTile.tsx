@@ -4,9 +4,9 @@ import { locationComponent } from '../../lib/level-1/ecs/components/locationComp
 import { surfaceComponent, SurfaceType } from '../../lib/level-1/ecs/components/surfaceComponent';
 import { getMaterialDistribution } from '../../lib/level-1/ecs/components/surfaceComponent/materialDistribution';
 import { EcsEntity } from '../../lib/level-1/ecs/types';
-import { useMapTileContextMenu } from '../../ui/context-menu/MAP_TILE_CONTEXT_MENU';
 import { useEventedValue } from '../../ui/hooks/useEventedValue';
 import { MapLocation } from '../map/MapLocation';
+import { useGameContextMenuOpener } from './GameContextMenu';
 
 export type WallMaterial = 'granite' | 'limestone' | 'clay' | 'dirt';
 export type ExcavatedMaterial = 'dirt' | 'wood' | 'pebbles' | 'stones' | 'concrete';
@@ -28,6 +28,11 @@ const MATERIAL_COLORS = {
 	},
 };
 
+/**
+ * A component that maps a game tile to a presentational map location.
+ *
+ * This component uses the {@link MapLocation} presentational component to display the tile's location on the map.
+ */
 export const GameMapTile: FC<{
 	tile: EcsEntity<typeof locationComponent | typeof surfaceComponent>;
 }> = ({ tile }) => {
@@ -35,7 +40,6 @@ export const GameMapTile: FC<{
 
 	const surfaceType = useEventedValue(tile.surfaceType);
 	const isExcavated = surfaceType === SurfaceType.OPEN;
-
 	const distribution = useMemo(
 		() => getMaterialDistribution(location[0], location[1]),
 		[location],
@@ -60,10 +64,11 @@ export const GameMapTile: FC<{
 		return new Color({ r, g, b }).darken(isExcavated ? 0 : 0.6);
 	}, [distribution, isExcavated]);
 
-	const contextMenu = useMapTileContextMenu();
+	const contextMenu = useGameContextMenuOpener();
 
 	const onRmb = useCallback<MouseEventHandler<HTMLDivElement>>(
 		(event) => {
+			return;
 			console.log('Hm');
 			contextMenu.open(event, { tile });
 		},

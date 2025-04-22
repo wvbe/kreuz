@@ -1,22 +1,14 @@
-import React, {
-	CSSProperties,
-	DetailedHTMLProps,
-	HTMLAttributes,
-	PropsWithChildren,
-	useMemo,
-} from 'react';
+import React, { CSSProperties, DetailedHTMLProps, HTMLAttributes, useMemo } from 'react';
 
 export const MapLocation: React.FC<
-	PropsWithChildren<
-		DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
-			x: number;
-			y: number;
-			dx?: number;
-			dy?: number;
-			style?: CSSProperties;
-		}
-	>
-> = ({ x, y, dx = 0, dy = 0, style = {}, children: decoration, ...rest }) => {
+	DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
+		x: number;
+		y: number;
+		dx?: number;
+		dy?: number;
+		style?: CSSProperties;
+	}
+> = ({ x, y, dx = 0, dy = 0, style = {}, ...rest }) => {
 	const styleProp = useMemo<CSSProperties>(
 		() => ({
 			position: 'absolute',
@@ -32,9 +24,5 @@ export const MapLocation: React.FC<
 		}),
 		[x, y, dx, dy, style],
 	);
-	return (
-		<div style={styleProp} {...rest}>
-			{decoration}
-		</div>
-	);
+	return <div style={styleProp} {...rest} />;
 };

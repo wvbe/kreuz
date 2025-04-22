@@ -11,6 +11,11 @@ import { GameMapTile } from './GameMapTile';
 
 const filterNoTiles = (entity: EcsEntity): entity is EcsEntity => !tileArchetype.test(entity);
 
+/**
+ * A component that maps the game terrain and entities to presentational components.
+ *
+ * This component uses the {@link GameMapTile} and {@link GameMapEntity} presentational components to display the game map.
+ */
 export const GameMap: FC = () => {
 	const game = useGameContext();
 	const tilesCollection = useCollection(game.terrain.tiles);

@@ -1,5 +1,5 @@
 import React, { type FunctionComponent, type ReactNode } from 'react';
-import { PopOnUpdateSpan } from './PopOnUpdateSpan';
+import { PopOnUpdateSpan } from '../../../ui2/util/PopOnUpdateSpan';
 
 import './badge.css';
 
@@ -9,7 +9,7 @@ export const Badge: FunctionComponent<{
 	subtitle: ReactNode;
 }> = ({ icon, title, subtitle }) => {
 	return (
-		<header className='badge'>
+		<div className='badge'>
 			<div className='meta--emoji-symbols badge__icon'>
 				<div className='badge__icon__inner'>{icon}</div>
 			</div>
@@ -19,6 +19,6 @@ export const Badge: FunctionComponent<{
 					<PopOnUpdateSpan>{subtitle}</PopOnUpdateSpan>
 				</p>
 			</div>
-		</header>
+		</div>
 	);
 };

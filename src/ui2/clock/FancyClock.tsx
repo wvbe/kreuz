@@ -7,8 +7,6 @@ import './FancyClock.css';
 interface AnalogClockProps {
 	/** Current time value (0-1000, where 0 is midnight and 1000 is one hour later) */
 	time: number;
-	/** Callback function when time speed is changed */
-	onTimeSpeedChange: (speed: number) => void;
 	style?:
 		| 'skeuomorphic'
 		| 'flat-design'
@@ -28,7 +26,6 @@ interface AnalogClockProps {
 export const FancyClock: FunctionComponent<AnalogClockProps> = ({
 	time,
 	style = 'skeuomorphic',
-	onTimeSpeedChange,
 }) => {
 	// Convert time (0-1000) to degrees (0-360)
 	const t = time / 60;

@@ -10,15 +10,16 @@ import { MapTileContextMenuSection } from './MapTileContextMenuSection';
 export const MapTileContextMenu: FC<{
 	tile: EcsEntity<typeof locationComponent>;
 }> = ({ tile }) => {
-	const game = useGameContext();
 	const selectedEntity = useSelectedEntity();
 
+	const game = useGameContext();
 	const tileEntities = game.entities.filter(
 		(entity) =>
 			locationComponent.test(entity) &&
 			!tileArchetype.test(entity) &&
 			(entity as EcsEntity<typeof locationComponent>).equalsMapLocation(tile.location.get()),
 	);
+
 	return (
 		<ErrorBoundary>
 			<div className='panel map-tile-context-menu'>

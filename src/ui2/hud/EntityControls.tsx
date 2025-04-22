@@ -1,38 +1,26 @@
 import React from 'react';
+import TabbedSlider, { Tab } from '../util/TabbedSlider';
 import './EntityControls.css';
 import { RoundGlass } from './RoundGlass';
+import { DefinitionTable } from '../util/DefinitionTable';
 
-const EntityControls: React.FC<{
+export interface EntityControlsProps {
 	visual: React.ReactNode;
-	entityInfo: {
-		key: string;
-		value: string;
-	}[];
-	actions?: {
-		label: string;
-		onClick: () => void;
-	}[];
-}> = ({ visual, entityInfo, actions }) => {
+	entityInfo: { key: string; value: React.ReactNode }[];
+	tabs?: Tab[];
+}
+
+const EntityControls: React.FC<EntityControlsProps> = ({ visual, entityInfo, tabs }) => {
 	return (
 		<div className='entity-controls'>
 			<div className='entity-preview-container'>
 				<RoundGlass>{visual}</RoundGlass>
 			</div>
 			<div className='entity-info-container'>
-				<div className='entity-info'>
-					{entityInfo.map((info) => (
-						<div key={info.key}>
-							<strong>{info.key}:</strong> {info.value}
-						</div>
-					))}
-				</div>
-				{actions && (
-					<div className='entity-actions'>
-						{actions.map((action, index) => (
-							<button key={index} onClick={action.onClick}>
-								{action.label}
-							</button>
-						))}
+				<DefinitionTable data={entityInfo} />
+				{tabs && tabs.length > 0 && (
+					<div className='entity-tabs'>
+						<TabbedSlider tabs={tabs} />
 					</div>
 				)}
 			</div>

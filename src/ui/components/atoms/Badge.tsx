@@ -10,7 +10,7 @@ export const Badge: FunctionComponent<{
 }> = ({ icon, title, subtitle }) => {
 	return (
 		<div className='badge'>
-			<div className='meta--emoji-symbols badge__icon'>
+			<div className='badge__icon'>
 				<div className='badge__icon__inner'>{icon}</div>
 			</div>
 			<div className='badge__labels'>

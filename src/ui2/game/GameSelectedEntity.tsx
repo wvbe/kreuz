@@ -7,17 +7,13 @@ import { pathingComponent } from '../../lib/level-1/ecs/components/pathingCompon
 import { visibilityComponent } from '../../lib/level-1/ecs/components/visibilityComponent';
 import { wealthComponent } from '../../lib/level-1/ecs/components/wealthComponent';
 import { useControlsContext } from '../contexts/ControlsContext';
+import { Panel } from '../hud/atoms/Panel';
 import EntityControls, { EntityControlsProps } from '../hud/EntityControls';
 import { ErrorBoundary } from '../util/ErrorBoundary';
 import { GameEntityIcon } from './GameEntityIcon';
 import EventLogTab from './tabs/EventLogTab';
 import InventoryTab from './tabs/InventoryTab';
 import PathingTab from './tabs/PathingTab';
-
-type ButtonAction = {
-	label: string;
-	onClick: () => void;
-};
 
 const NO_ENTITY_SELECTED_ENTITY = { id: 'no-entity-selected' };
 
@@ -42,7 +38,7 @@ const GameSelectedEntity: React.FC = () => {
 		);
 
 		const props: EntityControlsProps = {
-			visual: (
+			icon: (
 				<div style={{ fontSize: `${selectedEntity.iconSize ?? 0.4}em` }}>
 					<GameEntityIcon entity={selectedEntity} />
 				</div>
@@ -78,11 +74,11 @@ const GameSelectedEntity: React.FC = () => {
 	}, [state.selectedEntity]);
 
 	return (
-		<div data-component='GameSelectedEntity'>
+		<Panel data-component='GameSelectedEntity'>
 			<ErrorBoundary>
 				<EntityControls {...entityControlProps} />
 			</ErrorBoundary>
-		</div>
+		</Panel>
 	);
 };
 

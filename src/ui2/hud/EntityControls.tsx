@@ -1,22 +1,32 @@
-import React from 'react';
-import TabbedSlider, { Tab } from '../util/TabbedSlider';
-import './EntityControls.css';
-import { RoundGlass } from './RoundGlass';
+import React, { ReactNode } from 'react';
 import { DefinitionTable } from '../util/DefinitionTable';
+import TabbedSlider, { Tab } from '../util/TabbedSlider';
+import { EntityBadge } from './EntityBadge';
+import './EntityControls.css';
+import { RoundGlass } from './atoms/RoundGlass';
 
 export interface EntityControlsProps {
-	visual: React.ReactNode;
+	icon: string | React.ReactNode;
+	title: ReactNode;
+	subtitle: ReactNode;
 	entityInfo: { key: string; value: React.ReactNode }[];
 	tabs?: Tab[];
 }
 
-const EntityControls: React.FC<EntityControlsProps> = ({ visual, entityInfo, tabs }) => {
+const EntityControls: React.FC<EntityControlsProps> = ({
+	icon,
+	title,
+	subtitle,
+	entityInfo,
+	tabs,
+}) => {
 	return (
 		<div className='entity-controls'>
 			<div className='entity-preview-container'>
-				<RoundGlass>{visual}</RoundGlass>
+				<RoundGlass>{icon}</RoundGlass>
 			</div>
 			<div className='entity-info-container'>
+				<EntityBadge title={title} subtitle={subtitle} hideIcon={true} />
 				<DefinitionTable data={entityInfo} />
 				{tabs && tabs.length > 0 && (
 					<div className='entity-tabs'>

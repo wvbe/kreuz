@@ -1,5 +1,8 @@
 import React, { CSSProperties, DetailedHTMLProps, HTMLAttributes, useMemo } from 'react';
 
+/**
+ * Puts a div at a given location on the map.
+ */
 export const MapLocation: React.FC<
 	DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
 		x: number;

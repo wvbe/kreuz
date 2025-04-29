@@ -3,7 +3,8 @@ import { useEventedValue } from '../../ui/hooks/useEventedValue';
 import { useDriverContext } from '../contexts/DriverContext';
 import { useGameContext } from '../contexts/GameContext';
 
-import { FancyClock } from '../clock/FancyClock';
+import { FancyClock } from '../hud/atoms/FancyClock';
+import { Panel } from '../hud/atoms/Panel';
 import './game-ui.css';
 
 /**
@@ -41,7 +42,7 @@ export const GameClock: FC = () => {
 	}, []);
 
 	return (
-		<div data-component='GameClock'>
+		<Panel data-component='GameClock'>
 			<FancyClock
 				time={
 					// t+1 tick on fancy clock is one second.
@@ -56,6 +57,6 @@ export const GameClock: FC = () => {
 			</aside>
 			<p>Speed: {gameSpeed}</p>
 			{isAnimating ? <p>Animating</p> : <p>Paused</p>}
-		</div>
+		</Panel>
 	);
 };

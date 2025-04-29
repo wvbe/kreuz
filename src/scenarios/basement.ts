@@ -6,20 +6,13 @@
  * The expected outcome is a short-running game that ends the timeloop amicably because there is
  * no further events planned.
  */
-import {
-	DriverI,
-	EcsArchetypeEntity,
-	SurfaceType,
-	byEcsArchetype,
-	personArchetype,
-	tileArchetype,
-} from '@lib';
-import { DEFAULT_ASSETS } from '@lib/assets';
-import { Game, generateGridTerrainFromAscii } from '@lib/core';
-import { byEcsComponents } from '../library/level-1/ecs/assert.ts';
-import { civilianBehavior } from '../library/level-2/behavior.ts';
-import { growTerrainForExcavatedEdges } from '../library/level-3/modifiers/growTerrainForExcavatedEdges.ts';
-
+import { DriverI } from '../lib/level-1/drivers/types';
+import { personArchetype } from '../lib/level-1/ecs/archetypes/personArchetype';
+import Game from '../lib/level-1/Game';
+import { civilianBehavior } from '../lib/level-2/behavior';
+import { DEFAULT_ASSETS } from '../lib/level-2/DEFAULT_ASSETS';
+import { growTerrainForExcavatedEdges } from '../lib/level-3/modifiers/growTerrainForExcavatedEdges';
+import { generateGridTerrainFromAscii } from '../lib/test/generateGridTerrainFromAscii';
 export default async function (driver: DriverI) {
 	const game = new Game(driver, '1', DEFAULT_ASSETS);
 	game.terrain.tiles.$add.on(growTerrainForExcavatedEdges.bind(game));

@@ -8,7 +8,7 @@ export default {
 } as Meta;
 
 const Template: Story = (args) => {
-	const [text, setText] = useState('Initial Text');
+	const [text, setText] = useState('This will refresh for a random value every 2 seconds');
 
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -19,6 +19,7 @@ const Template: Story = (args) => {
 
 	return <PopOnUpdateSpan {...args}>{text}</PopOnUpdateSpan>;
 };
+
 
 export const Default = Template.bind({});
 Default.args = {};

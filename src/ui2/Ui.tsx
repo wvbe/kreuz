@@ -9,8 +9,9 @@ import { GameClock } from './game/GameClock';
 import { GameContextMenuHost } from './game/GameContextMenu';
 import { GameMap } from './game/GameMap';
 import { GameSelectedEntity } from './game/GameSelectedEntity';
+import './hud/variables.css';
 import { PanZoomable } from './util/PanZoomable';
-
+import { GameActionBar } from './game/GameActionBar';
 registerUiForPrompt(PROMPT_CONSTRUCTION_JOB, EntityConstructionModal);
 
 export const Ui: FunctionComponent<{
@@ -20,6 +21,7 @@ export const Ui: FunctionComponent<{
 	return (
 		<Contexts driver={driver} game={game}>
 			<GameClock />
+			<GameActionBar />
 			<GameSelectedEntity />
 			<PanZoomable>
 				<GameContextMenuHost>

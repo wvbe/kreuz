@@ -29,35 +29,86 @@ const exampleTabs: Tab[] = [
 	},
 ];
 
-export const Frodo = Template.bind({});
-Frodo.args = {
-	visual: '💅',
+export const FlumboZibble = Template.bind({});
+FlumboZibble.args = {
+	icon: '💅',
+	title: 'Flumbo Zibble',
+	subtitle: 'Zibblewump',
 	entityInfo: [
-		{ key: 'Name', value: 'Frodo Baggins' },
-		{ key: 'Race', value: 'Hobbit' },
-		{ key: 'Role', value: 'Ring Bearer' },
+		{ key: 'Role', value: 'Zibblewump Flarn' },
+		{ key: 'Status', value: 'Snorfleblat glibberflop' },
 	],
 	tabs: exampleTabs,
 };
 
-export const Gandalf = Template.bind({});
-Gandalf.args = {
-	visual: '🧙‍♂️',
+export const GloffleTheBlib = Template.bind({});
+GloffleTheBlib.args = {
+	icon: '🧙‍♂️',
+	title: 'Gloffle the Blib',
+	subtitle: 'Flibberflop',
 	entityInfo: [
-		{ key: 'Name', value: 'Gandalf the Grey' },
-		{ key: 'Race', value: 'Maia' },
-		{ key: 'Role', value: 'Wizard' },
+		{ key: 'Role', value: 'Wizzlefump' },
+		{ key: 'Status', value: 'Fizzlenarf blorptwizzle' },
 	],
 	tabs: exampleTabs,
 };
 
-export const Aragorn = Template.bind({});
-Aragorn.args = {
-	visual: '🤴',
+export const Snorvax = Template.bind({});
+Snorvax.args = {
+	icon: '💎',
+	title: 'Snorvax',
+	subtitle: 'Squibblewump',
 	entityInfo: [
-		{ key: 'Name', value: 'Aragorn' },
-		{ key: 'Race', value: 'Human' },
-		{ key: 'Role', value: 'King of Gondor' },
+		{ key: 'Role', value: 'Snarfleblat of Blorptown' },
+		{ key: 'Status', value: 'Grizzlewump turned flarnblat' },
+	],
+	tabs: exampleTabs,
+};
+
+export const Twizzlefip = Template.bind({});
+Twizzlefip.args = {
+	icon: '🏹',
+	title: 'Twizzlefip',
+	subtitle: 'Glibberflop',
+	entityInfo: [
+		{ key: 'Role', value: 'Twizzleflarn' },
+		{ key: 'Status', value: 'Snorfleblat blorpcounter' },
+	],
+	tabs: exampleTabs,
+};
+
+export const Blimbo = Template.bind({});
+Blimbo.args = {
+	icon: '🪓',
+	title: 'Blimbo',
+	subtitle: 'Bibblewump',
+	entityInfo: [
+		{ key: 'Role', value: 'Wompleblat' },
+		{ key: 'Status', value: 'Flarn maintenance snorfle' },
+	],
+	tabs: exampleTabs,
+};
+
+export const SnarfleSnib = Template.bind({});
+SnarfleSnib.args = {
+	icon: '🥘',
+	title: 'Snarfle Snib',
+	subtitle: 'Zibblewump',
+	entityInfo: [
+		{ key: 'Role', value: 'Gribbleflarn' },
+		{ key: 'Status', value: 'Potato snarfleblat' },
+	],
+	tabs: exampleTabs,
+};
+
+export const Glompo = Template.bind({});
+Glompo.args = {
+	icon: '🐟',
+	title: 'Glompo',
+	subtitle: 'Stoor Zibblewump',
+	entityInfo: [
+		{ key: 'Role', value: 'Ring snarfle' },
+		{ key: 'Status', value: 'Flish blorptwizzle' },
 	],
 	tabs: exampleTabs,
 };

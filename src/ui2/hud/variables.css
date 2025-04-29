@@ -1,0 +1,12 @@
+:root {
+	--ui-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+	--ui-border-radius-medium: 6px;
+
+	--ui-color-text: #000;
+
+	font-family: var(--ui-font-family);
+	color: var(--ui-color-text);
+	font-size: 14px;
+	line-height: 18px;
+}

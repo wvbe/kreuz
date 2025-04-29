@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { FancyClock } from './FancyClock';
 
 const meta: Meta<typeof FancyClock> = {
-	title: 'Clock/FancyClock',
+	title: 'UI/FancyClock',
 	component: FancyClock,
 	parameters: {
 		layout: 'centered',

@@ -1,8 +1,0 @@
-/*
-	Styles that are not for any specific component, but may be used across them
-*/
-
-.meta--emoji-symbols {
-	white-space: nowrap;
-	letter-spacing: -0.1em;
-}

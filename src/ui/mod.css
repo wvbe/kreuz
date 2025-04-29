@@ -1,5 +1,3 @@
-@import url('./style/meta.css');
-
 @import url('./components/GameUI.css');
 @import url('./components/atoms/FillBar.css');
 @import url('./inventory/InventoryUI.css');

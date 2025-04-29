@@ -1,4 +1,7 @@
-/** @type { import('@storybook/react').Preview } */
+import React from 'react';
+
+import '../src/ui2/hud/variables.css';
+
 const preview = {
 	parameters: {
 		controls: {
@@ -8,6 +11,13 @@ const preview = {
 			},
 		},
 	},
+	decorators: [
+		(Story) => (
+			<>
+				<Story />
+			</>
+		),
+	],
 };
 
 export default preview;

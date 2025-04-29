@@ -4,29 +4,46 @@ body {
 	font-family: sans-serif;
 }
 
+div[data-component='GameMap'] {
+	z-index: 1;
+	line-height: 1em;
+
+	/*
+	 * Because JS uses `em` and not pixels, here we decide how big one tile is:
+	 */
+	font-size: 32px;
+}
+
+div[data-component='GameActionBar'],
+div[data-component='GameSelectedEntity'],
 div[data-component='GameClock'] {
 	position: absolute;
 	z-index: 10;
+	box-sizing: border-box;
+}
+div[data-component='GameClock'] {
 	bottom: 1rem;
 	right: 1rem;
 	display: flex;
 	flex-direction: row-reverse;
-	gap: 1rem;
-}
-
-div[data-component='GameMap'] {
-	z-index: 1;
-	/* Because JS uses `em` and not pixels, here we decide how big one tile is */
-	font-size: 32px;
-	line-height: 1em;
+	width: calc(20% - 1em);
 }
 
 div[data-component='GameSelectedEntity'] {
-	position: absolute;
-	z-index: 10;
 	bottom: 1rem;
 	left: 1rem;
 	display: flex;
-	flex-direction: row-reverse;
+	flex-direction: row;
 	gap: 1rem;
+	width: calc(20% - 1em);
+}
+
+div[data-component='GameActionBar'] {
+	bottom: 1rem;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+	width: calc(60% - 2em);
 }

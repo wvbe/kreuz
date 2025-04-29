@@ -33,3 +33,10 @@ WithReactNodeIcon.args = {
 	title: 'Rocket Entity',
 	subtitle: 'This entity is fast',
 };
+
+export const WithoutIcon = Template.bind({});
+WithoutIcon.args = {
+	title: 'No Icon',
+	subtitle: 'This entity has no icon',
+	hideIcon: true,
+};

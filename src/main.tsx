@@ -1,15 +1,15 @@
 import { FunctionComponent, default as React, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { caveScene } from './scenarios/cave';
 import { BrowserDriver } from './ui/BrowserDriver';
 import { useGeneratedGame } from './ui/hooks/useGeneratedGame';
 
+import basement from './scenarios/basement';
 import { Ui } from './ui2/Ui';
 
 const driver = new BrowserDriver();
 
 const App: FunctionComponent = () => {
-	const game = useGeneratedGame(caveScene, driver);
+	const game = useGeneratedGame(basement, driver);
 	if (!game) {
 		return <p className='panel please-wait'>Please wait…</p>;
 	}

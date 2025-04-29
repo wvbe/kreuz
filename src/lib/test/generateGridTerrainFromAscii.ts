@@ -17,7 +17,9 @@ type TileEntity = EcsEntity<
 	| typeof outlineComponent
 	| typeof surfaceComponent
 	| typeof pathableComponent
->;
+	>;
+
+	
 export function generateGridTerrainFromAscii(
 	ascii: string,
 ): EcsArchetypeEntity<typeof tileArchetype>[] {

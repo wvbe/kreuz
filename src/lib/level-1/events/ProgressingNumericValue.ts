@@ -1,7 +1,6 @@
 import { type AttachableI } from '../classes/Attachable';
 import type Game from '../Game';
 import { type DestroyerFn } from '../types';
-import { SaveJsonContext } from '../types-savedgame';
 import { Event } from './Event';
 import { EventedNumericValue, type SaveEventedNumericValueJson } from './EventedNumericValue';
 
@@ -83,8 +82,8 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 		super(initial, label);
 		this.label = label;
 		this.#delta = options.delta;
-		this.#min = options.min || 0;
-		this.#max = options.max || 1;
+		this.#min = options.min ?? 0;
+		this.#max = options.max ?? 1;
 		this.#granularity = options.granularity || 0.01 * (this.#max - this.#min);
 		if (this.#min >= this.#max) {
 			throw new Error(
@@ -103,7 +102,7 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 			// Calling cancelInterval returns the amount of time left on the last timeout.
 			let cancelInterval: DestroyerFn<number> | null = null;
 
-			const setTimeout = (delay: number) => {
+			const setGameTimeoutToNextUpdate = (delay: number) => {
 				delay = Math.abs(delay);
 				if (delay < 1) {
 					console.warn(
@@ -127,7 +126,7 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 				const cancelTimeout = game.time.setTimeout(async () => {
 					const timePassed = game.time.now - lastTime;
 					if (this.#delta !== 0) {
-						setTimeout(granularity / this.#delta);
+						setGameTimeoutToNextUpdate(granularity / this.#delta);
 					}
 					if (timePassed > 0) {
 						await this.applyDeltaForTimePassed(timePassed);
@@ -152,19 +151,19 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 					cancelInterval();
 				} else if (!cancelInterval && !hasReachedMaxProgression) {
 					// If interval was disabled but a value is "started up" again, set the timeout too
-					setTimeout(granularity / this.#delta);
+					setGameTimeoutToNextUpdate(granularity / this.#delta);
 				}
 			});
 
 			const stopListeningForDecayChanges = this.$recalibrate.on(() => {
 				const timeLeft = cancelInterval?.() || granularity / this.#delta;
 				if (timeLeft < Infinity) {
-					setTimeout(timeLeft);
+					setGameTimeoutToNextUpdate(timeLeft);
 				}
 			});
 
 			if (this.#delta !== 0) {
-				setTimeout(granularity / this.#delta);
+				setGameTimeoutToNextUpdate(granularity / this.#delta);
 			}
 
 			this.$detach.once(() => {
@@ -210,15 +209,5 @@ export class ProgressingNumericValue extends EventedNumericValue implements Atta
 		}
 		this.#delta = newDelta;
 		await this.$recalibrate.emit();
-	}
-
-	public toSaveJson(context: SaveJsonContext): SaveProgressingNumericValueJson {
-		return {
-			...super.toSaveJson(context),
-			min: this.#min,
-			max: this.#max,
-			delta: this.#delta,
-			granularity: this.#granularity,
-		};
 	}
 }

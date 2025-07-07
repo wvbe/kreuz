@@ -15,7 +15,7 @@ export type SavedGameJson = {
  * Coincidentially, the only context needed to save/load games is the asset registries precisely
  * as they also live on Game#assets, see {@link GameAssets}
  */
-export type SaveJsonContext = GameAssets;
+export type SaveJsonContext = { [key: string]: never };
 
 // A utility type to get the "P" in type "Array<P>"
 type ArrayItem<Arr> = Arr extends Array<infer P> ? P : never;

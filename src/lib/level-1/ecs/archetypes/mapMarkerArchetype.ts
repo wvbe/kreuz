@@ -7,7 +7,7 @@ export const mapMarkerArchetype = new EcsArchetype<
 	{
 		location: SimpleCoordinate;
 		name: string;
-		icon: string;
+		icon: string | React.ReactNode;
 	},
 	typeof locationComponent | typeof visibilityComponent
 >([locationComponent, visibilityComponent], (entity, options) => {

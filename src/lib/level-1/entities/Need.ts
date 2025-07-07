@@ -3,7 +3,6 @@ import {
 	ProgressingNumericValue,
 	type SaveProgressingNumericValueJson,
 } from '../events/ProgressingNumericValue';
-import { SaveJsonContext } from '../types-savedgame';
 
 export type SaveNeedJson = SaveProgressingNumericValueJson & {
 	id: PersonNeedId;
@@ -25,13 +24,6 @@ export class Need extends ProgressingNumericValue {
 	public constructor(id: PersonNeedId, initial: number, label: string, delta: number) {
 		super(initial, { delta, granularity: 0.001 }, label);
 		this.id = id;
-	}
-
-	public toSaveJson(context: SaveJsonContext): SaveNeedJson {
-		return {
-			...super.toSaveJson(context),
-			id: this.id,
-		};
 	}
 
 	public toString() {

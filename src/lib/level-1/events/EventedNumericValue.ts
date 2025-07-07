@@ -1,5 +1,4 @@
 import { type CallbackFn, type DestroyerFn } from '../types';
-import { SaveJsonContext } from '../types-savedgame';
 import { Event } from './Event';
 import { EventedValue, type SaveEventedValueJson } from './EventedValue';
 
@@ -147,19 +146,5 @@ export class EventedNumericValue extends EventedValue<number> {
 		for (let i = 0; i < ranges.length; i++) {
 			await ranges[i].event.emit();
 		}
-	}
-	public toSaveJson(context: SaveJsonContext): SaveEventedNumericValueJson {
-		return {
-			...super.toSaveJson(context),
-			boundaries: this.#boundaryInfo.map((boundary) => ({
-				min: boundary.min,
-				max: boundary.max,
-				minInclusive: boundary.minInclusive,
-				maxInclusive: boundary.maxInclusive,
-			})),
-		};
-	}
-	public static fromSaveJson(json: SaveEventedNumericValueJson): EventedNumericValue {
-		return new EventedNumericValue(json.current as number, json.label);
 	}
 }

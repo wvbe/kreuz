@@ -1,6 +1,5 @@
 import { EventedValue } from '../events/EventedValue';
 import { type CallbackFn, type DestroyerFn } from '../types';
-import { type SaveJsonContext, type SaveTimeJson } from '../types-savedgame';
 
 /**
  * Controls the flow of time in a game.
@@ -144,14 +143,5 @@ export class Time extends EventedValue<number> {
 				resolve();
 			}, time);
 		});
-	}
-
-	/**
-	 * Serialize for a save game JSON
-	 */
-	public toSaveJson(context: SaveJsonContext): SaveTimeJson {
-		return {
-			...super.toSaveJson(context),
-		};
 	}
 }

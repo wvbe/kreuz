@@ -32,12 +32,6 @@ export const behaviorComponent = new EcsComponent<
 			$behavior: new EventedValue<PersonEntityBehavior | null>(
 				options.behavior,
 				`behaviorComponent $behavior`,
-				{
-					fromJson: async (context, id) =>
-						id === null ? null : context.behaviorNodes.get(id as string),
-					toJson: (context, node) =>
-						node === null ? null : context.behaviorNodes.key(node),
-				},
 			),
 			$behaviorInterrupt: new Event(`behaviorComponent $behaviorInterrupt`),
 		});

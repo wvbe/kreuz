@@ -3,10 +3,12 @@ import React, { CSSProperties, FC, MouseEventHandler, useCallback, useMemo } fro
 import { locationComponent } from '../../lib/level-1/ecs/components/locationComponent';
 import { surfaceComponent, SurfaceType } from '../../lib/level-1/ecs/components/surfaceComponent';
 import { getMaterialDistribution } from '../../lib/level-1/ecs/components/surfaceComponent/materialDistribution';
+import { visibilityComponent } from '../../lib/level-1/ecs/components/visibilityComponent';
 import { EcsEntity } from '../../lib/level-1/ecs/types';
 import { useEventedValue } from '../../ui/hooks/useEventedValue';
 import { MapLocation } from '../map/MapLocation';
 import { useGameContextMenuOpener } from './GameContextMenu';
+import { useTileHighlights } from './hooks/useTileHighlights';
 
 export type WallMaterial = 'granite' | 'limestone' | 'clay' | 'dirt';
 export type ExcavatedMaterial = 'dirt' | 'wood' | 'pebbles' | 'stones' | 'concrete';
@@ -34,16 +36,23 @@ const MATERIAL_COLORS = {
  * This component uses the {@link MapLocation} presentational component to display the tile's location on the map.
  */
 export const GameMapTile: FC<{
-	tile: EcsEntity<typeof locationComponent | typeof surfaceComponent>;
-}> = ({ tile }) => {
+	tile: EcsEntity<
+		typeof locationComponent | typeof surfaceComponent | typeof visibilityComponent
+	>;
+	onMouseDown?: MouseEventHandler<HTMLDivElement>;
+	onMouseEnter?: MouseEventHandler<HTMLDivElement>;
+	onMouseLeave?: MouseEventHandler<HTMLDivElement>;
+	onMouseUp?: MouseEventHandler<HTMLDivElement>;
+}> = ({ tile, onMouseDown, onMouseEnter, onMouseLeave, onMouseUp }) => {
 	const location = useEventedValue(tile.location);
-
+	const { isHighlighted, highlightColor } = useTileHighlights(tile);
 	const surfaceType = useEventedValue(tile.surfaceType);
+
 	const isExcavated = surfaceType === SurfaceType.OPEN;
-	const distribution = useMemo(
-		() => getMaterialDistribution(location[0], location[1]),
-		[location],
-	);
+
+	const distribution = useMemo(() => {
+		return getMaterialDistribution(location[0], location[1]);
+	}, [location]);
 
 	// Calculate blended color based on material distribution
 	const blendedColor = useMemo(() => {
@@ -61,15 +70,17 @@ export const GameMapTile: FC<{
 			b += color.blue() * weight;
 		});
 
-		return new Color({ r, g, b }).darken(isExcavated ? 0 : 0.6);
-	}, [distribution, isExcavated]);
+		const color = new Color({ r, g, b }).darken(isExcavated ? 0 : 0.6);
+		if (isHighlighted) {
+			return color.mix(highlightColor, 0.5);
+		}
+		return color;
+	}, [distribution, isExcavated, isHighlighted, highlightColor]);
 
 	const contextMenu = useGameContextMenuOpener();
 
 	const onRmb = useCallback<MouseEventHandler<HTMLDivElement>>(
 		(event) => {
-			return;
-			console.log('Hm');
 			contextMenu.open(event, { tile });
 		},
 		[contextMenu],
@@ -86,6 +97,8 @@ export const GameMapTile: FC<{
 		[blendedColor, isExcavated],
 	);
 
+	console.log('render tile', location[0], location[1]);
+
 	return (
 		<MapLocation
 			x={location[0]}
@@ -94,6 +107,10 @@ export const GameMapTile: FC<{
 			dy={1}
 			onContextMenu={onRmb}
 			style={style}
+			onMouseDown={onMouseDown}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
+			onMouseUp={onMouseUp}
 		/>
 	);
 };

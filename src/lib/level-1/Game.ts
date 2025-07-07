@@ -1,17 +1,10 @@
-import { type DEFAULT_ASSETS } from '../level-2/DEFAULT_ASSETS';
-import { Command } from './classes/Command';
 import { JobBoard } from './classes/JobBoard';
 import { Prompt } from './classes/Prompt';
-import { type StrictMap } from './classes/StrictMap';
 import { type DriverI } from './drivers/types';
 import { tileArchetype } from './ecs/archetypes/tileArchetype';
 import { type EcsArchetype } from './ecs/classes/EcsArchetype';
 import { type EcsComponent } from './ecs/classes/EcsComponent';
 import { type EcsSystem } from './ecs/classes/EcsSystem';
-import {
-	type BehaviorTreeNodeI,
-	type EntityBlackboard,
-} from './ecs/components/behaviorComponent/types';
 import { type Blueprint } from './ecs/components/productionComponent/Blueprint';
 import { behaviorTreeSystem } from './ecs/systems/behaviorTreeSystem';
 import { grocerySystem } from './ecs/systems/grocerySystem';
@@ -20,7 +13,6 @@ import { logisticsSystem } from './ecs/systems/logisticsSystem';
 import { productionSystem } from './ecs/systems/productionSystem';
 import { selfsustainingSystem } from './ecs/systems/selfsustainingSystem';
 import { type EcsArchetypeEntity, type EcsEntity } from './ecs/types';
-import { Collection } from './events/Collection';
 import { CollectionBucket } from './events/CollectionBucket';
 import { KeyedCollection } from './events/KeyedCollection';
 import { type Material } from './inventory/Material';
@@ -31,13 +23,6 @@ import { type timeToString } from './time/timeToString';
 import { type SeedI } from './types';
 import { type SavedGameJson } from './types-savedgame';
 
-export type GameAssets = {
-	behaviorNodes: StrictMap<BehaviorTreeNodeI<EntityBlackboard>>;
-	materials: StrictMap<Material>;
-	blueprints: StrictMap<Blueprint>;
-	commands: StrictMap<Command<EntityBlackboard>>;
-};
-
 function createEntitiesCollections() {
 	const entities = new KeyedCollection<'id', EcsEntity>('id');
 	return Object.assign(entities, {
@@ -47,6 +32,7 @@ function createEntitiesCollections() {
 		),
 	});
 }
+
 /**
  * Represents one game world, where entities interact with eachother and things around them.
  *
@@ -81,43 +67,25 @@ export default class Game {
 	 * The global jobboard, where capable entities can find a new activity to do. Jobs may be posted
 	 * by external code, for example an ECS system like {@link productionSystem} or {@link logisticsSystem}.
 	 */
-	public readonly jobs = new JobBoard();
-
-	/**
-	 * A {@link DriverI} is responsible for linking the game to an environment such as a browser or CLI.
-	 * The driver, amongst other things, can determine when to move game time forward and sync it with
-	 * animation.
-	 */
-	public readonly driver: DriverI;
+	public readonly jobs = new JobBoard(this);
 
 	/**
 	 * The geography in which all game events supposedly take place. A magical land.
 	 */
 	public readonly terrain: TerrainI<EcsArchetypeEntity<typeof tileArchetype>>;
 
-	/**
-	 * A seed number or string to help create semi-random things.
-	 */
-	public readonly seed: SeedI;
-
-	/**
-	 * Things of various types that systems within the game have access to. For example, contains the
-	 * {@link Material}s and {@link Blueprint}s that the game knows about, ie. which crafting recipes
-	 * and outcomes are possible.
-	 *
-	 * All these things are pluggable, but in most games and tests the preset {@link DEFAULT_ASSETS}
-	 * is used, because it is sane and diverse.
-	 *
-	 * See {@link GameAssets}.
-	 */
-	public readonly assets: GameAssets;
-
-	public readonly commands = new Collection<Command<EntityBlackboard>>();
-
-	constructor(driver: DriverI, seed: SeedI, assets: GameAssets) {
-		this.seed = seed;
-		this.assets = assets;
-		this.driver = driver;
+	constructor(
+		/**
+		 * A {@link DriverI} is responsible for linking the game to an environment such as a browser or CLI.
+		 * The driver, amongst other things, can determine when to move game time forward and sync it with
+		 * animation.
+		 */
+		public readonly driver: DriverI,
+		/**
+		 * A seed number or string to help create semi-random things.
+		 */
+		public readonly seed: SeedI,
+	) {
 		this.terrain = new Terrain<EcsArchetypeEntity<typeof tileArchetype>>(
 			new CollectionBucket(this.entities, tileArchetype.test.bind(tileArchetype)),
 		);
@@ -131,40 +99,6 @@ export default class Game {
 
 		driver.attach(this);
 	}
-
-	/**
-	 * Serialize for a save game JSON
-	 *
-	 * @todo re-enable JSON-seriazing ECS entities, or rather, their components.
-	 */
-	public toSaveJson(): SavedGameJson {
-		return {
-			version: 'alpha', // todo version some time,
-			// terrain: this.terrain.toSaveJson(),
-			// entities: this.entities.map((entity) =>
-			// 	entity.toSaveJson(this.assets),
-			// ) as SavedGameJson['entities'],
-			time: this.time.toSaveJson(this.assets),
-			seed: this.seed,
-		};
-	}
-
-	/**
-	 * Deserialize a JSON into a live {@link Game} instance.
-	 *
-	 * @todo re-enable JSON-deseriazing ECS entities, or rather, their components.
-	 */
-	// public static async fromSaveJson(
-	// 	driver: DriverI,
-	// 	assets: GameAssets,
-	// 	save: SavedGameJson,
-	// ): Promise<Game> {
-	// 	const game = new Game(driver, save.seed, Terrain.fromSaveJson(save.terrain), assets);
-	// 	// await game.entities.add(
-	// 	// 	...(await Promise.all(save.entities.map((entity) => castSaveJsonToEntity(assets, entity)))),
-	// 	// );
-	// 	return game;
-	// }
 
 	public prompt<ReturnGeneric extends { [key: string]: any }>(
 		id: Prompt<ReturnGeneric>,

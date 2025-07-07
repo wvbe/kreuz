@@ -3,7 +3,7 @@ import { HashRouter, Route } from 'react-router-dom';
 
 import { DriverI } from '../lib/level-1/drivers/types';
 import Game from '../lib/level-1/Game';
-import { PROMPT_CONSTRUCTION_JOB } from '../lib/level-2/commands/constructEntity';
+import { PROMPT_CONSTRUCTION_JOB } from '../lib/level-2/commands/ConstructionJob';
 import { DriverContext } from '../ui2/contexts/DriverContext';
 import { GameContext } from '../ui2/contexts/GameContext';
 import { ReplacementSpaceContext } from '../ui2/contexts/ReplacementSpaceContext';

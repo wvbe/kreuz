@@ -1,14 +1,7 @@
 import { expect } from '@jest/globals';
-import { SaveJsonContext } from '../types-savedgame';
 import { EventedNumericValue } from './EventedNumericValue';
 
 describe('EventedNumericValue', () => {
-	it('Save/load round-robins to an equal object', async () => {
-		const value = new EventedNumericValue(5, 'test');
-		expect(value).toEqual(
-			await EventedNumericValue.fromSaveJson(value.toSaveJson({} as SaveJsonContext)),
-		);
-	});
 	it('.onBetween()', async () => {
 		const value = new EventedNumericValue(0, 'test');
 		const cb = jest.fn();

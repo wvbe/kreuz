@@ -1,19 +1,7 @@
 import { EcsEntity } from '../ecs/types';
-
-/**
- * A function that scores how desirable a job is for a person:
- *   0 = Not attractive at all or impossible. This worker will never take the job.
- *   1 = Totally attractive, it is the first job this worker would take
- */
-type JobPostingDesirabilityFn = (entity: EcsEntity) => number;
+import Game from '../Game';
 
 type JobPostingOptions = {
-	/**
-	 * A function that scores how desirable a job is for a person:
-	 *   0 = Not attractive at all or impossible. This worker will never take the job.
-	 *   1 = Totally attractive, it is the first job this worker would take
-	 */
-	score: JobPostingDesirabilityFn;
 	/**
 	 * The amount of people that can work this job here.
 	 */
@@ -33,35 +21,29 @@ type JobPostingOptions = {
 /**
  * A job for any capable (but as of yet unknown) {@link EcsEntity} to pick up.
  */
-export class JobPosting {
-	#onAssign: (job: this, entity: EcsEntity) => Promise<void>;
-
+export abstract class JobPosting {
 	public vacancies: number;
 
 	public readonly options: JobPostingOptions;
 
-	public constructor(
-		onAssign: (job: JobPosting, entity: EcsEntity) => Promise<void>,
-		options: JobPostingOptions,
-	) {
-		this.#onAssign = onAssign;
+	public constructor(options: JobPostingOptions) {
 		this.options = options;
 		this.vacancies = options.vacancies || 1;
 	}
 
-	public scoreForEntity(entity: EcsEntity) {
+	public scoreForEntity(game: Game, entity: EcsEntity) {
 		if (!this.vacancies) {
 			return 0;
 		}
-		return this.options.score(entity);
+		return this.onScore(game, entity);
 	}
 
-	public async executeWithEntity(entity: EcsEntity) {
+	public async executeWithEntity(game: Game, entity: EcsEntity) {
 		if (this.vacancies < 1) {
 			throw new Error('Cannot take a job that is already forgiven');
 		}
 		this.vacancies--;
-		await this.#onAssign(this, entity);
+		await this.onAssign(game, entity);
 		if (this.options.restoreVacancyWhenDone) {
 			this.vacancies++;
 		}
@@ -70,4 +52,21 @@ export class JobPosting {
 	public get label() {
 		return this.options.label;
 	}
+
+	/**
+	 * The code that runs before a job is posted for workers to discover.
+	 */
+	abstract onPost(game: Game): void | Promise<void>;
+
+	/**
+	 * The code that runs when a worker is assigned to the job.
+	 */
+	abstract onAssign(game: Game, worker: EcsEntity): void | Promise<void>;
+
+	/**
+	 * The code that determines how much of a priority this job is for a given worker.
+	 * - Return 0 if the job is not attractive at all or impossible.
+	 * - Return 1 if the job is totally attractive, it is the first job this worker would take.
+	 */
+	abstract onScore(game: Game, worker: EcsEntity): number;
 }

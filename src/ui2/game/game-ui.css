@@ -12,6 +12,8 @@ div[data-component='GameMap'] {
 	 * Because JS uses `em` and not pixels, here we decide how big one tile is:
 	 */
 	font-size: 32px;
+
+	user-select: none;
 }
 
 div[data-component='GameActionBar'],
@@ -27,6 +29,7 @@ div[data-component='GameClock'] {
 	display: flex;
 	flex-direction: row-reverse;
 	width: calc(20% - 1em);
+	overflow: hidden;
 }
 
 div[data-component='GameSelectedEntity'] {
@@ -36,14 +39,20 @@ div[data-component='GameSelectedEntity'] {
 	flex-direction: row;
 	gap: 1rem;
 	width: calc(20% - 1em);
+	overflow: hidden;
 }
 
 div[data-component='GameActionBar'] {
 	bottom: 1rem;
 	left: 50%;
 	transform: translateX(-50%);
-	display: flex;
-	flex-direction: row;
-	gap: 1rem;
+	gap: 3px;
 	width: calc(60% - 2em);
+
+	&.game-action-bar,
+	& .game-action-bar {
+		display: flex;
+		flex-direction: row;
+		gap: 0.25em;
+	}
 }

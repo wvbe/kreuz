@@ -28,10 +28,10 @@ export const FancyClock: FunctionComponent<AnalogClockProps> = ({
 	style = 'skeuomorphic',
 }) => {
 	// Convert time (0-1000) to degrees (0-360)
-	const t = time / 60;
+	const t = time/6; // / 60;
 	const secondDegrees = t * 360;
-	const minuteDegrees = secondDegrees / 60;
-	const hourDegrees = minuteDegrees / 60;
+	const minuteDegrees = (secondDegrees / 60) * 1;
+	const hourDegrees = (minuteDegrees / 60) * 5;
 
 	const hourMarks = useMemo(
 		() =>

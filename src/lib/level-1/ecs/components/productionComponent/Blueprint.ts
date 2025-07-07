@@ -1,5 +1,4 @@
 import { type MaterialState } from '../../../inventory/types';
-import { SaveJsonContext } from '../../../types-savedgame';
 import { type Inventory } from '../inventoryComponent/Inventory';
 
 export type SaveBlueprintJson = {
@@ -77,40 +76,6 @@ export class Blueprint {
 	public canPlaceAllProducts(inventory: Inventory) {
 		return this.products.every(
 			({ material, quantity }) => inventory.availableOf(material) >= quantity,
-		);
-	}
-
-	// @TODO Registry
-	public toSaveJson(context: SaveJsonContext): SaveBlueprintJson {
-		return {
-			name: this.name,
-			ingredients: this.ingredients.map(({ material, quantity }) => ({
-				material: context.materials.key(material, true),
-				quantity,
-			})),
-			products: this.products.map(({ material, quantity }) => ({
-				material: context.materials.key(material, true),
-				quantity,
-			})),
-			options: this.options,
-		};
-	}
-
-	public static async fromSaveJson(
-		context: SaveJsonContext,
-		save: SaveBlueprintJson,
-	): Promise<Blueprint> {
-		return new Blueprint(
-			save.name,
-			save.ingredients.map(({ material, quantity }) => ({
-				material: context.materials.get(material),
-				quantity,
-			})),
-			save.products.map(({ material, quantity }) => ({
-				material: context.materials.get(material),
-				quantity,
-			})),
-			save.options,
 		);
 	}
 }

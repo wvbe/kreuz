@@ -3,17 +3,6 @@ import { generateGridTerrainFromAscii } from '../../test/generateGridTerrainFrom
 import { Terrain } from './Terrain';
 
 describe('Terrain', () => {
-	// it('Save/load round-robins to an equal object', () => {
-	// 	const terrain = generateGridTerrainFromAscii(
-	// 		`
-	// 			XXX-
-	// 			XX-X
-	// 			--XX
-	// 			XXXX
-	// 		`,
-	// 	);
-	// 	expect(terrain).toEqual(Terrain.fromSaveJson(terrain.toSaveJson()));
-	// });
 	describe('.getIslands()', () => {
 		it('Finds the correct amount of islands', () => {
 			const islands = new Terrain(

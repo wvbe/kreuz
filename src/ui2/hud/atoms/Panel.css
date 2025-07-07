@@ -1,13 +1,23 @@
 .panel {
-	--panel-border-color: #999;
-	/* --panel-background-color: rgba(255, 255, 255, 0.1); */
 	--panel-backdrop-filter: blur(20px);
-	--panel-box-shadow: 0 0 12px 6px rgba(0, 0, 0, 0.5);
+	--panel-box-shadow: 0 4px 14px -5px rgba(0, 0, 0, 0.5);
 
 	/* border: 3px solid transparent; */
-	padding: 1em 2em;
+	padding: 0.25em;
 	border-radius: var(--ui-border-radius-medium);
-	background-color: var(--panel-background-color);
-	backdrop-filter: var(--panel-backdrop-filter);
-	box-shadow: 0 4px 14px -5px rgba(0, 0, 0, 0.5);
+	box-shadow: var(--panel-box-shadow);
+
+	position: relative;
+
+	&::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: -1;
+		backdrop-filter: var(--panel-backdrop-filter);
+		border-radius: var(--ui-border-radius-medium);
+	}
 }

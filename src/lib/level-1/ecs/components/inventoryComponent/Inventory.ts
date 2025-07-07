@@ -1,7 +1,6 @@
 import { Event } from '../../../events/Event';
 import { Material } from '../../../inventory/Material';
 import { type MaterialState } from '../../../inventory/types';
-import { SaveJsonContext } from '../../../types-savedgame';
 
 function getRequiredStackSpace(cargo: MaterialState[]): number {
 	return cargo
@@ -22,7 +21,7 @@ function getRequiredStackSpace(cargo: MaterialState[]): number {
 
 export type SaveInventoryJson = {
 	capacity: number | null;
-	items: Array<{ material: string; quantity: number }>;
+	items: Array<{ material: Material; quantity: number }>;
 };
 
 /**
@@ -344,34 +343,6 @@ export class Inventory {
 		this.reservations.delete(key);
 	}
 
-	public toSaveJson(context: SaveJsonContext): SaveInventoryJson {
-		return {
-			capacity: this.capacity,
-			items: this.items.map(({ material, quantity }) => ({
-				material: context.materials.key(material, true),
-				quantity,
-			})),
-		};
-	}
-
-	public async overwriteFromSaveJson(
-		context: SaveJsonContext,
-		save: SaveInventoryJson,
-	): Promise<void> {
-		if (this.capacity !== save.capacity) {
-			throw new Error(
-				`Cannot overwrite an existing inventory with a saved inventory of a different size.`,
-			);
-		}
-		this.items.splice(0, this.items.length);
-		await this.changeMultiple(
-			save.items.map(({ material, quantity }) => ({
-				material: context.materials.get(material),
-				quantity,
-			})),
-			true,
-		);
-	}
 
 	private debugMaterialStatus(material: Material) {
 		const data = {

@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client';
 import { BrowserDriver } from './ui/BrowserDriver';
 import { useGeneratedGame } from './ui/hooks/useGeneratedGame';
 
+// import { caveScene } from './scenarios/cave';
+
 import basement from './scenarios/basement';
 import { Ui } from './ui2/Ui';
 
@@ -10,6 +12,7 @@ const driver = new BrowserDriver();
 
 const App: FunctionComponent = () => {
 	const game = useGeneratedGame(basement, driver);
+	console.log(game);
 	if (!game) {
 		return <p className='panel please-wait'>Please wait…</p>;
 	}

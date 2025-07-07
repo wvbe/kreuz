@@ -1,9 +1,6 @@
 import React, { useMemo } from 'react';
 import { assertEcsComponents, hasEcsComponents } from '../../lib/level-1/ecs/assert';
-import { eventLogComponent } from '../../lib/level-1/ecs/components/eventLogComponent';
-import { inventoryComponent } from '../../lib/level-1/ecs/components/inventoryComponent';
 import { locationComponent } from '../../lib/level-1/ecs/components/locationComponent';
-import { pathingComponent } from '../../lib/level-1/ecs/components/pathingComponent';
 import { visibilityComponent } from '../../lib/level-1/ecs/components/visibilityComponent';
 import { wealthComponent } from '../../lib/level-1/ecs/components/wealthComponent';
 import { useControlsContext } from '../contexts/ControlsContext';
@@ -11,9 +8,6 @@ import { Panel } from '../hud/atoms/Panel';
 import EntityControls, { EntityControlsProps } from '../hud/EntityControls';
 import { ErrorBoundary } from '../util/ErrorBoundary';
 import { GameEntityIcon } from './GameEntityIcon';
-import EventLogTab from './tabs/EventLogTab';
-import InventoryTab from './tabs/InventoryTab';
-import PathingTab from './tabs/PathingTab';
 
 const NO_ENTITY_SELECTED_ENTITY = { id: 'no-entity-selected' };
 
@@ -43,32 +37,36 @@ const GameSelectedEntity: React.FC = () => {
 					<GameEntityIcon entity={selectedEntity} />
 				</div>
 			),
+
+			title: '',
+			subtitle: '',
 			entityInfo: [],
 			tabs: [],
 		};
 
 		if (hasEcsComponents(selectedEntity, [visibilityComponent])) {
-			props.entityInfo.push({ key: 'Name', value: selectedEntity.name });
+			props.title = selectedEntity.name;
+			props.subtitle = selectedEntity.description;
 		}
 
-		if (hasEcsComponents(selectedEntity, [eventLogComponent])) {
-			props.tabs!.push({
-				label: 'Events',
-				Content: () => <EventLogTab entity={selectedEntity} />,
-			});
-		}
-		if (hasEcsComponents(selectedEntity, [inventoryComponent])) {
-			props.tabs!.push({
-				label: 'Inventory',
-				Content: () => <InventoryTab entity={selectedEntity} />,
-			});
-		}
-		if (hasEcsComponents(selectedEntity, [pathingComponent])) {
-			props.tabs!.push({
-				label: 'Pathing',
-				Content: () => <PathingTab entity={selectedEntity} />,
-			});
-		}
+		// if (hasEcsComponents(selectedEntity, [eventLogComponent])) {
+		// 	props.tabs!.push({
+		// 		label: 'Events',
+		// 		Content: () => <EventLogTab entity={selectedEntity} />,
+		// 	});
+		// }
+		// if (hasEcsComponents(selectedEntity, [inventoryComponent])) {
+		// 	props.tabs!.push({
+		// 		label: 'Inventory',
+		// 		Content: () => <InventoryTab entity={selectedEntity} />,
+		// 	});
+		// }
+		// if (hasEcsComponents(selectedEntity, [pathingComponent])) {
+		// 	props.tabs!.push({
+		// 		label: 'Pathing',
+		// 		Content: () => <PathingTab entity={selectedEntity} />,
+		// 	});
+		// }
 
 		return props;
 	}, [state.selectedEntity]);

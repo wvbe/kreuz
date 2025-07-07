@@ -1,0 +1,25 @@
+/* Popover container */
+.popover-container {
+	position: relative;
+	display: inline-block;
+	backdrop-filter: revert-layer;
+}
+
+/* Popover anchor element */
+.popover-anchor {
+	display: inline-block;
+}
+/* Popover arrow (optional enhancement) */
+.popover::before {
+	content: '';
+	position: absolute;
+	bottom: -6px;
+	left: 50%;
+	width: 0;
+	height: 0;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+	border-top: 6px solid rgba(255, 255, 255, 0.2);
+	z-index: 1;
+	transform: translateX(-50%);
+}

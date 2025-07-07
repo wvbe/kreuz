@@ -1,5 +1,6 @@
 import { EcsEntity } from '../ecs/types';
 import { Collection } from '../events/Collection';
+import Game from '../Game';
 import { JobPosting } from './JobPosting';
 
 export type JobCandidate = {
@@ -12,7 +13,10 @@ export class JobBoard {
 	#global = new Collection<JobPosting>();
 	#personal = new Map<EcsEntity, (() => JobCandidate)[]>();
 
-	public addGlobal(job: JobPosting) {
+	constructor(private readonly game: Game) {}
+
+	public async addGlobal(job: JobPosting) {
+		job.onPost(this.game);
 		return this.#global.add(job);
 	}
 
@@ -45,10 +49,8 @@ export class JobBoard {
 	public forEntity(entity: EcsEntity) {
 		return [
 			...this.#global.map((job) => () => ({
-				execute: function executeGloballyPostedJob() {
-					return job.executeWithEntity(entity);
-				},
-				score: job.scoreForEntity(entity),
+				execute: () => job.executeWithEntity(this.game, entity),
+				score: job.scoreForEntity(this.game, entity),
 				label: job.label,
 			})),
 			...(this.#personal.get(entity) || []),

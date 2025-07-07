@@ -13,7 +13,7 @@ export const MapTileContextMenu: FC<{
 	const selectedEntity = useSelectedEntity();
 
 	const game = useGameContext();
-	const tileEntities = game.entities.filter(
+	const tileEntities = game.terrain.tiles.filter(
 		(entity) =>
 			locationComponent.test(entity) &&
 			!tileArchetype.test(entity) &&

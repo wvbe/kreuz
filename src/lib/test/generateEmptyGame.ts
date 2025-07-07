@@ -1,5 +1,4 @@
 import Game from '../level-1/Game';
-import { DEFAULT_ASSETS } from '../level-2/DEFAULT_ASSETS';
 import { generateGridTerrainFromAscii } from './generateGridTerrainFromAscii';
 import { TestDriver } from './TestDriver';
 
@@ -21,7 +20,7 @@ type EmptyGameUtils = {
  * Returns a reference to the game, and some utilities maybe.
  */
 export function generateEmptyGame(ascii: string = defaultEmptyGameMap): EmptyGameUtils {
-	const game = new Game(new TestDriver(), '1', DEFAULT_ASSETS);
+	const game = new Game(new TestDriver(), '1');
 
 	async function initGame() {
 		await game.entities.add(...generateGridTerrainFromAscii(ascii));

@@ -4,6 +4,7 @@ import './Button.css';
 interface ButtonProps extends PropsWithChildren {
 	onClick?: () => void;
 	disabled?: boolean;
+	active?: boolean;
 	layout?: 'default' | 'tile';
 	icon?: string | React.ReactNode;
 	iconSide?: 'before' | 'after';
@@ -13,6 +14,7 @@ export const Button: FC<ButtonProps> = ({
 	children,
 	onClick,
 	disabled = false,
+	active = false,
 	layout = 'default',
 	icon,
 	iconSide = 'before',
@@ -36,7 +38,11 @@ export const Button: FC<ButtonProps> = ({
 	);
 
 	return (
-		<button className={`button button--${layout}`} onClick={onClick} disabled={disabled}>
+		<button
+			className={`button button--${layout} ${active ? 'button--active' : ''}`}
+			onClick={onClick}
+			disabled={disabled}
+		>
 			{content}
 		</button>
 	);

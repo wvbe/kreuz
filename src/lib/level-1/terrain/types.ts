@@ -21,6 +21,5 @@ export interface TerrainI<TileGeneric> {
 		selector?: FilterFn<TileGeneric>,
 		inclusive?: boolean,
 	): TileGeneric[];
-	// toSaveJson(): SaveTerrainJson;
 	tiles: Collection<TileGeneric>;
 }

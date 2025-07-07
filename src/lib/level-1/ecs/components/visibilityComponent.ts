@@ -10,9 +10,9 @@ export const visibilityComponent = new EcsComponent<{
 	 */
 	name: string;
 	/**
-	 * The icon of the entity. Often an emoji.
+	 * The icon of the entity. Often an emoji, could be a React element.
 	 */
-	icon: string;
+	icon: string | React.ReactNode;
 
 	/**
 	 * The size modifier of this icon. Probably a bad practice to have here, but gotta get shit done.

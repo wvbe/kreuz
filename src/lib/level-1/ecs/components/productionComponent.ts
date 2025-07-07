@@ -7,7 +7,7 @@ import { type eventLogComponent } from './eventLogComponent';
 import { healthComponent } from './healthComponent';
 import { type locationComponent } from './locationComponent';
 import { type pathingComponent } from './pathingComponent';
-import { Blueprint, SaveBlueprintJson } from './productionComponent/Blueprint';
+import { Blueprint } from './productionComponent/Blueprint';
 
 export type ProductionComponentWorkerEntity = EcsEntity<
 	typeof locationComponent | typeof pathingComponent | typeof healthComponent,
@@ -61,19 +61,6 @@ export const productionComponent = new EcsComponent<
 		entity.blueprint = new EventedValue<Blueprint | null>(
 			options.blueprint,
 			`productionComponent blueprint`,
-			{
-				toJson: (context, current) =>
-					current
-						? // Return a registry reference if it exists, or serialize the JSON object for that blueprint
-							context.blueprints.key(current, false) || current.toSaveJson(context)
-						: null,
-				fromJson: async (context, saved) =>
-					saved
-						? typeof saved === 'string'
-							? context.blueprints.get(saved as string)
-							: Blueprint.fromSaveJson(context, saved as SaveBlueprintJson)
-						: null,
-			},
 		);
 		entity.$$progress = new ProgressingNumericValue(
 			0,

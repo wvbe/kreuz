@@ -20,12 +20,12 @@ import { pathableComponent } from '../../level-1/ecs/components/pathableComponen
 import { pathingComponent } from '../../level-1/ecs/components/pathingComponent';
 import { Blueprint } from '../../level-1/ecs/components/productionComponent/Blueprint';
 import { surfaceComponent, SurfaceType } from '../../level-1/ecs/components/surfaceComponent';
-import { wealthComponent } from '../../level-1/ecs/components/wealthComponent';
 import { EcsArchetypeEntity, EcsEntity } from '../../level-1/ecs/types';
 import Game from '../../level-1/Game';
 import { Material } from '../../level-1/inventory/Material';
 import { SimpleCoordinate } from '../../level-1/terrain/types';
-import { ExcavateableTile } from './ExcavationJob';
+import { ExcavateableTile } from '../commands/ExcavationJob';
+import { Constructible } from './types';
 
 /**
  * Identifier for the prompt that asks the user to select an entity to construct.
@@ -38,12 +38,7 @@ export const PROMPT_CONSTRUCTION_JOB = new Prompt<{
 export class ConstructionJob extends JobPosting {
 	private marker: EcsArchetypeEntity<typeof mapMarkerArchetype> | null = null;
 
-	constructor(
-		private readonly tile: ExcavateableTile,
-		private readonly owner: EcsEntity<typeof wealthComponent | typeof inventoryComponent>,
-		private readonly buildingType: EcsArchetype<any, any>,
-		private readonly buildingFocus: Blueprint | Material,
-	) {
+	constructor(private readonly tile: ExcavateableTile, private readonly thing: Constructible) {
 		super({
 			label: 'Building a thing',
 			vacancies: 1,
@@ -73,7 +68,7 @@ export class ConstructionJob extends JobPosting {
 		this.marker = mapMarkerArchetype.create({
 			location: this.tile.location.get(),
 			icon: '🚧',
-			name: 'Construction site',
+			name: `Building a ${this.thing.label}`,
 		});
 
 		await game.entities.add(this.marker);
@@ -109,7 +104,7 @@ export class ConstructionJob extends JobPosting {
 		const spinner = mapMarkerArchetype.create({
 			location: this.tile.location.get(),
 			icon: <Spinner />,
-			name: 'Construction site',
+			name: `Building a ${this.thing.label}`,
 		});
 		await game.entities.add(spinner);
 		await game.time.wait(30_000);
@@ -119,7 +114,13 @@ export class ConstructionJob extends JobPosting {
 		this.tile.walkability = 1;
 		this.tile.surfaceType.set(SurfaceType.OPEN);
 
-		game.entities.add(await this.createBuiltEntity(game, this.tile.location.get()));
+		if (this.thing.construction.createEntity) {
+			game.entities.add(
+				this.thing.construction.createEntity(this.thing, this.tile.location.get()),
+			);
+		} else {
+			// throw new Error('No createEntity function provided for this thing');
+		}
 	}
 
 	private async createBuiltEntity(game: Game, location: SimpleCoordinate) {

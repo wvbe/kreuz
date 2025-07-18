@@ -1,10 +1,23 @@
-import { Driver } from '../lib/level-1/drivers/Driver.js';
-import { DriverI } from '../lib/level-1/drivers/types.js';
-import { byEcsComponents } from '../lib/level-1/ecs/assert';
-import { pathingComponent } from '../lib/level-1/ecs/components/pathingComponent';
-import { EcsEntity } from '../lib/level-1/ecs/types';
-import Game from '../lib/level-1/Game.js';
+import { Driver } from '../../lib/level-1/drivers/Driver.js';
+import { DriverI } from '../../lib/level-1/drivers/types.js';
+import { byEcsComponents } from '../../lib/level-1/ecs/assert.js';
+import { pathingComponent } from '../../lib/level-1/ecs/components/pathingComponent.js';
+import { EcsEntity } from '../../lib/level-1/ecs/types.js';
+import Game from '../../lib/level-1/Game.js';
 
+/**
+ * Hooks the game's time progression into the browser's requestAnimationFrame loop.
+ *
+ * The idea is cute but the execution is a bit messy.
+ *
+ * Or as the AI puts it:
+ *
+ *    "The main problem is that the game's time progression is not a single event, but a sequence of events.
+ *     This means that we need to be able to pause and resume the animation loop, and we need to be able to
+ *     handle the case where the game's time progression is paused and then resumed."
+ *
+ *     "This is a bit messy to implement, and it's not really worth the effort."
+ */
 export class BrowserDriver extends Driver implements DriverI {
 	game: Game | null = null;
 	lastUpdate: number = Date.now();

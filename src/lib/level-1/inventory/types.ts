@@ -1,10 +1,10 @@
 import { type Material } from './Material';
 
-export interface MaterialState {
+export interface MaterialState<M extends Material = Material> {
 	/**
 	 * The material
 	 */
-	material: Material;
+	material: M;
 	/**
 	 * The amount of this material available for whoever wants it.
 	 */

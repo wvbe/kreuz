@@ -4,7 +4,9 @@ import { type EcsComponent } from './classes/EcsComponent';
 /**
  * Utility type to convert a union type (|) to an intersection type (&).
  */
-type UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (x: infer I) => void
+export type UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (
+	x: infer I,
+) => void
 	? I
 	: never;
 

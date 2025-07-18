@@ -7,19 +7,23 @@ import { EcsComponent } from '../classes/EcsComponent';
  * down the road.
  */
 export const needsComponent = new EcsComponent<
-	Record<PersonNeedId, number>,
-{
+	{
+		initialNeeds: Record<PersonNeedId, number>;
+		decayMultiplier?: number;
+	},
+	{
 		/**
 		 * The needs of the entity.
 		 */
 		needs: Record<PersonNeedId, Need>;
-		decayMultiplier?: number;
+		decayMultiplier: number;
 	}
 >(
 	(entity) => !!entity.needs,
 	(entity, options) => {
 		const decayMultiplier = options.decayMultiplier || 1;
 		Object.assign(entity, {
+			decayMultiplier,
 			needs: PERSON_NEEDS.reduce<Record<string, Need>>(
 				(map, needConfig) => ({
 					...map,

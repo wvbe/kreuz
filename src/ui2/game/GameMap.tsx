@@ -24,7 +24,6 @@ export const GameMap: FC<{ tilePaintMode: TilePaintMode | null }> = ({ tilePaint
 	const { onTileMouseDown, onTileMouseEnter } = useTilePaintMode(tilePaintMode ?? null);
 
 	const tiles = useMemo(() => {
-		console.log('render tiles');
 		return tilesCollection.map((tile) => {
 			return (
 				<GameMapTile
@@ -39,14 +38,12 @@ export const GameMap: FC<{ tilePaintMode: TilePaintMode | null }> = ({ tilePaint
 
 	const entitiesCollection = useCollection(game.entities, filterNoTiles);
 	const entities = useMemo(() => {
-		console.log('render entities');
 		return entitiesCollection
 			.filter(byEcsComponents([locationComponent, visibilityComponent]))
 			.map((tile) => {
 				return <GameMapEntity key={tile.id} entity={tile} />;
 			});
 	}, [entitiesCollection]);
-	console.log('render game map');
 
 	return (
 		<div data-component='GameMap' style={{ position: 'absolute', top: '50%', left: '50%' }}>

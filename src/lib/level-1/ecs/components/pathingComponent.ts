@@ -3,12 +3,15 @@ import { Event } from '../../events/Event';
 import { EventedValue } from '../../events/EventedValue';
 import { SimpleCoordinate } from '../../terrain/types';
 import { CallbackFn } from '../../types';
+import { tileArchetype } from '../archetypes/tileArchetype';
+import { hasEcsComponents } from '../assert';
 import { EcsComponent } from '../classes/EcsComponent';
 import { EcsEntity } from '../types';
 import { healthComponent } from './healthComponent';
 import { locationComponent } from './locationComponent';
 import { pathableComponent } from './pathableComponent';
 import { Path } from './pathingComponent/Path';
+import { visibilityComponent } from './visibilityComponent';
 
 type PathingEntity = EcsEntity<typeof locationComponent | typeof pathingComponent>;
 export type PathableTileEntity = EcsEntity<typeof locationComponent | typeof pathableComponent>;
@@ -40,7 +43,19 @@ async function walkToTile(entity: PathingEntity, game: Game, destination: Pathab
 	if (!start) {
 		throw new Error(`Entity "${entity.id}" lives on a detached coordinate`);
 	}
-	const path = new Path({ closest: true }).findPathBetween(start, destination);
+	const path = new Path({
+		closest: true,
+		obstacles: game.entities
+			.filter(
+				(entity) =>
+					!tileArchetype.test(entity) &&
+					hasEcsComponents(entity, [locationComponent, visibilityComponent]),
+			)
+			.map((entity) => ({
+				coordinate: (entity as EcsEntity<typeof locationComponent>).location.get(),
+				cost: 12,
+			})),
+	}).findPathBetween(start, destination);
 
 	// -----------------------------
 

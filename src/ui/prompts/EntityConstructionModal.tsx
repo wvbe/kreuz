@@ -5,7 +5,7 @@ import { marketArchetype } from '../../lib/level-1/ecs/archetypes/marketArchetyp
 import { EcsArchetype } from '../../lib/level-1/ecs/classes/EcsArchetype';
 import { Blueprint } from '../../lib/level-1/ecs/components/productionComponent/Blueprint';
 import { Material } from '../../lib/level-1/inventory/Material';
-import { PROMPT_CONSTRUCTION_JOB } from '../../lib/level-2/commands/ConstructionJob';
+import { PROMPT_CONSTRUCTION_JOB } from '../../lib/level-2/construction/job';
 import { useGameContext } from '../../ui2/contexts/GameContext';
 import { InventoryBag } from '../../ui2/game/GameInventory';
 import { Badge } from '../components/atoms/Badge';

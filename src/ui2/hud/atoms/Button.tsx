@@ -1,7 +1,7 @@
 import React, { FC, PropsWithChildren } from 'react';
 import './Button.css';
 
-interface ButtonProps extends PropsWithChildren {
+export interface ButtonProps extends PropsWithChildren {
 	onClick?: () => void;
 	disabled?: boolean;
 	active?: boolean;

@@ -12,7 +12,6 @@ export const MapLocation: React.FC<
 		style?: CSSProperties;
 	}
 > = ({ x, y, dx = 0, dy = 0, style = {}, ...rest }) => {
-	console.log('MapLocation', x, y, dx, dy);
 	const styleProp = useMemo<CSSProperties>(
 		() => ({
 			position: 'absolute',

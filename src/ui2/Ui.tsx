@@ -1,7 +1,6 @@
 import React, { useState, type FunctionComponent } from 'react';
 import { DriverI } from '../lib/level-1/drivers/types';
 import Game from '../lib/level-1/Game';
-import { PROMPT_CONSTRUCTION_JOB } from '../lib/level-2/commands/ConstructionJob';
 import { registerUiForPrompt } from '../ui/modals/ModalHost';
 import { EntityConstructionModal } from '../ui/prompts/EntityConstructionModal';
 import { Contexts } from './Contexts';
@@ -13,6 +12,7 @@ import { GameSelectedEntity } from './game/GameSelectedEntity';
 import { TilePaintMode } from './game/hooks/useTilePaintMode';
 import './hud/variables.css';
 import { PanZoomable } from './util/PanZoomable';
+import { PROMPT_CONSTRUCTION_JOB } from '../lib/level-2/construction/job';
 registerUiForPrompt(PROMPT_CONSTRUCTION_JOB, EntityConstructionModal);
 
 export const Ui: FunctionComponent<{

@@ -6,6 +6,7 @@
 //   Includes Binary Heap (with modifications) from Marijn Haverbeke.
 //   http://eloquentjavascript.net/appendix2.html
 
+import { SimpleCoordinate } from '../../../terrain/types';
 import { EcsEntity } from '../../types';
 import { locationComponent } from '../locationComponent';
 import { pathableComponent } from '../pathableComponent';
@@ -37,14 +38,8 @@ type HeuristicReport = {
 type PathOptions = {
 	closest: boolean;
 	heuristic?: HeuristicScorer;
+	obstacles?: { coordinate: SimpleCoordinate; cost: number }[];
 };
-
-/**
- * @TODO
- */
-function getVisitationCost(_from: PathableEntity, _neighbor: PathableEntity) {
-	return 1;
-}
 
 export class Path {
 	readonly #options: PathOptions;
@@ -63,8 +58,21 @@ export class Path {
 			return heuristic.f;
 		});
 		this.#heuristic = (pos0, pos1) => {
-			return pos0.euclideanDistanceTo(pos1.location.get());
+			return pos0.euclideanDistanceTo(pos1.location.get()); // + this.getVisitationCost(pos0, pos1)
 		};
+	}
+
+	private getVisitationCost(from: PathableEntity, to: PathableEntity): number {
+		if (!this.#options.obstacles) {
+			return 1;
+		}
+		const cost = this.#options.obstacles
+			.filter((obstacle) => to.equalsMapLocation(obstacle.coordinate))
+			.reduce((total, obstacle) => total + obstacle.cost, 1);
+		if (cost > 1) {
+			console.log('cost', cost);
+		}
+		return cost;
 	}
 
 	public findPathBetween(start: PathableEntity, end: PathableEntity) {
@@ -117,7 +125,8 @@ export class Path {
 
 				// The g score is the shortest distance from start to current node.
 				// We need to check if the path we have arrived at this neighbor is the shortest one we have seen yet.
-				const gScore = currentNodeHeuristics.g + getVisitationCost(currentNode, neighbor);
+				const gScore =
+					currentNodeHeuristics.g + this.getVisitationCost(currentNode, neighbor);
 				const beenVisited = !!neighborHeuristics;
 
 				if (!beenVisited || (neighborHeuristics && gScore < neighborHeuristics.g)) {

@@ -53,9 +53,11 @@ export const personArchetype = new EcsArchetype<
 			location: options.location,
 		});
 		needsComponent.attach(entity, {
-			hydration: 1,
-			nutrition: 1,
-			
+			initialNeeds: {
+				hydration: 1,
+				nutrition: 1,
+			},
+			decayMultiplier: 0,
 		});
 		pathingComponent.attach(entity, {
 			walkSpeed: 1 / 1000,

@@ -53,7 +53,7 @@ describe('getMaterialDistribution', () => {
 		expect(result1).toEqual(result2);
 	});
 
-	it.each([
+	it.each<[number, number][]>([
 		[
 			[5, 5],
 			[6, 6],

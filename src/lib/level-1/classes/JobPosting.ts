@@ -59,7 +59,8 @@ export abstract class JobPosting {
 	abstract onPost(game: Game): void | Promise<void>;
 
 	/**
-	 * The code that runs when a worker is assigned to the job.
+	 * The code that runs when a worker is assigned to the job. Should start the job, perform
+	 * the job, and return or resolve to `Promise<void>` when the job is done.
 	 */
 	abstract onAssign(game: Game, worker: EcsEntity): void | Promise<void>;
 

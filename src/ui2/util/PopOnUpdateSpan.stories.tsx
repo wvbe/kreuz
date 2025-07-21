@@ -1,4 +1,4 @@
-import { Meta, Story } from '@storybook/react';
+import { Meta, StoryFn } from '@storybook/react';
 import React, { useEffect, useState } from 'react';
 import { PopOnUpdateSpan } from './PopOnUpdateSpan';
 
@@ -7,7 +7,7 @@ export default {
 	component: PopOnUpdateSpan,
 } as Meta;
 
-const Template: Story = (args) => {
+const Template: StoryFn = (args) => {
 	const [text, setText] = useState('This will refresh for a random value every 2 seconds');
 
 	useEffect(() => {
@@ -19,7 +19,6 @@ const Template: Story = (args) => {
 
 	return <PopOnUpdateSpan {...args}>{text}</PopOnUpdateSpan>;
 };
-
 
 export const Default = Template.bind({});
 Default.args = {};

@@ -1,6 +1,5 @@
-import React, { useMemo, type FunctionComponent } from 'react';
+import { FunctionComponent, useMemo } from 'react';
 import { useReplacementSpaceContext } from '../../../ui2/contexts/ReplacementSpaceContext';
-import { EntityLink } from '../../entities/EntityLink';
 
 export const TokenizedText: FunctionComponent<{ text: string }> = ({ text }) => {
 	const space = useReplacementSpaceContext();
@@ -14,7 +13,7 @@ export const TokenizedText: FunctionComponent<{ text: string }> = ({ text }) => 
 				if (!item) {
 					return token;
 				}
-				return <EntityLink key={i} entity={item} />;
+				return `[${_key}: ${token}]`;
 			}),
 		[space, text],
 	);

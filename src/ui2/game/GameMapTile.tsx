@@ -44,7 +44,7 @@ export const GameMapTile: FC<{
 	onMouseLeave?: MouseEventHandler<HTMLDivElement>;
 	onMouseUp?: MouseEventHandler<HTMLDivElement>;
 }> = ({ tile, onMouseDown, onMouseEnter, onMouseLeave, onMouseUp }) => {
-	console.log('Rerender tile', tile.location.get().join(','));
+
 	const location = useEventedValue(tile.location);
 	const { isHighlighted, highlightColor } = useTileHighlights(tile);
 	const surfaceType = useEventedValue(tile.surfaceType);

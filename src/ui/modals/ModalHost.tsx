@@ -1,6 +1,7 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { Prompt } from '../../lib/level-1/classes/Prompt';
 import { DriverI } from '../../lib/level-1/drivers/types';
+import { type Event } from '../../lib/level-1/events/Event';
 import { useDriverContext } from '../../ui2/contexts/DriverContext';
 import { PromptModal } from '../prompts/types';
 
@@ -15,7 +16,7 @@ export function registerUiForPrompt<Data extends { [key: string]: unknown }>(
 
 let identifier = 0;
 
-type PromptData = DriverI['$prompt'] extends Event<infer T> ? T[0] : never;
+type PromptData = DriverI['$prompt'] extends Event<infer T> ? T[number] : never;
 
 export const ModalHost: FC = () => {
 	const [prompts, setPrompts] = useState<PromptData[]>([]);

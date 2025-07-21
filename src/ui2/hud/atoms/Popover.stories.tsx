@@ -44,12 +44,12 @@ const meta: Meta<typeof Popover> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type StoryFn = StoryObj<typeof meta>;
 
 /**
  * Basic popover with button trigger
  */
-export const Basic: Story = {
+export const Basic: StoryFn = {
 	render: (args) => (
 		<Popover
 			{...args}
@@ -70,7 +70,7 @@ export const Basic: Story = {
 /**
  * Popover with rich content including icons and formatting
  */
-export const RichContent: Story = {
+export const RichContent: StoryFn = {
 	render: (args) => (
 		<Popover
 			{...args}
@@ -116,7 +116,7 @@ export const RichContent: Story = {
 /**
  * Popover with form elements
  */
-export const WithForm: Story = {
+export const WithForm: StoryFn = {
 	render: (args) => (
 		<Popover
 			{...args}
@@ -155,7 +155,7 @@ export const WithForm: Story = {
 /**
  * Popover with list content
  */
-export const WithList: Story = {
+export const WithList: StoryFn = {
 	render: (args) => (
 		<Popover
 			{...args}
@@ -217,7 +217,7 @@ export const WithList: Story = {
 /**
  * Popover that starts open by default
  */
-export const DefaultOpen: Story = {
+export const DefaultOpen: StoryFn = {
 	render: (args) => (
 		<Popover
 			{...args}
@@ -236,7 +236,7 @@ export const DefaultOpen: Story = {
 /**
  * Popover with disabled outside click closing
  */
-export const NoOutsideClick: Story = {
+export const NoOutsideClick: StoryFn = {
 	render: (args) => (
 		<Popover
 			{...args}
@@ -256,7 +256,7 @@ export const NoOutsideClick: Story = {
 /**
  * Multiple popovers for comparison
  */
-export const MultiplePopovers: Story = {
+export const MultiplePopovers: StoryFn = {
 	render: () => (
 		<div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
 			<Popover
@@ -307,7 +307,7 @@ export const MultiplePopovers: Story = {
 /**
  * Popover with long content that demonstrates text wrapping
  */
-export const LongContent: Story = {
+export const LongContent: StoryFn = {
 	render: (args) => (
 		<Popover
 			{...args}

@@ -1,5 +1,5 @@
-import type { SeedI } from '../../level-1/classes/Random';
 import { Random } from '../../level-1/classes/Random';
+import { type SeedI } from '../../level-1/types';
 
 const SETTLEMENT_PREFIXES = [
 	'Apple',

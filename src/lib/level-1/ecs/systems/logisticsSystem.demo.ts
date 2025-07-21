@@ -1,13 +1,19 @@
 import { createJobWorkBehavior } from '../../../level-2/behavior/reusable/nodes/createJobWorkBehavior';
-import { wheat } from '../../../level-2/materials';
 import { generateEmptyGame } from '../../../test/generateEmptyGame';
-import { type SimpleCoordinate } from '../../terrain/types';
+import { Material } from '../../inventory/Material';
+import { MaterialState } from '../../inventory/types';
+import { SimpleCoordinate } from '../../terrain/types';
 import { personArchetype } from '../archetypes/personArchetype';
 import { importExportComponent } from '../components/importExportComponent';
 import { inventoryComponent } from '../components/inventoryComponent';
-import { type MaterialState } from '../components/inventoryComponent/types';
 import { locationComponent } from '../components/locationComponent';
-import { type EcsEntity } from '../types';
+import { EcsEntity } from '../types';
+
+const wheat = new Material('Wheat', {
+	symbol: 'WH',
+	stackSize: 100,
+	value: 0.1,
+});
 
 function createChestEntity(
 	location: SimpleCoordinate,

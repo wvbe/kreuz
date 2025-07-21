@@ -1,6 +1,5 @@
 import { action } from '@storybook/addon-actions';
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import React from 'react';
+import { Meta, StoryFn } from '@storybook/react';
 import { Inventory } from '../../lib/level-1/ecs/components/inventoryComponent/Inventory';
 import { Material } from '../../lib/level-1/inventory/Material';
 import { GameInventory } from './GameInventory';
@@ -23,9 +22,9 @@ inventory.changeMultiple([
 export default {
 	title: 'Game/GameInventory',
 	component: GameInventory,
-} as ComponentMeta<typeof GameInventory>;
+} as Meta<typeof GameInventory>;
 
-const Template: ComponentStory<typeof GameInventory> = (args) => <GameInventory {...args} />;
+const Template: StoryFn<typeof GameInventory> = (args) => <GameInventory {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

@@ -1,6 +1,0 @@
-.game-ui__clock {
-	position: absolute;
-	z-index: 3;
-	top: var(--line-height);
-	left: var(--line-height);
-}

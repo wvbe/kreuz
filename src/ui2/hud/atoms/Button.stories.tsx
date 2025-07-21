@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import React from 'react';
 import { Button } from './Button';
 
 /**
@@ -43,12 +44,12 @@ const meta: Meta<typeof Button> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type StoryFn = StoryObj<typeof meta>;
 
 /**
  * Default button with standard styling
  */
-export const Default: Story = {
+export const Default: StoryFn = {
 	args: {
 		children: 'Click me',
 	},
@@ -57,7 +58,7 @@ export const Default: Story = {
 /**
  * Button in tile layout mode, suitable for grid-based interfaces
  */
-export const Tile: Story = {
+export const Tile: StoryFn = {
 	args: {
 		children: 'Tile',
 		layout: 'tile',
@@ -67,7 +68,7 @@ export const Tile: Story = {
 /**
  * Disabled button state
  */
-export const Disabled: Story = {
+export const Disabled: StoryFn = {
 	args: {
 		children: 'Disabled',
 		disabled: true,
@@ -77,7 +78,7 @@ export const Disabled: Story = {
 /**
  * Disabled tile button
  */
-export const DisabledTile: Story = {
+export const DisabledTile: StoryFn = {
 	args: {
 		children: 'Disabled',
 		layout: 'tile',
@@ -88,7 +89,7 @@ export const DisabledTile: Story = {
 /**
  * Button with longer text content
  */
-export const LongText: Story = {
+export const LongText: StoryFn = {
 	args: {
 		children: 'This is a button with longer text content',
 	},
@@ -97,7 +98,7 @@ export const LongText: Story = {
 /**
  * Tile button with longer text
  */
-export const TileLongText: Story = {
+export const TileLongText: StoryFn = {
 	args: {
 		children: 'Long text in tile',
 		layout: 'tile',
@@ -107,7 +108,7 @@ export const TileLongText: Story = {
 /**
  * Button with icon-like content
  */
-export const IconButton: Story = {
+export const IconButton: StoryFn = {
 	args: {
 		children: '⚡',
 		layout: 'tile',
@@ -117,7 +118,7 @@ export const IconButton: Story = {
 /**
  * Button with icon before text
  */
-export const IconBefore: Story = {
+export const IconBefore: StoryFn = {
 	args: {
 		children: 'Save',
 		icon: '💾',
@@ -128,7 +129,7 @@ export const IconBefore: Story = {
 /**
  * Button with icon after text
  */
-export const IconAfter: Story = {
+export const IconAfter: StoryFn = {
 	args: {
 		children: 'Download',
 		icon: '⬇️',
@@ -139,7 +140,7 @@ export const IconAfter: Story = {
 /**
  * Tile button with icon
  */
-export const TileWithIcon: Story = {
+export const TileWithIcon: StoryFn = {
 	args: {
 		children: 'Build',
 		icon: '🔨',
@@ -150,7 +151,7 @@ export const TileWithIcon: Story = {
 /**
  * Button with React node as icon
  */
-export const ReactNodeIcon: Story = {
+export const ReactNodeIcon: StoryFn = {
 	args: {
 		children: 'Settings',
 		icon: <span style={{ fontSize: '1.2em' }}>⚙️</span>,
@@ -161,7 +162,7 @@ export const ReactNodeIcon: Story = {
 /**
  * Multiple buttons in different states for comparison
  */
-export const AllStates: Story = {
+export const AllStates: StoryFn = {
 	render: () => (
 		<div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
 			<Button>Default</Button>
@@ -177,7 +178,7 @@ export const AllStates: Story = {
 /**
  * Multiple buttons with icons for comparison
  */
-export const IconExamples: Story = {
+export const IconExamples: StoryFn = {
 	render: () => (
 		<div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
 			<Button icon='💾' iconSide='before'>

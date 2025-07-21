@@ -1,15 +1,6 @@
 import { type CallbackFn, type DestroyerFn } from '../types';
 import { Event } from './Event';
-import { EventedValue, type SaveEventedValueJson } from './EventedValue';
-
-export type SaveEventedNumericValueJson = SaveEventedValueJson & {
-	boundaries: Array<{
-		min: number;
-		max: number;
-		minInclusive: boolean;
-		maxInclusive: boolean;
-	}>;
-};
+import { EventedValue } from './EventedValue';
 
 type BetweenRange = {
 	min: number;

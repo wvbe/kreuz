@@ -69,9 +69,7 @@ export class Path {
 		const cost = this.#options.obstacles
 			.filter((obstacle) => to.equalsMapLocation(obstacle.coordinate))
 			.reduce((total, obstacle) => total + obstacle.cost, 1);
-		if (cost > 1) {
-			console.log('cost', cost);
-		}
+
 		return cost;
 	}
 

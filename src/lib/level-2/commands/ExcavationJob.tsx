@@ -1,5 +1,4 @@
-import React from 'react';
-import { Spinner } from '../../../ui2/hud/atoms/spinner';
+import { Spinner } from '../../../ui2/hud/atoms/Spinner';
 import { JobPosting } from '../../level-1/classes/JobPosting';
 import { mapMarkerArchetype } from '../../level-1/ecs/archetypes/mapMarkerArchetype';
 import { assertEcsComponents, hasEcsComponents } from '../../level-1/ecs/assert';

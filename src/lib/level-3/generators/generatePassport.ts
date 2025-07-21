@@ -1,5 +1,5 @@
-import type { SeedI } from '../../level-1/classes/Random';
 import { Random } from '../../level-1/classes/Random';
+import { SeedI } from '../../level-1/types';
 
 import { ICONS_FEMALE, ICONS_MALE } from './data/icons';
 import FIRST_NAMES_F from './data/names-female';

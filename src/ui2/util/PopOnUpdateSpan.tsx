@@ -1,4 +1,4 @@
-import React, {
+import {
 	type DetailedHTMLProps,
 	type FunctionComponent,
 	type HTMLAttributes,
@@ -14,7 +14,9 @@ export const PopOnUpdateSpan: FunctionComponent<
 	const clicks = useRef(0);
 	const element = useRef<HTMLSpanElement | null>(null);
 	const last = useRef<ReactNode | null>(null);
-	const setElementRef = useCallback((el: HTMLSpanElement) => (element.current = el), []);
+	const setElementRef = useCallback((el: HTMLSpanElement) => {
+		element.current = el;
+	}, []);
 	useEffect(
 		function performPopOnUpdateAnimation() {
 			if (!element.current) {

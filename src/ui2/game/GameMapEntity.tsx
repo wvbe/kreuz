@@ -1,4 +1,4 @@
-import React, {
+import {
 	DetailedHTMLProps,
 	FunctionComponent,
 	HTMLAttributes,
@@ -10,7 +10,6 @@ import { visibilityComponent } from '../../lib/level-1/ecs/components/visibility
 import { EcsEntity } from '../../lib/level-1/ecs/types';
 import { useEventedValue } from '../../ui/hooks/useEventedValue';
 import { useControlsContext } from '../contexts/ControlsContext';
-import { useGameContext } from '../contexts/GameContext';
 import { MapLocation } from '../map/MapLocation';
 import { useGameContextMenuOpener } from './GameContextMenu';
 import { GameEntityIcon } from './GameEntityIcon';
@@ -31,16 +30,16 @@ export const GameMapEntity: FunctionComponent<
 
 	const contextMenu = useGameContextMenuOpener();
 
-	const game = useGameContext();
+	// const game = useGameContext();
 
 	const onContextMenu = useCallback<MouseEventHandler<HTMLDivElement>>(
 		(event) => {
 			return; // Context menu is disabled for now
-			const tile = game.terrain.getTileEqualToLocation(entity.location.get());
-			if (!tile) {
-				throw new Error(`Entity "${entity.id}" lives on a detached coordinate`);
-			}
-			contextMenu.open(event, { tile });
+			// const tile = game.terrain.getTileEqualToLocation(entity.location.get());
+			// if (!tile) {
+			// 	throw new Error(`Entity "${entity.id}" lives on a detached coordinate`);
+			// }
+			// contextMenu.open(event, { tile });
 		},
 		[contextMenu],
 	);

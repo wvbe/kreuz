@@ -15,7 +15,6 @@ const App: FunctionComponent = () => {
 	if (!game) {
 		return <p className='panel please-wait'>Please wait…</p>;
 	}
-	console.log(game);
 
 	return <Ui game={game} driver={driver} />;
 };

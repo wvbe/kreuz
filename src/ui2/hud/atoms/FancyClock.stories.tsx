@@ -17,26 +17,24 @@ const meta: Meta<typeof FancyClock> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof FancyClock>;
+type StoryFn = StoryObj<typeof FancyClock>;
 
-export const Default: Story = {
+export const Default: StoryFn = {
 	args: {
 		time: 500, // Half past midnight
-		onTimeSpeedChange: (speed) => console.log('Time speed changed to:', speed),
+
 		style: 'skeuomorphic',
 	},
 };
 
-export const Midnight: Story = {
+export const Midnight: StoryFn = {
 	args: {
 		time: 0,
-		onTimeSpeedChange: (speed) => console.log('Time speed changed to:', speed),
 	},
 };
 
-export const OneHour: Story = {
+export const OneHour: StoryFn = {
 	args: {
 		time: 1000,
-		onTimeSpeedChange: (speed) => console.log('Time speed changed to:', speed),
 	},
 };

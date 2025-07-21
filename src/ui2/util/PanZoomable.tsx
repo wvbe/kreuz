@@ -1,6 +1,7 @@
 import panzoom, { PanZoom } from 'panzoom';
 import React, {
 	createContext,
+	useCallback,
 	useContext,
 	useEffect,
 	useMemo,
@@ -46,6 +47,10 @@ export const PanZoomable: FunctionComponent<{ children: ReactNode }> = ({ childr
 	const elementRef = useRef<HTMLDivElement | null>(null);
 	const panzoomRef = useRef<PanZoom | null>(null);
 
+	const onRef = useCallback((el: HTMLDivElement | null) => {
+		elementRef.current = el;
+	}, []);
+
 	useEffect(() => {
 		if (!elementRef.current) {
 			return;
@@ -82,7 +87,7 @@ export const PanZoomable: FunctionComponent<{ children: ReactNode }> = ({ childr
 	return (
 		<panzoomControlsContext.Provider value={panzoomControls}>
 			<div style={outerStyle}>
-				<div ref={(el) => (elementRef.current = el)} style={innerStyle}>
+				<div ref={onRef} style={innerStyle}>
 					{children}
 				</div>
 			</div>

@@ -1,4 +1,4 @@
-import { ExcavatedMaterial, WallMaterial } from '../../../../../ui2/map/MapLocation';
+import { WallMaterial, ExcavatedMaterial } from '../../../../../ui2/game/GameMapTile';
 
 /**
  * Represents the material composition of a terrain tile.

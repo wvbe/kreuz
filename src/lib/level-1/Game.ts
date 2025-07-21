@@ -21,7 +21,6 @@ import { type TerrainI } from './terrain/types';
 import { Time } from './time/Time';
 import { type timeToString } from './time/timeToString';
 import { type SeedI } from './types';
-import { type SavedGameJson } from './types-savedgame';
 
 function createEntitiesCollections() {
 	const entities = new KeyedCollection<'id', EcsEntity>('id');

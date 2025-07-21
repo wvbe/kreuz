@@ -1,5 +1,4 @@
-import { Meta, Story } from '@storybook/react';
-import React from 'react';
+import { Meta, StoryFn } from '@storybook/react';
 import { InventoryStack } from './InventoryStack';
 
 export default {
@@ -7,7 +6,7 @@ export default {
 	component: InventoryStack,
 } as Meta;
 
-const Template: Story<{ icon: string; label: string; quantity: number; isGhost?: boolean }> = (
+const Template: StoryFn<{ icon: string; label: string; quantity: number; isGhost?: boolean }> = (
 	args,
 ) => <InventoryStack {...args} />;
 

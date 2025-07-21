@@ -1,10 +1,4 @@
-import { type JsonValue } from 'https://deno.land/std@0.185.0/json/common';
 import { Event } from './Event';
-
-export type SaveEventedValueJson<As extends JsonValue = JsonValue> = {
-	current: As;
-	label: string;
-};
 
 /**
  * A value that emits an event when changed.

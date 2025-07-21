@@ -1,11 +1,24 @@
 import { expect } from '@jest/globals';
 import { createJobWorkBehavior } from '../../../level-2/behavior/reusable/nodes/createJobWorkBehavior';
-import { growWheat } from '../../../level-2/blueprints';
-import { wheat } from '../../../level-2/materials';
+
 import { generateEmptyGame } from '../../../test/generateEmptyGame';
+import { Material } from '../../inventory/Material';
 import { factoryArchetype } from '../archetypes/factoryArchetype';
 import { personArchetype } from '../archetypes/personArchetype';
+import { Blueprint } from '../components/productionComponent/Blueprint';
 import { EcsArchetypeEntity } from '../types';
+
+const wheat = new Material('Wheat', {
+	symbol: 'WH',
+	stackSize: 100,
+	value: 0.1,
+});
+
+export const growWheat = new Blueprint('Growing wheat', [], [{ material: wheat, quantity: 1 }], {
+	workersRequired: 1,
+	fullTimeEquivalent: 10000,
+	buildingName: 'Wheat farm',
+});
 
 describe('System: productionSystem', () => {
 	const { game, initGame } = generateEmptyGame();

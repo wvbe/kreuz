@@ -1,19 +1,13 @@
-import { JobPosting } from '../../classes/JobPosting';
+import { ProductionJob } from '../../../level-2/commands/ProductionJob';
 import Game from '../../Game';
 import { type Material } from '../../inventory/Material';
-import { byEcsComponents, hasEcsComponents } from '../assert';
+import { byEcsComponents } from '../assert';
 import { EcsSystem } from '../classes/EcsSystem';
 import { eventLogComponent } from '../components/eventLogComponent';
-import { healthComponent } from '../components/healthComponent';
 import { inventoryComponent } from '../components/inventoryComponent';
 import { locationComponent } from '../components/locationComponent';
-import { pathingComponent } from '../components/pathingComponent';
-import {
-	ProductionComponentWorkerEntity,
-	productionComponent,
-} from '../components/productionComponent';
+import { productionComponent } from '../components/productionComponent';
 import { Blueprint } from '../components/productionComponent/Blueprint';
-import { wealthComponent } from '../components/wealthComponent';
 import { EcsEntity } from '../types';
 
 /**
@@ -86,68 +80,6 @@ function canStartNewBlueprintCycle(factory: ProductionSystemFactoryEntity, bluep
 function isBlueprintCycleBusy(factory: ProductionSystemFactoryEntity): boolean {
 	const isBusy = !!(factory.blueprint.get() && factory.$$progress.delta > 0);
 	return isBusy;
-}
-
-async function assignWorkerToFactory(
-	game: Game,
-	worker: ProductionComponentWorkerEntity,
-	factory: ProductionSystemFactoryEntity,
-) {
-	if (worker.health.get() <= 0) {
-		throw new Error('Dead people cannot work');
-	}
-
-	await worker.events?.add(`Going to ${factory} for work`);
-
-	const tile = game.terrain.getTileEqualToLocation(factory.location.get());
-	if (!tile) {
-		throw new Error(`Entity "${factory.id}" lives on a detached coordinate`);
-	}
-	await worker.walkToTile(game, tile);
-	if (worker.health.get() <= 0) {
-		// Worker died on the way to the factory :(
-		return;
-	}
-
-	await factory.$workers.add(worker);
-
-	const destroyWorkerPoorHealthListener = worker.health.$recalibrate.on(() => {
-		if (worker.health.delta > 0) {
-			return;
-		}
-		worker.events?.add(`Poor health, leaving job at ${factory}`);
-		factory.$workers.remove(worker);
-	});
-
-	// .on instead of .once, because we're manually destroying the listener
-	const destroyDeathListener = worker.$death.on(() => {
-		factory.$workers.remove(worker);
-	});
-
-	// const destroyProductionComplete = factory.$$progress.onBelow(
-	// 	0,
-	// 	() => {
-	// 		factory.$workers.remove(worker);
-	// 	},
-	// 	true,
-	// );
-
-	await worker.events?.add(`Working in ${factory}`);
-
-	// Finish job when the worker is removed from the worker list. factory happens
-	// when the factory is not productive for a while..
-	await new Promise<void>((resolve) => {
-		const unlisten = factory.$workers.$remove.on((removed) => {
-			if (!removed.includes(worker)) {
-				return;
-			}
-			destroyDeathListener();
-			destroyWorkerPoorHealthListener();
-			// destroyProductionComplete();
-			unlisten();
-			resolve();
-		});
-	});
 }
 
 async function attachSystemToEntity(game: Game, factory: ProductionSystemFactoryEntity) {
@@ -295,62 +227,10 @@ async function attachSystemToEntity(game: Game, factory: ProductionSystemFactory
 		if (!blueprint || blueprint.options.workersRequired < 1) {
 			return;
 		}
-		const vacancy = new JobPosting(
-			(_job, entity) =>
-				assignWorkerToFactory(game, entity as ProductionComponentWorkerEntity, factory),
-			{
-				vacancies: factory.maxWorkers,
-				restoreVacancyWhenDone: true,
-				label: `Working for ${factory}`,
-				score: (entity) => {
-					if (
-						!hasEcsComponents(entity, [
-							healthComponent,
-							wealthComponent,
-							locationComponent,
-							pathingComponent,
-						])
-					) {
-						// Entities who are not interested in money, or entities who do not have a location,
-						// are never interested in this job.
-						return 0;
-					}
 
-					if (!entity.health.get()) {
-						// This person is ded
-						return 0;
-					}
-
-					let desirability = 1;
-
-					const maximumDistanceWillingToTravel = 20,
-						distanceToJob = entity.euclideanDistanceTo(factory.location.get()),
-						// 1 = very close job, 0 = infinitely far
-						distanceMultiplier = Math.max(
-							0,
-							(maximumDistanceWillingToTravel - distanceToJob) /
-								maximumDistanceWillingToTravel,
-						);
-					desirability *= distanceMultiplier;
-
-					if (
-						distanceMultiplier > 0 &&
-						(!blueprint.hasAllIngredients(factory.inventory) ||
-							!factory.inventory.isEverythingAdditionallyAllocatable(
-								blueprint.products,
-							))
-					) {
-						// Not enough ingredients in inventory to start another production cycle
-						// Or not enough space to stow the products
-						desirability *= 0.1;
-					}
-
-					return desirability;
-				},
-			},
-		);
-		game.jobs.addGlobal(vacancy);
-		factory.blueprint.once(() => game.jobs.removeGlobal(vacancy));
+		const jobPosting = new ProductionJob(factory);
+		game.jobs.addGlobal(jobPosting);
+		factory.blueprint.once(() => game.jobs.removeGlobal(jobPosting));
 	}
 	factory.blueprint.on(createWorkerJobPosting.bind(undefined, game));
 	createWorkerJobPosting(game, factory.blueprint.get());

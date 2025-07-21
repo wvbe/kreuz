@@ -2,14 +2,7 @@ import { type AttachableI } from '../classes/Attachable';
 import type Game from '../Game';
 import { type DestroyerFn } from '../types';
 import { Event } from './Event';
-import { EventedNumericValue, type SaveEventedNumericValueJson } from './EventedNumericValue';
-
-export type SaveProgressingNumericValueJson = SaveEventedNumericValueJson & {
-	min: number;
-	max: number;
-	delta: number;
-	granularity: number;
-};
+import { EventedNumericValue } from './EventedNumericValue';
 
 type ProgressingNumericValueOptions = {
 	/**

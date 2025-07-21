@@ -1,29 +1,16 @@
-import React from 'react';
-import { Spinner } from '../../../ui2/hud/atoms/spinner';
+import { Spinner } from '../../../ui2/hud/atoms/Spinner';
 import { JobPosting } from '../../level-1/classes/JobPosting';
 import { Prompt } from '../../level-1/classes/Prompt';
-import {
-	createFactoryForBlueprint,
-	factoryArchetype,
-} from '../../level-1/ecs/archetypes/factoryArchetype';
 import { mapMarkerArchetype } from '../../level-1/ecs/archetypes/mapMarkerArchetype';
-import {
-	createMarketForMaterial,
-	marketArchetype,
-} from '../../level-1/ecs/archetypes/marketArchetype';
 import { assertEcsComponents, hasEcsComponents } from '../../level-1/ecs/assert';
-import { EcsArchetype } from '../../level-1/ecs/classes/EcsArchetype';
 import { eventLogComponent } from '../../level-1/ecs/components/eventLogComponent';
 import { inventoryComponent } from '../../level-1/ecs/components/inventoryComponent';
 import { locationComponent } from '../../level-1/ecs/components/locationComponent';
 import { pathableComponent } from '../../level-1/ecs/components/pathableComponent';
 import { pathingComponent } from '../../level-1/ecs/components/pathingComponent';
-import { Blueprint } from '../../level-1/ecs/components/productionComponent/Blueprint';
 import { surfaceComponent, SurfaceType } from '../../level-1/ecs/components/surfaceComponent';
 import { EcsArchetypeEntity, EcsEntity } from '../../level-1/ecs/types';
 import Game from '../../level-1/Game';
-import { Material } from '../../level-1/inventory/Material';
-import { SimpleCoordinate } from '../../level-1/terrain/types';
 import { ExcavateableTile } from '../commands/ExcavationJob';
 import { Constructible } from './types';
 
@@ -31,8 +18,7 @@ import { Constructible } from './types';
  * Identifier for the prompt that asks the user to select an entity to construct.
  */
 export const PROMPT_CONSTRUCTION_JOB = new Prompt<{
-	buildingType: EcsArchetype<any, any>;
-	buildingFocus: Blueprint | Material;
+	derp: boolean;
 }>();
 
 export class ConstructionJob extends JobPosting {
@@ -119,26 +105,27 @@ export class ConstructionJob extends JobPosting {
 				this.thing.construction.createEntity(this.thing, this.tile.location.get()),
 			);
 		} else {
-			// throw new Error('No createEntity function provided for this thing');
+			// Todo, place this in an inventory or whatever
+			throw new Error('No createEntity function provided for this thing');
 		}
 	}
 
-	private async createBuiltEntity(game: Game, location: SimpleCoordinate) {
-		switch (this.buildingType) {
-			case factoryArchetype:
-				return createFactoryForBlueprint(
-					this.buildingFocus as Blueprint,
-					this.owner,
-					location,
-				);
-			case marketArchetype:
-				return createMarketForMaterial(
-					this.buildingFocus as Material,
-					this.owner,
-					location,
-				);
-			default:
-				throw new Error(`Unknown building type: ${this.buildingType}`);
-		}
-	}
+	// private async createBuiltEntity(game: Game, location: SimpleCoordinate) {
+	// 	switch (this.buildingType) {
+	// 		case factoryArchetype:
+	// 			return createFactoryForBlueprint(
+	// 				this.buildingFocus as Blueprint,
+	// 				this.owner,
+	// 				location,
+	// 			);
+	// 		case marketArchetype:
+	// 			return createMarketForMaterial(
+	// 				this.buildingFocus as Material,
+	// 				this.owner,
+	// 				location,
+	// 			);
+	// 		default:
+	// 			throw new Error(`Unknown building type: ${this.buildingType}`);
+	// 	}
+	// }
 }

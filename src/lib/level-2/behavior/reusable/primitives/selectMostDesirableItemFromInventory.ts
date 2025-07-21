@@ -1,5 +1,5 @@
 import { inventoryComponent } from '../../../../level-1/ecs/components/inventoryComponent';
-import { type EcsEntity, type TradeOrder } from '../../../../level-1/ecs/types';
+import { EcsEntity } from '../../../../level-1/ecs/types';
 import { DesirabilityRecord, VendorPurchaseScorer } from './types';
 
 /**

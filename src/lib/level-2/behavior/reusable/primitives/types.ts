@@ -1,12 +1,10 @@
-import {
-	EcsEntity,
-	Material,
-	inventoryComponent,
-	locationComponent,
-	ownerComponent,
-	pathingComponent,
-	wealthComponent,
-} from '../../../../level-1/mod';
+import { inventoryComponent } from '../../../../level-1/ecs/components/inventoryComponent';
+import { locationComponent } from '../../../../level-1/ecs/components/locationComponent';
+import { ownerComponent } from '../../../../level-1/ecs/components/ownerComponent';
+import { pathingComponent } from '../../../../level-1/ecs/components/pathingComponent';
+import { wealthComponent } from '../../../../level-1/ecs/components/wealthComponent';
+import { EcsEntity } from '../../../../level-1/ecs/types';
+import { Material } from '../../../../level-1/inventory/Material';
 
 type VendorEntity = EcsEntity<
 	| typeof inventoryComponent
@@ -41,7 +39,7 @@ export type VendorPurchaseScorer<IncludeVendor extends boolean> = (
 				| typeof wealthComponent
 				| typeof locationComponent
 				| typeof pathingComponent
-			>
+		  >
 		: EcsEntity<typeof inventoryComponent>,
 	vendor: IncludeVendor extends true ? VendorEntity : null,
 	material: Material,

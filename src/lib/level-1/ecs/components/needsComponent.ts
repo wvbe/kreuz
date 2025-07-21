@@ -29,7 +29,7 @@ export const needsComponent = new EcsComponent<
 					...map,
 					[needConfig.id]: new Need(
 						needConfig.id,
-						options[needConfig.id],
+						options.initialNeeds[needConfig.id],
 						needConfig.label,
 						needConfig.decay * decayMultiplier,
 					),

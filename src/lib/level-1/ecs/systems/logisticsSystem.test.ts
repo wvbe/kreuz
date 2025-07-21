@@ -1,7 +1,8 @@
 import { expect } from '@jest/globals';
 import { createJobWorkBehavior } from '../../../level-2/behavior/reusable/nodes/createJobWorkBehavior';
-import { wheat } from '../../../level-2/materials';
+
 import { generateEmptyGame } from '../../../test/generateEmptyGame';
+import { Material } from '../../inventory/Material';
 import { MaterialState } from '../../inventory/types';
 import { SimpleCoordinate } from '../../terrain/types';
 import { personArchetype } from '../archetypes/personArchetype';
@@ -11,6 +12,12 @@ import { inventoryComponent } from '../components/inventoryComponent';
 import { locationComponent } from '../components/locationComponent';
 import { visibilityComponent } from '../components/visibilityComponent';
 import { EcsEntity } from '../types';
+
+const wheat = new Material('Wheat', {
+	symbol: 'WH',
+	stackSize: 100,
+	value: 0.1,
+});
 
 function createChestEntity(
 	location: SimpleCoordinate,

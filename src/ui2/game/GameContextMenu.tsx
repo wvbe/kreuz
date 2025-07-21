@@ -1,7 +1,6 @@
-import React, { FC, useMemo } from 'react';
-import { tileArchetype } from '../../lib/level-1/ecs/archetypes/tileArchetype';
+import { FC, useMemo } from 'react';
 import { locationComponent } from '../../lib/level-1/ecs/components/locationComponent';
-import { EcsArchetypeEntity, EcsEntity } from '../../lib/level-1/ecs/types';
+import { EcsEntity } from '../../lib/level-1/ecs/types';
 import { useGameContext } from '../contexts/GameContext';
 import { ContextMenu, ContextMenuSection } from '../hud/ContextMenu';
 import { createContextMenu } from '../util/createContextMenu';
@@ -12,7 +11,7 @@ import { GameEntityBadge } from './GameEntityBadge';
  *
  * This component uses the {@link ContextMenu} presentational component to display options for a given game tile.
  */
-const GameContextMenu: FC<{ tile: EcsArchetypeEntity<typeof tileArchetype> }> = ({ tile }) => {
+const GameContextMenu: FC<{ tile: EcsEntity<typeof locationComponent> }> = ({ tile }) => {
 	const game = useGameContext();
 	const sections = useMemo<ContextMenuSection[]>(() => {
 		const location = tile.location.get();

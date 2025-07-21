@@ -1,7 +1,7 @@
 import { EcsEntity } from '../../level-1/ecs/types';
-import { Material } from '../../lib/level-1/inventory/Material';
-import { MaterialState } from '../../lib/level-1/inventory/types';
-
+import { Material } from '../../level-1/inventory/Material';
+import { MaterialState } from '../../level-1/inventory/types';
+import { SimpleCoordinate } from '../../level-1/terrain/types';
 export type RawMaterial = Material & {
 	type: 'raw';
 	description: string;
@@ -20,6 +20,6 @@ export type Constructible = Material & {
 	construction: {
 		time: number;
 		requiredMaterials: MaterialState<RawMaterial | ProcessedMaterial>[];
-		createEntity: (self: Constructible) => EcsEntity;
+		createEntity?: (self: Constructible, location: SimpleCoordinate) => EcsEntity;
 	};
 };

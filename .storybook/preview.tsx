@@ -1,6 +1,6 @@
 import React from 'react';
 
-import '../src/ui2/hud/variables.css';
+import '../src/ui/hud/variables.css';
 import './stories.css';
 const preview = {
 	parameters: {

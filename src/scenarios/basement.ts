@@ -6,19 +6,18 @@
  * The expected outcome is a short-running game that ends the timeloop amicably because there is
  * no further events planned.
  */
-import { DriverI } from '../lib/level-1/drivers/types';
-import { personArchetype } from '../lib/level-1/ecs/archetypes/personArchetype';
-import Game from '../lib/level-1/Game';
-import { civilianBehavior } from '../lib/level-2/behavior';
-import { growTerrainForExcavatedEdges } from '../lib/level-3/modifiers/growTerrainForExcavatedEdges';
-import { generateGridTerrainFromAscii } from '../lib/test/generateGridTerrainFromAscii';
+import { civilianBehavior } from '../game/assets/behavior';
+import { DriverI } from '../game/core/drivers/types';
+import { personArchetype } from '../game/core/ecs/archetypes/personArchetype';
+import Game from '../game/core/Game';
+import { growTerrainForExcavatedEdges } from '../game/generators/modifiers/growTerrainForExcavatedEdges';
+import { generateGridTerrainFromAscii } from '../game/test/generateGridTerrainFromAscii';
 
 export default async function (driver: DriverI) {
 	const game = new Game(driver, '1');
-	game.terrain.tiles.$add.on(growTerrainForExcavatedEdges.bind(game));
 
-	await game.entities.add(
-		...generateGridTerrainFromAscii(`
+	await game.terrain.addTiles(
+		generateGridTerrainFromAscii(`
 			XXXXXXXXXXXX
 			XXXXXXXXXXXX
 			XXXXXXXXXXXX
@@ -28,12 +27,17 @@ export default async function (driver: DriverI) {
 			XXXXXXXXXXXX
 		`),
 	);
+	game.terrain.tiles.$add.on(growTerrainForExcavatedEdges.bind(game));
+
+	growTerrainForExcavatedEdges.call(game, game.terrain.tiles.slice());
+
 	const entity = personArchetype.create({
 		location: game.terrain.getTileClosestToXy(0, 0).location.get(),
 		name: 'Rowbot',
 		icon: '🤖',
 		behavior: civilianBehavior,
 		wealth: 10_000,
+		immortal: true,
 	});
 	// entity.inventory.change(game.assets.materials.get('pickaxe'), 1);
 	await game.entities.add(entity);

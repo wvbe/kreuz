@@ -1,12 +1,12 @@
-import { FunctionComponent, default as React, StrictMode } from 'react';
+import { FunctionComponent, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { BrowserDriver } from './ui/game/BrowserDriver';
 import { useGeneratedGame } from './ui/hooks/useGeneratedGame';
-import { BrowserDriver } from './ui2/game/BrowserDriver';
 
 // import { caveScene } from './scenarios/cave';
 
 import basement from './scenarios/basement';
-import { Ui } from './ui2/Ui';
+import { Ui } from './ui/Ui';
 
 const driver = new BrowserDriver();
 

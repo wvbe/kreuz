@@ -1,0 +1,23 @@
+.panel {
+	--panel-backdrop-filter: blur(20px);
+	--panel-box-shadow: 0 4px 14px -5px rgba(0, 0, 0, 0.5);
+
+	padding: 0.25em;
+	border-radius: var(--ui-border-radius-medium);
+	box-shadow: var(--panel-box-shadow);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	background-color: rgba(255, 255, 255, 0.025);
+	position: relative;
+
+	&::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: -10;
+		backdrop-filter: var(--panel-backdrop-filter);
+		border-radius: var(--ui-border-radius-medium);
+	}
+}

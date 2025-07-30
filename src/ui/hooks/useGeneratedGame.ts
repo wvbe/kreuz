@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { DriverI } from '../../lib/level-1/drivers/types';
-import Game from '../../lib/level-1/Game';
+import { DriverI } from '../../game/core/drivers/types';
+import Game from '../../game/core/Game';
 
 export function useGeneratedGame(
 	factory: (driver: DriverI) => Promise<Game>,

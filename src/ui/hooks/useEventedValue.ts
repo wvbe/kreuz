@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Collection } from '../../lib/level-1/events/Collection';
-import { CollectionBucket } from '../../lib/level-1/events/CollectionBucket';
-import { EventedValue } from '../../lib/level-1/events/EventedValue';
-import { EventEmitterI } from '../../lib/level-1/events/types';
+import { Collection } from '../../game/core/events/Collection';
+import { CollectionBucket } from '../../game/core/events/CollectionBucket';
+import { EventedValue } from '../../game/core/events/EventedValue';
+import { EventEmitterI } from '../../game/core/events/types';
 
 function noTransformSingle<T, O = T>(value: T): O {
 	// Shut the fuck up, TypeScript.
@@ -67,7 +67,7 @@ export function useMemoFromEvent<
 
 	useEffect(() => {
 		setValue(initial);
-		return eventedValue.on(function useEventData_on(...value) {
+		return eventedValue?.on(function useEventData_on(...value) {
 			setValue(transform(...value));
 		});
 	}, [transform, eventedValue]);

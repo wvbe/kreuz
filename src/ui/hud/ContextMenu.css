@@ -1,0 +1,88 @@
+/* Basic styling for the context menu */
+.context-menu {
+	/* Colors */
+	--context-menu-bg-color: #f0f0f0;
+	--context-menu-border-color: #ccc;
+	--context-menu-shadow-color: rgba(0, 0, 0, 0.2);
+	--context-menu-text-color: #333;
+	--context-menu-header-bg-color: rgba(255, 255, 255, 0.1);
+	--context-menu-hover-bg-color: rgba(255, 255, 255, 0.3);
+
+	/* Sizes */
+	--context-menu-width: 200px;
+	--context-menu-submenu-width: 180px;
+	--context-menu-padding: 8px 12px;
+	--context-menu-shadow: 2px 2px 5px;
+	--context-menu-border-width: 1px;
+
+	/* Typography */
+	--context-menu-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	--context-menu-font-size: 14px;
+	--context-menu-font-weight-bold: bold;
+
+	/* Z-index */
+	--context-menu-submenu-z-index: 1000;
+
+	position: relative;
+	box-shadow: var(--context-menu-shadow) var(--context-menu-shadow-color);
+	width: var(--context-menu-width);
+}
+
+.context-menu,
+.context-menu__items {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25em;
+}
+
+.context-menu__header {
+	padding: var(--context-menu-padding);
+	font-weight: var(--context-menu-font-weight-bold);
+	background-color: var(--context-menu-header-bg-color);
+	border-radius: 0.25em;
+}
+
+.context-menu__items {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.context-menu__item {
+	padding: var(--context-menu-padding);
+	cursor: pointer;
+	transition: background-color 0.2s ease-in-out;
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	border-radius: 0.25em;
+	&:hover {
+		background-color: var(--context-menu-hover-bg-color);
+	}
+}
+
+.context-menu__submenu {
+	position: absolute;
+	left: 100%;
+	top: 0;
+	z-index: var(--context-menu-submenu-z-index);
+	background-color: var(--context-menu-bg-color);
+	border: var(--context-menu-border-width) solid var(--context-menu-border-color);
+	box-shadow: var(--context-menu-shadow) var(--context-menu-shadow-color);
+	width: var(--context-menu-submenu-width);
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	transform: none;
+}
+
+.context-menu__submenu-item {
+	padding: var(--context-menu-padding);
+	cursor: pointer;
+	transition: background-color 0.2s ease-in-out;
+	&:hover {
+		background-color: var(--context-menu-hover-bg-color);
+	}
+}

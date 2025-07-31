@@ -1,9 +1,9 @@
 import { SimpleCoordinate } from '../../../terrain/types';
 
 /**
- * Get the euclidian distance between two points in 3D space.
+ * Get the euclidean distance between two points in 3D space.
  */
-export function getEuclidianDistance(
+export function getEuclideanDistance(
 	[x1, y1, z1]: SimpleCoordinate,
 	[x2, y2, z2]: SimpleCoordinate,
 ) {

@@ -1,10 +1,10 @@
 import { QualifiedCoordinate, TerrainI } from '../../../terrain/types';
-import { getEuclidianDistance } from './getEuclidianDistance';
+import { getEuclideanDistance } from './getEuclideanDistance';
 
 /**
  * @note Does not count distance for passing into anotehr space.
  */
-export function getEuclidianDistanceAcrossSpaces(
+export function getEuclideanDistanceAcrossSpaces(
 	start: QualifiedCoordinate,
 	finish: QualifiedCoordinate,
 ) {
@@ -47,7 +47,7 @@ export function getEuclidianDistanceAcrossSpaces(
 			throw new Error('Child not found');
 		}
 		totalDistance +=
-			getEuclidianDistance(currentCoords, currentSpace.entryLocation!) *
+			getEuclideanDistance(currentCoords, currentSpace.entryLocation!) *
 			currentSpace.sizeMultiplier;
 		currentSpace = nextSpace;
 		currentCoords = child.location;
@@ -60,13 +60,13 @@ export function getEuclidianDistanceAcrossSpaces(
 			throw new Error('Child not found');
 		}
 		totalDistance +=
-			getEuclidianDistance(currentCoords, child.location) * currentSpace.sizeMultiplier;
+			getEuclideanDistance(currentCoords, child.location) * currentSpace.sizeMultiplier;
 		currentSpace = child.terrain!;
 		currentCoords = child.terrain.entryLocation!;
 	}
 
 	totalDistance +=
-		getEuclidianDistance(currentCoords, finishCoords) * currentSpace.sizeMultiplier;
+		getEuclideanDistance(currentCoords, finishCoords) * currentSpace.sizeMultiplier;
 
 	return totalDistance;
 }

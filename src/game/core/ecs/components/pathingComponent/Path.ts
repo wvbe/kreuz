@@ -298,7 +298,7 @@ export class Path<PathableEntity> {
 		});
 	}
 
-	public static forTerrainslands<X extends { tiles: Tile[]; neighbours: X[] }>(
+	public static forTerrainIslands<X extends { tiles: Tile[]; neighbours: X[] }>(
 		start: X,
 		options: Omit<PathOptions<X>, 'getLocation' | 'getNeighbours' | 'getWalkability'>,
 	) {

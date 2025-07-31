@@ -39,10 +39,17 @@ describe('getContiguousObjects', () => {
 	});
 
 	it('Out and in of a building', () => {
-		const path = calculatePathAcrossIslands(
-			buildingOne.getTileAtMapLocation([0, 0, 0]),
-			buildingTwo.getTileAtMapLocation([2, 0, 0]),
-		);
-		expect(path).toHaveLength(1);
+		const path = calculatePathAcrossIslands([buildingOne, 0, 0, 0], [buildingTwo, 2, 0, 0]);
+
+		// This comparison stalls Jest out:
+		// expect(path[0].tiles[0].location.get()[0]).toBe(world);
+		// expect(path[0].tiles[1].location.get()[0]).toBe(buildingTwo);
+
+		// So instead
+		expect(path.map((p) => p.tiles[0].location.get()[0].toString())).toEqual([
+			'building-1',
+			'world',
+			'building-2',
+		]);
 	});
 });

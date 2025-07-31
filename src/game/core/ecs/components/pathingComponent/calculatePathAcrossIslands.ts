@@ -1,9 +1,7 @@
 import { Terrain } from '../../../terrain/Terrain';
-import { SimpleCoordinate } from '../../../terrain/types';
+import { QualifiedCoordinate, SimpleCoordinate } from '../../../terrain/types';
 import { Tile } from '../../archetypes/tileArchetype';
-import { EcsEntity } from '../../types';
 import { isMapLocationEqualTo } from '../location/isMapLocationEqualTo';
-import { locationComponent } from '../locationComponent';
 import { Path } from './Path';
 
 type TerrainIsland = {
@@ -12,29 +10,31 @@ type TerrainIsland = {
 };
 
 export function calculatePathAcrossIslands(
-	entity: EcsEntity<typeof locationComponent>,
-	destination: Tile,
+	[startTerrain, ...startCoordinates]: QualifiedCoordinate,
+	[destinationTerrain, ...destinationCoordinates]: QualifiedCoordinate,
 ) {
-	const start = entity.location.get();
-	const [startTerrain, ...startCoordinates] = start;
 	const startTile = startTerrain.getTileAtMapLocation(startCoordinates);
 	if (!startTile) {
 		throw new Error('Could not find the start tile');
 	}
 
-	let destinationIsland: TerrainIsland | null = null;
+	const destinationTile = destinationTerrain.getTileAtMapLocation(destinationCoordinates);
+	if (!destinationTile) {
+		throw new Error('Could not find the destination tile');
+	}
 
+	let destinationIsland: TerrainIsland | null = null;
 	// Umm should I record `visitedIslands` instead?
 	const visitedTerrains: Terrain[] = [];
 
 	const startIsland = (function buildIslandGraph(tile: Tile) {
-		const [terrain] = tile.location.get();
-		console.log('Checking terrain', terrain.toString());
-		visitedTerrains.push(terrain);
+		const [currentTerrain] = tile.location.get();
+		console.log('Checking terrain', currentTerrain.toString());
+		visitedTerrains.push(currentTerrain);
 
 		// By querying all islands, rather than just look for the current island, we can benefit
 		// from a cache that builds up in Terrain.#islands.
-		const islands = terrain.getIslands().map<TerrainIsland>((tiles) => ({
+		const islands = currentTerrain.getIslands().map<TerrainIsland>((tiles) => ({
 			tiles,
 			neighbours: [],
 		}));
@@ -44,11 +44,11 @@ export function calculatePathAcrossIslands(
 			throw new Error('Could not find the current island');
 		}
 
-		if (!destinationIsland && currentIsland.tiles.includes(destination)) {
+		if (!destinationIsland && currentIsland.tiles.includes(destinationTile)) {
 			destinationIsland = currentIsland;
 		}
 
-		const neighbours = terrain
+		const neighbours = currentTerrain
 			.getAdjacentTerrains()
 			.filter((adjacent) => {
 				if (visitedTerrains.includes(adjacent.terrain)) {
@@ -61,8 +61,10 @@ export function calculatePathAcrossIslands(
 					),
 				);
 			})
-			.map(({ terrain }) => {
-				const tileToArriveOn = terrain.getTileAtMapLocation(terrain.portalEnd);
+			.map(({ terrain: destinationTerrain, portalStart }) => {
+				const tileToArriveOn = destinationTerrain.getTileAtMapLocation(
+					destinationTerrain.getLocationOfPortalToTerrain(currentTerrain),
+				);
 				if (!tileToArriveOn) {
 					throw new Error('Could not find the tile to arrive on');
 				}
@@ -83,5 +85,5 @@ export function calculatePathAcrossIslands(
 		closest: false,
 	}).to(destinationIsland);
 
-	return pathAcrossTerrains;
+	return [startIsland, ...pathAcrossTerrains];
 }

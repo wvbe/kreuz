@@ -15,10 +15,9 @@ describe('Path', () => {
 		});
 
 		expect(
-			new Path({ closest: false }).findPathBetween(
-				terrain.getTileAtMapLocation([0, 0, 0]),
-				terrain.getTileAtMapLocation([2, 0, 0]),
-			),
+			Path.forTile(terrain.getTileAtMapLocation([0, 0, 0]), {
+				closest: false,
+			}).to(terrain.getTileAtMapLocation([2, 0, 0])),
 		).toHaveLength(6);
 	});
 });

@@ -6,50 +6,58 @@
 //   Includes Binary Heap (with modifications) from Marijn Haverbeke.
 //   http://eloquentjavascript.net/appendix2.html
 
+import { Terrain } from '../../../terrain/Terrain';
 import { QualifiedCoordinate } from '../../../terrain/types';
-import { EcsEntity } from '../../types';
-import { locationComponent } from '../locationComponent';
-import { pathableComponent } from '../pathableComponent';
+import { Tile } from '../../archetypes/tileArchetype';
+import { getEuclideanDistanceAcrossSpaces } from '../location/getEuclideanDistanceAcrossSpaces';
+import { isMapLocationEqualTo } from '../location/isMapLocationEqualTo';
 import { BinaryHeap } from './BinaryHeap';
 
-type PathableEntity = EcsEntity<typeof pathableComponent | typeof locationComponent>;
-
-function isPathableEntity(entity: EcsEntity): entity is PathableEntity {
-	return pathableComponent.test(entity) && locationComponent.test(entity);
-}
-
 // See list of heuristics: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
-type HeuristicScorer = (a: PathableEntity, b: PathableEntity) => number;
+type HeuristicScorer<PathableEntity> = (a: PathableEntity, b: PathableEntity) => number;
 
 /**
  * Perform an A* Search on a graph given a start and end node.
  */
 
-type HeuristicReport = {
+type HeuristicReport<PathableEntity> = {
 	coordinate: PathableEntity;
 	h: number;
 	g: number;
 	f: number;
-	parent: HeuristicReport | null;
+	parent: HeuristicReport<PathableEntity> | null;
 	closed: boolean;
 	visited: boolean;
 };
 
-type PathOptions = {
+type PathOptions<PathableEntity> = {
+	/**
+	 * Set to true if you'll accept any path to as close as you can get, rather than strictly
+	 * to the destination completely.
+	 */
 	closest: boolean;
-	heuristic?: HeuristicScorer;
+	heuristic?: HeuristicScorer<PathableEntity>;
 	obstacles?: { coordinate: QualifiedCoordinate; cost: number }[];
+	getLocation: (entity: PathableEntity) => QualifiedCoordinate;
+	getNeighbours: (entity: PathableEntity) => PathableEntity[];
+	/**
+	 * Should return a number between 0 and 1 representing how easy it is to walk on this entity;
+	 * - 0 being completely impassable
+	 * - 1 being completely walkable
+	 *
+	 * This number will affect the cost of departing from, as well as arriving to, this tile.
+	 */
+	getWalkability: (entity: PathableEntity) => number;
 };
-
-export class Path {
-	readonly #options: PathOptions;
-	readonly #cache: Map<PathableEntity, HeuristicReport>;
+export class Path<PathableEntity> {
+	readonly #options: PathOptions<PathableEntity>;
+	readonly #cache: Map<PathableEntity, HeuristicReport<PathableEntity>>;
 	readonly #heap: BinaryHeap<PathableEntity>;
-	readonly #heuristic: HeuristicScorer;
+	readonly #heuristic: HeuristicScorer<PathableEntity>;
 
-	constructor(options: PathOptions) {
+	constructor(public readonly start: PathableEntity, options: PathOptions<PathableEntity>) {
 		this.#options = options;
-		this.#cache = new Map<PathableEntity, HeuristicReport>();
+		this.#cache = new Map<PathableEntity, HeuristicReport<PathableEntity>>();
 		this.#heap = new BinaryHeap<PathableEntity>((node) => {
 			const heuristic = this.#cache.get(node);
 			if (!heuristic) {
@@ -58,26 +66,41 @@ export class Path {
 			return heuristic.f;
 		});
 		this.#heuristic = (pos0, pos1) => {
-			return pos0.euclideanDistanceTo(pos1.location.get()); // + this.getVisitationCost(pos0, pos1)
+			return getEuclideanDistanceAcrossSpaces(
+				this.#options.getLocation(pos0),
+				this.#options.getLocation(pos1),
+			); // + this.getVisitationCost(pos0, pos1)
 		};
 	}
 
-	private getVisitationCost(from: PathableEntity, to: PathableEntity): number {
+	/**
+	 * The cost of visiting a tile is the inverse of the walkability of the tile. Also includes a penalty
+	 * for additional obstacles.
+	 */
+	private getVisitationCost(start: PathableEntity, destination: PathableEntity): number {
+		const walkability =
+			this.#options.getWalkability(start) * this.#options.getWalkability(destination);
 		if (!this.#options.obstacles) {
-			return 1;
+			return 1 / walkability;
 		}
+
 		const cost = this.#options.obstacles
-			.filter((obstacle) => to.equalsMapLocation(obstacle.coordinate))
+			.filter((obstacle) =>
+				isMapLocationEqualTo(this.#options.getLocation(destination), obstacle.coordinate),
+			)
 			.reduce((total, obstacle) => total + obstacle.cost, 1);
 
-		return cost;
+		return cost / walkability;
 	}
 
-	public findPathBetween(start: PathableEntity, end: PathableEntity) {
-		let closestNode = start; // set the start node to be the closest if required
-		let closestNodeHeuristics: HeuristicReport = {
+	/**
+	 * Find a path to the given destination.
+	 */
+	public to(destination: PathableEntity) {
+		let closestNode = this.start; // set the start node to be the closest if required
+		let closestNodeHeuristics: HeuristicReport<PathableEntity> = {
 			coordinate: closestNode,
-			h: this.#heuristic(start, end),
+			h: this.#heuristic(this.start, destination),
 			g: 0,
 			f: 0,
 
@@ -89,9 +112,9 @@ export class Path {
 		};
 
 		// At this stage `start` is also `closestNode`, so lets associate those heuristics
-		this.#cache.set(start, closestNodeHeuristics);
+		this.#cache.set(this.start, closestNodeHeuristics);
 
-		this.#heap.push(start);
+		this.#heap.push(this.start);
 
 		while (this.#heap.size() > 0) {
 			// Grab the lowest f(x) to process next.  Heap keeps this sorted for us.
@@ -102,7 +125,12 @@ export class Path {
 			}
 
 			// End case -- result has been found, return the traced path.
-			if (currentNode.equalsMapLocation(end.location.get())) {
+			if (
+				isMapLocationEqualTo(
+					this.#options.getLocation(currentNode),
+					this.#options.getLocation(destination),
+				)
+			) {
 				return this.tracePath(currentNodeHeuristics);
 			}
 
@@ -110,13 +138,13 @@ export class Path {
 			currentNodeHeuristics.closed = true;
 
 			// Find all neighbors for the current node.
-			const neighbors = currentNode.pathingNeighbours.filter(isPathableEntity);
+			const neighbors = this.#options.getNeighbours(currentNode);
 
 			for (let i = 0, il = neighbors.length; i < il; ++i) {
 				const neighbor = neighbors[i];
 				let neighborHeuristics = this.#cache.get(neighbor);
 
-				if (neighborHeuristics?.closed || neighbor.walkability <= 0) {
+				if (neighborHeuristics?.closed || this.#options.getWalkability(neighbor) <= 0) {
 					// Not a valid node to process, skip to next neighbor.
 					continue;
 				}
@@ -128,7 +156,7 @@ export class Path {
 				const beenVisited = !!neighborHeuristics;
 
 				if (!beenVisited || (neighborHeuristics && gScore < neighborHeuristics.g)) {
-					const hScore = this.#heuristic(neighbor, end);
+					const hScore = this.#heuristic(neighbor, destination);
 					// Found an optimal (so far) path to this node.  Take score for node to see how good it is.
 					neighborHeuristics = {
 						coordinate: neighbor,
@@ -139,7 +167,10 @@ export class Path {
 						closed: true,
 						visited: true,
 					};
-					this.#cache.set(neighbor, neighborHeuristics as HeuristicReport);
+					this.#cache.set(
+						neighbor,
+						neighborHeuristics as HeuristicReport<PathableEntity>,
+					);
 
 					if (this.#options.closest) {
 						// If the neighbour is closer than the current closestNode or if it's equally close but has
@@ -183,15 +214,18 @@ export class Path {
 	 *   path to it.
 	 * - As an optimization, may weed out the tiles that are on a different island early.
 	 */
-	public findPathToClosest(start: PathableEntity, options: PathableEntity[]) {
+	public toClosestOf(destinations: PathableEntity[]) {
 		const nearest: {
 			tile: PathableEntity;
 			distance: number;
 			path?: PathableEntity[];
-		}[] = options
+		}[] = destinations
 			.map((tile) => ({
 				tile,
-				distance: start.euclideanDistanceTo(tile.location.get()),
+				distance: getEuclideanDistanceAcrossSpaces(
+					this.#options.getLocation(this.start),
+					this.#options.getLocation(tile),
+				),
 			}))
 			.sort((a, b) => a.distance - b.distance);
 
@@ -202,7 +236,7 @@ export class Path {
 			if (last.path) {
 				return last;
 			}
-			const path = this.findPathBetween(start, option.tile);
+			const path = this.to(option.tile);
 			if (!path.length) {
 				return last;
 			}
@@ -220,7 +254,7 @@ export class Path {
 		};
 	}
 
-	private tracePath(heuristicReport: HeuristicReport) {
+	private tracePath(heuristicReport: HeuristicReport<PathableEntity>) {
 		let curr = heuristicReport;
 		const path = [];
 		while (curr.parent) {
@@ -228,5 +262,52 @@ export class Path {
 			curr = curr.parent;
 		}
 		return path.map((heuristicReport) => heuristicReport.coordinate);
+	}
+
+	/**
+	 * Create an instance of {@link Path} preconfigured to navigate between {@link Tile}.
+	 */
+	public static forTile(
+		start: Tile,
+		options: Omit<PathOptions<Tile>, 'getLocation' | 'getNeighbours' | 'getWalkability'>,
+	) {
+		return new Path<Tile>(start, {
+			...options,
+			getNeighbours: (tile) => tile.pathingNeighbours as Tile[],
+			getLocation: (tile) => tile.location.get(),
+			getWalkability: (tile) => tile.walkability,
+		});
+	}
+
+	/**
+	 * Create an instance of {@link Path} preconfigured to navigate between {@link Terrain}.
+	 *
+	 * @deprecated This is unreliable, because a terrain could have islands
+	 * that are not connected to each other -- making travellign through the terrain impossible.
+	 */
+	public static forTerrain(
+		start: Terrain,
+		options: Omit<PathOptions<Terrain>, 'getLocation' | 'getNeighbours' | 'getWalkability'>,
+	) {
+		return new Path(start, {
+			...options,
+			getNeighbours: (tile) => tile.getAdjacentTerrains().map((t) => t.terrain),
+			// @TODO: base this on the terrains location in the top-level world terrain
+			getLocation: (terrain) => [terrain, 0, 0, 0],
+			getWalkability: () => 1,
+		});
+	}
+
+	public static forTerrainslands<X extends { tiles: Tile[]; neighbours: X[] }>(
+		start: X,
+		options: Omit<PathOptions<X>, 'getLocation' | 'getNeighbours' | 'getWalkability'>,
+	) {
+		return new Path(start, {
+			...options,
+			getNeighbours: (island) => island.neighbours,
+			// @TODO: calculate island location based on terrain location and the mean x/y coordinate of tiles
+			getLocation: (island) => [island.tiles[0].location.get()[0], 0, 0, 0],
+			getWalkability: () => 1,
+		});
 	}
 }

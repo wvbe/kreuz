@@ -2,6 +2,7 @@ import { EventedValue } from '../../events/EventedValue';
 import { QualifiedCoordinate } from '../../terrain/types';
 import { EcsComponent } from '../classes/EcsComponent';
 import { getEuclideanDistanceAcrossSpaces } from './location/getEuclideanDistanceAcrossSpaces';
+import { isMapLocationEqualTo } from './location/isMapLocationEqualTo';
 
 /**
  * Entities with this component have a location in the world.
@@ -31,11 +32,8 @@ export const locationComponent = new EcsComponent<
 
 		entity.location = location;
 
-		entity.equalsMapLocation = (other: QualifiedCoordinate): boolean => {
-			const [space1, x1, y1] = location.get();
-			const [space2, x2, y2] = other;
-			return space1 === space2 && x1 === x2 && y1 === y2;
-		};
+		entity.equalsMapLocation = (other: QualifiedCoordinate): boolean =>
+			isMapLocationEqualTo(location.get(), other);
 
 		entity.euclideanDistanceTo = (other: QualifiedCoordinate): number =>
 			getEuclideanDistanceAcrossSpaces(location.get(), other);

@@ -1,4 +1,5 @@
-import { QualifiedCoordinate, TerrainI } from '../../../terrain/types';
+import { Terrain } from '../../../terrain/Terrain';
+import { QualifiedCoordinate } from '../../../terrain/types';
 import { getEuclideanDistance } from './getEuclideanDistance';
 
 /**
@@ -6,67 +7,72 @@ import { getEuclideanDistance } from './getEuclideanDistance';
  */
 export function getEuclideanDistanceAcrossSpaces(
 	start: QualifiedCoordinate,
-	finish: QualifiedCoordinate,
+	destination: QualifiedCoordinate,
 ) {
-	if (start.length !== 4 || finish.length !== 4) {
-		throw new Error('Start or finish location is not qualified');
+	if (start.length !== 4 || destination.length !== 4) {
+		throw new Error('Start or destination location is not qualified');
 	}
-	const [startSpace, ...startCoords] = start;
-	const [finishSpace, ...finishCoords] = finish;
+	const [startTerrain, ...startCoords] = start;
+	const [destinationTerrain, ...destinationCoords] = destination;
 
-	let commonAncestor: TerrainI | null = null;
-	const finishAncestorsToCommonAncestor: TerrainI[] = [];
-	if (startSpace === finishSpace) {
+	let commonAncestor: Terrain | null = null;
+	const destinationAncestorsToCommonAncestor: Terrain[] = [];
+	if (startTerrain === destinationTerrain) {
 		// This is a common case, so its worth avoiding a little extra work
-		commonAncestor = startSpace;
-		finishAncestorsToCommonAncestor.push(finishSpace);
+		commonAncestor = startTerrain;
+		destinationAncestorsToCommonAncestor.push(destinationTerrain);
 	} else {
-		const startAncestors = startSpace.getAncestors();
-		const finishAncestors = finishSpace.getAncestors();
+		const startAncestors = startTerrain.getAncestors();
+		const destinationAncestors = destinationTerrain.getAncestors();
 		commonAncestor =
-			[startSpace, ...startAncestors].find((ancestor) =>
-				[finishSpace, ...finishAncestors].includes(ancestor),
+			[startTerrain, ...startAncestors].find((ancestor) =>
+				[destinationTerrain, ...destinationAncestors].includes(ancestor),
 			) ?? null;
 		if (!commonAncestor) {
 			throw new Error('No common ancestor found');
 		}
-		finishAncestorsToCommonAncestor.push(
-			finishSpace,
-			...finishAncestors.slice(0, finishAncestors.indexOf(commonAncestor)),
+		destinationAncestorsToCommonAncestor.push(
+			destinationTerrain,
+			...destinationAncestors.slice(0, destinationAncestors.indexOf(commonAncestor)),
 		);
 	}
 
 	let totalDistance = 0,
-		currentSpace = startSpace,
+		currentTerrain = startTerrain,
 		currentCoords = startCoords;
 
-	while (currentSpace !== commonAncestor) {
-		const nextSpace = currentSpace.getParent()!;
-		const child = nextSpace.children.find((child) => child.terrain === currentSpace);
-		if (!child) {
-			throw new Error('Child not found');
+	// Travel up, towards the common ancestor
+	while (currentTerrain !== commonAncestor) {
+		const portalToParent = currentTerrain.getPortalToParent();
+		if (!portalToParent) {
+			throw new Error('Portal to parent not found');
 		}
 		totalDistance +=
-			getEuclideanDistance(currentCoords, currentSpace.entryLocation!) *
-			currentSpace.sizeMultiplier;
-		currentSpace = nextSpace;
-		currentCoords = child.location;
+			getEuclideanDistance(currentCoords, portalToParent.portalStart) *
+			currentTerrain.sizeMultiplier;
+
+		// Get this value before we change the current terrain
+
+		currentCoords = portalToParent.terrain.getLocationOfPortalToTerrain(currentTerrain);
+		currentTerrain = portalToParent.terrain;
 	}
 
-	while (currentSpace !== finishSpace) {
-		const nextSpace = finishAncestorsToCommonAncestor.pop();
-		const child = currentSpace.children.find((child) => child.terrain === nextSpace);
-		if (!child) {
-			throw new Error('Child not found');
-		}
+	// At this point, currentCoords is set to the SimpleCoordinates within the common ancestor
+
+	// Travel down, along the destination terrain's ancestry
+	while (currentTerrain !== destinationTerrain) {
+		const childTerrain = destinationAncestorsToCommonAncestor.pop()!;
+		const portalToChild = currentTerrain.getPortalToChild(childTerrain);
 		totalDistance +=
-			getEuclideanDistance(currentCoords, child.location) * currentSpace.sizeMultiplier;
-		currentSpace = child.terrain!;
-		currentCoords = child.terrain.entryLocation!;
+			getEuclideanDistance(currentCoords, portalToChild.portalStart) *
+			currentTerrain.sizeMultiplier;
+
+		currentCoords = childTerrain.getLocationOfPortalToTerrain(currentTerrain);
+		currentTerrain = childTerrain;
 	}
 
 	totalDistance +=
-		getEuclideanDistance(currentCoords, finishCoords) * currentSpace.sizeMultiplier;
+		getEuclideanDistance(currentCoords, destinationCoords) * currentTerrain.sizeMultiplier;
 
 	return totalDistance;
 }

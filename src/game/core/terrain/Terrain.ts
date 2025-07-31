@@ -1,8 +1,9 @@
 import { Tile, tileArchetype } from '../ecs/archetypes/tileArchetype';
+import { getContiguousObjects } from '../ecs/components/pathingComponent/getContiguousObjects';
 import { SurfaceType } from '../ecs/components/surfaceComponent';
 import { Collection } from '../events/Collection';
 import { FilterFn } from '../types';
-import { QualifiedCoordinate, type SimpleCoordinate, type TerrainI } from './types';
+import { QualifiedCoordinate, TerrainPortal, type SimpleCoordinate } from './types';
 export type SaveTerrainJson = {
 	tiles: Array<{
 		center: SimpleCoordinate;
@@ -12,17 +13,40 @@ export type SaveTerrainJson = {
 	size: number;
 };
 
-export class Terrain implements TerrainI {
+export class Terrain {
 	/**
 	 * If we need to stringify a {@link QualifiedCoordinate}, which includes a reference to the terrain,
 	 * it will be useful to have a recognizable identifier.
 	 */
 	public readonly id: string;
 
-	public readonly children: { location: SimpleCoordinate; terrain: TerrainI }[] = [];
+	/**
+	 * If this space contains other spaces, this will be the children spaces.
+	 */
+	public readonly children: TerrainPortal[] = [];
 	public readonly tiles = new Collection<Tile>();
-	#parent: TerrainI | null = null;
-	public readonly entryLocation: SimpleCoordinate | null = null;
+	#parent: Terrain | null = null;
+
+	/**
+	 * If an entity travels into this terrain from the parent terrain, they will arrive at this
+	 *  coordinate. Also, it is where you can exit into the parent from.
+	 *
+	 * A "portal" is a doorway from the parent terrain into this terrain. The portal's end
+	 * is in the destination terrain, whereas the portal's start is in the parent terrain at a
+	 * location recorded on the many-to-one relationship ({@link TerrainPortal.portalStart}).
+	 *
+	 * If this terrain has a parent, travelling from the parent into this terrail will
+	 * place you at the end of that portal location.
+	 */
+	/**
+	 *
+	 */
+	public readonly portalEnd: SimpleCoordinate | null = null;
+
+	/**
+	 * Size factor, useful for calculating distance. The size factor in the "world" terrain implementation is large,
+	 * the size factor of a building terrain implementation would be a fraction of it.
+	 */
 	public readonly sizeMultiplier: number;
 
 	public constructor(
@@ -30,9 +54,18 @@ export class Terrain implements TerrainI {
 			id?: string;
 			distanceMultiplier?: number;
 			parentage?: {
-				locationInParent: SimpleCoordinate;
-				parentTerrain: TerrainI;
-				entryLocation: SimpleCoordinate;
+				/**
+				 * The beginning of the portal going from the parent into the child, ie. {@link SimpleCoordinate} in the parent terrain
+				 */
+				portalStart: SimpleCoordinate;
+				/**
+				 * The parent terrain itself
+				 */
+				parentTerrain: Terrain;
+				/**
+				 * The end of the portal going from the parent into the child, ie. {@link SimpleCoordinate} in the current terrain
+				 */
+				portalEnd: SimpleCoordinate;
 			} | null;
 			tiles?: {
 				location: SimpleCoordinate;
@@ -44,12 +77,12 @@ export class Terrain implements TerrainI {
 		this.sizeMultiplier = options.distanceMultiplier ?? 1;
 
 		if (options.parentage) {
+			this.portalEnd = options.parentage.portalEnd;
 			this.#parent = options.parentage.parentTerrain;
 			this.#parent.children.push({
-				location: options.parentage.locationInParent,
+				portalStart: options.parentage.portalStart,
 				terrain: this,
 			});
-			this.entryLocation = options.parentage.entryLocation;
 		}
 
 		this.addTiles(options.tiles ?? []);
@@ -99,20 +132,62 @@ export class Terrain implements TerrainI {
 				return this.tiles.add(tile);
 			}),
 		);
+
+		// Clear the cache of our carefully calculated islands because we've added new tiles
+		this.#islands.clear();
 	}
 
-	public getParent(): TerrainI | null {
-		return this.#parent;
+	public getPortalToChild(childTerrain: Terrain): TerrainPortal {
+		const child = this.children.find((child) => child.terrain === childTerrain);
+		if (!child) {
+			throw new Error(`Child terrain ${childTerrain.id} not found in ${this.id}`);
+		}
+		return child;
 	}
 
-	public getAncestors(): TerrainI[] {
+	public getLocationOfPortalToTerrain(adjacentTerrain: Terrain): SimpleCoordinate {
+		if (adjacentTerrain === this.#parent) {
+			return this.portalEnd!;
+		}
+		const portal = this.getPortalToChild(adjacentTerrain);
+		return portal.portalStart;
+	}
+
+	/**
+	 * If this space is contained within another space, this will be the parent space.
+	 */
+	public getPortalToParent(): TerrainPortal | null {
+		if (!this.#parent || !this.portalEnd) {
+			return null;
+		}
+
+		return {
+			// Here's why a child terrain can travel to the parent through only one location:
+			portalStart: this.portalEnd,
+			terrain: this.#parent,
+		};
+	}
+
+	/**
+	 * If this space is contained within another space, this will be the ancestors of this space.
+	 *
+	 * Should return ancestors in order of shallow-to-deep. For example: House, City, Country, World.
+	 */
+	public getAncestors(): Terrain[] {
 		const ancestors = [];
-		let current: TerrainI | null = this.getParent();
+		let current: TerrainPortal | null = this.getPortalToParent();
 		while (current) {
 			ancestors.push(current);
-			current = current.getParent();
+			current = current.terrain.getPortalToParent();
 		}
-		return ancestors;
+		return ancestors.map(({ terrain }) => terrain);
+	}
+
+	/**
+	 * Returns the parent and child terrains.
+	 */
+	public getAdjacentTerrains(): TerrainPortal[] {
+		return [this.getPortalToParent(), ...this.children].filter((t) => t !== null);
 	}
 
 	/**
@@ -149,28 +224,20 @@ export class Terrain implements TerrainI {
 	}
 
 	/**
-	 * Array of all tiles that make up this terrain.
+	 * Array of all tiles that make up this terrain and which are connected to one another as pathing
+	 * neighbours.
 	 */
 	public selectContiguousTiles(
 		start: Tile,
 		selector: FilterFn<Tile> = (tile) => tile.walkability > 0,
 		inclusive = true,
 	): Tile[] {
-		const island: Tile[] = [];
-		const seen: Tile[] = [];
-		const queue: Tile[] = [start];
-
-		while (queue.length) {
-			const current = queue.shift() as Tile;
-			if (inclusive || current !== start) {
-				island.push(current);
-			}
-
-			const neighbours = this.getNeighborTiles(current).filter((n) => !seen.includes(n));
-			seen.splice(0, 0, current, ...neighbours);
-			queue.splice(0, 0, ...neighbours.filter(selector));
-		}
-		return island;
+		return getContiguousObjects(
+			start,
+			(tile) => tile.pathingNeighbours as Tile[],
+			selector,
+			inclusive,
+		);
 	}
 
 	/**
@@ -195,8 +262,6 @@ export class Terrain implements TerrainI {
 
 	/**
 	 * Get a list of contigious groups of tiles, aka a list of islands.
-	 *
-	 * @note Only public for testing purposes.
 	 */
 	public getIslands(selector: FilterFn<Tile> = (tile) => tile.walkability > 0): Tile[][] {
 		const fromCache = this.#islands.get(selector);
@@ -241,14 +306,6 @@ export class Terrain implements TerrainI {
 				return last;
 			}
 		}, this.tiles.get(0));
-	}
-
-	/**
-	 * Get the tiles that are adjacent to another tile.
-	 */
-	public getNeighborTiles(center: Tile): Tile[] {
-		// @TODO not coerce to TileEcs
-		return center.pathingNeighbours as Tile[];
 	}
 
 	public toString() {

@@ -7,19 +7,21 @@ import { getEuclideanDistanceAcrossSpaces } from './getEuclideanDistanceAcrossSp
 // Note: does not test the distance multipliers for different spaces
 
 describe('getEuclideanDistanceAcrossSpaces', () => {
-	const terrainWorld = new Terrain();
+	const terrainWorld = new Terrain({ id: 'world' });
 	const terrainCity = new Terrain({
+		id: 'city',
 		parentage: {
-			locationInParent: [3, 0, 0],
+			portalStart: [3, 0, 0],
 			parentTerrain: terrainWorld,
-			entryLocation: [0, 2, 0],
+			portalEnd: [0, 2, 0],
 		},
 	});
 	const terrainHouse = new Terrain({
+		id: 'house',
 		parentage: {
-			locationInParent: [2, 0, 0],
+			portalStart: [2, 0, 0],
 			parentTerrain: terrainCity,
-			entryLocation: [0, 5, 0],
+			portalEnd: [0, 5, 0],
 		},
 	});
 	it('should calculate distance between two points in the same space', () => {

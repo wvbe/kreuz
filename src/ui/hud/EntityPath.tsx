@@ -1,18 +1,15 @@
 import { FC } from 'react';
-import { PathableTileEntity } from '../../game/core/ecs/components/pathingComponent';
-
+import { Tile } from '../../game/core/ecs/archetypes/tileArchetype';
 import './EntityPath.css';
-const EntityPathStep: FC<{ tile: PathableTileEntity | null; isCurrent: boolean }> = ({
-	tile,
-	isCurrent,
-}) => {
+
+const EntityPathStep: FC<{ tile: Tile | null; isCurrent: boolean }> = ({ tile, isCurrent }) => {
 	return <div className={`entity-path-step ${isCurrent ? 'current' : ''}`}></div>;
 };
 
 export const EntityPath: FC<{
-	tiles: PathableTileEntity[] | null;
-	currentTile?: PathableTileEntity;
-	nextTile?: PathableTileEntity;
+	tiles: Tile[] | null;
+	currentTile?: Tile;
+	nextTile?: Tile;
 }> = ({ tiles, currentTile, nextTile }) => {
 	const isCurrentTileCurrent = !tiles?.includes(nextTile!);
 

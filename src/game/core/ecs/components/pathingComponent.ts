@@ -3,18 +3,16 @@ import { Event } from '../../events/Event';
 import { EventedValue } from '../../events/EventedValue';
 import { QualifiedCoordinate } from '../../terrain/types';
 import { CallbackFn } from '../../types';
-import { tileArchetype } from '../archetypes/tileArchetype';
+import { Tile, tileArchetype } from '../archetypes/tileArchetype';
 import { hasEcsComponents } from '../assert';
 import { EcsComponent } from '../classes/EcsComponent';
 import { EcsEntity } from '../types';
 import { healthComponent } from './healthComponent';
 import { locationComponent } from './locationComponent';
-import { pathableComponent } from './pathableComponent';
 import { Path } from './pathingComponent/Path';
 import { visibilityComponent } from './visibilityComponent';
 
 type PathingEntity = EcsEntity<typeof locationComponent | typeof pathingComponent>;
-export type PathableTileEntity = EcsEntity<typeof locationComponent | typeof pathableComponent>;
 
 async function animateTo(entity: PathingEntity, destination: QualifiedCoordinate) {
 	const distance = entity.euclideanDistanceTo(destination);
@@ -28,7 +26,7 @@ async function animateTo(entity: PathingEntity, destination: QualifiedCoordinate
 async function walkToTile(
 	entity: PathingEntity,
 	game: Game,
-	destination: PathableTileEntity,
+	destination: Tile,
 	stopAtDistanceToTarget: number = 0,
 ) {
 	if (!locationComponent.test(entity) || !pathingComponent.test(entity)) {
@@ -48,7 +46,7 @@ async function walkToTile(
 	if (!start) {
 		throw new Error(`Entity "${entity.id}" lives on a detached coordinate`);
 	}
-	const path = new Path({
+	const path = Path.forTile(start, {
 		closest: true,
 		obstacles: game.entities
 			.filter(
@@ -60,7 +58,7 @@ async function walkToTile(
 				coordinate: (entity as EcsEntity<typeof locationComponent>).location.get(),
 				cost: 12,
 			})),
-	}).findPathBetween(start, destination);
+	}).to(destination);
 
 	const lastTileInPath = path[path.length - 1];
 	if (lastTileInPath) {
@@ -141,11 +139,7 @@ export const pathingComponent = new EcsComponent<
 		/**
 		 * A method to make this entity find a path towards the given tile and animate towards it.
 		 */
-		walkToTile(
-			game: Game,
-			tile: PathableTileEntity,
-			stopAtDistanceToTarget?: number,
-		): Promise<void>;
+		walkToTile(game: Game, tile: Tile, stopAtDistanceToTarget?: number): Promise<void>;
 		/**
 		 * The distance covered per game time.
 		 */
@@ -153,7 +147,7 @@ export const pathingComponent = new EcsComponent<
 		/**
 		 * The path that this entity is currently walking along, so long as it is walking.
 		 */
-		$path: EventedValue<PathableTileEntity[] | null>;
+		$path: EventedValue<Tile[] | null>;
 		/**
 		 * Emitted when the entity starts a new step in the path.
 		 */

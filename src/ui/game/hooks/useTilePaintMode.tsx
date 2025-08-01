@@ -23,6 +23,9 @@ type DragStatus = {
 
 type DragCallback = (tile: HihglightableTile) => void;
 
+/**
+ * @TODO use qualified coordinates
+ */
 function getTilesInRange(game: Game, start: SimpleCoordinate, end: SimpleCoordinate) {
 	const tiles: HihglightableTile[] = [];
 	for (let x = Math.min(start[0], end[0]); x <= Math.max(start[0], end[0]); x++) {

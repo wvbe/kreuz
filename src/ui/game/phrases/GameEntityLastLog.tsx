@@ -6,9 +6,9 @@ import { useMemoFromEvent } from '../../hooks/useEventedValue';
 
 function getLastLog(entity?: EcsEntity) {
 	if (!entity || !hasEcsComponents(entity, [eventLogComponent])) {
-		return 'No event';
+		return null;
 	}
-	return entity.events.get(entity.events.length - 1) ?? 'No event yet';
+	return entity.events.get(entity.events.length - 1) ?? null;
 }
 
 export const GameEntityLastLog: FC<{ entity?: EcsEntity }> = ({ entity }) => {

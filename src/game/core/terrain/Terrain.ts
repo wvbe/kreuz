@@ -170,6 +170,7 @@ export class Terrain {
 
 	/**
 	 * If this space is contained within another space, this will be the ancestors of this space.
+	 * Does not include itself.
 	 *
 	 * Should return ancestors in order of shallow-to-deep. For example: House, City, Country, World.
 	 */

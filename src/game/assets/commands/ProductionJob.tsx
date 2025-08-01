@@ -3,6 +3,7 @@ import { assertEcsComponents, hasEcsComponents } from '../../core/ecs/assert';
 import { eventLogComponent } from '../../core/ecs/components/eventLogComponent';
 import { healthComponent } from '../../core/ecs/components/healthComponent';
 import { inventoryComponent } from '../../core/ecs/components/inventoryComponent';
+import { getTileAtLocation } from '../../core/ecs/components/location/getTileAtLocation';
 import { locationComponent } from '../../core/ecs/components/locationComponent';
 import { pathingComponent } from '../../core/ecs/components/pathingComponent';
 import { productionComponent } from '../../core/ecs/components/productionComponent';
@@ -106,7 +107,7 @@ export class ProductionJob extends JobPosting {
 		const factory = this.factory;
 		await worker.events?.add(`Going to ${factory} for work`);
 
-		const tile = game.terrain.getTileAtMapLocation(factory.location.get());
+		const tile = getTileAtLocation(factory.location.get());
 		if (!tile) {
 			throw new Error(`Entity "${factory.id}" lives on a detached coordinate`);
 		}

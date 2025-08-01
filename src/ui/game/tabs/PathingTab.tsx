@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { getTileAtLocation } from '../../../game/core/ecs/components/location/getTileAtLocation';
 import { locationComponent } from '../../../game/core/ecs/components/locationComponent';
 import { pathingComponent } from '../../../game/core/ecs/components/pathingComponent';
 import { EcsEntity } from '../../../game/core/ecs/types';
@@ -24,7 +25,7 @@ const PathingTab: React.FC<{
 	const game = useGameContext();
 	const locationTile = useMemo(() => {
 		if (location) {
-			return game.terrain.getTileAtMapLocation(location);
+			return getTileAtLocation(location);
 		}
 		return null;
 	}, [game, location]);
@@ -36,9 +37,7 @@ const PathingTab: React.FC<{
 				tiles={path ? [...path] : path}
 				currentTile={locationTile ?? undefined}
 				nextTile={
-					stepStart?.destination
-						? game.terrain.getTileAtMapLocation(stepStart.destination)!
-						: undefined
+					stepStart?.destination ? getTileAtLocation(stepStart.destination)! : undefined
 				}
 			/>
 		</div>

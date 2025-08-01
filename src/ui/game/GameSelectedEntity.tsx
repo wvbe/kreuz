@@ -1,10 +1,12 @@
-import React, { useMemo } from 'react';
+import React, { ReactNode, useMemo } from 'react';
 import { assertEcsComponents, hasEcsComponents } from '../../game/core/ecs/assert';
 import { eventLogComponent } from '../../game/core/ecs/components/eventLogComponent';
 import { locationComponent } from '../../game/core/ecs/components/locationComponent';
+import { portalComponent } from '../../game/core/ecs/components/portalComponent';
 import { visibilityComponent } from '../../game/core/ecs/components/visibilityComponent';
 import { wealthComponent } from '../../game/core/ecs/components/wealthComponent';
 import { useControlsContext } from '../contexts/ControlsContext';
+import { Button } from '../hud/atoms/Button';
 import { Panel } from '../hud/atoms/Panel';
 import EntityControls, { EntityControlsProps } from '../hud/EntityControls';
 import { ErrorBoundary } from '../util/ErrorBoundary';
@@ -48,18 +50,16 @@ const GameSelectedEntity: React.FC = () => {
 		return '';
 	}, [selectedEntity]);
 
-	const subtitle = useMemo(() => {
-		if (hasEcsComponents(selectedEntity, [visibilityComponent])) {
-			return selectedEntity.description;
-		}
-		return '';
-	}, [selectedEntity]);
-
 	const entityInfo = useMemo(() => {
-		const info = [{ key: 'Nerf', value: 'yes' as React.ReactNode }];
+		const info: { key: string; value: string | ReactNode }[] = [
+			{ key: 'ID', value: selectedEntity.id },
+		];
 
 		if (hasEcsComponents(selectedEntity, [eventLogComponent])) {
-			info[0].value = selectedEntity.events.get(0);
+			info.push({ key: 'Status', value: selectedEntity.events.get(0) });
+		}
+		if (hasEcsComponents(selectedEntity, [portalComponent])) {
+			info.push({ key: 'Destination', value: <Button layout='small'>Visit</Button> });
 		}
 
 		return info;

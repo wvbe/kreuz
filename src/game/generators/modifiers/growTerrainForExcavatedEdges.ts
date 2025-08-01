@@ -44,6 +44,9 @@ function hallucinateMissingNeighbors(
  * When associated with the terrain.tiles.$add event, this function will grow the terrain
  * by one undiscovered tile around every tile that is excavated on the (former) edge of the terrain.
  * This essentially makes the terrain infinitely large, because you can excavate it infinitely much.
+ *
+ * @deprecated A better way to implement this is to invent a system where you can select tile (coordinates)
+ * for tiles that dont exist yet.
  */
 export async function growTerrainForExcavatedEdges(
 	this: Game,

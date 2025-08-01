@@ -5,7 +5,7 @@ export interface ButtonProps extends PropsWithChildren {
 	onClick?: () => void;
 	disabled?: boolean;
 	active?: boolean;
-	layout?: 'default' | 'tile';
+	layout?: 'default' | 'tile' | 'small';
 	icon?: string | React.ReactNode;
 	iconSide?: 'before' | 'after';
 }

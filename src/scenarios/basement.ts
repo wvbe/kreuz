@@ -9,6 +9,7 @@
 import { civilianBehavior } from '../game/assets/behavior';
 import { DriverI } from '../game/core/drivers/types';
 import { personArchetype } from '../game/core/ecs/archetypes/personArchetype';
+import { portalArchetype } from '../game/core/ecs/archetypes/portalArchetype';
 import Game from '../game/core/Game';
 import { growTerrainForExcavatedEdges } from '../game/generators/modifiers/growTerrainForExcavatedEdges';
 import { generateGridTerrainFromAscii } from '../game/test/generateGridTerrainFromAscii';
@@ -39,8 +40,25 @@ export default async function (driver: DriverI) {
 		wealth: 10_000,
 		immortal: true,
 	});
-	// entity.inventory.change(game.assets.materials.get('pickaxe'), 1);
 	await game.entities.add(entity);
 
+	const portal = portalArchetype.create({
+		location: [game.terrain, 3, 2, 0],
+		name: 'Portal to another place',
+		tiles: generateGridTerrainFromAscii(`
+			XXXXXXXXXXXX
+			XXXXXXXXXXXX
+			X----X-----X
+			XXXXXXXXXXXX
+			XXXXXXXXXXXX`),
+		portalEnd: [5, 2, 0],
+	});
+	await game.entities.add(portal);
+
+	const portalBack = portalArchetype.create({
+		name: 'Portal to another place',
+		reverseOfPortalEntity: portal,
+	});
+	await game.entities.add(portalBack);
 	return game;
 }

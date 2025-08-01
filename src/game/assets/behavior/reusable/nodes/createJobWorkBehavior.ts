@@ -2,6 +2,7 @@ import { assertEcsComponents } from '../../../../core/ecs/assert';
 import { BehaviorTreeSignal } from '../../../../core/ecs/components/behaviorComponent/BehaviorTreeSignal';
 import { ExecutionNode } from '../../../../core/ecs/components/behaviorComponent/ExecutionNode';
 import { type EntityBlackboard } from '../../../../core/ecs/components/behaviorComponent/types';
+import { getTileAtLocation } from '../../../../core/ecs/components/location/getTileAtLocation';
 import { locationComponent } from '../../../../core/ecs/components/locationComponent';
 
 export function createJobWorkBehavior() {
@@ -9,12 +10,10 @@ export function createJobWorkBehavior() {
 		'Do the work',
 		async (blackboard: EntityBlackboard) => {
 			assertEcsComponents(blackboard.entity, [locationComponent]);
-			const startingTile = blackboard.game.terrain.getTileAtMapLocation(
-				blackboard.entity.location.get(),
-			);
-			if (!startingTile) {
-				throw new BehaviorTreeSignal(`The entity is not on the terrain`);
-			}
+
+			// Throw if this entity is not in a valid tile
+			getTileAtLocation(blackboard.entity.location.get());
+
 			// const zzz = findHopsToSelectedPatheables(startingTile, (tile) => {
 			// 	return FindInPatheableOrderResult.INCLUDE;
 			// });

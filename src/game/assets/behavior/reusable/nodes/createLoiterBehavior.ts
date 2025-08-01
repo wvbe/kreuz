@@ -7,6 +7,7 @@ import { SequenceNode } from '../../../../core/ecs/components/behaviorComponent/
 import { type EntityBlackboard } from '../../../../core/ecs/components/behaviorComponent/types';
 import { eventLogComponent } from '../../../../core/ecs/components/eventLogComponent';
 import { healthComponent } from '../../../../core/ecs/components/healthComponent';
+import { getTileAtLocation } from '../../../../core/ecs/components/location/getTileAtLocation';
 import { locationComponent } from '../../../../core/ecs/components/locationComponent';
 import { pathingComponent } from '../../../../core/ecs/components/pathingComponent';
 import { type EcsEntity } from '../../../../core/ecs/types';
@@ -42,7 +43,7 @@ export function createLoiterBehavior() {
 					if (eventLogComponent.test(entity)) {
 						await entity.events?.add('Wandering around…');
 					}
-					const start = game.terrain.getTileAtMapLocation(entity.location.get());
+					const start = getTileAtLocation(entity.location.get());
 					if (!start) {
 						throw new Error(`Entity "${entity.id}" lives on a detached coordinate`);
 					}

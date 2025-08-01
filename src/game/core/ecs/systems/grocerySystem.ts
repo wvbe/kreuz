@@ -6,6 +6,7 @@ import { EcsSystem } from '../classes/EcsSystem';
 import { eventLogComponent } from '../components/eventLogComponent';
 import { healthComponent } from '../components/healthComponent';
 import { inventoryComponent } from '../components/inventoryComponent';
+import { getTileAtLocation } from '../components/location/getTileAtLocation';
 import { locationComponent } from '../components/locationComponent';
 import { needsComponent } from '../components/needsComponent';
 import { ownerComponent } from '../components/ownerComponent';
@@ -169,7 +170,7 @@ async function doGrocery(
 
 	await entity.events?.add(`Going to ${vendor} to buy some ${material}`);
 
-	const vendorLocation = game.terrain.getTileAtMapLocation(vendor.location.get());
+	const vendorLocation = getTileAtLocation(vendor.location.get());
 	if (!vendorLocation) {
 		throw new Error(`Vendor "${vendor.id}" lives on a detached coordinate`);
 	}

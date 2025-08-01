@@ -1,6 +1,6 @@
 import { generateGridTerrainFromAscii } from '../../../../test/generateGridTerrainFromAscii';
 import { Terrain } from '../../../terrain/Terrain';
-import { calculatePathAcrossIslands } from './calculatePathAcrossIslands';
+import { getIslandHopsBetweenCoordinates } from './getIslandHopsBetweenCoordinates';
 
 describe('getContiguousObjects', () => {
 	const world = new Terrain({
@@ -39,7 +39,10 @@ describe('getContiguousObjects', () => {
 	});
 
 	it('Out and in of a building', () => {
-		const path = calculatePathAcrossIslands([buildingOne, 0, 0, 0], [buildingTwo, 2, 0, 0]);
+		const path = getIslandHopsBetweenCoordinates(
+			[buildingOne, 0, 0, 0],
+			[buildingTwo, 2, 0, 0],
+		);
 
 		// This comparison stalls Jest out:
 		// expect(path[0].tiles[0].location.get()[0]).toBe(world);

@@ -1,9 +1,10 @@
-import { FC, useMemo } from 'react';
+import { createContext, FC, useContext, useMemo } from 'react';
 import { tileArchetype } from '../../game/core/ecs/archetypes/tileArchetype';
 import { byEcsComponents } from '../../game/core/ecs/assert';
 import { locationComponent } from '../../game/core/ecs/components/locationComponent';
 import { visibilityComponent } from '../../game/core/ecs/components/visibilityComponent';
 import { EcsEntity } from '../../game/core/ecs/types';
+import { Terrain } from '../../game/core/terrain/Terrain';
 import { useGameContext } from '../contexts/GameContext';
 import { useCollection } from '../hooks/useEventedValue';
 import { GameMapEntity } from './GameMapEntity';
@@ -12,14 +13,26 @@ import { TilePaintMode, useTilePaintMode } from './hooks/useTilePaintMode';
 
 const filterNoTiles = (entity: EcsEntity): entity is EcsEntity => !tileArchetype.test(entity);
 
+const TerrainContext = createContext<Terrain | null>(null);
+
+export function useTerrainContext(): Terrain {
+	const terrain = useContext(TerrainContext);
+	if (!terrain) {
+		throw new Error('Terrain context not found');
+	}
+	return terrain;
+}
 /**
  * A component that maps the game terrain and entities to presentational components.
  *
  * This component uses the {@link GameMapTile} and {@link GameMapEntity} presentational components to display the game map.
  */
-export const GameMap: FC<{ tilePaintMode: TilePaintMode | null }> = ({ tilePaintMode }) => {
+export const GameTerrain: FC<{ terrain: Terrain; tilePaintMode: TilePaintMode | null }> = ({
+	terrain,
+	tilePaintMode,
+}) => {
 	const game = useGameContext();
-	const tilesCollection = useCollection(game.terrain.tiles);
+	const tilesCollection = useCollection(terrain.tiles);
 
 	const { onTileMouseDown, onTileMouseEnter } = useTilePaintMode(tilePaintMode ?? null);
 
@@ -37,18 +50,20 @@ export const GameMap: FC<{ tilePaintMode: TilePaintMode | null }> = ({ tilePaint
 	}, [tilesCollection]);
 
 	const entitiesCollection = useCollection(game.entities, filterNoTiles);
-	const entities = useMemo(() => {
-		return entitiesCollection
-			.filter(byEcsComponents([locationComponent, visibilityComponent]))
-			.map((tile) => {
-				return <GameMapEntity key={tile.id} entity={tile} />;
-			});
-	}, [entitiesCollection]);
+	const entities = useMemo(
+		() =>
+			entitiesCollection
+				.filter(byEcsComponents([locationComponent, visibilityComponent]))
+				.map((tile) => <GameMapEntity key={tile.id} entity={tile} />),
+		[entitiesCollection],
+	);
 
 	return (
-		<div data-component='GameMap' style={{ position: 'absolute', top: '50%', left: '50%' }}>
-			{tiles}
-			{entities}
-		</div>
+		<TerrainContext.Provider value={terrain}>
+			<div data-component='GameMap' style={{ position: 'absolute', top: '50%', left: '50%' }}>
+				{tiles}
+				{entities}
+			</div>
+		</TerrainContext.Provider>
 	);
 };

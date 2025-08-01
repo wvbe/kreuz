@@ -99,8 +99,7 @@ export const GameMapTile: FC<{
 
 	return (
 		<MapLocation
-			x={location[1]}
-			y={location[2]}
+			eventedQualifiedCoordinates={tile.location}
 			dx={1}
 			dy={1}
 			onContextMenu={onRmb}

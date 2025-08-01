@@ -6,12 +6,12 @@
 //   Includes Binary Heap (with modifications) from Marijn Haverbeke.
 //   http://eloquentjavascript.net/appendix2.html
 
-import { Terrain } from '../../../terrain/Terrain';
 import { QualifiedCoordinate } from '../../../terrain/types';
 import { Tile } from '../../archetypes/tileArchetype';
 import { getEuclideanDistanceAcrossSpaces } from '../location/getEuclideanDistanceAcrossSpaces';
 import { isMapLocationEqualTo } from '../location/isMapLocationEqualTo';
 import { BinaryHeap } from './BinaryHeap';
+import { getTerrainHopsBetweenCoordinates } from './getTerrainHopsBetweenCoordinates';
 
 // See list of heuristics: http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
 type HeuristicScorer<PathableEntity> = (a: PathableEntity, b: PathableEntity) => number;
@@ -267,37 +267,62 @@ export class Path<PathableEntity> {
 	/**
 	 * Create an instance of {@link Path} preconfigured to navigate between {@link Tile}.
 	 */
-	public static forTile(
-		start: Tile,
+	public static between(
+		startTile: Tile,
+		destinationTile: Tile,
 		options: Omit<PathOptions<Tile>, 'getLocation' | 'getNeighbours' | 'getWalkability'>,
-	) {
-		return new Path<Tile>(start, {
+	): Tile[] {
+		if (isMapLocationEqualTo(startTile.location.get(), destinationTile.location.get())) {
+			return [startTile];
+		}
+
+		const pathingOptions: PathOptions<Tile> = {
 			...options,
 			getNeighbours: (tile) => tile.pathingNeighbours as Tile[],
 			getLocation: (tile) => tile.location.get(),
 			getWalkability: (tile) => tile.walkability,
-		});
+		};
+		const terrainsInBetween = getTerrainHopsBetweenCoordinates(
+			startTile.location.get(),
+			destinationTile.location.get(),
+		).slice(1);
+
+		const tiles: Tile[] = [];
+
+		let [currentTerrain, ...currentLocation] = startTile.location.get();
+
+		for (const nextTerrain of terrainsInBetween) {
+			const currentTile = currentTerrain.getTileAtMapLocation(currentLocation);
+			const nextPortalLocation = currentTerrain.getLocationOfPortalToTerrain(nextTerrain);
+			const nextPortalTile = currentTerrain.getTileAtMapLocation(nextPortalLocation);
+			if (currentTile !== nextPortalTile) {
+				const pathToPortal = new Path<Tile>(currentTile, pathingOptions).to(nextPortalTile);
+				if (!pathToPortal.length) {
+					return [];
+				}
+				tiles.push(...pathToPortal);
+			}
+
+			currentLocation = nextTerrain.getLocationOfPortalToTerrain(currentTerrain);
+			currentTerrain = nextTerrain;
+			tiles.push(currentTerrain.getTileAtMapLocation(currentLocation));
+		}
+
+		const currentTile = currentTerrain.getTileAtMapLocation(currentLocation);
+		if (currentTile !== destinationTile) {
+			const nextPath = new Path<Tile>(currentTile, pathingOptions).to(destinationTile);
+			if (!nextPath.length) {
+				return [];
+			}
+			tiles.push(...nextPath);
+		}
+
+		return tiles;
 	}
 
 	/**
-	 * Create an instance of {@link Path} preconfigured to navigate between {@link Terrain}.
-	 *
-	 * @deprecated This is unreliable, because a terrain could have islands
-	 * that are not connected to each other -- making travellign through the terrain impossible.
+	 * @deprecated together with {@link getIslandHopsBetweenCoordinates}
 	 */
-	public static forTerrain(
-		start: Terrain,
-		options: Omit<PathOptions<Terrain>, 'getLocation' | 'getNeighbours' | 'getWalkability'>,
-	) {
-		return new Path(start, {
-			...options,
-			getNeighbours: (tile) => tile.getAdjacentTerrains().map((t) => t.terrain),
-			// @TODO: base this on the terrains location in the top-level world terrain
-			getLocation: (terrain) => [terrain, 0, 0, 0],
-			getWalkability: () => 1,
-		});
-	}
-
 	public static forTerrainIslands<X extends { tiles: Tile[]; neighbours: X[] }>(
 		start: X,
 		options: Omit<PathOptions<X>, 'getLocation' | 'getNeighbours' | 'getWalkability'>,

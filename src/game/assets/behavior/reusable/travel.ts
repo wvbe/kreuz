@@ -1,3 +1,4 @@
+import { getTileAtLocation } from '../../../core/ecs/components/location/getTileAtLocation';
 import { locationComponent } from '../../../core/ecs/components/locationComponent';
 import { pathingComponent } from '../../../core/ecs/components/pathingComponent';
 import { type EcsEntity } from '../../../core/ecs/types';
@@ -8,10 +9,7 @@ export async function walkEntityToEntity(
 	entity: EcsEntity<typeof pathingComponent>,
 	destination: EcsEntity<typeof locationComponent>,
 ) {
-	const tile = game.terrain.getTileAtMapLocation(destination.location.get());
-	if (!tile) {
-		throw new Error(`Entity "${destination.id}" lives on a detached coordinate`);
-	}
+	const tile = getTileAtLocation(destination.location.get());
 	await entity.walkToTile(game, tile);
 }
 
@@ -19,10 +17,7 @@ export function getEntitiesReachableByEntity<F>(
 	game: Game,
 	entity: EcsEntity<typeof locationComponent>,
 ): EcsEntity<typeof locationComponent>[] {
-	const location = game.terrain.getTileAtMapLocation(entity.location.get());
-	if (!location) {
-		throw new Error(`Entity "${entity.id}" lives on a detached coordinate`);
-	}
+	const location = getTileAtLocation(entity.location.get());
 	const island = game.terrain.selectContiguousTiles(location);
 	return game.entities
 		.filter<EcsEntity<typeof locationComponent>>((entity) => locationComponent.test(entity))

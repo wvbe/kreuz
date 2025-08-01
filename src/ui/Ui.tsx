@@ -5,8 +5,8 @@ import { Contexts } from './Contexts';
 import { GameActionBar } from './game/GameActionBar';
 import { GameClock } from './game/GameClock';
 import { GameContextMenuHost } from './game/GameContextMenu';
-import { GameMap } from './game/GameMap';
 import { GameSelectedEntity } from './game/GameSelectedEntity';
+import { GameTerrain } from './game/GameTerrain';
 import { TilePaintMode } from './game/hooks/useTilePaintMode';
 import './hud/variables.css';
 import { PanZoomable } from './util/PanZoomable';
@@ -25,7 +25,7 @@ export const Ui: FunctionComponent<{
 			<GameSelectedEntity />
 			<PanZoomable>
 				<GameContextMenuHost>
-					<GameMap tilePaintMode={tilePaintMode} />
+					<GameTerrain tilePaintMode={tilePaintMode} terrain={game.terrain} />
 				</GameContextMenuHost>
 			</PanZoomable>
 		</Contexts>

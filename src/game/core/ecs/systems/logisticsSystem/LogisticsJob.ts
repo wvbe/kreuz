@@ -4,6 +4,7 @@ import { assertEcsComponents, hasEcsComponents } from '../../assert';
 import { eventLogComponent } from '../../components/eventLogComponent';
 import { healthComponent } from '../../components/healthComponent';
 import { inventoryComponent } from '../../components/inventoryComponent';
+import { getTileAtLocation } from '../../components/location/getTileAtLocation';
 import { locationComponent } from '../../components/locationComponent';
 import { pathingComponent } from '../../components/pathingComponent';
 import { EcsEntity } from '../../types';
@@ -61,7 +62,7 @@ export class LogisticsJob extends JobPosting {
 
 		await worker.events?.add(`Going to ${this.deal.supplier} for a hauling job`);
 
-		const supplier = game.terrain.getTileAtMapLocation(this.deal.supplier.location.get());
+		const supplier = getTileAtLocation(this.deal.supplier.location.get());
 		if (!supplier) {
 			throw new Error(`Deal destination lives on a detached coordinate`);
 		}
@@ -102,7 +103,7 @@ export class LogisticsJob extends JobPosting {
 
 		await worker.events?.add(`Delivering cargo to ${this.deal.destination}`);
 
-		const destination = game.terrain.getTileAtMapLocation(this.deal.destination.location.get());
+		const destination = getTileAtLocation(this.deal.destination.location.get());
 		if (!destination) {
 			throw new Error(`Deal destination lives on a detached coordinate`);
 		}

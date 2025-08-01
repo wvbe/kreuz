@@ -53,8 +53,7 @@ export const GameMapEntity: FunctionComponent<
 
 	return (
 		<MapLocation
-			x={x}
-			y={y}
+			eventedQualifiedCoordinates={entity.location}
 			zIndex={entity.visiblityPriority}
 			onClick={onClick}
 			onContextMenu={onContextMenu}

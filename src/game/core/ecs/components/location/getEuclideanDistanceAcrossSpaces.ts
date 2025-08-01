@@ -57,8 +57,6 @@ export function getEuclideanDistanceAcrossSpaces(
 		currentTerrain = portalToParent.terrain;
 	}
 
-	// At this point, currentCoords is set to the SimpleCoordinates within the common ancestor
-
 	// Travel down, along the destination terrain's ancestry
 	while (currentTerrain !== destinationTerrain) {
 		const childTerrain = destinationAncestorsToCommonAncestor.pop()!;

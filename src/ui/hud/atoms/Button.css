@@ -20,6 +20,10 @@
 			font-size: 2em;
 		}
 	}
+	&.button--small {
+		padding: 0 0.5em;
+		min-height: 24px;
+	}
 
 	&.button--active {
 		background-color: rgba(215, 249, 20, 0.5) !important;

@@ -8,6 +8,7 @@ import { hasEcsComponents } from '../assert';
 import { EcsComponent } from '../classes/EcsComponent';
 import { EcsEntity } from '../types';
 import { healthComponent } from './healthComponent';
+import { getTileAtLocation } from './location/getTileAtLocation';
 import { locationComponent } from './locationComponent';
 import { Path } from './pathingComponent/Path';
 import { visibilityComponent } from './visibilityComponent';
@@ -42,11 +43,11 @@ async function walkToTile(
 	// To work around the bug, and as a cheaper option, find the tile whose XY is equal to the current
 	// location. The only downsize is that entities that are mid-way a tile will not find one. Since
 	// this is not a feature yet, we can use it regardless:
-	const start = game.terrain.getTileAtMapLocation(entity.location.get());
+	const start = getTileAtLocation(entity.location.get());
 	if (!start) {
 		throw new Error(`Entity "${entity.id}" lives on a detached coordinate`);
 	}
-	const path = Path.forTile(start, {
+	const path = Path.between(start, destination, {
 		closest: true,
 		obstacles: game.entities
 			.filter(
@@ -58,7 +59,7 @@ async function walkToTile(
 				coordinate: (entity as EcsEntity<typeof locationComponent>).location.get(),
 				cost: 12,
 			})),
-	}).to(destination);
+	});
 
 	const lastTileInPath = path[path.length - 1];
 	if (lastTileInPath) {

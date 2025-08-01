@@ -5,7 +5,7 @@ export function getTerrainHopsBetweenCoordinates(
 	[destinationTerrain]: QualifiedCoordinate,
 ) {
 	if (startTerrain === destinationTerrain) {
-		return [destinationTerrain];
+		return [];
 	}
 
 	const startAncestors = startTerrain.getAncestors(),
@@ -19,7 +19,6 @@ export function getTerrainHopsBetweenCoordinates(
 	}
 
 	return [
-		startTerrain,
 		...startAncestors.slice(0, startAncestors.indexOf(commonAncestor)),
 		commonAncestor,
 		...destinationAncestors.slice(0, destinationAncestors.indexOf(commonAncestor)).reverse(),

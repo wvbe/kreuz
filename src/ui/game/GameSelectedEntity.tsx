@@ -5,13 +5,14 @@ import { locationComponent } from '../../game/core/ecs/components/locationCompon
 import { portalComponent } from '../../game/core/ecs/components/portalComponent';
 import { visibilityComponent } from '../../game/core/ecs/components/visibilityComponent';
 import { wealthComponent } from '../../game/core/ecs/components/wealthComponent';
-import { useControlsContext } from '../contexts/ControlsContext';
 import { Button } from '../hud/atoms/Button';
 import { Panel } from '../hud/atoms/Panel';
 import EntityControls, { EntityControlsProps } from '../hud/EntityControls';
+import { useSelectedEntityStore } from '../stores/selectedEntityStore';
 import { ErrorBoundary } from '../util/ErrorBoundary';
 import { GameEntityIcon } from './GameEntityIcon';
 import { GameEntityLastLog } from './phrases/GameEntityLastLog';
+import { setSelectedTerrain } from '../stores/selectedTerrainStore';
 
 const NO_ENTITY_SELECTED_ENTITY = { id: 'no-entity-selected' };
 
@@ -21,9 +22,8 @@ const NO_ENTITY_SELECTED_ENTITY = { id: 'no-entity-selected' };
  * This component uses the {@link EntityControls} presentational component to display controls for the selected entity.
  */
 const GameSelectedEntity: React.FC = () => {
-	const { state, selectEntity } = useControlsContext();
-
-	const selectedEntity = state.selectedEntity ?? NO_ENTITY_SELECTED_ENTITY;
+	const selectedEntity =
+		useSelectedEntityStore((state) => state.selectedEntity) ?? NO_ENTITY_SELECTED_ENTITY;
 
 	// Asserting the components here informs the TS language server what the types
 	// are for the rest of the function. The function will not actually throw if an
@@ -59,7 +59,19 @@ const GameSelectedEntity: React.FC = () => {
 			info.push({ key: 'Status', value: selectedEntity.events.get(0) });
 		}
 		if (hasEcsComponents(selectedEntity, [portalComponent])) {
-			info.push({ key: 'Destination', value: <Button layout='small'>Visit</Button> });
+			info.push({
+				key: 'Destination',
+				value: (
+					<Button
+						layout='small'
+						onClick={() => {
+							setSelectedTerrain(selectedEntity.portalDestinationTerrain);
+						}}
+					>
+						Visit
+					</Button>
+				),
+			});
 		}
 
 		return info;

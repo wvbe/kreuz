@@ -47,6 +47,7 @@ export const portalArchetype = new EcsArchetype<
 	visibilityComponent.attach(entity, {
 		name: options.name,
 		icon: `⭕️`,
+		iconSize: 0.5,
 	});
 
 	if (options.reverseOfPortalEntity) {

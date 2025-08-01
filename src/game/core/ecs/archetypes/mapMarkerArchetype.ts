@@ -30,5 +30,6 @@ export const mapMarkerArchetype = new EcsArchetype<
 	visibilityComponent.attach(entity, {
 		name: options.name,
 		icon: options.icon,
+		iconSize: 0.7,
 	});
 });

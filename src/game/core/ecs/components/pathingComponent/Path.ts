@@ -282,10 +282,12 @@ export class Path<PathableEntity> {
 			getLocation: (tile) => tile.location.get(),
 			getWalkability: (tile) => tile.walkability,
 		};
+		const [startTerrain] = startTile.location.get();
+		const [destinationTerrain] = destinationTile.location.get();
 		const terrainsInBetween = getTerrainHopsBetweenCoordinates(
 			startTile.location.get(),
 			destinationTile.location.get(),
-		).slice(1);
+		);
 
 		const tiles: Tile[] = [];
 

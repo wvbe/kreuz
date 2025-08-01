@@ -29,16 +29,25 @@ describe('getContiguousObjects', () => {
 	it('Out and in of a building', () => {
 		const path = getTerrainHopsBetweenCoordinates(
 			[buildingOneA, 0, 0, 0],
-			[buildingTwoA, 2, 0, 0],
+			[buildingTwoA, 0, 0, 0],
 		);
 
-		expect(path[0]).toBe(buildingOneA);
-		expect(path[1]).toBe(buildingOne);
-		expect(path[2]).toBe(world);
-		expect(path[3]).toBe(buildingTwo);
-		expect(path[4]).toBe(buildingTwoA);
+		expect(path[0]).toBe(buildingOne);
+		expect(path[1]).toBe(world);
+		expect(path[2]).toBe(buildingTwo);
+		expect(path[3]).toBe(buildingTwoA);
 
 		expect(path).not.toContain(space);
-		expect(path).toHaveLength(5);
+		expect(path).toHaveLength(4);
+	});
+	it('Only into a building', () => {
+		const path = getTerrainHopsBetweenCoordinates([world, 0, 0, 0], [buildingTwoA, 0, 0, 0]);
+
+		expect(path[0]).toBe(world);
+		expect(path[1]).toBe(buildingTwo);
+		expect(path[2]).toBe(buildingTwoA);
+
+		expect(path).not.toContain(space);
+		expect(path).toHaveLength(3);
 	});
 });

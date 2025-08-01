@@ -2,8 +2,7 @@ import { ColorInstance } from 'color';
 import { useCallback, useEffect, useRef } from 'react';
 import { locationComponent } from '../../../game/core/ecs/components/locationComponent';
 import { EcsEntity } from '../../../game/core/ecs/types';
-import Game from '../../../game/core/Game';
-import { type SimpleCoordinate } from '../../../game/core/terrain/types';
+import { QualifiedCoordinate } from '../../../game/core/terrain/types';
 import { useGameContext } from '../../contexts/GameContext';
 import { usePanZoomControls } from '../../util/PanZoomable';
 import { useTileHighlightsContext } from './useTileHighlights';
@@ -17,8 +16,8 @@ export type TilePaintMode = {
 };
 
 type DragStatus = {
-	start: SimpleCoordinate;
-	end: SimpleCoordinate;
+	start: QualifiedCoordinate;
+	end: QualifiedCoordinate;
 };
 
 type DragCallback = (tile: HihglightableTile) => void;
@@ -26,11 +25,13 @@ type DragCallback = (tile: HihglightableTile) => void;
 /**
  * @TODO use qualified coordinates
  */
-function getTilesInRange(game: Game, start: SimpleCoordinate, end: SimpleCoordinate) {
+function getTilesInRange(start: QualifiedCoordinate, end: QualifiedCoordinate) {
 	const tiles: HihglightableTile[] = [];
-	for (let x = Math.min(start[0], end[0]); x <= Math.max(start[0], end[0]); x++) {
-		for (let y = Math.min(start[1], end[1]); y <= Math.max(start[1], end[1]); y++) {
-			const tile = game.terrain.getTileAtMapLocation([x, y, 0], true);
+	const [startTerrain, startX, startY, startZ] = start;
+	const [endTerrain, endX, endY, endZ] = end;
+	for (let x = Math.min(startX, endX); x <= Math.max(startX, endX); x++) {
+		for (let y = Math.min(startY, endY); y <= Math.max(startY, endY); y++) {
+			const tile = startTerrain.getTileAtMapLocation([startTerrain, x, y, 0], true);
 			if (tile) {
 				tiles.push(tile);
 			}
@@ -70,8 +71,8 @@ export function useTilePaintMode(currentMode: TilePaintMode | null): {
 
 		const location = tile.location.get();
 		dragStatus.current = {
-			start: location.slice(1) as SimpleCoordinate,
-			end: location.slice(1) as SimpleCoordinate,
+			start: location,
+			end: location,
 		};
 
 		void tileHighlightsContext.tiles.set(tile, true);
@@ -82,7 +83,7 @@ export function useTilePaintMode(currentMode: TilePaintMode | null): {
 			}
 
 			onDragCompleteRef.current?.(
-				getTilesInRange(gameContext, dragStatus.current.start, dragStatus.current.end),
+				getTilesInRange(dragStatus.current.start, dragStatus.current.end),
 			);
 			dragStatus.current = null;
 			tileHighlightsContext.tiles.forEach((value, key) => {
@@ -98,20 +99,20 @@ export function useTilePaintMode(currentMode: TilePaintMode | null): {
 			// No drag in progress
 			return;
 		}
-		dragStatus.current.end = tile.location.get().slice(1) as SimpleCoordinate;
+		dragStatus.current.end = tile.location.get();
 
 		const added = new Set<HihglightableTile>();
 		for (
-			let x = Math.min(dragStatus.current.start[0], dragStatus.current.end[0]);
-			x <= Math.max(dragStatus.current.start[0], dragStatus.current.end[0]);
+			let x = Math.min(dragStatus.current.start[1], dragStatus.current.end[1]);
+			x <= Math.max(dragStatus.current.start[1], dragStatus.current.end[1]);
 			x++
 		) {
 			for (
-				let y = Math.min(dragStatus.current.start[1], dragStatus.current.end[1]);
-				y <= Math.max(dragStatus.current.start[1], dragStatus.current.end[1]);
+				let y = Math.min(dragStatus.current.start[2], dragStatus.current.end[2]);
+				y <= Math.max(dragStatus.current.start[2], dragStatus.current.end[2]);
 				y++
 			) {
-				const tile = gameContext.terrain.getTileClosestToXy(x, y);
+				const tile = dragStatus.current.start[0].getTileClosestToXy(x, y);
 				added.add(tile);
 				void tileHighlightsContext.tiles.set(tile, true);
 			}

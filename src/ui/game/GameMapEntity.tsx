@@ -8,9 +8,9 @@ import {
 import { locationComponent } from '../../game/core/ecs/components/locationComponent';
 import { visibilityComponent } from '../../game/core/ecs/components/visibilityComponent';
 import { EcsEntity } from '../../game/core/ecs/types';
-import { useControlsContext } from '../contexts/ControlsContext';
 import { useEventedValue } from '../hooks/useEventedValue';
 import { MapLocation } from '../map/MapLocation';
+import { setSelectedEntity, useSelectedEntityStore } from '../stores/selectedEntityStore';
 import { useGameContextMenuOpener } from './GameContextMenu';
 import { GameEntityIcon } from './GameEntityIcon';
 
@@ -24,9 +24,7 @@ export const GameMapEntity: FunctionComponent<
 		entity: EcsEntity<typeof locationComponent | typeof visibilityComponent>;
 	} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>
 > = ({ entity, ...rest }) => {
-	const { state, selectEntity } = useControlsContext();
-
-	const isSelected = state.selectedEntity === entity;
+	const isSelected = useSelectedEntityStore((state) => state.selectedEntity === entity);
 
 	const contextMenu = useGameContextMenuOpener();
 
@@ -44,10 +42,10 @@ export const GameMapEntity: FunctionComponent<
 
 	const onClick = useCallback<MouseEventHandler<HTMLDivElement>>(
 		(event) => {
-			selectEntity(entity);
+			setSelectedEntity(entity);
 			event.stopPropagation();
 		},
-		[selectEntity, entity],
+		[entity],
 	);
 	const [_terrain, x, y] = useEventedValue(entity.location);
 
@@ -62,9 +60,9 @@ export const GameMapEntity: FunctionComponent<
 		>
 			<div
 				style={{
-					minWidth: '0.8em',
-					maxWidth: '0.8em',
-					height: '0.8em',
+					minWidth: '1em',
+					maxWidth: '1em',
+					height: '1em',
 					borderRadius: '50%',
 					display: 'flex',
 					alignItems: 'center',

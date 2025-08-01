@@ -61,6 +61,13 @@ async function walkToTile(
 			})),
 	});
 
+	console.log(
+		'User needs to walk to tile',
+		start.location.get().join('/'),
+		'to',
+		destination.location.get().join('/'),
+	);
+
 	const lastTileInPath = path[path.length - 1];
 	if (lastTileInPath) {
 		const distanceToTarget = destination.euclideanDistanceTo(lastTileInPath.location.get());

@@ -3,8 +3,10 @@ import { useDriverContext } from '../contexts/DriverContext';
 import { useGameContext } from '../contexts/GameContext';
 import { useEventedValue } from '../hooks/useEventedValue';
 
+import { Button } from '../hud/atoms/Button';
 import { FancyClock } from '../hud/atoms/FancyClock';
 import { Panel } from '../hud/atoms/Panel';
+import { DefinitionTable } from '../util/DefinitionTable';
 import './game-ui.css';
 
 /**
@@ -43,20 +45,33 @@ export const GameClock: FC = () => {
 
 	return (
 		<Panel data-component='GameClock'>
-			<FancyClock
-				time={
-					// t+1 tick on fancy clock is one second.
-					// t+1 tick on game is however much time it takes to walk from one tile to another
-					// so the arbitrary number here decides how long that is
-					time / 300
-				}
-			/>
-			<aside>
-				<button onClick={slower}>🐢</button>
-				<button onClick={faster}>🐇</button>
-			</aside>
-			<p>Speed: {gameSpeed}</p>
-			{isAnimating ? <p>Animating</p> : <p>Paused</p>}
+			<div style={{ flex: 0 }}>
+				<FancyClock
+					time={
+						// t+1 tick on fancy clock is one second.
+						// t+1 tick on game is however much time it takes to walk from one tile to another
+						// so the arbitrary number here decides how long that is
+						time / 300
+					}
+				/>
+			</div>
+			<div style={{ flex: 1 }}>
+				<DefinitionTable
+					data={[
+						{ key: 'Status', value: isAnimating ? 'Running' : 'Paused' },
+						{ key: 'Speed', value: gameSpeed },
+						{
+							key: 'Controls',
+							value: (
+								<>
+									<Button onClick={slower} icon={'🐢'} layout='tile'></Button>
+									<Button onClick={faster} icon={'🐇'} layout='tile'></Button>
+								</>
+							),
+						},
+					]}
+				/>
+			</div>
 		</Panel>
 	);
 };

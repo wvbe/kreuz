@@ -45,6 +45,7 @@
 		"perlin-noise": "^0.0.1",
 		"poisson-disk-sampling": "^2.3.1",
 		"react-router-dom": "^7.5.0",
-		"seedrandom": "^3.0.5"
+		"seedrandom": "^3.0.5",
+		"zustand": "^5.0.7"
 	}
 }

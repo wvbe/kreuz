@@ -35,7 +35,7 @@ export const MapLocation: React.FC<
 						...style,
 				  }
 				: {},
-		[x, y, dx, dy, style, zIndex],
+		[parentTerrain, x, y, dx, dy, style, zIndex],
 	);
 	return parentTerrain === coordinateTerrain ? <div style={styleProp} {...rest} /> : null;
 };

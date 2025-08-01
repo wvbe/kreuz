@@ -6,10 +6,10 @@ import { GameActionBar } from './game/GameActionBar';
 import { GameClock } from './game/GameClock';
 import { GameContextMenuHost } from './game/GameContextMenu';
 import { GameSelectedEntity } from './game/GameSelectedEntity';
-import { GameTerrain } from './game/GameTerrain';
 import { TilePaintMode } from './game/hooks/useTilePaintMode';
 import './hud/variables.css';
 import { PanZoomable } from './util/PanZoomable';
+import { GameSelectedTerrain } from './game/GameSelectedTerrain';
 
 export const Ui: FunctionComponent<{
 	driver: DriverI;
@@ -25,7 +25,7 @@ export const Ui: FunctionComponent<{
 			<GameSelectedEntity />
 			<PanZoomable>
 				<GameContextMenuHost>
-					<GameTerrain tilePaintMode={tilePaintMode} terrain={game.terrain} />
+					<GameSelectedTerrain tilePaintMode={tilePaintMode} />
 				</GameContextMenuHost>
 			</PanZoomable>
 		</Contexts>

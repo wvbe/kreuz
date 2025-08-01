@@ -67,7 +67,7 @@ export const personArchetype = new EcsArchetype<
 		visibilityComponent.attach(entity, {
 			name: options.name,
 			icon: options.icon,
-			iconSize: 0.8,
+			iconSize: 0.7,
 			visiblityPriority: 99999,
 		});
 		wealthComponent.attach(entity, {

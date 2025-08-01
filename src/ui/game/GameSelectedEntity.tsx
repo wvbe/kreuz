@@ -1,7 +1,8 @@
-import React, { ReactNode, useMemo } from 'react';
+import React, { ReactNode, useEffect, useMemo } from 'react';
 import { assertEcsComponents, hasEcsComponents } from '../../game/core/ecs/assert';
 import { eventLogComponent } from '../../game/core/ecs/components/eventLogComponent';
 import { locationComponent } from '../../game/core/ecs/components/locationComponent';
+import { pathingComponent } from '../../game/core/ecs/components/pathingComponent';
 import { portalComponent } from '../../game/core/ecs/components/portalComponent';
 import { visibilityComponent } from '../../game/core/ecs/components/visibilityComponent';
 import { wealthComponent } from '../../game/core/ecs/components/wealthComponent';
@@ -9,10 +10,10 @@ import { Button } from '../hud/atoms/Button';
 import { Panel } from '../hud/atoms/Panel';
 import EntityControls, { EntityControlsProps } from '../hud/EntityControls';
 import { useSelectedEntityStore } from '../stores/selectedEntityStore';
+import { setSelectedTerrain } from '../stores/selectedTerrainStore';
 import { ErrorBoundary } from '../util/ErrorBoundary';
 import { GameEntityIcon } from './GameEntityIcon';
 import { GameEntityLastLog } from './phrases/GameEntityLastLog';
-import { setSelectedTerrain } from '../stores/selectedTerrainStore';
 
 const NO_ENTITY_SELECTED_ENTITY = { id: 'no-entity-selected' };
 
@@ -33,6 +34,16 @@ const GameSelectedEntity: React.FC = () => {
 		[],
 		[visibilityComponent, locationComponent, wealthComponent],
 	);
+
+	// Whenever the selected entity walks into another terrain, camera follows to the same terrain
+	useEffect(() => {
+		if (!hasEcsComponents(selectedEntity, [pathingComponent])) {
+			return;
+		}
+		return selectedEntity.$portalExited.on((portal) => {
+			setSelectedTerrain(portal.terrain);
+		});
+	}, [selectedEntity]);
 
 	const icon = useMemo(
 		() => (

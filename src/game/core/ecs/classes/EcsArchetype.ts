@@ -19,17 +19,10 @@ export class EcsArchetype<
 	OptionsGeneric extends Record<string, unknown>,
 	ComponentGeneric extends EcsComponent<any>,
 > {
-	public readonly components: ComponentGeneric[];
-
-	readonly #attachEntity: EcsArchetypeAttachor<OptionsGeneric>;
-
 	constructor(
-		componentDependencies: ComponentGeneric[],
-		attachEntity: EcsArchetypeAttachor<OptionsGeneric>,
-	) {
-		this.components = componentDependencies;
-		this.#attachEntity = attachEntity;
-	}
+		private readonly components: ComponentGeneric[],
+		private readonly factory: EcsArchetypeAttachor<OptionsGeneric>,
+	) {}
 
 	/**
 	 * Create a new entity with this archetype.
@@ -39,7 +32,7 @@ export class EcsArchetype<
 			id: `${identifier++}`,
 			archetype: this,
 		};
-		this.#attachEntity(entity, options);
+		this.factory(entity, options);
 		if (!this.test(entity)) {
 			// You forgot to attach all relevant components to this entity, in #attachEntity
 			throw new Error(`Programmer error, entity ${entity.id} failed its own archetype test`);

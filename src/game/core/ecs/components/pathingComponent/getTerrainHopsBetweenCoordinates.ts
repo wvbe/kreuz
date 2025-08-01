@@ -18,10 +18,21 @@ export function getTerrainHopsBetweenCoordinates(
 		throw new Error('No common ancestor found');
 	}
 
-	return [
-		...startAncestors.slice(0, startAncestors.indexOf(commonAncestor)),
-		commonAncestor,
+	// The steps between the start and the common ancestor
+	const hops = startAncestors.slice(0, startAncestors.indexOf(commonAncestor));
+
+	if (startTerrain !== commonAncestor) {
+		hops.push(commonAncestor);
+	}
+
+	// The steps between the common ancestor and the destination
+	hops.push(
 		...destinationAncestors.slice(0, destinationAncestors.indexOf(commonAncestor)).reverse(),
-		destinationTerrain,
-	];
+	);
+
+	if (commonAncestor !== destinationTerrain) {
+		hops.push(destinationTerrain);
+	}
+
+	return hops;
 }

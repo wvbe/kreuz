@@ -8,6 +8,41 @@ import { visibilityComponent } from '../components/visibilityComponent';
 import { EcsEntity } from '../types';
 
 /**
+ * Some common options for the portal archetype.
+ *
+ * - `name`: The name of the portal.
+ *
+ * And then two mutually exclusive option groups:
+ * - The options to self-register a new {@link Terrain} and a portal entity to it
+ * - Or you're setting up the portal entity back to the paren
+ * - `reverseOfPortalEntity`: If set, this portal is the reverse of another portal.
+ * - `location`: The location of the portal.
+ * - `tiles`: The tiles of the portal.
+ * - `portalEnd`: The end of the portal.
+ */
+type PortalArchetypeOptions = {
+	name: string;
+} & (
+	| {
+			location: QualifiedCoordinate;
+			tiles: {
+				location: SimpleCoordinate;
+				surfaceType: SurfaceType;
+			}[];
+			portalEnd: SimpleCoordinate;
+			reverseOfPortalEntity?: null;
+	  }
+	| {
+			location?: null;
+			tiles?: null;
+			portalEnd?: null;
+			reverseOfPortalEntity: EcsEntity<
+				typeof locationComponent | typeof visibilityComponent | typeof portalComponent
+			>;
+	  }
+);
+
+/**
  * The `mapMarkerArchetype` is an ECS archetype that defines entities representing map markers.
  * These entities have a location and are visible on the map with a name and an icon.
  *
@@ -21,33 +56,13 @@ import { EcsEntity } from '../types';
  * - `icon`: The icon representing the entity, which can be a string or a React node.
  */
 export const portalArchetype = new EcsArchetype<
-	{
-		name: string;
-	} & (
-		| {
-				location: QualifiedCoordinate;
-				tiles: {
-					location: SimpleCoordinate;
-					surfaceType: SurfaceType;
-				}[];
-				portalEnd: SimpleCoordinate;
-				reverseOfPortalEntity?: null;
-		  }
-		| {
-				location?: null;
-				tiles?: null;
-				portalEnd?: null;
-				reverseOfPortalEntity: EcsEntity<
-					typeof locationComponent | typeof visibilityComponent | typeof portalComponent
-				>;
-		  }
-	),
+	PortalArchetypeOptions,
 	typeof locationComponent | typeof visibilityComponent | typeof portalComponent
 >([locationComponent, visibilityComponent, portalComponent], (entity, options) => {
 	visibilityComponent.attach(entity, {
 		name: options.name,
-		icon: `⭕️`,
-		iconSize: 0.5,
+		icon: options.reverseOfPortalEntity ? `🚪` : `🏠`,
+		iconSize: 0.9,
 	});
 
 	if (options.reverseOfPortalEntity) {

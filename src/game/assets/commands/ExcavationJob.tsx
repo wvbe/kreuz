@@ -1,6 +1,7 @@
 import { Spinner } from '../../../ui/hud/atoms/Spinner';
 import { JobPosting } from '../../core/classes/JobPosting';
 import { mapMarkerArchetype } from '../../core/ecs/archetypes/mapMarkerArchetype';
+import { Tile } from '../../core/ecs/archetypes/tileArchetype';
 import { assertEcsComponents, hasEcsComponents } from '../../core/ecs/assert';
 import { eventLogComponent } from '../../core/ecs/components/eventLogComponent';
 import { inventoryComponent } from '../../core/ecs/components/inventoryComponent';
@@ -11,13 +12,10 @@ import { surfaceComponent, SurfaceType } from '../../core/ecs/components/surface
 import { EcsArchetypeEntity, EcsEntity } from '../../core/ecs/types';
 import Game from '../../core/Game';
 
-export type ExcavateableTile = EcsEntity<
-	typeof locationComponent | typeof pathableComponent | typeof surfaceComponent
->;
 export class ExcavationJob extends JobPosting {
 	private marker: EcsArchetypeEntity<typeof mapMarkerArchetype> | null = null;
 
-	constructor(private readonly tile: ExcavateableTile) {
+	constructor(private readonly tile: Tile) {
 		super({
 			location: tile.location.get(),
 			label: 'Clear a space',
@@ -34,7 +32,7 @@ export class ExcavationJob extends JobPosting {
 	 * - It is not already cleared
 	 * - It is adjacent to a pathable neighbor
 	 */
-	public static tileIsExcavateable(game: Game, tile: EcsEntity): tile is ExcavateableTile {
+	public static tileIsExcavateable(game: Game, tile: EcsEntity): tile is Tile {
 		if (!hasEcsComponents(tile, [locationComponent, pathableComponent, surfaceComponent])) {
 			return false;
 		}

@@ -20,6 +20,9 @@ components are defined in `src/game/core/ecs/components/`.
 The game instance is usually called simply `game` and contains all the stable API to interact with
 entities, events and so on.
 
+Testing:
+- All *.test.ts files are written for Jest, not vitest
+
 Code style:
 
 -   Most React components should have Storybook stories.

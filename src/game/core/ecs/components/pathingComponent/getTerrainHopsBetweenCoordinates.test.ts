@@ -32,10 +32,12 @@ describe('getContiguousObjects', () => {
 			[buildingTwoA, 0, 0, 0],
 		);
 
-		expect(path[0]).toBe(buildingOne);
-		expect(path[1]).toBe(world);
-		expect(path[2]).toBe(buildingTwo);
-		expect(path[3]).toBe(buildingTwoA);
+		expect(path.map((terrain) => terrain.id)).toEqual([
+			'building-1',
+			'world',
+			'building-2',
+			'building-2a',
+		]);
 
 		expect(path).not.toContain(space);
 		expect(path).toHaveLength(4);
@@ -43,11 +45,9 @@ describe('getContiguousObjects', () => {
 	it('Only into a building', () => {
 		const path = getTerrainHopsBetweenCoordinates([world, 0, 0, 0], [buildingTwoA, 0, 0, 0]);
 
-		expect(path[0]).toBe(world);
-		expect(path[1]).toBe(buildingTwo);
-		expect(path[2]).toBe(buildingTwoA);
+		expect(path.map((terrain) => terrain.id)).toEqual(['building-2', 'building-2a']);
 
 		expect(path).not.toContain(space);
-		expect(path).toHaveLength(3);
+		expect(path).toHaveLength(2);
 	});
 });

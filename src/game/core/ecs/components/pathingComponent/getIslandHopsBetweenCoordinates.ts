@@ -57,7 +57,7 @@ export function getIslandHopsBetweenCoordinates(
 		}
 
 		const neighbours = currentTerrain
-			.getAdjacentTerrains()
+			.getPortals()
 			.filter((adjacent) => {
 				if (visitedTerrains.includes(adjacent.terrain)) {
 					return false;

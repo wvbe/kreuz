@@ -8,7 +8,7 @@
 
 import { QualifiedCoordinate } from '../../../terrain/types';
 import { Tile } from '../../archetypes/tileArchetype';
-import { getEuclideanDistanceAcrossSpaces } from '../location/getEuclideanDistanceAcrossSpaces';
+import { getEuclideanMapDistanceAcrossSpaces } from '../location/getEuclideanMapDistanceAcrossSpaces';
 import { isMapLocationEqualTo } from '../location/isMapLocationEqualTo';
 import { BinaryHeap } from './BinaryHeap';
 import { getTerrainHopsBetweenCoordinates } from './getTerrainHopsBetweenCoordinates';
@@ -66,7 +66,7 @@ export class Path<PathableEntity> {
 			return heuristic.f;
 		});
 		this.#heuristic = (pos0, pos1) => {
-			return getEuclideanDistanceAcrossSpaces(
+			return getEuclideanMapDistanceAcrossSpaces(
 				this.#options.getLocation(pos0),
 				this.#options.getLocation(pos1),
 			); // + this.getVisitationCost(pos0, pos1)
@@ -222,7 +222,7 @@ export class Path<PathableEntity> {
 		}[] = destinations
 			.map((tile) => ({
 				tile,
-				distance: getEuclideanDistanceAcrossSpaces(
+				distance: getEuclideanMapDistanceAcrossSpaces(
 					this.#options.getLocation(this.start),
 					this.#options.getLocation(tile),
 				),
@@ -282,8 +282,6 @@ export class Path<PathableEntity> {
 			getLocation: (tile) => tile.location.get(),
 			getWalkability: (tile) => tile.walkability,
 		};
-		const [startTerrain] = startTile.location.get();
-		const [destinationTerrain] = destinationTile.location.get();
 		const terrainsInBetween = getTerrainHopsBetweenCoordinates(
 			startTile.location.get(),
 			destinationTile.location.get(),

@@ -2,7 +2,7 @@ import { Spinner } from '../../../ui/hud/atoms/Spinner';
 import { JobPosting } from '../../core/classes/JobPosting';
 import { Prompt } from '../../core/classes/Prompt';
 import { mapMarkerArchetype } from '../../core/ecs/archetypes/mapMarkerArchetype';
-import { tileArchetype } from '../../core/ecs/archetypes/tileArchetype';
+import { Tile, tileArchetype } from '../../core/ecs/archetypes/tileArchetype';
 import { assertEcsComponents, hasEcsComponents } from '../../core/ecs/assert';
 import { eventLogComponent } from '../../core/ecs/components/eventLogComponent';
 import { inventoryComponent } from '../../core/ecs/components/inventoryComponent';
@@ -12,7 +12,6 @@ import { pathingComponent } from '../../core/ecs/components/pathingComponent';
 import { surfaceComponent, SurfaceType } from '../../core/ecs/components/surfaceComponent';
 import { EcsArchetypeEntity, EcsEntity } from '../../core/ecs/types';
 import Game from '../../core/Game';
-import { ExcavateableTile } from '../commands/ExcavationJob';
 import { Constructible } from './types';
 
 /**
@@ -25,7 +24,7 @@ export const PROMPT_CONSTRUCTION_JOB = new Prompt<{
 export class ConstructionJob extends JobPosting {
 	private marker: EcsArchetypeEntity<typeof mapMarkerArchetype> | null = null;
 
-	constructor(private readonly tile: ExcavateableTile, private readonly thing: Constructible) {
+	constructor(private readonly tile: Tile, private readonly thing: Constructible) {
 		super({
 			location: tile.location.get(),
 			label: `Build a ${thing.label.toLowerCase()}`,
@@ -41,7 +40,7 @@ export class ConstructionJob extends JobPosting {
 	 * - It has the necessary ECS components
 	 * - It is already cleared
 	 */
-	public static tileIsBuildable(game: Game, tile: EcsEntity): tile is ExcavateableTile {
+	public static tileIsBuildable(game: Game, tile: EcsEntity): tile is Tile {
 		if (!hasEcsComponents(tile, [locationComponent, pathableComponent, surfaceComponent])) {
 			return false;
 		}

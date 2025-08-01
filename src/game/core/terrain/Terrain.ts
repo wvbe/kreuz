@@ -23,8 +23,10 @@ export class Terrain {
 	/**
 	 * If this space contains other spaces, this will be the children spaces.
 	 */
-	public readonly children: TerrainPortal[] = [];
+	private readonly children: TerrainPortal[] = [];
+
 	public readonly tiles = new Collection<Tile>();
+
 	#parent: Terrain | null = null;
 
 	/**
@@ -187,7 +189,7 @@ export class Terrain {
 	/**
 	 * Returns the parent and child terrains.
 	 */
-	public getAdjacentTerrains(): TerrainPortal[] {
+	public getPortals(): TerrainPortal[] {
 		return [this.getPortalToParent(), ...this.children].filter((t) => t !== null);
 	}
 

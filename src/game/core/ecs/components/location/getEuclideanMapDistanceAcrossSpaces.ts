@@ -1,11 +1,13 @@
 import { Terrain } from '../../../terrain/Terrain';
 import { QualifiedCoordinate } from '../../../terrain/types';
-import { getEuclideanDistance } from './getEuclideanDistance';
+import { getEuclideanMapDistance } from './getEuclideanMapDistance';
+
+export const COST_OF_SWITCHING_TERRAINS = 1;
 
 /**
  * @note Does not count distance for passing into anotehr space.
  */
-export function getEuclideanDistanceAcrossSpaces(
+export function getEuclideanMapDistanceAcrossSpaces(
 	start: QualifiedCoordinate,
 	destination: QualifiedCoordinate,
 ) {
@@ -48,13 +50,15 @@ export function getEuclideanDistanceAcrossSpaces(
 			throw new Error('Portal to parent not found');
 		}
 		totalDistance +=
-			getEuclideanDistance(currentCoords, portalToParent.portalStart) *
+			getEuclideanMapDistance(currentCoords, portalToParent.portalStart) *
 			currentTerrain.sizeMultiplier;
 
 		// Get this value before we change the current terrain
 
 		currentCoords = portalToParent.terrain.getLocationOfPortalToTerrain(currentTerrain);
 		currentTerrain = portalToParent.terrain;
+
+		totalDistance += COST_OF_SWITCHING_TERRAINS;
 	}
 
 	// Travel down, along the destination terrain's ancestry
@@ -62,15 +66,16 @@ export function getEuclideanDistanceAcrossSpaces(
 		const childTerrain = destinationAncestorsToCommonAncestor.pop()!;
 		const portalToChild = currentTerrain.getPortalToChild(childTerrain);
 		totalDistance +=
-			getEuclideanDistance(currentCoords, portalToChild.portalStart) *
+			getEuclideanMapDistance(currentCoords, portalToChild.portalStart) *
 			currentTerrain.sizeMultiplier;
 
 		currentCoords = childTerrain.getLocationOfPortalToTerrain(currentTerrain);
 		currentTerrain = childTerrain;
+		totalDistance += COST_OF_SWITCHING_TERRAINS;
 	}
 
 	totalDistance +=
-		getEuclideanDistance(currentCoords, destinationCoords) * currentTerrain.sizeMultiplier;
+		getEuclideanMapDistance(currentCoords, destinationCoords) * currentTerrain.sizeMultiplier;
 
 	return totalDistance;
 }

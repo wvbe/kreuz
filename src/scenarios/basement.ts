@@ -48,10 +48,10 @@ export default async function (driver: DriverI) {
 		tiles: generateGridTerrainFromAscii(`
 			XXXXXXXXXXXX
 			XXXXXXXXXXXX
-			X----X-----X
 			XXXXXXXXXXXX
-			XXXXXXXXXXXX`),
-		portalEnd: [5, 2, 0],
+			XXXXXXXXXXXX
+			---------X--`),
+		portalEnd: [9, 4, 0],
 	});
 	await game.entities.add(portal);
 

@@ -1,7 +1,7 @@
 import type Game from '../../Game';
 import { Event } from '../../events/Event';
 import { EventedValue } from '../../events/EventedValue';
-import { QualifiedCoordinate } from '../../terrain/types';
+import { QualifiedCoordinate, TerrainPortal } from '../../terrain/types';
 import { CallbackFn } from '../../types';
 import { Tile, tileArchetype } from '../archetypes/tileArchetype';
 import { hasEcsComponents } from '../assert';
@@ -9,6 +9,7 @@ import { EcsComponent } from '../classes/EcsComponent';
 import { EcsEntity } from '../types';
 import { healthComponent } from './healthComponent';
 import { getTileAtLocation } from './location/getTileAtLocation';
+import { isMapLocationEqualTo } from './location/isMapLocationEqualTo';
 import { locationComponent } from './locationComponent';
 import { Path } from './pathingComponent/Path';
 import { visibilityComponent } from './visibilityComponent';
@@ -17,11 +18,30 @@ type PathingEntity = EcsEntity<typeof locationComponent | typeof pathingComponen
 
 async function animateTo(entity: PathingEntity, destination: QualifiedCoordinate) {
 	const distance = entity.euclideanDistanceTo(destination);
+	const [currentTerrain, ...currentCoords] = entity.location.get();
+	const portal = currentTerrain
+		.getPortals()
+		.find(
+			({ terrain, portalStart }) =>
+				isMapLocationEqualTo(portalStart, currentCoords) &&
+				isMapLocationEqualTo(destination, [
+					terrain,
+					...terrain.getLocationOfPortalToTerrain(currentTerrain),
+				]),
+		);
 	await entity.$stepStart.set({
 		destination,
 		duration: distance / entity.walkSpeed,
-		done: async () => await entity.$stepEnd.emit(destination),
+		done: async () => {
+			if (portal) {
+				await entity.$portalExited.emit(portal);
+			}
+			await entity.$stepEnd.emit(destination);
+		},
 	});
+	if (portal) {
+		await entity.$portalEntered.emit(portal);
+	}
 }
 
 async function walkToTile(
@@ -60,13 +80,6 @@ async function walkToTile(
 				cost: 12,
 			})),
 	});
-
-	console.log(
-		'User needs to walk to tile',
-		start.location.get().join('/'),
-		'to',
-		destination.location.get().join('/'),
-	);
 
 	const lastTileInPath = path[path.length - 1];
 	if (lastTileInPath) {
@@ -179,6 +192,9 @@ export const pathingComponent = new EcsComponent<
 		 * Emitted when the entity finishes a step in the path.
 		 */
 		$stepEnd: Event<[QualifiedCoordinate]>;
+
+		$portalEntered: Event<[TerrainPortal]>;
+		$portalExited: Event<[TerrainPortal]>;
 	}
 >(
 	(entity) =>
@@ -197,6 +213,8 @@ export const pathingComponent = new EcsComponent<
 				done: CallbackFn;
 			} | null>(null, 'pathingComponent $stepStart'),
 			$stepEnd: new Event<[QualifiedCoordinate]>('pathingComponent $stepEnd'),
+			$portalEntered: new Event<[TerrainPortal]>('pathingComponent $portalEntered'),
+			$portalExited: new Event<[TerrainPortal]>('pathingComponent $portalExited'),
 		};
 		Object.assign(entity, events);
 	},

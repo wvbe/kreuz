@@ -19,10 +19,12 @@ type TileEntity = EcsEntity<
 	| typeof pathableComponent
 >;
 
-export function generateGridTerrainFromAscii(ascii: string): {
+type GeneratedTile = {
 	location: SimpleCoordinate;
 	surfaceType: SurfaceType;
-}[] {
+};
+
+export function generateGridTerrainFromAscii(ascii: string): GeneratedTile[] {
 	const datas = ascii
 		.trim()
 		.split('\n')
@@ -32,11 +34,15 @@ export function generateGridTerrainFromAscii(ascii: string): {
 	}
 
 	const tiles = datas.map((data, y) =>
-		data.map((character, x) => ({
-			location: [x, y, character === '-' ? -1 : 1] as SimpleCoordinate,
-			surfaceType: character === '-' ? SurfaceType.UNKNOWN : SurfaceType.OPEN,
-		})),
+		data.map((character, x) =>
+			character === '-'
+				? null
+				: {
+						location: [x, y, character === '-' ? -1 : 1] as SimpleCoordinate,
+						surfaceType: character === '-' ? SurfaceType.UNKNOWN : SurfaceType.OPEN,
+				  },
+		),
 	);
 
-	return tiles.flatMap((row) => row);
+	return tiles.flatMap((row) => row).filter((t): t is GeneratedTile => t !== null);
 }

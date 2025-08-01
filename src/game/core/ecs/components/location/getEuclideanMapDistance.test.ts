@@ -1,31 +1,28 @@
 import { expect } from '@jest/globals';
-import { getEuclideanDistance } from './getEuclideanDistance';
+import { getEuclideanMapDistance } from './getEuclideanMapDistance';
 
-describe('getEuclideanDistance', () => {
-	it('should calculate distance between two points in 3D space', () => {
+describe('getEuclideanMapDistance', () => {
+	it('should calculate distance between two points in 2D space', () => {
 		const point1: [number, number, number] = [0, 0, 0];
 		const point2: [number, number, number] = [3, 4, 0];
 
-		const distance = getEuclideanDistance(point1, point2);
-
+		const distance = getEuclideanMapDistance(point1, point2);
 		expect(distance).toBe(5);
 	});
 
-	it('should calculate distance with z-coordinate difference', () => {
+	it('the z-coordinate is ignored', () => {
 		const point1: [number, number, number] = [0, 0, 0];
 		const point2: [number, number, number] = [0, 0, 5];
 
-		const distance = getEuclideanDistance(point1, point2);
-
-		expect(distance).toBe(5);
+		const distance = getEuclideanMapDistance(point1, point2);
+		expect(distance).toBe(0);
 	});
 
 	it('should return 0 for identical points', () => {
 		const point1: [number, number, number] = [5, 10, 15];
 		const point2: [number, number, number] = [5, 10, 15];
 
-		const distance = getEuclideanDistance(point1, point2);
-
+		const distance = getEuclideanMapDistance(point1, point2);
 		expect(distance).toBe(0);
 	});
 
@@ -33,9 +30,7 @@ describe('getEuclideanDistance', () => {
 		const point1: [number, number, number] = [-1, -2, -3];
 		const point2: [number, number, number] = [2, 4, 6];
 
-		const distance = getEuclideanDistance(point1, point2);
-
-		// Expected: sqrt((2-(-1))² + (4-(-2))² + (6-(-3))²) = sqrt(9 + 36 + 81) = sqrt(126) ≈ 11.225
-		expect(distance).toBeCloseTo(11.225, 3);
+		const distance = getEuclideanMapDistance(point1, point2);
+		expect(distance).toBeCloseTo(6.708, 3);
 	});
 });

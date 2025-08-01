@@ -106,10 +106,10 @@ describe('isMapLocationEqualTo', () => {
 			const simpleCoord: SimpleCoordinate = [1, 2, 3];
 			const qualifiedCoord: QualifiedCoordinate = [mockTerrain, 1, 2, 3];
 
-			expect(() => isMapLocationEqualTo(simpleCoord, qualifiedCoord)).toThrow(
+			expect(() => isMapLocationEqualTo(simpleCoord, qualifiedCoord as any)).toThrow(
 				'Coordinate types are not the same',
 			);
-			expect(() => isMapLocationEqualTo(qualifiedCoord, simpleCoord)).toThrow(
+			expect(() => isMapLocationEqualTo(qualifiedCoord, simpleCoord as any)).toThrow(
 				'Coordinate types are not the same',
 			);
 		});

@@ -13,6 +13,10 @@ export type SaveTerrainJson = {
 	size: number;
 };
 
+export type TileInfo = {
+	location: SimpleCoordinate;
+	surfaceType: SurfaceType;
+};
 export class Terrain {
 	/**
 	 * If we need to stringify a {@link QualifiedCoordinate}, which includes a reference to the terrain,
@@ -87,34 +91,9 @@ export class Terrain {
 			});
 		}
 
-		this.addTiles(options.tiles ?? []);
-	}
-
-	/**
-	 * Creates new tiles into the terrain based on a list of infos given. The created tiles will
-	 * have qualified coordinates and pathing neighbours set up.
-	 */
-	public async addTiles(
-		tileInfos: {
-			location: SimpleCoordinate;
-			surfaceType: SurfaceType;
-		}[],
-	) {
-		const newTiles = tileInfos.map((tileInfo) =>
-			tileArchetype.create({
-				location: [this, ...tileInfo.location],
-				outlineCoordinates: [
-					[-0.5, -0.5, 0],
-					[0.5, -0.5, 0],
-					[0.5, 0.5, 0],
-					[-0.5, 0.5, 0],
-				],
-				surfaceType: tileInfo.surfaceType,
-			}),
-		);
-
-		await Promise.all(
-			newTiles.map(async (tile) => {
+		this.tiles.$change.on((added, _removed) => {
+			for (const tile of added) {
+				const neighbours = tile.pathingNeighbours;
 				[
 					[-1, 0],
 					[1, 0],
@@ -126,14 +105,33 @@ export class Terrain {
 						[ownLocation[1] + dx, ownLocation[2] + dy, ownLocation[3]],
 						true,
 					);
-					if (neighbour) {
+					if (neighbour && !neighbours.includes(neighbour)) {
 						tile.pathingNeighbours.push(neighbour);
 						neighbour.pathingNeighbours.push(tile);
 					}
+					if (tile.pathingNeighbours.length > 4) {
+						console.log('TILE HAS MORE THAN 4 NEIGHBORS', tile);
+					}
 				});
-				return this.tiles.add(tile);
+			}
+		});
+
+		this.addTiles(options.tiles ?? []);
+	}
+
+	/**
+	 * Creates new tiles into the terrain based on a list of infos given. The created tiles will
+	 * have qualified coordinates and pathing neighbours set up.
+	 */
+	public async addTiles(tileInfos: TileInfo[]) {
+		const newTiles = tileInfos.map((tileInfo) =>
+			tileArchetype.create({
+				location: [this as Terrain, ...tileInfo.location] as QualifiedCoordinate,
+				surfaceType: tileInfo.surfaceType,
 			}),
 		);
+
+		await this.tiles.add(...newTiles);
 
 		// Clear the cache of our carefully calculated islands because we've added new tiles
 		this.#islands.clear();
@@ -204,11 +202,11 @@ export class Terrain {
 	 */
 	public getTileAtMapLocation(
 		location: SimpleCoordinate | QualifiedCoordinate,
-		lax?: false,
+		lax?: false | undefined,
 	): Tile;
 	public getTileAtMapLocation(
 		location: SimpleCoordinate | QualifiedCoordinate,
-		lax?: true,
+		lax: true,
 	): Tile | null;
 	public getTileAtMapLocation(location: SimpleCoordinate | QualifiedCoordinate, lax?: boolean) {
 		if (location.length === 4 && location[0] !== this) {

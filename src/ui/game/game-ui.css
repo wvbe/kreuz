@@ -10,8 +10,10 @@ div[data-component='GameMap'] {
 
 	/*
 	 * Because JS uses `em` and not pixels, here we decide how big one tile is:
+	 * @note: This value is now set in `PanZoomable`, which is also responsible for translating
+	 * clicks to game coordinates.
 	 */
-	font-size: 32px;
+	/* font-size: 32px; */
 
 	user-select: none;
 }

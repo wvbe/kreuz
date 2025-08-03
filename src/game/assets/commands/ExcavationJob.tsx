@@ -5,6 +5,7 @@ import { Tile } from '../../core/ecs/archetypes/tileArchetype';
 import { assertEcsComponents, hasEcsComponents } from '../../core/ecs/assert';
 import { eventLogComponent } from '../../core/ecs/components/eventLogComponent';
 import { inventoryComponent } from '../../core/ecs/components/inventoryComponent';
+import { getEuclideanMapDistanceAcrossSpaces } from '../../core/ecs/components/location/getEuclideanMapDistanceAcrossSpaces';
 import { locationComponent } from '../../core/ecs/components/locationComponent';
 import { pathableComponent } from '../../core/ecs/components/pathableComponent';
 import { pathingComponent } from '../../core/ecs/components/pathingComponent';
@@ -15,7 +16,12 @@ import Game from '../../core/Game';
 export class ExcavationJob extends JobPosting {
 	private marker: EcsArchetypeEntity<typeof mapMarkerArchetype> | null = null;
 
-	constructor(private readonly tile: Tile) {
+	constructor(
+		private readonly tile: Tile,
+		private readonly conf: {
+			onSuccess?: (tile: Tile) => void | Promise<void>;
+		} = {},
+	) {
 		super({
 			location: tile.location.get(),
 			label: 'Clear a space',
@@ -32,7 +38,7 @@ export class ExcavationJob extends JobPosting {
 	 * - It is not already cleared
 	 * - It is adjacent to a pathable neighbor
 	 */
-	public static tileIsExcavateable(game: Game, tile: EcsEntity): tile is Tile {
+	public static canModifyTile(game: Game, tile: EcsEntity): tile is Tile {
 		if (!hasEcsComponents(tile, [locationComponent, pathableComponent, surfaceComponent])) {
 			return false;
 		}
@@ -84,7 +90,7 @@ export class ExcavationJob extends JobPosting {
 		// if (!worker.inventory.availableOf(game.assets.materials.get('pickaxe')!)) {
 		// 	return 0;
 		// }
-		return 1;
+		return 1 / getEuclideanMapDistanceAcrossSpaces(worker.location.get(), this.location);
 	}
 
 	async onAssign(game: Game, worker: EcsEntity): Promise<void> {
@@ -100,6 +106,7 @@ export class ExcavationJob extends JobPosting {
 		try {
 			await worker.walkToTile(game, this.tile, 1);
 		} catch (error) {
+			console.error(error);
 			await worker.events?.add('Could not find a path close enough to the target');
 			// Replace the job icon with a spinner while the job is in progress
 			if (this.marker) {
@@ -122,8 +129,6 @@ export class ExcavationJob extends JobPosting {
 		await game.time.wait(30_000);
 		await game.entities.remove(spinner);
 
-		// Make the tile walkable now that it is excavated.
-		this.tile.walkability = 1;
-		this.tile.surfaceType.set(SurfaceType.OPEN);
+		await this.conf.onSuccess?.(this.tile);
 	}
 }

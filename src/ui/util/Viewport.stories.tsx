@@ -1,8 +1,8 @@
-import { PanZoomable } from './PanZoomable';
+import { Viewport } from './Viewport';
 
 export default {
-	title: 'UI/Util/PanZoomable',
-	component: PanZoomable,
+	title: 'UI/Util/Viewport',
+	component: Viewport,
 	tags: ['autodocs'],
 	parameters: {
 		layout: 'fullscreen',

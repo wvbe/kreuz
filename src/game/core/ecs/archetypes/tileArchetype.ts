@@ -10,7 +10,7 @@ import { EcsArchetypeEntity } from '../types';
 export const tileArchetype = new EcsArchetype<
 	{
 		location: QualifiedCoordinate;
-		outlineCoordinates: SimpleCoordinate[];
+		outlineCoordinates?: SimpleCoordinate[];
 		surfaceType: SurfaceType;
 	},
 	| typeof visibilityComponent
@@ -25,7 +25,12 @@ export const tileArchetype = new EcsArchetype<
 			location: options.location,
 		});
 		outlineComponent.attach(entity, {
-			outlineCoordinates: options.outlineCoordinates,
+			outlineCoordinates: options.outlineCoordinates ?? [
+				[-0.5, -0.5, 0],
+				[0.5, -0.5, 0],
+				[0.5, 0.5, 0],
+				[-0.5, 0.5, 0],
+			],
 		});
 		surfaceComponent.attach(entity, { surfaceType: options.surfaceType });
 		pathableComponent.attach(entity, {

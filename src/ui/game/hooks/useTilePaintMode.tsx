@@ -3,8 +3,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { locationComponent } from '../../../game/core/ecs/components/locationComponent';
 import { EcsEntity } from '../../../game/core/ecs/types';
 import { QualifiedCoordinate } from '../../../game/core/terrain/types';
-import { useGameContext } from '../../contexts/GameContext';
-import { usePanZoomControls } from '../../util/PanZoomable';
+import { getViewportControls } from '../../stores/selectedActionStore';
 import { useTileHighlightsContext } from './useTileHighlights';
 
 export type HihglightableTile = EcsEntity<typeof locationComponent>;
@@ -44,19 +43,18 @@ export function useTilePaintMode(currentMode: TilePaintMode | null): {
 	onTileMouseDown: DragCallback;
 	onTileMouseEnter: DragCallback;
 } {
-	const gameContext = useGameContext();
 	const dragStatus = useRef<null | DragStatus>(null);
-	const { setIsPaused } = usePanZoomControls();
 
 	const tileHighlightsContext = useTileHighlightsContext();
 
 	const onDragCompleteRef = useRef(currentMode?.onDragComplete);
 	useEffect(() => {
+		const controls = getViewportControls();
 		if (currentMode) {
-			setIsPaused(true);
+			controls.getPanzoomInstance()?.pause();
 			onDragCompleteRef.current = currentMode?.onDragComplete;
 		} else {
-			setIsPaused(false);
+			controls.getPanzoomInstance()?.resume();
 			onDragCompleteRef.current = undefined;
 		}
 	}, [currentMode]);

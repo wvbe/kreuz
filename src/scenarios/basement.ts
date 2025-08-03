@@ -11,7 +11,6 @@ import { DriverI } from '../game/core/drivers/types';
 import { personArchetype } from '../game/core/ecs/archetypes/personArchetype';
 import { portalArchetype } from '../game/core/ecs/archetypes/portalArchetype';
 import Game from '../game/core/Game';
-import { growTerrainForExcavatedEdges } from '../game/generators/modifiers/growTerrainForExcavatedEdges';
 import { generateGridTerrainFromAscii } from '../game/test/generateGridTerrainFromAscii';
 
 export default async function (driver: DriverI) {
@@ -28,9 +27,6 @@ export default async function (driver: DriverI) {
 			XXXXXXXXXXXX
 		`),
 	);
-	game.terrain.tiles.$add.on(growTerrainForExcavatedEdges.bind(game));
-
-	growTerrainForExcavatedEdges.call(game, game.terrain.tiles.slice());
 
 	const entity = personArchetype.create({
 		location: game.terrain.getTileClosestToXy(0, 0).location.get(),
@@ -46,12 +42,17 @@ export default async function (driver: DriverI) {
 		location: [game.terrain, 3, 2, 0],
 		name: 'Portal to another place',
 		tiles: generateGridTerrainFromAscii(`
-			XXXXXXXXXXXX
-			XXXXXXXXXXXX
-			XXXXXXXXXXXX
-			XXXXXXXXXXXX
-			---------X--`),
-		portalEnd: [9, 4, 0],
+			XXXXXXXXXXXXXXXXXX
+			XXXXXXXXXXXXXXXXXX
+			XXXXXXXXXXXXXXXXXX
+			XXXXXXXXXXXXXXXXXX
+			XXXXXXXXXXXXXXXXXX
+			XXXXXXXXXXXXXXXXXX
+			XXXXXXXXXXXXXXXXXX
+			XXXXXXXXXXXXXXXXXX
+			XXXXXXXXXXXXXXXXXX
+			---------------X--`),
+		portalEnd: [15, 9, 0],
 	});
 	await game.entities.add(portal);
 

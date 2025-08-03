@@ -1,33 +1,33 @@
-import { useState, type FunctionComponent } from 'react';
+import { type FunctionComponent } from 'react';
 import { DriverI } from '../game/core/drivers/types';
 import Game from '../game/core/Game';
+import { excavatorButton } from './actions/landfill';
 import { Contexts } from './Contexts';
 import { GameActionBar } from './game/GameActionBar';
 import { GameClock } from './game/GameClock';
 import { GameContextMenuHost } from './game/GameContextMenu';
 import { GameSelectedEntity } from './game/GameSelectedEntity';
-import { TilePaintMode } from './game/hooks/useTilePaintMode';
-import './hud/variables.css';
-import { PanZoomable } from './util/PanZoomable';
 import { GameSelectedTerrain } from './game/GameSelectedTerrain';
+import './hud/variables.css';
+import { Viewport } from './util/Viewport';
+import { GameActionButton } from './game/GameActionButton';
 
 export const Ui: FunctionComponent<{
 	driver: DriverI;
 	game: Game;
 }> = ({ driver, game }) => {
-	// Track the currently selected tool (paint mode)
-	const [tilePaintMode, setTilePaintMode] = useState<TilePaintMode | null>(null);
-
 	return (
 		<Contexts driver={driver} game={game}>
 			<GameClock />
-			<GameActionBar tilePaintMode={tilePaintMode} setTilePaintMode={setTilePaintMode} />
+			<GameActionBar>
+				<GameActionButton options={excavatorButton} />
+			</GameActionBar>
 			<GameSelectedEntity />
-			<PanZoomable>
+			<Viewport>
 				<GameContextMenuHost>
-					<GameSelectedTerrain tilePaintMode={tilePaintMode} />
+					<GameSelectedTerrain />
 				</GameContextMenuHost>
-			</PanZoomable>
+			</Viewport>
 		</Contexts>
 	);
 };

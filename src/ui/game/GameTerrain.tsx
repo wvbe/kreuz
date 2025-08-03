@@ -22,6 +22,7 @@ export function useTerrainContext(): Terrain {
 	}
 	return terrain;
 }
+
 /**
  * A component that maps the game terrain and entities to presentational components.
  *

@@ -9,7 +9,7 @@ import { getEuclideanMapDistanceAcrossSpaces } from '../../core/ecs/components/l
 import { locationComponent } from '../../core/ecs/components/locationComponent';
 import { pathableComponent } from '../../core/ecs/components/pathableComponent';
 import { pathingComponent } from '../../core/ecs/components/pathingComponent';
-import { surfaceComponent, SurfaceType } from '../../core/ecs/components/surfaceComponent';
+import { surfaceComponent } from '../../core/ecs/components/surfaceComponent';
 import { EcsArchetypeEntity, EcsEntity } from '../../core/ecs/types';
 import Game from '../../core/Game';
 
@@ -42,18 +42,6 @@ export class ExcavationJob extends JobPosting {
 		if (!hasEcsComponents(tile, [locationComponent, pathableComponent, surfaceComponent])) {
 			return false;
 		}
-		if (tile.surfaceType.get() !== SurfaceType.UNKNOWN) {
-			return false;
-		}
-		// if (
-		// 	!tile.pathingNeighbours.some(
-		// 		(neighbour) =>
-		// 			(neighbour as EcsEntity<typeof surfaceComponent>).surfaceType?.get() ===
-		// 			SurfaceType.OPEN,
-		// 	)
-		// ) {
-		// 	return false;
-		// }
 
 		// This lookup could be a lot cheaper if we indexed entities by X/Y
 		if (

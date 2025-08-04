@@ -2,21 +2,28 @@ import { Collection } from './Collection';
 
 export class KeyedCollection<
 	KeyGeneric extends string,
-	ItemGeneric extends Record<KeyGeneric, unknown>,
+	ItemGeneric extends Record<KeyGeneric, unknown> | unknown,
 > extends Collection<ItemGeneric> {
 	/**
-	 * The property at which items are keyed, for example "id"
+	 * The property at which items are keyed, for example "id", or a function that can return the key
+	 * for an item (for example, because the item is not an object that has public properties)
 	 */
-	#itemKey: KeyGeneric;
+	#itemKey: KeyGeneric | ((item: ItemGeneric) => KeyGeneric);
 	#keyMap = new Map<unknown, ItemGeneric | null>();
 
-	constructor(itemKey: KeyGeneric) {
+	constructor(itemKey: KeyGeneric | ((item: ItemGeneric) => KeyGeneric)) {
 		super();
 		this.#itemKey = itemKey;
 	}
 
+	#getKeyForItem(item: ItemGeneric): unknown {
+		return typeof this.#itemKey === 'function'
+			? this.#itemKey(item)
+			: (item as Record<KeyGeneric, unknown>)[this.#itemKey];
+	}
+
 	#associateKey(item: ItemGeneric): void {
-		const key = item[this.#itemKey];
+		const key = this.#getKeyForItem(item);
 		if (this.#keyMap.has(key)) {
 			throw new Error(`Cannot associate a key "${key}" that is already occupied`);
 		}
@@ -24,7 +31,7 @@ export class KeyedCollection<
 	}
 
 	#unassociateKey(item: ItemGeneric): void {
-		const key = item[this.#itemKey];
+		const key = this.#getKeyForItem(item);
 		if (!this.#keyMap.has(key)) {
 			throw new Error(`Cannot unassociate a key "${key}" that is not occupied`);
 		}
@@ -39,11 +46,15 @@ export class KeyedCollection<
 	 * - If either occurred, both lists (added and removed) are emitted as the $change event
 	 */
 	public async change(addItems: ItemGeneric[], removeItems: ItemGeneric[]) {
-		// Method is a fork of Collection#change, but with added #associateKey and #unassociateKEy calls
-		this.list.push(...addItems);
-		addItems.forEach((item) => {
+		const newlyAddedItems = addItems.filter((item) => {
+			if (this.#keyMap.has(this.#getKeyForItem(item))) {
+				return false;
+			}
 			this.#associateKey(item);
+			return true;
 		});
+		this.list.push(...newlyAddedItems);
+
 		const wasActuallyRemoved = removeItems.filter((item) => {
 			const index = this.list.indexOf(item);
 			if (index === -1) {
@@ -53,17 +64,19 @@ export class KeyedCollection<
 			this.#unassociateKey(item);
 			return true;
 		});
-		if (addItems.length) {
-			await this.$add.emit(addItems);
-		}
-		if (wasActuallyRemoved.length) {
-			await this.$remove.emit(wasActuallyRemoved);
-		}
-		if (addItems.length || wasActuallyRemoved.length) {
-			await this.$change.emit(addItems, wasActuallyRemoved);
-		}
+
+		await Promise.all([
+			newlyAddedItems.length ? await this.$add.emit(newlyAddedItems) : null,
+			wasActuallyRemoved.length ? await this.$remove.emit(wasActuallyRemoved) : null,
+			newlyAddedItems.length || wasActuallyRemoved.length
+				? await this.$change.emit(newlyAddedItems, wasActuallyRemoved)
+				: null,
+		]);
 	}
-	public getByKey(key: ItemGeneric[KeyGeneric]): ItemGeneric | null {
+
+	public getByKey(
+		key: ItemGeneric extends Record<KeyGeneric, unknown> ? ItemGeneric[KeyGeneric] : unknown,
+	): ItemGeneric | null {
 		return this.#keyMap.get(key) || null;
 	}
 }

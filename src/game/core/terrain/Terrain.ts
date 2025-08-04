@@ -202,13 +202,16 @@ export class Terrain {
 	 */
 	public getTileAtMapLocation(
 		location: SimpleCoordinate | QualifiedCoordinate,
-		lax?: false | undefined,
+		lax?: false,
 	): Tile;
 	public getTileAtMapLocation(
 		location: SimpleCoordinate | QualifiedCoordinate,
 		lax: true,
 	): Tile | null;
-	public getTileAtMapLocation(location: SimpleCoordinate | QualifiedCoordinate, lax?: boolean) {
+	public getTileAtMapLocation(
+		location: SimpleCoordinate | QualifiedCoordinate,
+		lax?: boolean,
+	): Tile | null {
 		if (location.length === 4 && location[0] !== this) {
 			if (lax) {
 				return null;

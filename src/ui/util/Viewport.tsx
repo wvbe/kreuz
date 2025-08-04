@@ -41,7 +41,10 @@ const outerStyle: React.CSSProperties = {
 	overflow: 'hidden',
 };
 
-const innerStyle = {
+const innerStyle: React.CSSProperties = {
+	position: 'absolute',
+	top: '50%',
+	left: '50%',
 	width: '100%',
 	height: '100%',
 };
@@ -72,8 +75,8 @@ export const Viewport: FunctionComponent<{ children: ReactNode }> = ({ children 
 		canvasElementRef.current = innerElementRef.current.querySelector<HTMLDivElement>(
 			'[data-component="GameMap"]',
 		);
-		if (canvasElementRef.current) {
-			canvasElementRef.current.style.fontSize = `${GAME_LENGTH_TO_PIXELS}px`;
+		if (outerElementRef.current) {
+			outerElementRef.current.style.fontSize = `${GAME_LENGTH_TO_PIXELS}px`;
 		}
 
 		panzoomRef.current = panzoom(innerElementRef.current, {

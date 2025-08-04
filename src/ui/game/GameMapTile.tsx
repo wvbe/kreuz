@@ -39,11 +39,7 @@ export const GameMapTile: FC<{
 	tile: EcsEntity<
 		typeof locationComponent | typeof surfaceComponent | typeof visibilityComponent
 	>;
-	onMouseDown?: MouseEventHandler<HTMLDivElement>;
-	onMouseEnter?: MouseEventHandler<HTMLDivElement>;
-	onMouseLeave?: MouseEventHandler<HTMLDivElement>;
-	onMouseUp?: MouseEventHandler<HTMLDivElement>;
-}> = ({ tile, onMouseDown, onMouseEnter, onMouseLeave, onMouseUp }) => {
+}> = ({ tile }) => {
 	const location = useEventedValue(tile.location);
 	const { isHighlighted, highlightColor } = useTileHighlights(tile);
 	const surfaceType = useEventedValue(tile.surfaceType);
@@ -97,6 +93,9 @@ export const GameMapTile: FC<{
 		[blendedColor, isExcavated],
 	);
 
+	if (surfaceType === SurfaceType.UNKNOWN) {
+		return null;
+	}
 	return (
 		<MapLocation
 			eventedQualifiedCoordinates={tile.location}
@@ -104,10 +103,6 @@ export const GameMapTile: FC<{
 			dy={1}
 			onContextMenu={onRmb}
 			style={style}
-			onMouseDown={onMouseDown}
-			onMouseEnter={onMouseEnter}
-			onMouseLeave={onMouseLeave}
-			onMouseUp={onMouseUp}
 		/>
 	);
 };

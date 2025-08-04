@@ -1,7 +1,6 @@
 import React, { CSSProperties, DetailedHTMLProps, HTMLAttributes, useMemo } from 'react';
 import { EventedValue } from '../../game/core/events/EventedValue';
 import { QualifiedCoordinate } from '../../game/core/terrain/types';
-import { useTerrainContext } from '../game/GameTerrain';
 import { useEventedValue } from '../hooks/useEventedValue';
 
 /**
@@ -9,33 +8,39 @@ import { useEventedValue } from '../hooks/useEventedValue';
  */
 export const MapLocation: React.FC<
 	DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
-		eventedQualifiedCoordinates: EventedValue<QualifiedCoordinate>;
+		qualifiedCoordinates?: QualifiedCoordinate;
+		eventedQualifiedCoordinates?: EventedValue<QualifiedCoordinate>;
 		dx?: number;
 		dy?: number;
 		style?: CSSProperties;
 		zIndex?: number;
 	}
-> = ({ eventedQualifiedCoordinates, dx = 0, dy = 0, style = {}, zIndex = 0, ...rest }) => {
-	const parentTerrain = useTerrainContext();
-	const [coordinateTerrain, x, y] = useEventedValue(eventedQualifiedCoordinates);
+> = ({
+	qualifiedCoordinates,
+	eventedQualifiedCoordinates,
+	dx = 0,
+	dy = 0,
+	style = {},
+	zIndex = 0,
+	...rest
+}) => {
+	const [_terrain, x, y] =
+		qualifiedCoordinates ?? useEventedValue(eventedQualifiedCoordinates!) ?? [];
 	const styleProp = useMemo<CSSProperties>(
-		() =>
-			parentTerrain === coordinateTerrain
-				? {
-						position: 'absolute',
-						width: `${dx}em`,
-						height: `${dy}em`,
-						left: `${x}em`,
-						top: `${y}em`,
-						transform: `translate(-50%, -50%)`,
-						display: 'flex',
-						justifyContent: 'center',
-						alignItems: 'center',
-						zIndex,
-						...style,
-				  }
-				: {},
-		[parentTerrain, x, y, dx, dy, style, zIndex],
+		() => ({
+			position: 'absolute',
+			width: `${dx}em`,
+			height: `${dy}em`,
+			left: `${x}em`,
+			top: `${y}em`,
+			transform: `translate(-50%, -50%)`,
+			display: 'flex',
+			justifyContent: 'center',
+			alignItems: 'center',
+			zIndex,
+			...style,
+		}),
+		[x, y, dx, dy, style, zIndex],
 	);
-	return parentTerrain === coordinateTerrain ? <div style={styleProp} {...rest} /> : null;
+	return <div style={styleProp} {...rest} />;
 };

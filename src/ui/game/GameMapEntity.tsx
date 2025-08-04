@@ -11,8 +11,10 @@ import { EcsEntity } from '../../game/core/ecs/types';
 import { useEventedValue } from '../hooks/useEventedValue';
 import { MapLocation } from '../map/MapLocation';
 import { setSelectedEntity, useSelectedEntityStore } from '../stores/selectedEntityStore';
+import { useSelectedTerrainStore } from '../stores/selectedTerrainStore';
 import { useGameContextMenuOpener } from './GameContextMenu';
 import { GameEntityIcon } from './GameEntityIcon';
+import { useGameContext } from '../contexts/GameContext';
 
 /**
  * A component that maps a game entity to a presentational map location.
@@ -24,8 +26,10 @@ export const GameMapEntity: FunctionComponent<
 		entity: EcsEntity<typeof locationComponent | typeof visibilityComponent>;
 	} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>
 > = ({ entity, ...rest }) => {
+	const game = useGameContext();
 	const isSelected = useSelectedEntityStore((state) => state.selectedEntity === entity);
-
+	const selectedTerrain =
+		useSelectedTerrainStore((state) => state.selectedTerrain) ?? game.terrain;
 	const contextMenu = useGameContextMenuOpener();
 
 	const onContextMenu = useCallback<MouseEventHandler<HTMLDivElement>>(
@@ -47,7 +51,11 @@ export const GameMapEntity: FunctionComponent<
 		},
 		[entity],
 	);
-	const [_terrain, x, y] = useEventedValue(entity.location);
+	const [terrain, x, y] = useEventedValue(entity.location);
+
+	if (terrain !== selectedTerrain) {
+		return null;
+	}
 
 	return (
 		<MapLocation

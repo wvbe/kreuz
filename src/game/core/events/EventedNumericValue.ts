@@ -121,6 +121,14 @@ export class EventedNumericValue extends EventedValue<number> {
 			max: inclusive,
 		});
 	}
+	/**
+	 * Resolves when the value is below the specified value.
+	 */
+	public promiseBelow(max: number, inclusive = false): Promise<void> {
+		return new Promise((resolve) => {
+			this.onceBelow(max, resolve, inclusive);
+		});
+	}
 
 	public getCurrentRanges() {
 		return this.#boundaryInfo.filter((range) => valueInRange(this.current, range));

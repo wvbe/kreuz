@@ -29,5 +29,9 @@ export const GameActionButton: FC<{ options: Action }> = ({ options }) => {
 
 	const isSelected = useSelectedToolStore((state) => state.selectedAction === options);
 
-	return <Button icon={options.icon} layout='tile' onClick={onClick} active={isSelected} />;
+	return (
+		<Button icon={options.icon} layout='tile' onClick={onClick} active={isSelected}>
+			{options.label ?? null}
+		</Button>
+	);
 };

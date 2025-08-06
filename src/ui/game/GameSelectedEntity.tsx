@@ -4,11 +4,13 @@ import { eventLogComponent } from '../../game/core/ecs/components/eventLogCompon
 import { locationComponent } from '../../game/core/ecs/components/locationComponent';
 import { pathingComponent } from '../../game/core/ecs/components/pathingComponent';
 import { portalComponent } from '../../game/core/ecs/components/portalComponent';
+import { rawMaterialComponent } from '../../game/core/ecs/components/rawMaterialComponent';
 import { visibilityComponent } from '../../game/core/ecs/components/visibilityComponent';
 import { wealthComponent } from '../../game/core/ecs/components/wealthComponent';
 import { Button } from '../hud/atoms/Button';
 import { Panel } from '../hud/atoms/Panel';
 import EntityControls, { EntityControlsProps } from '../hud/EntityControls';
+import { Gauge } from '../hud/Gauge';
 import { useSelectedEntityStore } from '../stores/selectedEntityStore';
 import { setSelectedTerrain } from '../stores/selectedTerrainStore';
 import { ErrorBoundary } from '../util/ErrorBoundary';
@@ -83,6 +85,14 @@ const GameSelectedEntity: React.FC = () => {
 					</Button>
 				),
 			});
+		}
+		if (hasEcsComponents(selectedEntity, [rawMaterialComponent])) {
+			info.push(
+				...selectedEntity.rawMaterials.map((rawMaterial) => ({
+					key: rawMaterial.material.label,
+					value: <Gauge eventedValue={rawMaterial.quantity} />,
+				})),
+			);
 		}
 
 		return info;

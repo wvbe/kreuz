@@ -1,4 +1,4 @@
-import { type Need } from '../entities/Need';
+import { type Need } from '../ecs/components/needs/Need';
 import { DAY } from '../time/constants';
 
 export type PersonNeedId = 'nutrition' | 'hydration';

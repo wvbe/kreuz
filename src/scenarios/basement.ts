@@ -10,6 +10,10 @@ import { civilianBehavior } from '../game/assets/behavior';
 import { DriverI } from '../game/core/drivers/types';
 import { personArchetype } from '../game/core/ecs/archetypes/personArchetype';
 import { portalArchetype } from '../game/core/ecs/archetypes/portalArchetype';
+import {
+	RawMaterialType,
+	regeneratingRawMaterialArchetype,
+} from '../game/core/ecs/archetypes/regeneratingRawMaterialArchetype';
 import Game from '../game/core/Game';
 import { generateGridTerrainFromAscii } from '../game/test/generateGridTerrainFromAscii';
 
@@ -27,6 +31,14 @@ export default async function (driver: DriverI) {
 			XXXXXXXXXXXX
 		`),
 	);
+
+	for (let i = 2; i < 6; i++) {
+		const regeneratingRawMaterial = regeneratingRawMaterialArchetype.create({
+			location: [game.terrain, i, 5, 0],
+			type: RawMaterialType.PINEWOOD,
+		});
+		await game.entities.add(regeneratingRawMaterial);
+	}
 
 	const entity = personArchetype.create({
 		location: game.terrain.getTileClosestToXy(0, 0).location.get(),

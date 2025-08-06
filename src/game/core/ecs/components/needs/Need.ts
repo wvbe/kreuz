@@ -1,5 +1,5 @@
-import { PersonNeedId } from '../constants/needs';
-import { ProgressingNumericValue } from '../events/ProgressingNumericValue';
+import { PersonNeedId } from '../../../constants/needs';
+import { ProgressingNumericValue } from '../../../events/ProgressingNumericValue';
 
 /**
  * A need represents the urgency with which a personnal requirement needs to be fulfilled. In most

@@ -1,4 +1,3 @@
-import { Need } from '../../entities/Need';
 import Game from '../../Game';
 import { type Material } from '../../inventory/Material';
 import { byEcsComponents } from '../assert';
@@ -8,6 +7,7 @@ import { healthComponent } from '../components/healthComponent';
 import { inventoryComponent } from '../components/inventoryComponent';
 import { getTileAtLocation } from '../components/location/getTileAtLocation';
 import { locationComponent } from '../components/locationComponent';
+import { Need } from '../components/needs/Need';
 import { needsComponent } from '../components/needsComponent';
 import { ownerComponent } from '../components/ownerComponent';
 import { pathingComponent } from '../components/pathingComponent';

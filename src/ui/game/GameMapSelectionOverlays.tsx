@@ -5,10 +5,11 @@ import { QualifiedCoordinate } from '../../game/core/terrain/types';
 import { useCollection, useEventedValue } from '../hooks/useEventedValue';
 import { MapLocation } from '../map/MapLocation';
 
-type SelectionOverlay = {
+export type SelectionOverlay = {
 	tileCoordinates: EventedValue<QualifiedCoordinate[]>;
 	colors: {
 		background: string;
+		border: string;
 	};
 };
 export const selectionOverlays = new Collection<SelectionOverlay>();
@@ -23,11 +24,24 @@ export const GameMapSelectionOverlay: FC<{
 			coordinates.map((coordinate) => (
 				<MapLocation
 					key={String(coordinate)}
-					qualifiedCoordinates={coordinate}
+					qualifiedCoordinates={[coordinate[0], coordinate[1], coordinate[2], 0]}
 					dx={1}
 					dy={1}
-					style={{ backgroundColor: selection.colors.background }}
-				/>
+				>
+					<div
+						style={{
+							backgroundColor: selection.colors.background,
+							border: `1px solid ${selection.colors.border}`,
+							width: '100%',
+							height: '100%',
+							position: 'absolute',
+							top: '50%',
+							left: '50%',
+							transform: 'translate(-50%, -50%)',
+							// borderRadius: '50%',
+						}}
+					/>
+				</MapLocation>
 			)),
 		[coordinates],
 	);

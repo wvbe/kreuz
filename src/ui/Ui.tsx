@@ -1,4 +1,5 @@
 import { type FunctionComponent } from 'react';
+import { excavatorButton, fillButton, harvestButton } from '../game/assets/actions/landscaping';
 import { DriverI } from '../game/core/drivers/types';
 import Game from '../game/core/Game';
 import { Contexts } from './Contexts';
@@ -11,7 +12,6 @@ import { GameSelectedEntity } from './game/GameSelectedEntity';
 import { GameSelectedTerrain } from './game/GameSelectedTerrain';
 import './hud/variables.css';
 import { Viewport } from './util/Viewport';
-import { excavatorButton, fillButton } from './actions/landscaping';
 
 export const Ui: FunctionComponent<{
 	driver: DriverI;
@@ -23,6 +23,7 @@ export const Ui: FunctionComponent<{
 			<GameActionBar>
 				<GameActionButton options={excavatorButton} />
 				<GameActionButton options={fillButton} />
+				<GameActionButton options={harvestButton} />
 			</GameActionBar>
 			<GameSelectedEntity />
 			<Viewport>

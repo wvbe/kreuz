@@ -34,6 +34,7 @@ export const MapLocation: React.FC<
 			left: `${x}em`,
 			top: `${y}em`,
 			transform: `translate(-50%, -50%)`,
+			// transform: `translate(-0.5em, -0.5em)`,
 			display: 'flex',
 			justifyContent: 'center',
 			alignItems: 'center',

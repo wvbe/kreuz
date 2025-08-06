@@ -1,4 +1,4 @@
-import { ProductionJob } from '../../../assets/commands/ProductionJob';
+import { ProductionJob } from '../../../assets/actions/jobs/ProductionJob';
 import { JobPriority } from '../../classes/JobBoard';
 import Game from '../../Game';
 import { type Material } from '../../inventory/Material';

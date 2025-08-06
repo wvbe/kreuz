@@ -1,18 +1,19 @@
-import { ExcavationJob } from '../../game/assets/commands/ExcavationJob';
-import { JobPriority } from '../../game/core/classes/JobBoard';
-import { Tile, tileArchetype } from '../../game/core/ecs/archetypes/tileArchetype';
-import { hasEcsComponents } from '../../game/core/ecs/assert';
-import { getTileAtLocation } from '../../game/core/ecs/components/location/getTileAtLocation';
-import { isMapLocationEqualTo } from '../../game/core/ecs/components/location/isMapLocationEqualTo';
-import { locationComponent } from '../../game/core/ecs/components/locationComponent';
-import { SurfaceType } from '../../game/core/ecs/components/surfaceComponent';
-import { EventedValue } from '../../game/core/events/EventedValue';
-import Game from '../../game/core/Game';
-import { QualifiedCoordinate } from '../../game/core/terrain/types';
-import { selectionOverlays } from '../game/GameMapSelectionOverlays';
-import { createRectangularSelectionListeners } from '../selections/createRectangularSelectionListeners';
-import { getTileCoordinatesInRectangle } from '../selections/rectangle/getTileCoordinatesInRectangle';
-import { Action } from './types';
+import { Action } from '../../../ui/actions/types';
+import { SelectionOverlay, selectionOverlays } from '../../../ui/game/GameMapSelectionOverlays';
+import { createRectangularSelectionListeners } from '../../../ui/selections/createRectangularSelectionListeners';
+import { getTileCoordinatesInRectangle } from '../../../ui/selections/rectangle/getTileCoordinatesInRectangle';
+import { JobPriority } from '../../core/classes/JobBoard';
+import { Tile, tileArchetype } from '../../core/ecs/archetypes/tileArchetype';
+import { assertEcsComponents, hasEcsComponents } from '../../core/ecs/assert';
+import { getTileAtLocation } from '../../core/ecs/components/location/getTileAtLocation';
+import { isMapLocationEqualTo } from '../../core/ecs/components/location/isMapLocationEqualTo';
+import { locationComponent } from '../../core/ecs/components/locationComponent';
+import { rawMaterialComponent } from '../../core/ecs/components/rawMaterialComponent';
+import { SurfaceType } from '../../core/ecs/components/surfaceComponent';
+import { EventedValue } from '../../core/events/EventedValue';
+import Game from '../../core/Game';
+import { QualifiedCoordinate } from '../../core/terrain/types';
+import { ExcavationJob } from './jobs/ExcavationJob';
 
 /**
  * Get all tiles within the rectanglar selection, or JIT create them if they don't exist
@@ -38,10 +39,11 @@ async function getOrCreateTilesInRectangle(start: QualifiedCoordinate, end: Qual
 }
 
 async function createRectangularSelectionVisualizationAndReturnTiles() {
-	const overlay = {
+	const overlay: SelectionOverlay = {
 		tileCoordinates: new EventedValue<QualifiedCoordinate[]>([]),
 		colors: {
 			background: '#ffe24966',
+			border: '#ffe249',
 		},
 	};
 	await selectionOverlays.add(overlay);
@@ -66,6 +68,7 @@ async function createRectangularSelectionVisualizationAndReturnTiles() {
 
 export const excavatorButton: Action = {
 	icon: '⛏',
+	label: 'Clear',
 	onClick: async (game: Game) => {
 		const tiles = await createRectangularSelectionVisualizationAndReturnTiles();
 		if (!tiles) {
@@ -82,7 +85,8 @@ export const excavatorButton: Action = {
 			game.jobs.add(
 				JobPriority.NORMAL,
 				new ExcavationJob(tile, {
-					onSuccess: (tile) => {
+					onSuccess: async (tile) => {
+						await game.time.wait(30_000);
 						tile.walkability = 1;
 						tile.surfaceType.set(SurfaceType.OPEN);
 					},
@@ -94,6 +98,7 @@ export const excavatorButton: Action = {
 
 export const fillButton: Action = {
 	icon: '🪏',
+	label: 'Fill',
 	onClick: async (game: Game) => {
 		const tiles = await createRectangularSelectionVisualizationAndReturnTiles();
 		if (!tiles) {
@@ -116,12 +121,55 @@ export const fillButton: Action = {
 			game.jobs.add(
 				JobPriority.NORMAL,
 				new ExcavationJob(tile, {
-					onSuccess: (tile) => {
+					onSuccess: async (tile) => {
+						await game.time.wait(30_000);
 						tile.walkability = 0;
 						tile.surfaceType.set(SurfaceType.UNKNOWN);
 					},
 				}),
 			);
+		}
+	},
+};
+
+export const harvestButton: Action = {
+	icon: '🍴',
+	label: 'Harvest',
+	onClick: async (game: Game) => {
+		const tiles = await createRectangularSelectionVisualizationAndReturnTiles();
+		if (!tiles) {
+			return;
+		}
+
+		for (const tile of tiles) {
+			const entitiesInSameLocation = game.entities.filter(
+				(entity) =>
+					hasEcsComponents(entity, [rawMaterialComponent]) &&
+					isMapLocationEqualTo(entity.location.get(), tile.location.get()),
+			);
+			if (!entitiesInSameLocation.length) {
+				continue;
+			}
+			for (const entity of entitiesInSameLocation) {
+				game.jobs.add(
+					JobPriority.NORMAL,
+					new ExcavationJob(tile, {
+						onSuccess: async () => {
+							assertEcsComponents(entity, [rawMaterialComponent]);
+
+							await Promise.all(
+								entity.rawMaterials.map(async ({ material }) => {
+									const quantity = await entity.harvestRawMaterial(
+										game,
+										material,
+									);
+									return { quantity, material };
+								}),
+							);
+						},
+					}),
+				);
+			}
 		}
 	},
 };

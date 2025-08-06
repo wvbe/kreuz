@@ -1,15 +1,15 @@
-import { JobPosting } from '../../core/classes/JobPosting';
-import { assertEcsComponents, hasEcsComponents } from '../../core/ecs/assert';
-import { eventLogComponent } from '../../core/ecs/components/eventLogComponent';
-import { healthComponent } from '../../core/ecs/components/healthComponent';
-import { inventoryComponent } from '../../core/ecs/components/inventoryComponent';
-import { getTileAtLocation } from '../../core/ecs/components/location/getTileAtLocation';
-import { locationComponent } from '../../core/ecs/components/locationComponent';
-import { pathingComponent } from '../../core/ecs/components/pathingComponent';
-import { productionComponent } from '../../core/ecs/components/productionComponent';
-import { wealthComponent } from '../../core/ecs/components/wealthComponent';
-import { EcsEntity } from '../../core/ecs/types';
-import Game from '../../core/Game';
+import { JobPosting } from '../../../core/classes/JobPosting';
+import { hasEcsComponents, assertEcsComponents } from '../../../core/ecs/assert';
+import { eventLogComponent } from '../../../core/ecs/components/eventLogComponent';
+import { healthComponent } from '../../../core/ecs/components/healthComponent';
+import { inventoryComponent } from '../../../core/ecs/components/inventoryComponent';
+import { getTileAtLocation } from '../../../core/ecs/components/location/getTileAtLocation';
+import { locationComponent } from '../../../core/ecs/components/locationComponent';
+import { pathingComponent } from '../../../core/ecs/components/pathingComponent';
+import { productionComponent } from '../../../core/ecs/components/productionComponent';
+import { wealthComponent } from '../../../core/ecs/components/wealthComponent';
+import { EcsEntity } from '../../../core/ecs/types';
+import Game from '../../../core/Game';
 
 /**
  * Duplicated somewhere

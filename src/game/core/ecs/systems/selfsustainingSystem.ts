@@ -1,9 +1,9 @@
 import Game from '../../Game';
-import { Need } from '../../entities/Need';
 import { byEcsComponents } from '../assert';
 import { EcsSystem } from '../classes/EcsSystem';
 import { eventLogComponent } from '../components/eventLogComponent';
 import { inventoryComponent } from '../components/inventoryComponent';
+import { Need } from '../components/needs/Need';
 import { needsComponent } from '../components/needsComponent';
 import { EcsEntity } from '../types';
 

@@ -1,17 +1,17 @@
-import { Spinner } from '../../../ui/hud/atoms/Spinner';
-import { JobPosting } from '../../core/classes/JobPosting';
-import { mapMarkerArchetype } from '../../core/ecs/archetypes/mapMarkerArchetype';
-import { Tile } from '../../core/ecs/archetypes/tileArchetype';
-import { assertEcsComponents, hasEcsComponents } from '../../core/ecs/assert';
-import { eventLogComponent } from '../../core/ecs/components/eventLogComponent';
-import { inventoryComponent } from '../../core/ecs/components/inventoryComponent';
-import { getEuclideanMapDistanceAcrossSpaces } from '../../core/ecs/components/location/getEuclideanMapDistanceAcrossSpaces';
-import { locationComponent } from '../../core/ecs/components/locationComponent';
-import { pathableComponent } from '../../core/ecs/components/pathableComponent';
-import { pathingComponent } from '../../core/ecs/components/pathingComponent';
-import { surfaceComponent } from '../../core/ecs/components/surfaceComponent';
-import { EcsArchetypeEntity, EcsEntity } from '../../core/ecs/types';
-import Game from '../../core/Game';
+import { Spinner } from '../../../../ui/hud/atoms/Spinner';
+import { JobPosting } from '../../../core/classes/JobPosting';
+import { mapMarkerArchetype } from '../../../core/ecs/archetypes/mapMarkerArchetype';
+import { Tile } from '../../../core/ecs/archetypes/tileArchetype';
+import { assertEcsComponents, hasEcsComponents } from '../../../core/ecs/assert';
+import { eventLogComponent } from '../../../core/ecs/components/eventLogComponent';
+import { inventoryComponent } from '../../../core/ecs/components/inventoryComponent';
+import { getEuclideanMapDistanceAcrossSpaces } from '../../../core/ecs/components/location/getEuclideanMapDistanceAcrossSpaces';
+import { locationComponent } from '../../../core/ecs/components/locationComponent';
+import { pathableComponent } from '../../../core/ecs/components/pathableComponent';
+import { pathingComponent } from '../../../core/ecs/components/pathingComponent';
+import { surfaceComponent } from '../../../core/ecs/components/surfaceComponent';
+import { EcsArchetypeEntity, EcsEntity } from '../../../core/ecs/types';
+import Game from '../../../core/Game';
 
 export class ExcavationJob extends JobPosting {
 	private marker: EcsArchetypeEntity<typeof mapMarkerArchetype> | null = null;
@@ -114,9 +114,7 @@ export class ExcavationJob extends JobPosting {
 			name: 'Excavation site',
 		});
 		await game.entities.add(spinner);
-		await game.time.wait(30_000);
-		await game.entities.remove(spinner);
-
 		await this.conf.onSuccess?.(this.tile);
+		await game.entities.remove(spinner);
 	}
 }

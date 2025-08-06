@@ -1,5 +1,5 @@
-import React, { useMemo, type FunctionComponent } from 'react';
-import './FancyClock.css';
+import { useMemo, type FunctionComponent } from 'react';
+import styles from './FancyClock.module.css';
 
 /**
  * Props for the AnalogClock component
@@ -28,7 +28,7 @@ export const FancyClock: FunctionComponent<AnalogClockProps> = ({
 	style = 'skeuomorphic',
 }) => {
 	// Convert time (0-1000) to degrees (0-360)
-	const t = time/6; // / 60;
+	const t = time / 6; // / 60;
 	const secondDegrees = t * 360;
 	const minuteDegrees = (secondDegrees / 60) * 1;
 	const hourDegrees = (minuteDegrees / 60) * 5;
@@ -38,7 +38,7 @@ export const FancyClock: FunctionComponent<AnalogClockProps> = ({
 			Array.from({ length: 12 }).map((_nothing, i) => (
 				<div
 					key={i}
-					className='hour-mark'
+					className={styles['hour-mark']}
 					style={{ transform: `rotate(${i * 30}deg)` }}
 				></div>
 			)),
@@ -53,7 +53,7 @@ export const FancyClock: FunctionComponent<AnalogClockProps> = ({
 				const y = 120 - radius * Math.cos((angle * Math.PI) / 180);
 				return (
 					<div
-						className='hour-number'
+						className={styles['hour-number']}
 						key={i}
 						style={{
 							left: `calc(${x}px * var(--zoom-factor))`,
@@ -67,30 +67,30 @@ export const FancyClock: FunctionComponent<AnalogClockProps> = ({
 		[],
 	);
 	return (
-		<div className={style}>
-			<div className='clock-container'>
-				<div className='clock-bezel'></div>
-				<div className='clock-face'>{hourNumbers}</div>
-				<div className='clock-reflection'></div>
-				<div className='hour-marks' id='skeuomorphic-hour-marks'>
+		<div className={styles[style]}>
+			<div className={styles['clock-container']}>
+				<div className={styles['clock-bezel']}></div>
+				<div className={styles['clock-face']}>{hourNumbers}</div>
+				<div className={styles['clock-reflection']}></div>
+				<div className={styles['hour-marks']} id='skeuomorphic-hour-marks'>
 					{hourMarks}
 				</div>
 				<div
-					className='hour-hand hand'
+					className={`${styles['hour-hand']} ${styles.hand}`}
 					id='skeuomorphic-hour-hand'
 					style={{ transform: `rotate(${hourDegrees}deg)` }}
 				></div>
 				<div
-					className='minute-hand hand'
+					className={`${styles['minute-hand']} ${styles.hand}`}
 					id='skeuomorphic-minute-hand'
 					style={{ transform: `rotate(${minuteDegrees}deg)` }}
 				></div>
 				<div
-					className='second-hand hand'
+					className={`${styles['second-hand']} ${styles.hand}`}
 					id='skeuomorphic-second-hand'
 					style={{ transform: `rotate(${secondDegrees}deg)` }}
 				></div>
-				<div className='clock-center'></div>
+				<div className={styles['clock-center']}></div>
 			</div>
 		</div>
 	);

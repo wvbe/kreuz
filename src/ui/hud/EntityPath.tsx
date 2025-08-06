@@ -1,9 +1,11 @@
 import { FC } from 'react';
 import { Tile } from '../../game/core/ecs/archetypes/tileArchetype';
-import './EntityPath.css';
+import styles from './EntityPath.module.css';
 
 const EntityPathStep: FC<{ tile: Tile | null; isCurrent: boolean }> = ({ tile, isCurrent }) => {
-	return <div className={`entity-path-step ${isCurrent ? 'current' : ''}`}></div>;
+	return (
+		<div className={`${styles['entity-path-step']} ${isCurrent ? styles.current : ''}`}></div>
+	);
 };
 
 export const EntityPath: FC<{
@@ -14,7 +16,7 @@ export const EntityPath: FC<{
 	const isCurrentTileCurrent = !tiles?.includes(nextTile!);
 
 	return (
-		<div className='entity-path'>
+		<div className={styles['entity-path']}>
 			{currentTile ? (
 				<EntityPathStep tile={currentTile} isCurrent={isCurrentTileCurrent} />
 			) : null}

@@ -19,6 +19,7 @@ export class ExcavationJob extends JobPosting {
 	constructor(
 		private readonly tile: Tile,
 		private readonly conf: {
+			jobQueueIcon?: React.ReactNode;
 			onSuccess?: (tile: Tile) => void | Promise<void>;
 		} = {},
 	) {
@@ -63,7 +64,7 @@ export class ExcavationJob extends JobPosting {
 
 		this.marker = mapMarkerArchetype.create({
 			location: this.tile.location.get(),
-			icon: '⛏️',
+			icon: this.conf.jobQueueIcon ?? '⛏️',
 			name: 'Excavation site',
 		});
 

@@ -1,5 +1,6 @@
 import { Action } from '../../../ui/actions/types';
 import { SelectionOverlay, selectionOverlays } from '../../../ui/game/GameMapSelectionOverlays';
+import { Spinner } from '../../../ui/hud/atoms/Spinner';
 import { createRectangularSelectionListeners } from '../../../ui/selections/createRectangularSelectionListeners';
 import { getTileCoordinatesInRectangle } from '../../../ui/selections/rectangle/getTileCoordinatesInRectangle';
 import { JobPriority } from '../../core/classes/JobBoard';
@@ -38,6 +39,11 @@ async function getOrCreateTilesInRectangle(start: QualifiedCoordinate, end: Qual
 	return tiles;
 }
 
+/**
+ * Sets a mouse event listener to create a rectangular selection, and returns the tiles within the selection.
+ *
+ * Or returns `null` if the selection was cancelled (eg. by pressing rmb instead of lmb).
+ */
 async function createRectangularSelectionVisualizationAndReturnTiles() {
 	const overlay: SelectionOverlay = {
 		tileCoordinates: new EventedValue<QualifiedCoordinate[]>([]),
@@ -56,6 +62,7 @@ async function createRectangularSelectionVisualizationAndReturnTiles() {
 	const rectangle = await promise();
 
 	destroyChangeListener();
+``
 	await selectionOverlays.remove(overlay);
 
 	if (!rectangle) {
@@ -67,9 +74,9 @@ async function createRectangularSelectionVisualizationAndReturnTiles() {
 }
 
 export const excavatorButton: Action = {
-	icon: '⛏',
+	icon: '⛏️',
 	label: 'Clear',
-	onClick: async (game: Game) => {
+	onInteractWithGame: async (game: Game) => {
 		const tiles = await createRectangularSelectionVisualizationAndReturnTiles();
 		if (!tiles) {
 			return;
@@ -85,6 +92,7 @@ export const excavatorButton: Action = {
 			game.jobs.add(
 				JobPriority.NORMAL,
 				new ExcavationJob(tile, {
+					jobQueueIcon: <Spinner waiting />,
 					onSuccess: async (tile) => {
 						await game.time.wait(30_000);
 						tile.walkability = 1;
@@ -99,7 +107,7 @@ export const excavatorButton: Action = {
 export const fillButton: Action = {
 	icon: '🪏',
 	label: 'Fill',
-	onClick: async (game: Game) => {
+	onInteractWithGame: async (game: Game) => {
 		const tiles = await createRectangularSelectionVisualizationAndReturnTiles();
 		if (!tiles) {
 			return;
@@ -121,6 +129,7 @@ export const fillButton: Action = {
 			game.jobs.add(
 				JobPriority.NORMAL,
 				new ExcavationJob(tile, {
+					jobQueueIcon: <Spinner waiting />,
 					onSuccess: async (tile) => {
 						await game.time.wait(30_000);
 						tile.walkability = 0;
@@ -135,7 +144,7 @@ export const fillButton: Action = {
 export const harvestButton: Action = {
 	icon: '🍴',
 	label: 'Harvest',
-	onClick: async (game: Game) => {
+	onInteractWithGame: async (game: Game) => {
 		const tiles = await createRectangularSelectionVisualizationAndReturnTiles();
 		if (!tiles) {
 			return;
@@ -154,6 +163,7 @@ export const harvestButton: Action = {
 				game.jobs.add(
 					JobPriority.NORMAL,
 					new ExcavationJob(tile, {
+						jobQueueIcon: <Spinner waiting />,
 						onSuccess: async () => {
 							assertEcsComponents(entity, [rawMaterialComponent]);
 

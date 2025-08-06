@@ -8,56 +8,70 @@ type RectangularSelectionStatus = {
 };
 
 /**
+ * The event that every remaining event listener for an action should be removed.
+ */
+export const GLOBAL_UNSET_ACTION_LISTENERS = new Event('globalCancelAction');
+
+/**
  * A function that sets the necessary event listeners to detect a rectangular selection across
  * the map element (grabbed from the selected action store).
  */
 export function createRectangularSelectionListeners(): {
 	/**
-	 * Skibidi
+	 * Set event listeners
 	 */
 	listen: () => void;
 	/**
-	 * Boink
+	 * Resolves a start/stop pair of {@link QualifiedCoordina}, or `null` if the action is cancelled
 	 */
 	promise: () => Promise<RectangularSelectionStatus | null>;
+
 	$change: Event<[RectangularSelectionStatus]>;
-	$finish: Event<[RectangularSelectionStatus]>;
-	$cancel: Event<[RectangularSelectionStatus]>;
+	$finish: Event<[RectangularSelectionStatus | null]>;
 } {
 	const panzoomControls = getViewportControls();
 	const element = panzoomControls.getPanzoomContainer();
-
+	const $cancel = new Event('RectangularSelectionTool $cancel');
 	const $change = new Event<[RectangularSelectionStatus]>('RectangularSelectionTool $change');
-	const $finish = new Event<[RectangularSelectionStatus]>('RectangularSelectionTool $selection');
-	const $cancel = new Event<[RectangularSelectionStatus]>('RectangularSelectionTool $selection');
+
+	// Emits `null` if the action is cancelled
+	const $finish = new Event<[RectangularSelectionStatus | null]>(
+		'RectangularSelectionTool $finish',
+	);
 
 	let dragStatus: RectangularSelectionStatus | null = null;
+
+	// Whenever anybody cancels an action from anywhere, clean up after ourselves if we haven't
+	// done so already.
+	const removeCleanupListener = GLOBAL_UNSET_ACTION_LISTENERS.on(async () => {
+		dragStatus = null;
+		// await $finish.emit(null);
+		panzoomControls.getPanzoomInstance()?.resume();
+
+		element.removeEventListener('mousedown', onMouseDown);
+		element.removeEventListener('contextmenu', onContextMenu);
+		element.removeEventListener('mousemove', onMouseMove);
+		element.ownerDocument.removeEventListener('mouseup', onMouseUp);
+
+		removeCleanupListener();
+	});
 
 	const onMouseDown = async ({ x, y }: MouseEvent) => {
 			const coordinate = panzoomControls.getCoordinateFromContainerPixels(x, y);
 			dragStatus = { start: coordinate, end: coordinate };
 
-			$change.emit({ ...dragStatus });
-
 			element.removeEventListener('mousedown', onMouseDown);
-
 			element.addEventListener('mousemove', onMouseMove);
 			element.ownerDocument.addEventListener('mouseup', onMouseUp, { once: true });
 			element.ownerDocument.addEventListener('contextmenu', onContextMenu, { once: true });
+
+			panzoomControls.getPanzoomInstance()?.pause();
+			await $change.emit({ ...dragStatus });
 		},
-		onContextMenu = async () => {
-			if (!dragStatus) {
-				throw new Error('Could not find the expected mouse drag status');
-			}
-			const copy = { ...dragStatus };
-			dragStatus = null;
-			dragStatus = null;
-
-			element.removeEventListener('mousemove', onMouseMove);
-			element.ownerDocument.removeEventListener('mouseup', onMouseUp);
-			element.ownerDocument.removeEventListener('contextmenu', onContextMenu);
-
-			void $cancel.emit(copy);
+		onContextMenu = async (event: MouseEvent) => {
+			event.preventDefault();
+			await $cancel.emit();
+			await GLOBAL_UNSET_ACTION_LISTENERS.emit();
 		},
 		onMouseMove = async ({ x, y }: MouseEvent) => {
 			if (!dragStatus) {
@@ -74,13 +88,8 @@ export function createRectangularSelectionListeners(): {
 			}
 
 			const copy = { ...dragStatus };
-			dragStatus = null;
-
-			element.removeEventListener('mousemove', onMouseMove);
-			element.ownerDocument.removeEventListener('mouseup', onMouseUp);
-			element.ownerDocument.removeEventListener('contextmenu', onContextMenu);
-
-			void $finish.emit(copy);
+			await GLOBAL_UNSET_ACTION_LISTENERS.emit();
+			await $finish.emit(copy);
 		};
 
 	return {
@@ -89,21 +98,18 @@ export function createRectangularSelectionListeners(): {
 		},
 		promise: () => {
 			return new Promise<RectangularSelectionStatus | null>((resolve) => {
-				const destroyFinishListener = $finish.once((dragStatus) => {
-					resolve(dragStatus);
-					destroyCancelListener();
+				const x = $finish.once((selection) => {
+					y();
+					resolve(selection);
 				});
-
-				const destroyCancelListener = $cancel.once((dragStatus) => {
+				const y = $cancel.once(() => {
+					x();
 					resolve(null);
-					destroyFinishListener();
 				});
-
 				element.addEventListener('mousedown', onMouseDown, { once: true });
 			});
 		},
 		$change,
 		$finish,
-		$cancel,
 	};
 }

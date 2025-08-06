@@ -1,0 +1,27 @@
+/**
+ * Styles for the GameMapEntity component
+ */
+
+.mapEntity {
+	transition: all 0.1s ease-in-out;
+}
+
+.entityContainer {
+	min-width: 1em;
+	max-width: 1em;
+	height: 1em;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: transparent;
+}
+
+.entityContainer.selected {
+	background-color: yellow;
+}
+
+.iconWrapper {
+	display: flex;
+	/* Font size will be set dynamically via style prop based on entity.iconSize */
+}

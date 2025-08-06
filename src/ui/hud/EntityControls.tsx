@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { DefinitionTable } from '../util/DefinitionTable';
 import TabbedSlider, { Tab } from '../util/TabbedSlider';
 import { EntityBadge } from './EntityBadge';
-import './EntityControls.css';
+import styles from './EntityControls.module.css';
 import { RoundGlass } from './atoms/RoundGlass';
 
 export interface EntityControlsProps {
@@ -21,15 +21,15 @@ const EntityControls: React.FC<EntityControlsProps> = ({
 	tabs,
 }) => {
 	return (
-		<div className='entity-controls'>
-			<div className='entity-preview-container'>
+		<div className={styles['entity-controls']}>
+			<div className={styles['entity-preview-container']}>
 				<RoundGlass>{icon}</RoundGlass>
 			</div>
-			<div className='entity-info-container'>
+			<div className={styles['entity-info-container']}>
 				<EntityBadge title={title} subtitle={subtitle} hideIcon={true} />
 				<DefinitionTable data={entityInfo} />
 				{tabs && tabs.length > 0 && (
-					<div className='entity-tabs'>
+					<div className={styles['entity-tabs']}>
 						<TabbedSlider tabs={tabs} />
 					</div>
 				)}

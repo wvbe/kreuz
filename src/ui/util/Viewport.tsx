@@ -114,7 +114,6 @@ export const Viewport: FunctionComponent<{ children: ReactNode }> = ({ children 
 		};
 		setViewportControls(controls);
 
-		console.log('panzoomcontrols set', controls);
 		return () => {
 			panzoomRef.current?.dispose();
 			panzoomRef.current = null;

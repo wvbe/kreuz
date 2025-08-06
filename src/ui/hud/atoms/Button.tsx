@@ -1,5 +1,5 @@
 import React, { FC, PropsWithChildren } from 'react';
-import './Button.css';
+import styles from './Button.module.css';
 
 export interface ButtonProps extends PropsWithChildren {
 	onClick?: () => void;
@@ -19,7 +19,7 @@ export const Button: FC<ButtonProps> = ({
 	icon,
 	iconSide = 'before',
 }) => {
-	const iconElement = icon ? <span className='button__icon'>{icon}</span> : null;
+	const iconElement = icon ? <span className={styles['button__icon']}>{icon}</span> : null;
 
 	const content = icon ? (
 		iconSide === 'after' ? (
@@ -39,7 +39,9 @@ export const Button: FC<ButtonProps> = ({
 
 	return (
 		<button
-			className={`button button--${layout} ${active ? 'button--active' : ''}`}
+			className={`${styles.button} ${styles[`button--${layout}`]} ${
+				active ? styles['button--active'] : ''
+			}`}
 			onClick={onClick}
 			disabled={disabled}
 		>

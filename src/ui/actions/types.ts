@@ -3,5 +3,5 @@ import { ButtonProps } from '../hud/atoms/Button';
 
 export type Action = Pick<ButtonProps, 'icon'> & {
 	label?: string;
-	onClick: (game: Game) => Promise<void>;
+	onInteractWithGame: (game: Game) => Promise<void>;
 };

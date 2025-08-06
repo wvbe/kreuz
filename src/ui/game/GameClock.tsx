@@ -7,7 +7,7 @@ import { Button } from '../hud/atoms/Button';
 import { FancyClock } from '../hud/atoms/FancyClock';
 import { Panel } from '../hud/atoms/Panel';
 import { DefinitionTable } from '../util/DefinitionTable';
-import './game-ui.css';
+import styles from './game-ui.module.css';
 
 /**
  * A component that maps the game time to a presentational clock component.
@@ -44,7 +44,7 @@ export const GameClock: FC = () => {
 	}, []);
 
 	return (
-		<Panel data-component='GameClock'>
+		<Panel data-component='GameClock' className={styles.gameClock}>
 			<div style={{ flex: 0 }}>
 				<FancyClock
 					time={

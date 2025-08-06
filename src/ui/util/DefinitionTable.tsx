@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import './DefinitionTable.css';
+import styles from './DefinitionTable.module.css';
 
 /**
  * A React component that displays a flexbox-based list of key-value pairs.
@@ -12,13 +12,13 @@ export const DefinitionTable: React.FC<{ data: { key: string; value: ReactNode }
 	data,
 }) => {
 	return (
-		<div className='definition-table'>
+		<div className={styles['definition-table']}>
 			{data.map(({ key, value }) => (
-				<div key={key} className='definition-row'>
-					<div className='definition-key'>
+				<div key={key} className={styles['definition-row']}>
+					<div className={styles['definition-key']}>
 						<strong>{key}:</strong>
 					</div>
-					<div className='definition-value'>{value}</div>
+					<div className={styles['definition-value']}>{value}</div>
 				</div>
 			))}
 		</div>

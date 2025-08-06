@@ -1,5 +1,5 @@
 import React, { Fragment, FunctionComponent, useState } from 'react';
-import './ContextMenu.css';
+import styles from './ContextMenu.module.css';
 import { Panel } from './atoms/Panel';
 
 // Define the typesC for the sections and items
@@ -13,21 +13,21 @@ const ContextMenuItems: FunctionComponent<{ items: Item[] }> = ({ items }) => {
 	const [activeSubMenu, setActiveSubMenu] = useState<number | null>(null);
 
 	return (
-		<ul className='context-menu__items'>
+		<ul className={styles['context-menu__items']}>
 			{items.map((item, itemIndex) => (
 				<li
 					key={itemIndex}
-					className='context-menu__item'
+					className={styles['context-menu__item']}
 					onMouseEnter={() => setActiveSubMenu(item.children ? itemIndex : null)}
 					onMouseLeave={() => setActiveSubMenu(null)}
 					onClick={item.onClick}
 				>
-					<div className='context-menu__item__label'>{item.label}</div>
+					<div className={styles['context-menu__item__label']}>{item.label}</div>
 					{item.children ? (
-						<div className='context-menu__item__children'>{'>'}</div>
+						<div className={styles['context-menu__item__children']}>{'>'}</div>
 					) : null}
 					{item.children && activeSubMenu === itemIndex && (
-						<ul className='context-menu__submenu'>
+						<ul className={styles['context-menu__submenu']}>
 							<ContextMenuItems items={item.children} />
 						</ul>
 					)}
@@ -40,10 +40,10 @@ export const ContextMenu: FunctionComponent<{ sections: ContextMenuSection[] }> 
 	sections,
 }) => {
 	return (
-		<Panel className='context-menu'>
+		<Panel className={styles['context-menu']}>
 			{sections.map((section, sectionIndex) => (
 				<Fragment key={sectionIndex}>
-					<div className='context-menu__header'>{section.header}</div>
+					<div className={styles['context-menu__header']}>{section.header}</div>
 					<ContextMenuItems items={section.items} />
 				</Fragment>
 			))}

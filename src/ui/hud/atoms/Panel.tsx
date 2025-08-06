@@ -1,13 +1,13 @@
 import { FC, PropsWithChildren } from 'react';
 
 import React from 'react';
-import './Panel.css';
+import styles from './Panel.module.css';
 
 export const Panel: FC<
 	PropsWithChildren<React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>>
 > = ({ children, ...props }) => {
 	return (
-		<div {...props} className={`panel ${props.className ?? ''}`}>
+		<div {...props} className={`${styles.panel} ${props.className ?? ''}`}>
 			{children}
 		</div>
 	);

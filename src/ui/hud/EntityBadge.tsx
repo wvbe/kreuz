@@ -1,5 +1,5 @@
-import React, { FunctionComponent, ReactNode } from 'react';
-import './EntityBadge.css';
+import { FunctionComponent, ReactNode } from 'react';
+import styles from './EntityBadge.module.css';
 import { RoundGlass } from './atoms/RoundGlass';
 
 export const EntityBadge: FunctionComponent<{
@@ -12,13 +12,13 @@ export const EntityBadge: FunctionComponent<{
 	hideIcon?: boolean;
 }> = ({ icon, title, subtitle, hideIcon }) => {
 	return (
-		<div className='entity-badge'>
+		<div className={styles['entity-badge']}>
 			{!hideIcon && (
-				<div className='entity-badge__icon'>
+				<div className={styles['entity-badge__icon']}>
 					<RoundGlass>{icon}</RoundGlass>
 				</div>
 			)}
-			<div className='entity-badge__labels'>
+			<div className={styles['entity-badge__labels']}>
 				<p>
 					<strong>{title}</strong>
 				</p>

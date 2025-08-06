@@ -1,6 +1,6 @@
-import React, { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { Panel } from './Panel';
-import './Popover.css';
+import styles from './Popover.module.css';
 
 interface PopoverProps {
 	/**
@@ -133,8 +133,8 @@ export const Popover: FC<PopoverProps> = ({
 	}, [isOpen, closeOnEscape, hidePopover]);
 
 	return (
-		<div className={`popover-container ${className}`}>
-			<div ref={anchorRef} className='popover-anchor'>
+		<div className={`${styles['popover-container']} ${className}`}>
+			<div ref={anchorRef} className={styles['popover-anchor']}>
 				{renderPopoverAnchor({
 					open: showPopover,
 					close: hidePopover,
@@ -144,7 +144,7 @@ export const Popover: FC<PopoverProps> = ({
 			{isOpen && (
 				<Panel
 					ref={popoverRef}
-					className='popover'
+					className={styles.popover}
 					style={{
 						position: 'absolute',
 						bottom: 'calc(100% + 8px)',

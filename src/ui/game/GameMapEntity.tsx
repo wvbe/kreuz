@@ -8,13 +8,14 @@ import {
 import { locationComponent } from '../../game/core/ecs/components/locationComponent';
 import { visibilityComponent } from '../../game/core/ecs/components/visibilityComponent';
 import { EcsEntity } from '../../game/core/ecs/types';
+import { useGameContext } from '../contexts/GameContext';
 import { useEventedValue } from '../hooks/useEventedValue';
 import { MapLocation } from '../map/MapLocation';
 import { setSelectedEntity, useSelectedEntityStore } from '../stores/selectedEntityStore';
 import { useSelectedTerrainStore } from '../stores/selectedTerrainStore';
 import { useGameContextMenuOpener } from './GameContextMenu';
 import { GameEntityIcon } from './GameEntityIcon';
-import { useGameContext } from '../contexts/GameContext';
+import styles from './GameMapEntity.module.css';
 
 /**
  * A component that maps a game entity to a presentational map location.
@@ -51,7 +52,7 @@ export const GameMapEntity: FunctionComponent<
 		},
 		[entity],
 	);
-	const [terrain, x, y] = useEventedValue(entity.location);
+	const [terrain] = useEventedValue(entity.location);
 
 	if (terrain !== selectedTerrain) {
 		return null;
@@ -63,22 +64,12 @@ export const GameMapEntity: FunctionComponent<
 			zIndex={entity.visiblityPriority}
 			onClick={onClick}
 			onContextMenu={onContextMenu}
-			style={{ transition: 'all 0.1s ease-in-out' }}
+			className={styles.mapEntity}
 			{...rest}
 		>
-			<div
-				style={{
-					minWidth: '1em',
-					maxWidth: '1em',
-					height: '1em',
-					borderRadius: '50%',
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-					backgroundColor: isSelected ? 'yellow' : 'transparent',
-				}}
-			>
+			<div className={`${styles.entityContainer} ${isSelected ? styles.selected : ''}`}>
 				<div
+					className={styles.iconWrapper}
 					style={{
 						fontSize: `${entity.iconSize}em`,
 					}}

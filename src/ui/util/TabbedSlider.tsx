@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './TabbedSlider.css';
+import styles from './TabbedSlider.module.css';
 
 export interface Tab {
 	label: string;
@@ -20,27 +20,29 @@ const TabbedSlider: React.FC<TabbedSliderProps> = ({ tabs }) => {
 	};
 
 	return (
-		<div className='tabbed-slider'>
-			<div className='tab-buttons'>
+		<div className={styles['tabbed-slider']}>
+			<div className={styles['tab-buttons']}>
 				{tabs.map((tab: Tab, index: number) => (
 					<button
 						key={index}
-						className={`tab-button ${index === activeIndex ? 'active' : ''}`}
+						className={`${styles['tab-button']} ${
+							index === activeIndex ? styles.active : ''
+						}`}
 						onClick={() => handleTabClick(index)}
 					>
 						{tab.label}
 					</button>
 				))}
 			</div>
-			<div className='tab-content'>
+			<div className={styles['tab-content']}>
 				<div
-					className='tab-content-inner'
+					className={styles['tab-content-inner']}
 					style={{
 						transform: `translateX(-${activeIndex * 100}%)`,
 					}}
 				>
 					{tabs.map((tab: Tab, index: number) => (
-						<div key={index} className='tab-panel'>
+						<div key={index} className={styles['tab-panel']}>
 							<tab.Content
 								isActive={index === activeIndex}
 								isVisible={Math.abs(index - activeIndex) <= 1}

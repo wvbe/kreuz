@@ -1,5 +1,5 @@
-import { PropsWithChildren, default as React, type FunctionComponent } from 'react';
-import './RoundGlass.css';
+import { PropsWithChildren, type FunctionComponent } from 'react';
+import styles from './RoundGlass.module.css';
 
 /**
  * A component that creates a round glass-like visual effect overlay for its children.
@@ -21,10 +21,10 @@ export const RoundGlass: FunctionComponent<
 	background = 'linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%)',
 }) => {
 	return (
-		<div className='round-glass-container' style={{ fontSize: size }}>
-			<div className='round-glass-face'></div>
-			<div className='round-glass-reflection'></div>
-			<div className='round-glass-content' style={{ background }}>
+		<div className={styles['round-glass-container']} style={{ fontSize: size }}>
+			<div className={styles['round-glass-face']}></div>
+			<div className={styles['round-glass-reflection']}></div>
+			<div className={styles['round-glass-content']} style={{ background }}>
 				{children}
 			</div>
 		</div>

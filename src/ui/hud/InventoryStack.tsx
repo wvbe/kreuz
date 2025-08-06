@@ -1,7 +1,7 @@
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import { PopOnUpdateSpan } from '../util/PopOnUpdateSpan';
 
-import './InventoryStack.css';
+import styles from './InventoryStack.module.css';
 
 export const InventoryStack: FunctionComponent<{
 	icon: string | null;
@@ -11,11 +11,13 @@ export const InventoryStack: FunctionComponent<{
 }> = ({ icon, label, quantity, isGhost }) => {
 	return (
 		<div
-			className={`inventory-stack ${isGhost ? 'inventory-stack--ghost' : ''}`}
+			className={`${styles['inventory-stack']} ${
+				isGhost ? styles['inventory-stack--ghost'] : ''
+			}`}
 			title={quantity > 0 ? `${quantity} x ${label}` : 'Empty slot!'}
 		>
-			<div className='inventory-stack__symbol'>{icon || '❓'}</div>
-			<div className='inventory-stack__quantity'>
+			<div className={styles['inventory-stack__symbol']}>{icon || '❓'}</div>
+			<div className={styles['inventory-stack__quantity']}>
 				<PopOnUpdateSpan>
 					{quantity === Infinity ? '∞' : quantity === -Infinity ? '-' : String(quantity)}
 				</PopOnUpdateSpan>

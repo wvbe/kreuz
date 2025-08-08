@@ -29,7 +29,6 @@ export const surfaceComponent = new EcsComponent<
 			options.surfaceType,
 			'surfaceComponent surfaceType',
 		);
-
 		entity.surfaceType = surfaceType;
 	},
 );

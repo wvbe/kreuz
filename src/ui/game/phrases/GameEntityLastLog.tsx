@@ -8,7 +8,7 @@ function getLastLog(entity?: EcsEntity) {
 	if (!entity || !hasEcsComponents(entity, [eventLogComponent])) {
 		return null;
 	}
-	return entity.events.get(entity.events.length - 1) ?? null;
+	return entity.events.length ? entity.events.get(entity.events.length - 1) : null;
 }
 
 export const GameEntityLastLog: FC<{ entity?: EcsEntity }> = ({ entity }) => {

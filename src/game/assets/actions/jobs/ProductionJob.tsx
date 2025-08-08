@@ -1,5 +1,5 @@
 import { JobPosting } from '../../../core/classes/JobPosting';
-import { hasEcsComponents, assertEcsComponents } from '../../../core/ecs/assert';
+import { assertEcsComponents, hasEcsComponents } from '../../../core/ecs/assert';
 import { eventLogComponent } from '../../../core/ecs/components/eventLogComponent';
 import { healthComponent } from '../../../core/ecs/components/healthComponent';
 import { inventoryComponent } from '../../../core/ecs/components/inventoryComponent';
@@ -100,7 +100,7 @@ export class ProductionJob extends JobPosting {
 			pathingComponent,
 		]);
 
-		if (worker.health.get() <= 0) {
+		if (worker.isDead()) {
 			throw new Error('Dead people cannot work');
 		}
 
@@ -112,7 +112,7 @@ export class ProductionJob extends JobPosting {
 			throw new Error(`Entity "${factory.id}" lives on a detached coordinate`);
 		}
 		await worker.walkToTile(game, tile);
-		if (worker.health.get() <= 0) {
+		if (worker.isDead()) {
 			// Worker died on the way to the factory :(
 			return;
 		}

@@ -8,6 +8,9 @@ import { getSelectedTerrain } from '../stores/selectedTerrainStore';
 export type ViewportControls = {
 	getPanzoomInstance(): PanZoom | null;
 	getPanzoomContainer(): HTMLDivElement;
+	/**
+	 * Translate the X and Y of a click on the panzoom container to a {@link QualifiedCoordinate} in the game world.
+	 */
 	getCoordinateFromContainerPixels(x: number, y: number): QualifiedCoordinate;
 };
 

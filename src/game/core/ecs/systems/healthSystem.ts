@@ -21,9 +21,6 @@ type HealthSystemEntity = EcsEntity<
 	typeof eventLogComponent
 >;
 
-/**
- * Attaches the health system to an entity.
- */
 async function attachSystemToEntity(game: Game, entity: HealthSystemEntity) {
 	entity.health.attach(game);
 

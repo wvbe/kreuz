@@ -9,9 +9,9 @@ type Type = string | number | React.ReactNode | null | undefined | any;
  * Uses the {@link useEventedValue} hook to subscribe to value changes.
  */
 export const GameEventedValue: FC<{
-	value: EventedValue<Type>;
+	eventedValue: EventedValue<Type>;
 	transform?: (value: Type) => React.ReactNode | Type;
-}> = ({ value, transform }) => {
-	const currentValue = useEventedValue(value, transform);
+}> = ({ eventedValue, transform }) => {
+	const currentValue = useEventedValue(eventedValue, transform);
 	return <>{currentValue}</>;
 };

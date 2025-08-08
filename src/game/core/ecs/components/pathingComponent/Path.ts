@@ -293,8 +293,9 @@ export class Path<PathableEntity> {
 
 		for (const nextTerrain of terrainsInBetween) {
 			const currentTile = currentTerrain.getTileAtMapLocation(currentLocation);
-			const nextPortalLocation = currentTerrain.getLocationOfPortalToTerrain(nextTerrain);
-			const nextPortalTile = currentTerrain.getTileAtMapLocation(nextPortalLocation);
+			const nextPortalTile = currentTerrain.getTileAtMapLocation(
+				currentTerrain.getLocationOfPortalToTerrain(nextTerrain),
+			);
 			if (currentTile !== nextPortalTile) {
 				const pathToPortal = new Path<Tile>(currentTile, pathingOptions).to(nextPortalTile);
 				if (!pathToPortal.length) {

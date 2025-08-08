@@ -6,6 +6,7 @@ import { getTileCoordinatesInRectangle } from '../../../ui/selections/rectangle/
 import { JobPriority } from '../../core/classes/JobBoard';
 import { Tile, tileArchetype } from '../../core/ecs/archetypes/tileArchetype';
 import { assertEcsComponents, hasEcsComponents } from '../../core/ecs/assert';
+import { eventLogComponent } from '../../core/ecs/components/eventLogComponent';
 import { getTileAtLocation } from '../../core/ecs/components/location/getTileAtLocation';
 import { isMapLocationEqualTo } from '../../core/ecs/components/location/isMapLocationEqualTo';
 import { locationComponent } from '../../core/ecs/components/locationComponent';
@@ -62,7 +63,7 @@ async function createRectangularSelectionVisualizationAndReturnTiles() {
 	const rectangle = await promise();
 
 	destroyChangeListener();
-``
+	``;
 	await selectionOverlays.remove(overlay);
 
 	if (!rectangle) {
@@ -93,7 +94,10 @@ export const excavatorButton: Action = {
 				JobPriority.NORMAL,
 				new ExcavationJob(tile, {
 					jobQueueIcon: <Spinner waiting />,
-					onSuccess: async (tile) => {
+					onSuccess: async (worker, tile) => {
+						if (hasEcsComponents(worker, [eventLogComponent])) {
+							worker.events.add('Cleared a space');
+						}
 						await game.time.wait(30_000);
 						tile.walkability = 1;
 						tile.surfaceType.set(SurfaceType.OPEN);
@@ -130,7 +134,10 @@ export const fillButton: Action = {
 				JobPriority.NORMAL,
 				new ExcavationJob(tile, {
 					jobQueueIcon: <Spinner waiting />,
-					onSuccess: async (tile) => {
+					onSuccess: async (worker, tile) => {
+						if (hasEcsComponents(worker, [eventLogComponent])) {
+							worker.events.add('Filled a space back up');
+						}
 						await game.time.wait(30_000);
 						tile.walkability = 0;
 						tile.surfaceType.set(SurfaceType.UNKNOWN);
@@ -151,23 +158,23 @@ export const harvestButton: Action = {
 		}
 
 		for (const tile of tiles) {
-			const entitiesInSameLocation = game.entities.filter(
+			const rawMaterialsInSameLocation = game.entities.filter(
 				(entity) =>
 					hasEcsComponents(entity, [rawMaterialComponent]) &&
 					isMapLocationEqualTo(entity.location.get(), tile.location.get()),
 			);
-			if (!entitiesInSameLocation.length) {
+			if (!rawMaterialsInSameLocation.length) {
 				continue;
 			}
-			for (const entity of entitiesInSameLocation) {
+			for (const entity of rawMaterialsInSameLocation) {
 				game.jobs.add(
 					JobPriority.NORMAL,
 					new ExcavationJob(tile, {
 						jobQueueIcon: <Spinner waiting />,
-						onSuccess: async () => {
+						onSuccess: async (worker) => {
 							assertEcsComponents(entity, [rawMaterialComponent]);
 
-							await Promise.all(
+							const harvest = await Promise.all(
 								entity.rawMaterials.map(async ({ material }) => {
 									const quantity = await entity.harvestRawMaterial(
 										game,
@@ -176,6 +183,15 @@ export const harvestButton: Action = {
 									return { quantity, material };
 								}),
 							);
+
+							console.log(harvest);
+							if (hasEcsComponents(worker, [eventLogComponent])) {
+								worker.events.add(
+									`Harvested ${harvest
+										.map(({ material }) => material.label)
+										.join(', ')}`,
+								);
+							}
 						},
 					}),
 				);

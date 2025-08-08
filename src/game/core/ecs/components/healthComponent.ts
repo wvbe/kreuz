@@ -21,6 +21,9 @@ export const healthComponent = new EcsComponent<
 		 * and handle this event.
 		 */
 		$death: Event;
+
+		isAlive: () => boolean;
+		isDead: () => boolean;
 	}
 >(
 	(entity) => entity.health instanceof ProgressingNumericValue && entity.$death instanceof Event,
@@ -35,6 +38,12 @@ export const healthComponent = new EcsComponent<
 		Object.assign(entity, {
 			health,
 			$death,
+			isAlive() {
+				return this.health.get() > 0;
+			},
+			isDead() {
+				return !this.isAlive();
+			},
 		});
 	},
 );

@@ -1,0 +1,33 @@
+body {
+	background-color: #2c1810;
+	color: #fff;
+	font-family: sans-serif;
+	line-height: 1.25;
+}
+button {
+	line-height: inherit;
+	font-size: inherit;
+	font-weight: inherit;
+}
+.gameClockContainer {
+	position: absolute;
+	z-index: 10;
+	box-sizing: border-box;
+	bottom: 4rem;
+	right: 2.5rem;
+}
+
+.gameActionBar {
+	position: absolute;
+	z-index: 10;
+	box-sizing: border-box;
+	bottom: 1rem;
+	left: 1rem;
+	right: 1rem;
+
+	display: flex;
+	flex-direction: row;
+	gap: 1em;
+	height: 0px;
+	align-items: end;
+}

@@ -51,7 +51,7 @@ export class LogisticsJob extends JobPosting {
 			[healthComponent, pathingComponent, locationComponent, inventoryComponent],
 			[eventLogComponent],
 		);
-		if (worker.health.get() <= 0) {
+		if (worker.isDead()) {
 			throw new Error('Dead people cannot haul cargo');
 		}
 
@@ -68,7 +68,7 @@ export class LogisticsJob extends JobPosting {
 		}
 
 		await worker.walkToTile(game, supplier);
-		if (worker.health.get() <= 0) {
+		if (worker.isDead()) {
 			// Worker died to retrieve the cargo. There is now an inventory reservation that will
 			// never be fulfilled.
 			// @TODO release inventory reservations
@@ -109,7 +109,7 @@ export class LogisticsJob extends JobPosting {
 		}
 		await worker.walkToTile(game, destination);
 
-		if (worker.health.get() <= 0) {
+		if (worker.isDead()) {
 			// Worker died on the way to deliver the cargo.
 			// @TODO Retrieve the cargo from their cold dead hands and deliver it?
 			return;
@@ -145,7 +145,7 @@ export class LogisticsJob extends JobPosting {
 		) {
 			return 0;
 		}
-		if (worker.health.get() <= 0) {
+		if (worker.isDead()) {
 			// Dead people cannot haul cargo
 			return 0;
 		}

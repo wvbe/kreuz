@@ -146,7 +146,7 @@ async function doGrocery(
 	need: Need,
 	{ vendor, material }: GroceryProposal,
 ) {
-	if (entity.health.get() <= 0) {
+	if (entity.isDead()) {
 		throw new Error('Dead people cannot haul cargo');
 	}
 
@@ -175,7 +175,7 @@ async function doGrocery(
 		throw new Error(`Vendor "${vendor.id}" lives on a detached coordinate`);
 	}
 	await entity.walkToTile(game, vendorLocation);
-	if (entity.health.get() <= 0) {
+	if (entity.isDead()) {
 		// Worker died to retrieve the cargo. There is now an inventory reservation that will never be fulfilled.
 		// @TODO release inventory reservations
 		return;

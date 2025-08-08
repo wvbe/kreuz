@@ -8,6 +8,7 @@
  */
 import { civilianBehavior } from '../game/assets/behavior';
 import { DriverI } from '../game/core/drivers/types';
+import { animalArchetype, AnimalArchetypeType } from '../game/core/ecs/archetypes/animalArchetype';
 import { personArchetype } from '../game/core/ecs/archetypes/personArchetype';
 import { portalArchetype } from '../game/core/ecs/archetypes/portalArchetype';
 import {
@@ -50,8 +51,46 @@ export default async function (driver: DriverI) {
 	});
 	await game.entities.add(entity);
 
+	await game.entities.add(
+		animalArchetype.create({
+			location: game.terrain.getTileClosestToXy(0, 0).location.get(),
+			name: 'Good Boy',
+			type: AnimalArchetypeType.DOG,
+		}),
+	);
+
+	await game.entities.add(
+		animalArchetype.create({
+			location: game.terrain
+				.getTileClosestToXy(Math.random() * 10, Math.random() * 10)
+				.location.get(),
+			name: 'Fien',
+			type: AnimalArchetypeType.CHICKEN,
+		}),
+	);
+
+	await game.entities.add(
+		animalArchetype.create({
+			location: game.terrain
+				.getTileClosestToXy(Math.random() * 10, Math.random() * 10)
+				.location.get(),
+			name: 'Siep',
+			type: AnimalArchetypeType.CHICKEN,
+		}),
+	);
+
+	await game.entities.add(
+		animalArchetype.create({
+			location: game.terrain
+				.getTileClosestToXy(Math.random() * 10, Math.random() * 10)
+				.location.get(),
+			name: 'Bella',
+			type: AnimalArchetypeType.COW,
+		}),
+	);
+
 	const portal = portalArchetype.create({
-		location: [game.terrain, 3, 2, 0],
+		location: [game.terrain, 3, 4, 0],
 		name: 'Portal to another place',
 		tiles: generateGridTerrainFromAscii(`
 			XXXXXXXXXXXXXXXXXX

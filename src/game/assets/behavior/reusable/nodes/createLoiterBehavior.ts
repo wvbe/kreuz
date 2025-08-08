@@ -71,7 +71,7 @@ export function createLoiterBehavior() {
 						healthComponent,
 					]);
 
-					if (entity.health.get() <= 0) {
+					if (entity.isDead()) {
 						throw new BehaviorTreeSignal(`Dead people cannot wander`);
 					}
 

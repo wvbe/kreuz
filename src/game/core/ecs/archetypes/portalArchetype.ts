@@ -1,6 +1,7 @@
 import { Terrain } from '../../terrain/Terrain';
 import { QualifiedCoordinate, SimpleCoordinate } from '../../terrain/types';
 import { EcsArchetype } from '../classes/EcsArchetype';
+import { eventLogComponent } from '../components/eventLogComponent';
 import { locationComponent } from '../components/locationComponent';
 import { portalComponent } from '../components/portalComponent';
 import { SurfaceType } from '../components/surfaceComponent';
@@ -57,41 +58,48 @@ type PortalArchetypeOptions = {
  */
 export const portalArchetype = new EcsArchetype<
 	PortalArchetypeOptions,
-	typeof locationComponent | typeof visibilityComponent | typeof portalComponent
->([locationComponent, visibilityComponent, portalComponent], (entity, options) => {
-	visibilityComponent.attach(entity, {
-		name: options.name,
-		icon: options.reverseOfPortalEntity ? `🚪` : `🏠`,
-		iconSize: 0.9,
-	});
-
-	if (options.reverseOfPortalEntity) {
-		const [destinationTerrain] = options.reverseOfPortalEntity.location.get();
-		const ownTerrain = options.reverseOfPortalEntity.portalDestinationTerrain;
-		const ownCoordinate = ownTerrain.getLocationOfPortalToTerrain(destinationTerrain);
-		portalComponent.attach(entity, {
-			portalDestinationTerrain: destinationTerrain,
-		});
-		locationComponent.attach(entity, {
-			location: [ownTerrain, ...ownCoordinate],
-		});
-	} else {
-		const [ownTerrain, ...ownCoordinate] = options.location;
-
-		portalComponent.attach(entity, {
-			portalDestinationTerrain: new Terrain({
-				id: entity.id,
-				parentage: {
-					portalStart: ownCoordinate,
-					parentTerrain: ownTerrain,
-					portalEnd: options.portalEnd,
-				},
-				tiles: options.tiles,
-			}),
+	| typeof locationComponent
+	| typeof visibilityComponent
+	| typeof portalComponent
+	| typeof eventLogComponent
+>(
+	[locationComponent, visibilityComponent, portalComponent, eventLogComponent],
+	(entity, options) => {
+		visibilityComponent.attach(entity, {
+			name: options.name,
+			icon: options.reverseOfPortalEntity ? `🚪` : `🏠`,
+			iconSize: 0.9,
 		});
 
-		locationComponent.attach(entity, {
-			location: options.location,
-		});
-	}
-});
+		if (options.reverseOfPortalEntity) {
+			const [destinationTerrain] = options.reverseOfPortalEntity.location.get();
+			const ownTerrain = options.reverseOfPortalEntity.portalDestinationTerrain;
+			const ownCoordinate = ownTerrain.getLocationOfPortalToTerrain(destinationTerrain);
+			portalComponent.attach(entity, {
+				portalDestinationTerrain: destinationTerrain,
+			});
+			locationComponent.attach(entity, {
+				location: [ownTerrain, ...ownCoordinate],
+			});
+		} else {
+			const [ownTerrain, ...ownCoordinate] = options.location;
+
+			portalComponent.attach(entity, {
+				portalDestinationTerrain: new Terrain({
+					id: entity.id,
+					parentage: {
+						portalStart: ownCoordinate,
+						parentTerrain: ownTerrain,
+						portalEnd: options.portalEnd,
+					},
+					tiles: options.tiles,
+				}),
+			});
+
+			eventLogComponent.attach(entity, {});
+			locationComponent.attach(entity, {
+				location: options.location,
+			});
+		}
+	},
+);

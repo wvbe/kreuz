@@ -20,7 +20,7 @@ export class ExcavationJob extends JobPosting {
 		private readonly tile: Tile,
 		private readonly conf: {
 			jobQueueIcon?: React.ReactNode;
-			onSuccess?: (tile: Tile) => void | Promise<void>;
+			onSuccess?: (worker: EcsEntity, tile: Tile) => void | Promise<void>;
 		} = {},
 	) {
 		super({
@@ -91,7 +91,7 @@ export class ExcavationJob extends JobPosting {
 
 		game.jobs.remove(this);
 
-		await worker.events?.add('Excavating a space');
+		await worker.events?.add('Going to clear a space');
 		try {
 			await worker.walkToTile(game, this.tile, 1);
 		} catch (error) {
@@ -115,7 +115,7 @@ export class ExcavationJob extends JobPosting {
 			name: 'Excavation site',
 		});
 		await game.entities.add(spinner);
-		await this.conf.onSuccess?.(this.tile);
+		await this.conf.onSuccess?.(worker, this.tile);
 		await game.entities.remove(spinner);
 	}
 }

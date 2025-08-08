@@ -1,9 +1,25 @@
 .gauge {
+	display: flex;
+	flex-direction: row;
+
 	border: 1px solid rgba(255, 255, 255, 0.5);
 	height: 1em;
 	padding: 1px;
+	&.vertical {
+		flex-direction: column;
+		justify-content: end;
+		height: 100%;
+		width: 1em;
+	}
 }
+
 .gaugeInner {
-	background-color: rgba(255, 255, 255, 0.5);
+	background-color: rgba(255, 255, 255, 0.7);
 	height: 100%;
+	width: attr(data-percentage);
+
+	.vertical & {
+		width: 100%;
+		height: attr(data-percentage);
+	}
 }

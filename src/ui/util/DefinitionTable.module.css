@@ -1,6 +1,7 @@
 .definition-table {
 	display: flex;
 	flex-direction: column;
+	gap: 0.25rem;
 }
 
 .definition-row {

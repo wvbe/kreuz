@@ -1,7 +1,8 @@
 import React, { ReactNode, useEffect, useMemo } from 'react';
 import { assertEcsComponents, hasEcsComponents } from '../../game/core/ecs/assert';
-import { eventLogComponent } from '../../game/core/ecs/components/eventLogComponent';
+import { healthComponent } from '../../game/core/ecs/components/healthComponent';
 import { locationComponent } from '../../game/core/ecs/components/locationComponent';
+import { needsComponent } from '../../game/core/ecs/components/needsComponent';
 import { pathingComponent } from '../../game/core/ecs/components/pathingComponent';
 import { portalComponent } from '../../game/core/ecs/components/portalComponent';
 import { rawMaterialComponent } from '../../game/core/ecs/components/rawMaterialComponent';
@@ -68,9 +69,9 @@ const GameSelectedEntity: React.FC = () => {
 			{ key: 'ID', value: selectedEntity.id },
 		];
 
-		if (hasEcsComponents(selectedEntity, [eventLogComponent])) {
-			info.push({ key: 'Status', value: selectedEntity.events.get(0) });
-		}
+		// if (hasEcsComponents(selectedEntity, [eventLogComponent])) {
+		// 	info.push({ key: 'Status', value: <GameEventedValue eventedValue={selectedEntity.events.get(0)} /> });
+		// }
 		if (hasEcsComponents(selectedEntity, [portalComponent])) {
 			info.push({
 				key: 'Destination',
@@ -93,6 +94,30 @@ const GameSelectedEntity: React.FC = () => {
 					value: <Gauge eventedValue={rawMaterial.quantity} />,
 				})),
 			);
+		}
+		if (hasEcsComponents(selectedEntity, [needsComponent])) {
+			info.push({
+				key: 'Health',
+				value: (
+					<div
+						style={{
+							display: 'flex',
+							flexDirection: 'row',
+							gap: '0.25em',
+							height: '3em',
+						}}
+					>
+						<Gauge eventedValue={selectedEntity.needs.nutrition} vertical />
+						<Gauge eventedValue={selectedEntity.needs.hydration} vertical />
+					</div>
+				),
+			});
+		}
+		if (hasEcsComponents(selectedEntity, [healthComponent])) {
+			info.push({
+				key: 'Health',
+				value: <Gauge eventedValue={selectedEntity.health} />,
+			});
 		}
 
 		return info;
@@ -121,6 +146,7 @@ const GameSelectedEntity: React.FC = () => {
 		<Panel data-component='GameSelectedEntity'>
 			<ErrorBoundary>
 				<EntityControls
+					key={selectedEntity.id}
 					icon={icon}
 					title={title}
 					subtitle={<GameEntityLastLog entity={selectedEntity} />}

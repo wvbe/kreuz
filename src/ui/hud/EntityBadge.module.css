@@ -3,19 +3,21 @@
 	flex-direction: row;
 	align-items: center;
 	gap: 0.5em;
+	white-space: nowrap;
 }
 .entity-badge__icon {
 	font-size: 2em;
 	flex: 0 0 auto;
-	width: 1em;
-	height: 1em;
+	width: 3rem;
+	height: 3rem;
 }
-.entity-badge__labels {
+.labels {
 	flex: 1 1 auto;
-	height: 2em;
-}
-.entity-badge__labels > * {
-	margin: 0;
-	height: 1em;
-	line-height: 1em;
+	height: 3rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	& > * {
+		margin: 0;
+	}
 }

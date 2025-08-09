@@ -15,9 +15,9 @@ import './hud/variables.css';
 import styles from './Ui.module.css';
 import { Viewport } from './util/Viewport';
 
-const ONE_FULL_ROTATION_OF_FASTEST = 1_800; // 30 minutes
-const ONE_FULL_ROTATION_OF_MIDDLE = 108_000; // 18 hours
-const ONE_FULL_ROTATION_OF_SLOWEST = 1_296_000; // 1 day
+const ONE_FULL_ROTATION_OF_FASTEST = 180; // 30 minutes
+const ONE_FULL_ROTATION_OF_MIDDLE = 10800; // 18 hours
+const ONE_FULL_ROTATION_OF_SLOWEST = 129600; // 1 day
 
 export const Ui: FunctionComponent<{
 	driver: DriverI;

@@ -15,10 +15,10 @@ export const EntityBadge: FunctionComponent<{
 		<div className={styles['entity-badge']}>
 			{!hideIcon && (
 				<div className={styles['entity-badge__icon']}>
-					<RoundGlass>{icon}</RoundGlass>
+					<RoundGlass size='3rem'>{icon}</RoundGlass>
 				</div>
 			)}
-			<div className={styles['entity-badge__labels']}>
+			<div className={styles.labels}>
 				<p>
 					<strong>{title}</strong>
 				</p>

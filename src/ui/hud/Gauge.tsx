@@ -7,14 +7,18 @@ export const Gauge: FC<{
 	eventedValue: EventedValue<number>;
 	max?: number;
 	vertical?: boolean;
-}> = ({ eventedValue, max = 1, vertical = false }) => {
+	label?: string;
+}> = ({ eventedValue, max = 1, vertical = false, label }) => {
 	const value = useEventedValue<number>(eventedValue);
 	return (
-		<div className={`${styles.gauge} ${vertical ? styles.vertical : ''}`}>
-			<div
-				className={styles.gaugeInner}
-				style={{ [vertical ? 'height' : 'width']: `${(value / max) * 100}%` }}
-			/>
+		<div className={`${styles.container} ${vertical ? styles.vertical : ''}`}>
+			<div className={styles.gauge}>
+				<div
+					className={styles.gaugeInner}
+					style={{ [vertical ? 'height' : 'width']: `${(value / max) * 100}%` }}
+				/>
+			</div>
+			{label ? <div className={styles.label}>{label}</div> : null}
 		</div>
 	);
 };

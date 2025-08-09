@@ -76,7 +76,7 @@ async function createRectangularSelectionVisualizationAndReturnTiles() {
 
 export const excavatorButton: Action = {
 	icon: '⛏️',
-	label: 'Clear',
+	label: 'Voiden',
 	onInteractWithGame: async (game: Game) => {
 		const tiles = await createRectangularSelectionVisualizationAndReturnTiles();
 		if (!tiles) {
@@ -110,7 +110,7 @@ export const excavatorButton: Action = {
 
 export const fillButton: Action = {
 	icon: '🪏',
-	label: 'Fill',
+	label: 'Charge',
 	onInteractWithGame: async (game: Game) => {
 		const tiles = await createRectangularSelectionVisualizationAndReturnTiles();
 		if (!tiles) {
@@ -149,8 +149,8 @@ export const fillButton: Action = {
 };
 
 export const harvestButton: Action = {
-	icon: '🍴',
-	label: 'Harvest',
+	icon: '🍽',
+	label: 'Reapen',
 	onInteractWithGame: async (game: Game) => {
 		const tiles = await createRectangularSelectionVisualizationAndReturnTiles();
 		if (!tiles) {

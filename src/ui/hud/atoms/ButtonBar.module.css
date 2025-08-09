@@ -2,8 +2,10 @@
 	display: flex;
 	flex-direction: row;
 	gap: 0.25rem;
-	flex: 0;
+	/* flex: 0; */
+	align-items: center;
 	&.stretchy {
 		flex: 1;
+		justify-content: center;
 	}
 }

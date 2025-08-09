@@ -18,7 +18,7 @@ export const GameClock: FC = () => {
 	// t+1 tick on fancy clock is one second.
 	// t+1000 tick on game is however much time it takes to walk from one tile to another
 	// so the arbitrary number here decides how long that is
-	return <FancyClock time={time / 300} />;
+	return <FancyClock time={time / 30} />;
 };
 
 /**

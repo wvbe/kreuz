@@ -1,42 +1,33 @@
 import React, { ReactNode, useEffect, useMemo } from 'react';
-import { assertEcsComponents, hasEcsComponents } from '../../game/core/ecs/assert';
+import { hasEcsComponents } from '../../game/core/ecs/assert';
 import { healthComponent } from '../../game/core/ecs/components/healthComponent';
+import { isMapLocationEqualTo } from '../../game/core/ecs/components/location/isMapLocationEqualTo';
 import { locationComponent } from '../../game/core/ecs/components/locationComponent';
 import { needsComponent } from '../../game/core/ecs/components/needsComponent';
 import { pathingComponent } from '../../game/core/ecs/components/pathingComponent';
 import { portalComponent } from '../../game/core/ecs/components/portalComponent';
 import { rawMaterialComponent } from '../../game/core/ecs/components/rawMaterialComponent';
 import { visibilityComponent } from '../../game/core/ecs/components/visibilityComponent';
-import { wealthComponent } from '../../game/core/ecs/components/wealthComponent';
+import { EcsEntity } from '../../game/core/ecs/types';
+import { QualifiedCoordinate } from '../../game/core/terrain/types';
+import { useGameContext } from '../contexts/GameContext';
 import { Button } from '../hud/atoms/Button';
-import { Panel } from '../hud/atoms/Panel';
-import EntityControls, { EntityControlsProps } from '../hud/EntityControls';
+import { ButtonBar } from '../hud/atoms/ButtonBar';
+import { EntityBadge } from '../hud/EntityBadge';
 import { Gauge } from '../hud/Gauge';
-import { useSelectedEntityStore } from '../stores/selectedEntityStore';
+import { setSelectedEntity, useSelectedEntityStore } from '../stores/selectedEntityStore';
 import { setSelectedTerrain } from '../stores/selectedTerrainStore';
 import { ErrorBoundary } from '../util/ErrorBoundary';
 import { GameEntityIcon } from './GameEntityIcon';
+import styles from './GameSelectedEntity.module.css';
 import { GameEntityLastLog } from './phrases/GameEntityLastLog';
 
 const NO_ENTITY_SELECTED_ENTITY = { id: 'no-entity-selected' };
 
-/**
- * A component that maps the selected game entity to a presentational component.
- *
- * This component uses the {@link EntityControls} presentational component to display controls for the selected entity.
- */
 const GameSelectedEntity: React.FC = () => {
+	const game = useGameContext();
 	const selectedEntity =
 		useSelectedEntityStore((state) => state.selectedEntity) ?? NO_ENTITY_SELECTED_ENTITY;
-
-	// Asserting the components here informs the TS language server what the types
-	// are for the rest of the function. The function will not actually throw if an
-	// "optional" component is missing.
-	assertEcsComponents(
-		selectedEntity,
-		[],
-		[visibilityComponent, locationComponent, wealthComponent],
-	);
 
 	// Whenever the selected entity walks into another terrain, camera follows to the same terrain
 	useEffect(() => {
@@ -50,7 +41,13 @@ const GameSelectedEntity: React.FC = () => {
 
 	const icon = useMemo(
 		() => (
-			<div style={{ fontSize: `${selectedEntity.iconSize ?? 0.4}em` }}>
+			<div
+				style={{
+					fontSize: `${
+						(selectedEntity as EcsEntity<typeof visibilityComponent>).iconSize ?? 0.4
+					}em`,
+				}}
+			>
 				<GameEntityIcon entity={selectedEntity} />
 			</div>
 		),
@@ -62,6 +59,49 @@ const GameSelectedEntity: React.FC = () => {
 			return selectedEntity.name;
 		}
 		return '';
+	}, [selectedEntity]);
+
+	const buttons = useMemo(() => {
+		const buttons: ReactNode[] = [];
+		if (hasEcsComponents(selectedEntity, [portalComponent])) {
+			buttons.push(
+				<Button
+					layout='tile'
+					icon='🚶‍♀️'
+					onClick={() => {
+						setSelectedTerrain(selectedEntity.portalDestinationTerrain);
+
+						// Set the reverse portal to be the new selected entity
+						const selectedTerrain = selectedEntity.location.get()[0];
+						const portalBackLocation: QualifiedCoordinate = [
+							selectedEntity.portalDestinationTerrain,
+							...selectedEntity.portalDestinationTerrain.getLocationOfPortalToTerrain(
+								selectedTerrain,
+							),
+						];
+						setSelectedEntity(
+							game.entities.find(
+								(en) =>
+									hasEcsComponents(en, [
+										locationComponent,
+										visibilityComponent,
+									]) &&
+									isMapLocationEqualTo(en.location.get(), portalBackLocation),
+							) ?? null,
+						);
+					}}
+				>
+					Visit
+				</Button>,
+			);
+		}
+		if (hasEcsComponents(selectedEntity, [needsComponent])) {
+			buttons.push(
+				<Gauge eventedValue={selectedEntity.needs.nutrition} vertical label='🍗' />,
+				<Gauge eventedValue={selectedEntity.needs.hydration} vertical label='💧' />,
+			);
+		}
+		return buttons;
 	}, [selectedEntity]);
 
 	const entityInfo = useMemo(() => {
@@ -95,24 +135,6 @@ const GameSelectedEntity: React.FC = () => {
 				})),
 			);
 		}
-		if (hasEcsComponents(selectedEntity, [needsComponent])) {
-			info.push({
-				key: 'Health',
-				value: (
-					<div
-						style={{
-							display: 'flex',
-							flexDirection: 'row',
-							gap: '0.25em',
-							height: '3em',
-						}}
-					>
-						<Gauge eventedValue={selectedEntity.needs.nutrition} vertical />
-						<Gauge eventedValue={selectedEntity.needs.hydration} vertical />
-					</div>
-				),
-			});
-		}
 		if (hasEcsComponents(selectedEntity, [healthComponent])) {
 			info.push({
 				key: 'Health',
@@ -123,38 +145,32 @@ const GameSelectedEntity: React.FC = () => {
 		return info;
 	}, [selectedEntity]);
 
-	const tabs = useMemo(() => {
-		const tabList: EntityControlsProps['tabs'] = [];
-
-		// if (hasEcsComponents(selectedEntity, [inventoryComponent])) {
-		// 	tabList.push({
-		// 		label: 'Inventory',
-		// 		Content: () => <InventoryTab entity={selectedEntity} />,
-		// 	});
-		// }
-		// if (hasEcsComponents(selectedEntity, [pathingComponent])) {
-		// 	tabList.push({
-		// 		label: 'Pathing',
-		// 		Content: () => <PathingTab entity={selectedEntity} />,
-		// 	});
-		// }
-
-		return tabList;
-	}, [selectedEntity]);
-
 	return (
-		<Panel data-component='GameSelectedEntity'>
-			<ErrorBoundary>
-				<EntityControls
-					key={selectedEntity.id}
-					icon={icon}
-					title={title}
-					subtitle={<GameEntityLastLog entity={selectedEntity} />}
-					entityInfo={entityInfo}
-					tabs={tabs}
-				/>
-			</ErrorBoundary>
-		</Panel>
+		<>
+			<div className={styles.container}>
+				{selectedEntity !== NO_ENTITY_SELECTED_ENTITY ? (
+					<div style={{ width: 0 }}>
+						<ErrorBoundary>
+							<EntityBadge
+								title={title}
+								icon={icon}
+								subtitle={<GameEntityLastLog entity={selectedEntity} />}
+							/>
+						</ErrorBoundary>
+					</div>
+				) : null}
+
+				<ButtonBar
+					style={{
+						height: 'calc(4em + 1em + 0.5em)',
+						minWidth: '16em',
+						boxSizing: 'border-box',
+					}}
+				>
+					<ErrorBoundary>{buttons.length > 0 ? buttons : null}</ErrorBoundary>
+				</ButtonBar>
+			</div>
+		</>
 	);
 };
 

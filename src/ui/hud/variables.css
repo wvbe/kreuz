@@ -1,6 +1,7 @@
 :root {
 	--ui-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
+	--ui-border-radius-small: 3px;
 	--ui-border-radius-medium: 6px;
 
 	--ui-color-text: #000;

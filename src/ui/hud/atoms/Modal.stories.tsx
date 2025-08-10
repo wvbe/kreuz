@@ -55,6 +55,9 @@ export const CustomPosition: Story = {
 };
 
 export const MultipleModals: Story = {
+	args: {
+		...Default.args,
+	},
 	render: () => (
 		<>
 			<Modal title='First Modal' initialPosition={{ x: 50, y: 50 }}>

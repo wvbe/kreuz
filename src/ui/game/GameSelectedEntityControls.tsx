@@ -55,7 +55,7 @@ const GameSelectedEntityControls: React.FC = () => {
 			buttons.push(
 				<Button
 					layout='tile'
-					icon='🔍'
+					icon='📜'
 					onClick={() =>
 						modalOpener({
 							title: 'Event Log',
@@ -66,7 +66,7 @@ const GameSelectedEntityControls: React.FC = () => {
 						})
 					}
 				>
-					Event Log
+					Chronicles
 				</Button>,
 			);
 		}

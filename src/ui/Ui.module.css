@@ -16,6 +16,13 @@ button {
 	bottom: 4rem;
 	right: 2.5rem;
 }
+.gameSelectedEntityContainer {
+	position: absolute;
+	z-index: 10;
+	box-sizing: border-box;
+	bottom: 4rem;
+	left: 2.5rem;
+}
 
 .gameActionBar {
 	position: absolute;

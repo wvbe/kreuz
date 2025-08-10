@@ -91,7 +91,6 @@ export class ExcavationJob extends JobPosting {
 
 		game.jobs.remove(this);
 
-		await worker.events?.add('Going to clear a space');
 		try {
 			await worker.walkToTile(game, this.tile, 1);
 		} catch (error) {

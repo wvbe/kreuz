@@ -67,7 +67,7 @@ export class BrowserDriver extends Driver implements DriverI {
 			await this.stop();
 		};
 		self.addEventListener('blur', onBlur);
-		this.$detach.once(() => self.removeEventListener('blue', onBlur));
+		this.$detach.once(() => self.removeEventListener('blur', onBlur));
 
 		this.$detach.once(
 			this.$resume.on(async () => {

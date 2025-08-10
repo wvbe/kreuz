@@ -8,9 +8,12 @@ import { GameClock, GameSpeedControls } from './game/GameClock';
 import { GameContextMenuHost } from './game/GameContextMenu';
 import { GameEventedValue } from './game/GameEventedValue';
 import { GameMapSelectionOverlays } from './game/GameMapSelectionOverlays';
-import { GameSelectedEntity } from './game/GameSelectedEntity';
+import { GameSelectedEntity } from './game/GameSelectedEntityControls';
+import { GameSelectedEntityGlass } from './game/GameSelectedEntityGlass';
 import { GameSelectedTerrain } from './game/GameSelectedTerrain';
+import { useFollowSelectedEntityToOtherTerrain } from './game/hooks/useFollowSelectedEntityToOtherTerrain';
 import { ButtonBar } from './hud/atoms/ButtonBar';
+import { ModalHost } from './hud/atoms/ModalHost';
 import './hud/variables.css';
 import styles from './Ui.module.css';
 import { Viewport } from './util/Viewport';
@@ -23,6 +26,7 @@ export const Ui: FunctionComponent<{
 	driver: DriverI;
 	game: Game;
 }> = ({ driver, game }) => {
+	useFollowSelectedEntityToOtherTerrain();
 	const transformGameTimeToDays = useCallback((time: number) => {
 		// Return a string like "Day 2, second hour"
 		const days = Math.floor(time / ONE_FULL_ROTATION_OF_SLOWEST);
@@ -41,6 +45,9 @@ export const Ui: FunctionComponent<{
 				<GameEventedValue eventedValue={game.time} transform={transformGameTimeToDays} />
 				<GameClock />
 			</div>
+			<div className={styles.gameSelectedEntityContainer}>
+				<GameSelectedEntityGlass />
+			</div>
 			<div className={styles.gameActionBar}>
 				<GameSelectedEntity />
 				<ButtonBar stretchy>
@@ -52,12 +59,15 @@ export const Ui: FunctionComponent<{
 					<GameSpeedControls />
 				</ButtonBar>
 			</div>
+
 			<Viewport>
 				<GameContextMenuHost>
 					<GameSelectedTerrain />
 					<GameMapSelectionOverlays />
 				</GameContextMenuHost>
 			</Viewport>
+
+			<ModalHost />
 		</Contexts>
 	);
 };

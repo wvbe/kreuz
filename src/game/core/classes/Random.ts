@@ -5,6 +5,9 @@ import seedrandom from 'seedrandom';
 
 import { type SeedI } from '../types';
 
+/**
+ * Just a wrapper for the most random "random" shit I had to use at any point.
+ */
 class ExpensiveRandom {
 	/**
 	 * Returns a random decimal number between 0 and 1.
@@ -62,31 +65,33 @@ class ExpensiveRandom {
 	 * a normal distribution, there is a good chance this number will be close to 0.5 most of the time.
 	 */
 	static normal(...seed: SeedI[]): number {
-		const min = 0;
-		const max = 1;
-		const skew = 1;
+		const minimum = 0;
+		const maximum = 1;
+		const skewFactor = 1;
 		// https://stackoverflow.com/a/49434653/2204864
-		let ind = 0;
-		let u = 0,
-			v = 0;
-		while (u === 0) {
-			// u = Math.random(); //Converting [0,1) to (0,1)
-			u = this.float(...seed, ++ind); //Converting [0,1) to (0,1)
+		let seedIndex = 0;
+		let uniformRandom1 = 0,
+			uniformRandom2 = 0;
+		while (uniformRandom1 === 0) {
+			// Converting [0,1) to (0,1)
+			uniformRandom1 = this.float(...seed, ++seedIndex);
 		}
-		while (v === 0) {
-			v = this.float(...seed, ++ind);
+		while (uniformRandom2 === 0) {
+			uniformRandom2 = this.float(...seed, ++seedIndex);
 		}
 
-		let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
-		num = num / 10.0 + 0.5; // Translate to 0 -> 1
-		if (num > 1 || num < 0) num = this.normal(skew, ...seed, ind);
+		let normalValue =
+			Math.sqrt(-2.0 * Math.log(uniformRandom1)) * Math.cos(2.0 * Math.PI * uniformRandom2);
+		normalValue = normalValue / 10.0 + 0.5; // Translate to 0 -> 1
+		if (normalValue > 1 || normalValue < 0)
+			normalValue = this.normal(skewFactor, ...seed, seedIndex);
 		// resample between 0 and 1 if out of range
 		else {
-			num = Math.pow(num, skew); // Skew
-			num *= max - min; // Stretch to fill range
-			num += min; // offset to min
+			normalValue = Math.pow(normalValue, skewFactor); // Skew
+			normalValue *= maximum - minimum; // Stretch to fill range
+			normalValue += minimum; // offset to min
 		}
-		return num;
+		return normalValue;
 	}
 }
 

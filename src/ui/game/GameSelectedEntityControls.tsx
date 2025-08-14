@@ -1,11 +1,10 @@
-import React, { ReactNode, useEffect, useMemo } from 'react';
+import React, { ReactNode, useMemo } from 'react';
 import { hasEcsComponents } from '../../game/core/ecs/assert';
 import { eventLogComponent } from '../../game/core/ecs/components/eventLogComponent';
 import { healthComponent } from '../../game/core/ecs/components/healthComponent';
 import { isMapLocationEqualTo } from '../../game/core/ecs/components/location/isMapLocationEqualTo';
 import { locationComponent } from '../../game/core/ecs/components/locationComponent';
 import { needsComponent } from '../../game/core/ecs/components/needsComponent';
-import { pathingComponent } from '../../game/core/ecs/components/pathingComponent';
 import { portalComponent } from '../../game/core/ecs/components/portalComponent';
 import { rawMaterialComponent } from '../../game/core/ecs/components/rawMaterialComponent';
 import { visibilityComponent } from '../../game/core/ecs/components/visibilityComponent';
@@ -30,24 +29,14 @@ const GameSelectedEntityControls: React.FC = () => {
 	const selectedEntity =
 		useSelectedEntityStore((state) => state.selectedEntity) ?? NO_ENTITY_SELECTED_ENTITY;
 
-	const modalOpener = useModalOpener(EventLogViewer);
-
-	// Whenever the selected entity walks into another terrain, camera follows to the same terrain
-	useEffect(() => {
-		if (!hasEcsComponents(selectedEntity, [pathingComponent])) {
-			return;
-		}
-		return selectedEntity.$portalExited.on((portal) => {
-			setSelectedTerrain(portal.terrain);
-		});
-	}, [selectedEntity]);
-
 	const title = useMemo(() => {
 		if (hasEcsComponents(selectedEntity, [visibilityComponent])) {
 			return selectedEntity.name;
 		}
-		return '';
+		return 'Anonymous';
 	}, [selectedEntity]);
+
+	const openEventLogModal = useModalOpener(EventLogViewer);
 
 	const buttons = useMemo(() => {
 		const buttons: ReactNode[] = [];
@@ -57,8 +46,8 @@ const GameSelectedEntityControls: React.FC = () => {
 					layout='tile'
 					icon='📜'
 					onClick={() =>
-						modalOpener({
-							title: 'Event Log',
+						openEventLogModal({
+							title: `${title}'s Chronicles`,
 							props: {
 								entity: selectedEntity,
 								onClose: () => {},
@@ -100,7 +89,7 @@ const GameSelectedEntityControls: React.FC = () => {
 		if (hasEcsComponents(selectedEntity, [needsComponent])) {
 			buttons.push(
 				<Gauge eventedValue={selectedEntity.needs.nutrition} vertical label='🍗' />,
-				<Gauge eventedValue={selectedEntity.needs.hydration} vertical label='💧' />,
+				// <Gauge eventedValue={selectedEntity.needs.hydration} vertical label='💧' />,
 			);
 		}
 		if (hasEcsComponents(selectedEntity, [rawMaterialComponent])) {
@@ -119,7 +108,7 @@ const GameSelectedEntityControls: React.FC = () => {
 			buttons.push(<Gauge eventedValue={selectedEntity.health} vertical label='💙' />);
 		}
 		return buttons;
-	}, [selectedEntity]);
+	}, [selectedEntity, title]);
 
 	return (
 		<div className={styles.container}>

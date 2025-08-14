@@ -1,9 +1,9 @@
-import { assertEcsComponents } from '../../../../core/ecs/assert';
-import { BehaviorTreeSignal } from '../../../../core/ecs/components/behaviorComponent/BehaviorTreeSignal';
-import { ExecutionNode } from '../../../../core/ecs/components/behaviorComponent/ExecutionNode';
-import { type EntityBlackboard } from '../../../../core/ecs/components/behaviorComponent/types';
-import { getTileAtLocation } from '../../../../core/ecs/components/location/getTileAtLocation';
-import { locationComponent } from '../../../../core/ecs/components/locationComponent';
+import { assertEcsComponents } from '../../../core/ecs/assert';
+import { BehaviorTreeSignal } from '../../../core/ecs/components/behaviorComponent/BehaviorTreeSignal';
+import { ExecutionNode } from '../../../core/ecs/components/behaviorComponent/ExecutionNode';
+import { type EntityBlackboard } from '../../../core/ecs/components/behaviorComponent/types';
+import { getTileAtLocation } from '../../../core/ecs/components/location/getTileAtLocation';
+import { locationComponent } from '../../../core/ecs/components/locationComponent';
 
 export function createJobWorkBehavior() {
 	return new ExecutionNode<EntityBlackboard>(

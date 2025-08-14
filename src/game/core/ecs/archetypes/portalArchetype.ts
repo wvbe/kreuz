@@ -71,6 +71,7 @@ export const portalArchetype = new EcsArchetype<
 			iconSize: 0.9,
 		});
 
+		eventLogComponent.attach(entity, {});
 		if (options.reverseOfPortalEntity) {
 			const [destinationTerrain] = options.reverseOfPortalEntity.location.get();
 			const ownTerrain = options.reverseOfPortalEntity.portalDestinationTerrain;
@@ -96,7 +97,6 @@ export const portalArchetype = new EcsArchetype<
 				}),
 			});
 
-			eventLogComponent.attach(entity, {});
 			locationComponent.attach(entity, {
 				location: options.location,
 			});

@@ -264,9 +264,6 @@ export class Path<PathableEntity> {
 		return path.map((heuristicReport) => heuristicReport.coordinate);
 	}
 
-	/**
-	 * Create an instance of {@link Path} preconfigured to navigate between {@link Tile}.
-	 */
 	public static between(
 		startTile: Tile,
 		destinationTile: Tile,

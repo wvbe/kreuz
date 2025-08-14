@@ -45,7 +45,7 @@ export const rawMaterialComponent = new EcsComponent<
 		 * - Slowly drain the material from this entity, all the way down to zero
 		 * - Restore the generation rate
 		 *
-		 * Returns the quantity of raw materials harvested (between 0 and the total capacity of the material)
+		 * Returns the amount of raw materials harvested
 		 */
 		harvestRawMaterial: (game: Game, material: Material) => Promise<number>;
 	}

@@ -244,7 +244,6 @@ export function getIslandTileInfos(islandTiles: GeneratedIslandTile[]): Array<{
 	location: SimpleCoordinate;
 	surfaceType: TerrainDefinition;
 }> {
-	console.log(islandTiles.map((tile) => tile.elevation).join('\t'));
 	return islandTiles.map((tile) => ({
 		location: tile.location,
 		surfaceType: tile.surfaceType,

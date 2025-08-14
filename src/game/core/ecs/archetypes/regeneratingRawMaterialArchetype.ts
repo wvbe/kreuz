@@ -1,4 +1,5 @@
 import { timberMaterial } from '../../../assets/materials/rawMaterials';
+import { grassMaterial } from '../../../assets/materials/vegetation';
 import { QualifiedCoordinate } from '../../terrain/types';
 import { EcsArchetype } from '../classes/EcsArchetype';
 import { eventLogComponent } from '../components/eventLogComponent';
@@ -8,6 +9,7 @@ import { visibilityComponent } from '../components/visibilityComponent';
 
 export enum RawMaterialType {
 	PINEWOOD,
+	GRASS,
 }
 
 export const regeneratingRawMaterialArchetype = new EcsArchetype<
@@ -22,7 +24,7 @@ export const regeneratingRawMaterialArchetype = new EcsArchetype<
 	});
 	eventLogComponent.attach(entity, {});
 	switch (options.type) {
-		case RawMaterialType.PINEWOOD:
+		case RawMaterialType.PINEWOOD: {
 			rawMaterialComponent.attach(entity, {
 				rawMaterials: [
 					{
@@ -33,9 +35,28 @@ export const regeneratingRawMaterialArchetype = new EcsArchetype<
 				],
 			});
 			visibilityComponent.attach(entity, {
-				name: 'Pine tree',
-				icon: '🌲',
+				name: timberMaterial.label,
+				icon: timberMaterial.symbol,
 				iconSize: 0.7,
 			});
+			break;
+		}
+		case RawMaterialType.GRASS: {
+			rawMaterialComponent.attach(entity, {
+				rawMaterials: [
+					{
+						material: grassMaterial,
+						totalCapacity: 100,
+						quantity: 0,
+					},
+				],
+			});
+			visibilityComponent.attach(entity, {
+				name: grassMaterial.label,
+				icon: grassMaterial.symbol,
+				iconSize: 0.7,
+			});
+			break;
+		}
 	}
 });

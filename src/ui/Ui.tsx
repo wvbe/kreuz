@@ -6,12 +6,12 @@ import { Contexts } from './Contexts';
 import { GameActionButton } from './game/GameActionButton';
 import { GameClock, GameSpeedControls } from './game/GameClock';
 import { GameContextMenuHost } from './game/GameContextMenu';
-import { GameEventedValue } from './game/GameEventedValue';
 import { GameMapSelectionOverlays } from './game/GameMapSelectionOverlays';
 import { GameSelectedEntity } from './game/GameSelectedEntityControls';
 import { GameSelectedEntityGlass } from './game/GameSelectedEntityGlass';
 import { GameSelectedTerrain } from './game/GameSelectedTerrain';
 import { useFollowSelectedEntityToOtherTerrain } from './game/hooks/useFollowSelectedEntityToOtherTerrain';
+import { UiEventedValue } from './game/UiEventedValue';
 import { ButtonBar } from './hud/atoms/ButtonBar';
 import { ModalHost } from './hud/atoms/ModalHost';
 import './hud/variables.css';
@@ -42,7 +42,7 @@ export const Ui: FunctionComponent<{
 	return (
 		<Contexts driver={driver} game={game}>
 			<div className={styles.gameClockContainer}>
-				<GameEventedValue eventedValue={game.time} transform={transformGameTimeToDays} />
+				<UiEventedValue eventedValue={game.time} transform={transformGameTimeToDays} />
 				<GameClock />
 			</div>
 			<div className={styles.gameSelectedEntityContainer}>

@@ -1,5 +1,5 @@
 import { expect } from '@jest/globals';
-import { createJobWorkBehavior } from '../../../assets/behavior/reusable/nodes/createJobWorkBehavior';
+import { createJobWorkBehavior } from '../../../assets/behavior/execution/createJobWorkBehavior';
 
 import { generateEmptyGame } from '../../../test/generateEmptyGame';
 import { Material } from '../../inventory/Material';

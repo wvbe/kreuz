@@ -1,4 +1,4 @@
-import { createLoiterBehavior } from '../../../assets/behavior/reusable/nodes/createLoiterBehavior';
+import { cattleBehavior } from '../../../assets/behavior/trees/cattleBehavior';
 import { QualifiedCoordinate } from '../../terrain/types';
 import { EcsArchetype } from '../classes/EcsArchetype';
 import { behaviorComponent } from '../components/behaviorComponent';
@@ -126,14 +126,17 @@ export const animalArchetype = new EcsArchetype<
 		const animal = getVariablesForAnimalType(options.type);
 
 		behaviorComponent.attach(entity, {
-			behavior: createLoiterBehavior(),
+			behavior: cattleBehavior,
 		});
+
 		healthComponent.attach(entity, {
 			health: 1,
 		});
+
 		locationComponent.attach(entity, {
 			location: options.location,
 		});
+
 		needsComponent.attach(entity, {
 			initialNeeds: {
 				hydration: 1,
@@ -141,6 +144,7 @@ export const animalArchetype = new EcsArchetype<
 			},
 			decayMultiplier: options.immortal ? 0 : 1 / animal.resilience,
 		});
+
 		pathingComponent.attach(entity, {
 			walkSpeed: animal.walkSpeed,
 		});

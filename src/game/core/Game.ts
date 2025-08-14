@@ -11,7 +11,7 @@ import { logisticsSystem } from './ecs/systems/logisticsSystem';
 import { productionSystem } from './ecs/systems/productionSystem';
 import { rawMaterialSystem } from './ecs/systems/rawMaterialSystem';
 import { selfsustainingSystem } from './ecs/systems/selfsustainingSystem';
-import { surfaceCollapseSystem } from './ecs/systems/serviceCollapseSystem';
+import { surfaceCollapseSystem } from './ecs/systems/surfaceCollapseSystem';
 import { type EcsEntity } from './ecs/types';
 import { KeyedCollection } from './events/KeyedCollection';
 import { type Material } from './inventory/Material';

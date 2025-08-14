@@ -20,42 +20,34 @@ type SelfSustainingEnitity = EcsEntity<
  * still below 30%, the satisfyOverTime loop runs in twice in parallel.
  */
 function attachSystemToEntityNeed(game: Game, entity: SelfSustainingEnitity, need: Need) {
-	const satisfyOverTime = async () => {
+	const consumeItem = async () => {
 		while (need.get() < 0.9) {
 			const stock = entity.inventory
 				.getAvailableItems()
 				.filter((item) => item.material[need.id] > 0)
 				.sort((a, b) => a.material[need.id] - b.material[need.id])
 				.shift();
-			if (!stock) {
-				return;
+			if (stock) {
+				entity.events?.add(`Satisfying ${need.id} with ${stock.material}`);
+				await entity.inventory.change(stock.material, -1);
+				await game.time.wait(1 * 1_000);
+				need.set(Math.min(1, need.get() + stock.material[need.id]));
 			}
-
-			entity.events?.add(`Satisfying ${need.id} with ${stock.material}`);
-
-			// Remove the item from the inventory.
-			await entity.inventory.change(stock.material, -1);
-
-			// Wait for the item to be consumed.
-			await game.time.wait(1 * 1_000);
-
-			// Satisfy the need.
-			need.set(Math.min(1, need.get() + stock.material[need.id]));
 		}
 	};
 
-	need.onBelow(0.3, satisfyOverTime);
+	need.onBelow(0.3, consumeItem);
 
 	entity.inventory.$change.on(() => {
 		if (need.get() < 0.3) {
-			satisfyOverTime();
+			consumeItem();
 		}
 	});
 }
 
 async function attachSystemToEntity(game: Game, entity: SelfSustainingEnitity) {
 	attachSystemToEntityNeed(game, entity, entity.needs.nutrition);
-	attachSystemToEntityNeed(game, entity, entity.needs.hydration);
+	// attachSystemToEntityNeed(game, entity, entity.needs.hydration);
 }
 
 async function attachSystem(game: Game) {

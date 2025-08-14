@@ -1,7 +1,7 @@
 import { expect } from '@jest/globals';
-import { personArchetype } from '../../core/ecs/archetypes/personArchetype';
-import { generateEmptyGame } from '../../test/generateEmptyGame';
-import { createLoiterBehavior } from './reusable/nodes/createLoiterBehavior';
+import { personArchetype } from '../../../core/ecs/archetypes/personArchetype';
+import { generateEmptyGame } from '../../../test/generateEmptyGame';
+import { createLoiterBehavior } from './createLoiterBehavior';
 
 describe('BT: createLoiterBehavior()', () => {
 	const { game, initGame } = generateEmptyGame();

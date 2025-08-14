@@ -40,53 +40,7 @@ async function animateTo(entity: PathingEntity, destination: QualifiedCoordinate
 		await entity.$portalEntered.emit(portal);
 	}
 }
-
-export async function walkToTile(
-	entity: PathingEntity,
-	game: Game,
-	destination: Tile,
-	stopAtDistanceToTarget: number = 0,
-) {
-	if (!locationComponent.test(entity) || !pathingComponent.test(entity)) {
-		throw new Error(`Entity ${entity} is unable to walk`);
-	}
-
-	// Its _possible_ that an entity lives on a tile that has so much elevation that
-	// .getTileClosestToXy actually finds the _wrong_ tile -- because its neighbor is closer than
-	// the proximity to z=0. In that case, there is a bug:
-	//
-	// const start = terrain.getTileClosestToXy(this.location.get().x, this.location.get().y);
-	//
-	// To work around the bug, and as a cheaper option, find the tile whose XY is equal to the current
-	// location. The only downsize is that entities that are mid-way a tile will not find one. Since
-	// this is not a feature yet, we can use it regardless:
-	const start = getTileAtLocation(entity.location.get());
-	if (!start) {
-		throw new Error(`Entity "${entity.id}" lives on a detached coordinate`);
-	}
-	const path = Path.between(start, destination, {
-		closest: true,
-		obstacles: game.entities
-			.filter(
-				(entity) =>
-					!tileArchetype.test(entity) &&
-					hasEcsComponents(entity, [locationComponent, visibilityComponent]),
-			)
-			.map((entity) => ({
-				coordinate: (entity as EcsEntity<typeof locationComponent>).location.get(),
-				cost: 12,
-			})),
-	});
-
-	const lastTileInPath = path[path.length - 1];
-	if (lastTileInPath) {
-		const distanceToTarget = destination.euclideanDistanceTo(lastTileInPath.location.get());
-		if (distanceToTarget > stopAtDistanceToTarget) {
-			throw new Error('Could not find a path close enough to the target');
-		}
-	}
-	// -----------------------------
-
+async function animateAlongPath(entity: PathingEntity, path: Tile[]) {
 	// @TODO add some safety checks on the path maybe.
 	// Emitting this event may prompt the promises of other walkOnTile tasks to reject.
 	const nextTileInPath = path.shift();
@@ -144,4 +98,64 @@ export async function walkToTile(
 	await animateTo(entity, nextTileInPath.location.get());
 
 	return promise;
+}
+
+function findPath(
+	game: Game,
+	entity: PathingEntity,
+	destination: Tile,
+	stopAtDistanceToTarget: number,
+) {
+	// Its _possible_ that an entity lives on a tile that has so much elevation that
+	// .getTileClosestToXy actually finds the _wrong_ tile -- because its neighbor is closer than
+	// the proximity to z=0. In that case, there is a bug:
+	//
+	// const start = terrain.getTileClosestToXy(this.location.get().x, this.location.get().y);
+	//
+	// To work around the bug, and as a cheaper option, find the tile whose XY is equal to the current
+	// location. The only downsize is that entities that are mid-way a tile will not find one. Since
+	// this is not a feature yet, we can use it regardless:
+	const start = getTileAtLocation(entity.location.get());
+	if (!start) {
+		throw new Error(`Entity "${entity.id}" lives on a detached coordinate`);
+	}
+	const path = Path.between(start, destination, {
+		closest: true,
+		obstacles: game.entities
+			.filter(
+				(entity) =>
+					!tileArchetype.test(entity) &&
+					hasEcsComponents(entity, [locationComponent, visibilityComponent]),
+			)
+			.map((entity) => ({
+				coordinate: (entity as EcsEntity<typeof locationComponent>).location.get(),
+				cost: 12,
+			})),
+	});
+
+	const lastTileInPath = path[path.length - 1];
+	if (lastTileInPath) {
+		const distanceToTarget = destination.euclideanDistanceTo(lastTileInPath.location.get());
+		if (distanceToTarget > stopAtDistanceToTarget) {
+			throw new Error('Could not find a path close enough to the target');
+		}
+	}
+
+	return path;
+}
+
+export async function walkToTile(
+	entity: PathingEntity,
+	game: Game,
+	destinationOrPath: Tile | Tile[],
+	stopAtDistanceToTarget: number = 0,
+) {
+	if (!locationComponent.test(entity) || !pathingComponent.test(entity)) {
+		throw new Error(`Entity ${entity} is unable to walk`);
+	}
+
+	const path = Array.isArray(destinationOrPath)
+		? destinationOrPath
+		: findPath(game, entity, destinationOrPath, stopAtDistanceToTarget);
+	await animateAlongPath(entity, path);
 }

@@ -6,7 +6,6 @@ import { GameSelectedEntity } from './GameSelectedEntityControls';
 
 export const GameSelectedEntityGlass: React.FC = () => {
 	const selectedEntity = useSelectedEntityStore((state) => state.selectedEntity);
-
 	if (!selectedEntity) {
 		return null;
 	}

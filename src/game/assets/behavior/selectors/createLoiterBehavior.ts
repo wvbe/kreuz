@@ -1,20 +1,20 @@
-import { Random } from '../../../../core/classes/Random';
-import { BehaviorTreeSignal } from '../../../../core/ecs/components/behaviorComponent/BehaviorTreeSignal';
-import { ExecutionNode } from '../../../../core/ecs/components/behaviorComponent/ExecutionNode';
-import { rejectBehaviorTreeWhenMissingEcsComponent } from '../../../../core/ecs/components/behaviorComponent/rejectBehaviorTreeWhenMissingEcsComponent';
-import { SelectorNode } from '../../../../core/ecs/components/behaviorComponent/SelectorNode';
-import { SequenceNode } from '../../../../core/ecs/components/behaviorComponent/SequenceNode';
-import { type EntityBlackboard } from '../../../../core/ecs/components/behaviorComponent/types';
-import { eventLogComponent } from '../../../../core/ecs/components/eventLogComponent';
-import { healthComponent } from '../../../../core/ecs/components/healthComponent';
-import { getTileAtLocation } from '../../../../core/ecs/components/location/getTileAtLocation';
-import { isMapLocationEqualTo } from '../../../../core/ecs/components/location/isMapLocationEqualTo';
-import { locationComponent } from '../../../../core/ecs/components/locationComponent';
-import { pathingComponent } from '../../../../core/ecs/components/pathingComponent';
-import { type EcsEntity } from '../../../../core/ecs/types';
-import Game from '../../../../core/Game';
-import { QualifiedCoordinate } from '../../../../core/terrain/types';
-import { createWaitBehavior } from './createWaitBehavior';
+import { Random } from '../../../core/classes/Random';
+import { BehaviorTreeSignal } from '../../../core/ecs/components/behaviorComponent/BehaviorTreeSignal';
+import { ExecutionNode } from '../../../core/ecs/components/behaviorComponent/ExecutionNode';
+import { rejectBehaviorTreeWhenMissingEcsComponent } from '../../../core/ecs/components/behaviorComponent/rejectBehaviorTreeWhenMissingEcsComponent';
+import { SelectorNode } from '../../../core/ecs/components/behaviorComponent/SelectorNode';
+import { SequenceNode } from '../../../core/ecs/components/behaviorComponent/SequenceNode';
+import { type EntityBlackboard } from '../../../core/ecs/components/behaviorComponent/types';
+import { eventLogComponent } from '../../../core/ecs/components/eventLogComponent';
+import { healthComponent } from '../../../core/ecs/components/healthComponent';
+import { getTileAtLocation } from '../../../core/ecs/components/location/getTileAtLocation';
+import { isMapLocationEqualTo } from '../../../core/ecs/components/location/isMapLocationEqualTo';
+import { locationComponent } from '../../../core/ecs/components/locationComponent';
+import { pathingComponent } from '../../../core/ecs/components/pathingComponent';
+import { type EcsEntity } from '../../../core/ecs/types';
+import Game from '../../../core/Game';
+import { QualifiedCoordinate } from '../../../core/terrain/types';
+import { createWaitBehavior } from '../execution/createWaitBehavior';
 
 type EntityWithComponents = EcsEntity<
 	| typeof locationComponent

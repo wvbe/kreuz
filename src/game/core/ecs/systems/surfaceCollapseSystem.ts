@@ -7,6 +7,9 @@ import { getTileAtLocation } from '../components/location/getTileAtLocation';
 import { isMapLocationEqualTo } from '../components/location/isMapLocationEqualTo';
 import { locationComponent } from '../components/locationComponent';
 
+/**
+ * Does collision detective, reasonably expensive :)
+ */
 export const surfaceCollapseSystem = new EcsSystem(async (game) => {
 	game.entities.$add.on(async (entities) => {
 		await Promise.all(

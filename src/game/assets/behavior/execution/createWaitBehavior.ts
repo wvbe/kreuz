@@ -1,7 +1,7 @@
-import { Random } from '../../../../core/classes/Random';
-import { ExecutionNode } from '../../../../core/ecs/components/behaviorComponent/ExecutionNode';
-import { type EntityBlackboard } from '../../../../core/ecs/components/behaviorComponent/types';
-import { eventLogComponent } from '../../../../core/ecs/components/eventLogComponent';
+import { Random } from '../../../core/classes/Random';
+import { ExecutionNode } from '../../../core/ecs/components/behaviorComponent/ExecutionNode';
+import { type EntityBlackboard } from '../../../core/ecs/components/behaviorComponent/types';
+import { eventLogComponent } from '../../../core/ecs/components/eventLogComponent';
 
 let ticker = 0;
 

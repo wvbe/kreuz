@@ -8,7 +8,7 @@ type Type = string | number | React.ReactNode | null | undefined | any;
  * A component that displays a numeric value that can change over time.
  * Uses the {@link useEventedValue} hook to subscribe to value changes.
  */
-export const GameEventedValue: FC<{
+export const UiEventedValue: FC<{
 	eventedValue: EventedValue<Type>;
 	transform?: (value: Type) => React.ReactNode | Type;
 }> = ({ eventedValue, transform }) => {

@@ -12,11 +12,10 @@ import { locationComponent } from '../../game/core/ecs/components/locationCompon
 import { surfaceComponent } from '../../game/core/ecs/components/surfaceComponent';
 import { visibilityComponent } from '../../game/core/ecs/components/visibilityComponent';
 import { EcsEntity } from '../../game/core/ecs/types';
-import { useEventedValue } from '../hooks/useEventedValue';
-import { MapLocation } from '../map/MapLocation';
-import { createGrassGraphic } from '../graphics/createGrassGraphic';
 import { createSandGraphic } from '../graphics/createSandGraphic';
 import { createWaveGraphic } from '../graphics/createWaveGraphic';
+import { useEventedValue } from '../hooks/useEventedValue';
+import { MapLocation } from '../map/MapLocation';
 import { GraphicsCache } from './util/GraphicsCache';
 
 export type WallMaterial = 'granite' | 'limestone' | 'clay' | 'dirt';
@@ -36,10 +35,12 @@ function getGraphicsCache(terrain: TerrainDefinition): null | GraphicsCache {
 	} else if (terrain === SandTerrain) {
 		graphicsCacheByTerrain.set(terrain, new GraphicsCache(() => createSandGraphic('#F4E4BC')));
 	} else if (terrain === GrassTerrain) {
-		graphicsCacheByTerrain.set(terrain, new GraphicsCache(() => createGrassGraphic('#7CB342')));
+		// graphicsCacheByTerrain.set(terrain, new GraphicsCache(() => createGrassGraphic('#7CB342')));
+		return null;
 	}
 	return graphicsCacheByTerrain.get(terrain) ?? null;
 }
+
 /**
  * A component that maps a game tile to a presentational map location.
  *

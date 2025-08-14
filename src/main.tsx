@@ -5,7 +5,7 @@ import { useGeneratedGame } from './ui/hooks/useGeneratedGame';
 
 // import { caveScene } from './scenarios/cave';
 
-import basement from './scenarios/basement';
+import basement from './scenarios/desertedIsland';
 import { Ui } from './ui/Ui';
 
 const driver = new BrowserDriver();

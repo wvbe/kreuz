@@ -8,7 +8,7 @@ import { type SeedI } from '../types';
 /**
  * Just a wrapper for the most random "random" shit I had to use at any point.
  */
-class ExpensiveRandom {
+export class ExpensiveRandom {
 	/**
 	 * Returns a random decimal number between 0 and 1.
 	 */
@@ -95,7 +95,7 @@ class ExpensiveRandom {
 	}
 }
 
-class FastRandom extends ExpensiveRandom {
+export class ShitRandom extends ExpensiveRandom {
 	static float(..._seed: SeedI[]): number {
 		return Math.random();
 	}
@@ -103,4 +103,5 @@ class FastRandom extends ExpensiveRandom {
 		return this.float(...seed) <= probabilityForTrue;
 	}
 }
+
 export const Random = ExpensiveRandom;

@@ -7,6 +7,7 @@
  * no further events planned.
  */
 import { civilianBehavior } from '../game/assets/behavior/trees/civilianBehavior';
+import { GrassTerrain } from '../game/assets/terrains';
 import { ShitRandom } from '../game/core/classes/Random';
 import { DriverI } from '../game/core/drivers/types';
 import { animalArchetype, AnimalArchetypeType } from '../game/core/ecs/archetypes/animalArchetype';
@@ -17,6 +18,7 @@ import {
 	regeneratingRawMaterialArchetype,
 } from '../game/core/ecs/archetypes/regeneratingRawMaterialArchetype';
 import Game from '../game/core/Game';
+import { generateIsland, getIslandTileInfos } from '../game/generators/generateIsland';
 import { generateGridTerrainFromAscii } from '../game/test/generateGridTerrainFromAscii';
 
 export default async function (driver: DriverI) {
@@ -24,15 +26,24 @@ export default async function (driver: DriverI) {
 
 	const x = 50,
 		y = x;
-	const tiles = generateGridTerrainFromAscii(`
-		XXXXXXXXXXXX
-		XXXXXXXXXXXX
-		XXXXXXXXXXXX
-		XXXXXXXXXXXX
-		XXXXXXXXXXXX
-		XXXXXXXXXXXX
-		XXXXXXXXXXXX
-	`);
+	// const tiles = generateGridTerrainFromAscii(`
+	// 	XXXXXXXXXXXX
+	// 	XXXXXXXXXXXX
+	// 	XXXXXXXXXXXX
+	// 	XXXXXXXXXXXX
+	// 	XXXXXXXXXXXX
+	// 	XXXXXXXXXXXX
+	// 	XXXXXXXXXXXX
+	// `);
+
+	const tiles = getIslandTileInfos(
+		generateIsland({
+			width: x,
+			height: y,
+			waterlineZ: -1,
+			seed: Math.random() * 10000,
+		}),
+	);
 
 	await game.terrain.addTiles(tiles);
 
@@ -108,6 +119,18 @@ export default async function (driver: DriverI) {
 		portalEnd: [15, 9, 0],
 	});
 	await game.entities.add(portal);
+
+	await game.entities.add(
+		...game.terrain.tiles
+			.filter((tile) => tile.surfaceType.get() === GrassTerrain && Math.random() < 0.1)
+			.map((tile) => {
+				const regeneratingRawMaterial = regeneratingRawMaterialArchetype.create({
+					location: tile.location.get(),
+					type: RawMaterialType.GRASS,
+				});
+				return regeneratingRawMaterial;
+			}),
+	);
 
 	const portalBack = portalArchetype.create({
 		name: 'Portal to another place',

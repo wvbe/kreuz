@@ -1,9 +1,10 @@
+import { TerrainDefinition } from '../../../assets/terrains';
 import { SimpleCoordinate, type QualifiedCoordinate } from '../../terrain/types';
 import { EcsArchetype } from '../classes/EcsArchetype';
 import { locationComponent } from '../components/locationComponent';
 import { outlineComponent } from '../components/outlineComponent';
 import { pathableComponent } from '../components/pathableComponent';
-import { surfaceComponent, SurfaceType } from '../components/surfaceComponent';
+import { surfaceComponent } from '../components/surfaceComponent';
 import { visibilityComponent } from '../components/visibilityComponent';
 import { EcsArchetypeEntity } from '../types';
 
@@ -11,7 +12,7 @@ export const tileArchetype = new EcsArchetype<
 	{
 		location: QualifiedCoordinate;
 		outlineCoordinates?: SimpleCoordinate[];
-		surfaceType: SurfaceType;
+		surfaceType: TerrainDefinition;
 	},
 	| typeof visibilityComponent
 	| typeof locationComponent
@@ -34,11 +35,11 @@ export const tileArchetype = new EcsArchetype<
 		});
 		surfaceComponent.attach(entity, { surfaceType: options.surfaceType });
 		pathableComponent.attach(entity, {
-			walkability: options.surfaceType === SurfaceType.OPEN ? 1 : 0,
+			walkability: options.surfaceType.walkability,
 		});
 		visibilityComponent.attach(entity, {
-			icon: options.surfaceType === SurfaceType.OPEN ? '🌏' : '🌫️',
-			name: options.surfaceType === SurfaceType.OPEN ? 'Walkable terrain' : 'Unknown terrain',
+			icon: options.surfaceType.icon,
+			name: options.surfaceType.label,
 		});
 	},
 );

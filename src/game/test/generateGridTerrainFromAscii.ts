@@ -1,7 +1,8 @@
+import { GrassTerrain, MysteriousTerrain, TerrainDefinition } from '../assets/terrains';
 import { locationComponent } from '../core/ecs/components/locationComponent';
 import { outlineComponent } from '../core/ecs/components/outlineComponent';
 import { pathableComponent } from '../core/ecs/components/pathableComponent';
-import { surfaceComponent, SurfaceType } from '../core/ecs/components/surfaceComponent';
+import { surfaceComponent } from '../core/ecs/components/surfaceComponent';
 import { EcsEntity } from '../core/ecs/types';
 import { SimpleCoordinate } from '../core/terrain/types';
 
@@ -21,7 +22,7 @@ type TileEntity = EcsEntity<
 
 type GeneratedTile = {
 	location: SimpleCoordinate;
-	surfaceType: SurfaceType;
+	surfaceType: TerrainDefinition;
 };
 
 export function generateGridTerrainFromAscii(ascii: string): GeneratedTile[] {
@@ -39,7 +40,7 @@ export function generateGridTerrainFromAscii(ascii: string): GeneratedTile[] {
 				? null
 				: {
 						location: [x, y, character === '-' ? -1 : 1] as SimpleCoordinate,
-						surfaceType: character === '-' ? SurfaceType.UNKNOWN : SurfaceType.OPEN,
+						surfaceType: character === '-' ? MysteriousTerrain : GrassTerrain,
 				  },
 		),
 	);

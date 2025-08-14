@@ -16,24 +16,46 @@ import {
 	regeneratingRawMaterialArchetype,
 } from '../game/core/ecs/archetypes/regeneratingRawMaterialArchetype';
 import Game from '../game/core/Game';
+import { generateIsland, getIslandTileInfos } from '../game/generators/generateIsland';
 import { generateGridTerrainFromAscii } from '../game/test/generateGridTerrainFromAscii';
 
+function fromArrayAndMutate<T>(arr: T[]) {
+	const index = Math.floor(Math.random() * arr.length);
+	const item = arr[index];
+	arr[index] = item;
+	return item;
+}
 export default async function (driver: DriverI) {
 	const game = new Game(driver, '1');
 
-	await game.terrain.addTiles(
-		generateGridTerrainFromAscii(`
-			XXXXXXXXXXXX
-			XXXXXXXXXXXX
-			XXXXXXXXXXXX
-			XXXXXXXXXXXX
-			XXXXXXXXXXXX
-			XXXXXXXXXXXX
-			XXXXXXXXXXXX
-		`),
+	const x = 50,
+		y = x;
+	// const tiles = generateGridTerrainFromAscii(`
+	// 	XXXXXXXXXXXX
+	// 	XXXXXXXXXXXX
+	// 	XXXXXXXXXXXX
+	// 	XXXXXXXXXXXX
+	// 	XXXXXXXXXXXX
+	// 	XXXXXXXXXXXX
+	// 	XXXXXXXXXXXX
+	// `);
+
+	const tiles = getIslandTileInfos(
+		generateIsland({
+			width: x,
+			height: y,
+			waterlineZ: -1,
+			seed: Math.random() * 10000,
+		}),
 	);
 
-	for (let i = 2; i < 6; i++) {
+	await game.terrain.addTiles(tiles);
+
+	const centerIsland = game.terrain.selectContiguousTiles(
+		game.terrain.getTileClosestToXy(x / 2, y / 2),
+	);
+
+	for (let i = Math.round(x / 2); i < 6; i++) {
 		const regeneratingRawMaterial = regeneratingRawMaterialArchetype.create({
 			location: [game.terrain, i, 5, 0],
 			type: RawMaterialType.PINEWOOD,
@@ -42,7 +64,7 @@ export default async function (driver: DriverI) {
 	}
 
 	const entity = personArchetype.create({
-		location: game.terrain.getTileClosestToXy(0, 0).location.get(),
+		location: game.terrain.getTileClosestToXy(x / 2, y / 2).location.get(),
 		name: 'Rowbot',
 		icon: '🤖',
 		behavior: civilianBehavior,

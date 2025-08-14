@@ -1,10 +1,10 @@
+import { TerrainDefinition } from '../../../assets/terrains';
 import { Terrain } from '../../terrain/Terrain';
 import { QualifiedCoordinate, SimpleCoordinate } from '../../terrain/types';
 import { EcsArchetype } from '../classes/EcsArchetype';
 import { eventLogComponent } from '../components/eventLogComponent';
 import { locationComponent } from '../components/locationComponent';
 import { portalComponent } from '../components/portalComponent';
-import { SurfaceType } from '../components/surfaceComponent';
 import { visibilityComponent } from '../components/visibilityComponent';
 import { EcsEntity } from '../types';
 
@@ -28,7 +28,7 @@ type PortalArchetypeOptions = {
 			location: QualifiedCoordinate;
 			tiles: {
 				location: SimpleCoordinate;
-				surfaceType: SurfaceType;
+				surfaceType: TerrainDefinition;
 			}[];
 			portalEnd: SimpleCoordinate;
 			reverseOfPortalEntity?: null;

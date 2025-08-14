@@ -6,7 +6,6 @@ import { healthComponent } from '../components/healthComponent';
 import { getTileAtLocation } from '../components/location/getTileAtLocation';
 import { isMapLocationEqualTo } from '../components/location/isMapLocationEqualTo';
 import { locationComponent } from '../components/locationComponent';
-import { SurfaceType } from '../components/surfaceComponent';
 
 export const surfaceCollapseSystem = new EcsSystem(async (game) => {
 	game.entities.$add.on(async (entities) => {
@@ -28,7 +27,7 @@ export const surfaceCollapseSystem = new EcsSystem(async (game) => {
 							});
 						};
 						const tile = getTileAtLocation(person.location.get());
-						if (tile.surfaceType.get() === SurfaceType.UNKNOWN) {
+						if (!tile.surfaceType.get()?.walkability) {
 							penalizeHealth();
 						}
 						destrLast = tile.surfaceType.on((surfaceType) => {
@@ -36,7 +35,7 @@ export const surfaceCollapseSystem = new EcsSystem(async (game) => {
 								tile.location.get(),
 								person.location.get(),
 							);
-							if (same && surfaceType === SurfaceType.UNKNOWN) {
+							if (same && !surfaceType?.walkability) {
 								penalizeHealth();
 							} else {
 								person.health.setDelta(0);

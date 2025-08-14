@@ -11,10 +11,10 @@ import { getTileAtLocation } from '../../core/ecs/components/location/getTileAtL
 import { isMapLocationEqualTo } from '../../core/ecs/components/location/isMapLocationEqualTo';
 import { locationComponent } from '../../core/ecs/components/locationComponent';
 import { rawMaterialComponent } from '../../core/ecs/components/rawMaterialComponent';
-import { SurfaceType } from '../../core/ecs/components/surfaceComponent';
 import { EventedValue } from '../../core/events/EventedValue';
 import Game from '../../core/Game';
 import { QualifiedCoordinate } from '../../core/terrain/types';
+import { GrassTerrain, MysteriousTerrain } from '../terrains';
 import { ExcavationJob } from './jobs/ExcavationJob';
 
 /**
@@ -30,7 +30,7 @@ async function getOrCreateTilesInRectangle(start: QualifiedCoordinate, end: Qual
 
 		const tile = tileArchetype.create({
 			location: coordinate,
-			surfaceType: SurfaceType.UNKNOWN,
+			surfaceType: MysteriousTerrain,
 		});
 
 		newTiles.push(tile);
@@ -84,10 +84,7 @@ export const excavatorButton: Action = {
 		}
 
 		for (const tile of tiles) {
-			if (
-				tile.surfaceType.get() === SurfaceType.OPEN ||
-				!ExcavationJob.canModifyTile(game, tile)
-			) {
+			if (!tile.surfaceType.get()?.isBuildable || !ExcavationJob.canModifyTile(game, tile)) {
 				continue;
 			}
 			game.jobs.add(
@@ -100,7 +97,7 @@ export const excavatorButton: Action = {
 						}
 						await game.time.wait(30_000);
 						tile.walkability = 1;
-						tile.surfaceType.set(SurfaceType.OPEN);
+						tile.surfaceType.set(GrassTerrain);
 					},
 				}),
 			);
@@ -124,7 +121,7 @@ export const fillButton: Action = {
 					isMapLocationEqualTo(entity.location.get(), tile.location.get()),
 			);
 			if (
-				tile.surfaceType.get() === SurfaceType.UNKNOWN ||
+				tile.surfaceType.get()?.isBuildable ||
 				!ExcavationJob.canModifyTile(game, tile) ||
 				entitiesInSameLocation
 			) {
@@ -140,7 +137,7 @@ export const fillButton: Action = {
 						}
 						await game.time.wait(30_000);
 						tile.walkability = 0;
-						tile.surfaceType.set(SurfaceType.UNKNOWN);
+						tile.surfaceType.set(MysteriousTerrain);
 					},
 				}),
 			);

@@ -1,6 +1,6 @@
+import { TerrainDefinition } from '../../assets/terrains';
 import { Tile, tileArchetype } from '../ecs/archetypes/tileArchetype';
 import { getContiguousObjects } from '../ecs/components/pathingComponent/getContiguousObjects';
-import { SurfaceType } from '../ecs/components/surfaceComponent';
 import { Collection } from '../events/Collection';
 import { FilterFn } from '../types';
 import { QualifiedCoordinate, TerrainPortal, type SimpleCoordinate } from './types';
@@ -15,7 +15,7 @@ export type SaveTerrainJson = {
 
 export type TileInfo = {
 	location: SimpleCoordinate;
-	surfaceType: SurfaceType;
+	surfaceType: TerrainDefinition;
 };
 export class Terrain {
 	/**
@@ -75,7 +75,7 @@ export class Terrain {
 			} | null;
 			tiles?: {
 				location: SimpleCoordinate;
-				surfaceType: SurfaceType;
+				surfaceType: TerrainDefinition;
 			}[];
 		} = {},
 	) {

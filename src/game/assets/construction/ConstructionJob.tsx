@@ -9,9 +9,10 @@ import { inventoryComponent } from '../../core/ecs/components/inventoryComponent
 import { locationComponent } from '../../core/ecs/components/locationComponent';
 import { pathableComponent } from '../../core/ecs/components/pathableComponent';
 import { pathingComponent } from '../../core/ecs/components/pathingComponent';
-import { surfaceComponent, SurfaceType } from '../../core/ecs/components/surfaceComponent';
+import { surfaceComponent } from '../../core/ecs/components/surfaceComponent';
 import { EcsArchetypeEntity, EcsEntity } from '../../core/ecs/types';
 import Game from '../../core/Game';
+import { OpenTerrain } from '../terrains';
 import { Constructible } from './types';
 
 /**
@@ -44,7 +45,7 @@ export class ConstructionJob extends JobPosting {
 		if (!hasEcsComponents(tile, [locationComponent, pathableComponent, surfaceComponent])) {
 			return false;
 		}
-		if (tile.surfaceType.get() !== SurfaceType.OPEN) {
+		if (!tile.surfaceType.get()?.isBuildable) {
 			return false;
 		}
 
@@ -112,7 +113,7 @@ export class ConstructionJob extends JobPosting {
 
 		// Make the tile walkable now that it is excavated.
 		this.tile.walkability = 1;
-		this.tile.surfaceType.set(SurfaceType.OPEN);
+		this.tile.surfaceType.set(OpenTerrain);
 
 		if (this.thing.construction.createEntity) {
 			game.entities.add(

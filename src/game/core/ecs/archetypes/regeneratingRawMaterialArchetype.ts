@@ -30,6 +30,7 @@ export const regeneratingRawMaterialArchetype = new EcsArchetype<
 					{
 						material: timberMaterial,
 						totalCapacity: 100,
+						minimumRatioToHarvest: 0.3,
 						quantity: 0,
 					},
 				],
@@ -46,8 +47,9 @@ export const regeneratingRawMaterialArchetype = new EcsArchetype<
 				rawMaterials: [
 					{
 						material: grassMaterial,
-						totalCapacity: 100,
-						quantity: 0,
+						totalCapacity: 10,
+						minimumRatioToHarvest: 0.3,
+						quantity: Math.random(),
 					},
 				],
 			});

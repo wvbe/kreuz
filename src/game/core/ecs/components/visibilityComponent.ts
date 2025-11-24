@@ -1,4 +1,5 @@
 import { token } from '../../../../ui/contexts/ReplacementSpace';
+import { EventedValue } from '../../events/EventedValue';
 import { EcsComponent } from '../classes/EcsComponent';
 
 /**
@@ -38,11 +39,13 @@ export const visibilityComponent = new EcsComponent<
 		iconSize?: number;
 
 		visiblityPriority: number;
+		isVisible: EventedValue<boolean>;
 	}
 >(
 	(entity) => entity.name !== undefined && entity.icon !== undefined,
 	(entity, options) => {
 		Object.assign(entity, options, {
+			isVisible: new EventedValue(true),
 			visiblityPriority: options.visiblityPriority ?? 500,
 			toString() {
 				return token('entity', entity);

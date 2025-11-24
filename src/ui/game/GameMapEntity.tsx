@@ -52,9 +52,10 @@ export const GameMapEntity: FunctionComponent<
 		},
 		[entity],
 	);
+	const isVisible = useEventedValue(entity.isVisible);
 	const [terrain] = useEventedValue(entity.location);
 
-	if (terrain !== selectedTerrain) {
+	if (!isVisible || terrain !== selectedTerrain) {
 		return null;
 	}
 

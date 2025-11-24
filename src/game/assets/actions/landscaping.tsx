@@ -155,10 +155,15 @@ export const harvestButton: Action = {
 		}
 
 		for (const tile of tiles) {
+			// Can harvest only the raw materials at the same location and at-or-above the minimum ratio to harvest
 			const rawMaterialsInSameLocation = game.entities.filter(
 				(entity) =>
 					hasEcsComponents(entity, [rawMaterialComponent]) &&
-					isMapLocationEqualTo(entity.location.get(), tile.location.get()),
+					isMapLocationEqualTo(entity.location.get(), tile.location.get()) &&
+					entity.rawMaterials.some(
+						({ quantity, minimumRatioToHarvest }) =>
+							quantity.get() >= minimumRatioToHarvest,
+					),
 			);
 			if (!rawMaterialsInSameLocation.length) {
 				continue;

@@ -16,7 +16,7 @@ export function createEatFromRawMaterial() {
 		async ({ game, entity }: EntityBlackboard) => {
 			assertEcsComponents(entity, [locationComponent, pathingComponent, needsComponent]);
 
-			if (entity.needs.nutrition.get() > 0.3) {
+			if (entity.needs.nutrition.get() > 0.6) {
 				throw new BehaviorTreeSignal(`I'm full`);
 			}
 
@@ -29,26 +29,28 @@ export function createEatFromRawMaterial() {
 			// Throw if this entity is not in a valid tile
 			getTileAtLocation(startingLocation);
 
-			const nearbyRawMaterials = game.entities
+			const resource = game.entities
 				.filter(byEcsComponents([locationComponent, rawMaterialComponent]))
 				.map((resource) => ({
 					entity: resource,
 					yummies:
 						// Resource contains an edible raw material
 						resource.rawMaterials.filter(
-							({ material, quantity }) =>
-								material.nutrition > 0 && quantity.get() > 0,
+							({ material, quantity, minimumRatioToHarvest }) =>
+								material.nutrition > 0 && quantity.get() >= minimumRatioToHarvest,
 						),
 					distance:
 						// Resource is "close by" (shit implementation)
-						resource.euclideanDistanceTo(startingLocation),
+						resource.euclideanDistanceTo(startingLocation) *
+						(0.9 + Math.random() * 0.2), // Randomize the distance to make it more interesting
 				}))
-				.filter(({ yummies, distance }) => yummies.length && distance < 30);
-
-			if (!nearbyRawMaterials.length) {
+				.filter(({ yummies, distance }) => yummies.length)
+				.sort((a, b) => a.distance - b.distance)
+				.shift();
+			if (!resource) {
 				throw new BehaviorTreeSignal(`There are no resources to eat`);
 			}
-			const resource = Random.fromArray(nearbyRawMaterials);
+
 			const material = Random.fromArray(resource.yummies);
 
 			if (hasEcsComponents(entity, [eventLogComponent])) {
@@ -56,6 +58,11 @@ export function createEatFromRawMaterial() {
 				entity.events?.add(`Munching on ${resource.entity}`);
 			}
 			await entity.walkToTile(game, getTileAtLocation(resource.entity.location.get()));
+
+			if (material.quantity.get() < material.minimumRatioToHarvest) {
+				// Somebody else ate our shit, stop
+				return;
+			}
 
 			const harvested = await resource.entity.harvestRawMaterial(game, material.material);
 			const nutritionalValue = material.material.nutrition * harvested;

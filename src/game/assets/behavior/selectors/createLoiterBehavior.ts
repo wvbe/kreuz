@@ -23,9 +23,6 @@ type EntityWithComponents = EcsEntity<
 	| typeof eventLogComponent
 >;
 
-// Some "entropy" lolz0r
-let ticker = 0;
-
 function getRandomTileNearby([currentTerrain, ...currentCoords]: QualifiedCoordinate) {
 	const closestTiles = currentTerrain.selectClosestTiles(
 		currentCoords,
@@ -78,10 +75,12 @@ export function createLoiterBehavior() {
 					if (eventLogComponent.test(entity)) {
 						await entity.events?.add('Wandering around…');
 					}
+
 					const start = getTileAtLocation(entity.location.get());
 					if (!start) {
 						throw new Error(`Entity "${entity.id}" lives on a detached coordinate`);
 					}
+
 					await entity.walkToTile(game, getRandomTileNearby(start.location.get()), 10);
 				},
 			),

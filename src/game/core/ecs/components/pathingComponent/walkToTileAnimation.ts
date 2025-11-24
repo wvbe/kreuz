@@ -44,7 +44,10 @@ async function animateAlongPath(entity: PathingEntity, path: Tile[]) {
 	// @TODO add some safety checks on the path maybe.
 	// Emitting this event may prompt the promises of other walkOnTile tasks to reject.
 	const nextTileInPath = path.shift();
-	if (!nextTileInPath) {
+	if (
+		!nextTileInPath ||
+		isMapLocationEqualTo(entity.location.get(), nextTileInPath.location.get())
+	) {
 		return;
 	}
 

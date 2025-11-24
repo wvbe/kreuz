@@ -13,6 +13,10 @@ type RawMaterialConfig = {
 	 */
 	totalCapacity: number;
 	/**
+	 * The minimum quantity of the material that is required to be harvested.
+	 */
+	minimumRatioToHarvest: number;
+	/**
 	 * The initial ratio of fullness (between 0-1). Will creep up to 1 under the right circumstances.
 	 */
 	quantity: number;
@@ -27,6 +31,10 @@ type RawMaterialState = {
 	 * The quantity of the material that is gained if a resource at 100% is harvested down to 0%.
 	 */
 	totalCapacity: number;
+	/**
+	 * The minimum ratio of fullness to harvest.
+	 */
+	minimumRatioToHarvest: number;
 	/**
 	 * The ratio of fullness (between 0-1). Will creep up to 1 under the right circumstances.
 	 */
@@ -55,17 +63,21 @@ export const rawMaterialComponent = new EcsComponent<
 		const rawMaterials = options.rawMaterials.map((config) => ({
 			material: config.material,
 			totalCapacity: config.totalCapacity,
+			minimumRatioToHarvest: config.minimumRatioToHarvest,
 			quantity: new ProgressingNumericValue(
 				config.quantity,
 				{
 					min: 0,
 					max: 1,
-					delta: 5 / 1000000,
+					delta: 5 / 1_000_000,
 					granularity: 5 / 1000,
 				},
 				'raw material',
 			),
 		}));
+
+		// The speed at which the raw material is munched on
+		const deltaPenalty = 1 / 33_000;
 
 		Object.assign(entity, {
 			rawMaterials,
@@ -76,14 +88,13 @@ export const rawMaterialComponent = new EcsComponent<
 				if (!rawMaterial) {
 					throw new Error(`Raw material ${material} not found`);
 				}
-				const delta = rawMaterial.quantity.delta;
 				const materialQuantity = Math.floor(
 					rawMaterial.quantity.get() * rawMaterial.totalCapacity,
 				);
 
-				rawMaterial.quantity.setDelta(-1 / 10_000);
+				rawMaterial.quantity.setDelta(rawMaterial.quantity.delta - deltaPenalty);
 				await rawMaterial.quantity.promiseBelow(0, true);
-				rawMaterial.quantity.setDelta(delta);
+				rawMaterial.quantity.setDelta(rawMaterial.quantity.delta + deltaPenalty);
 				return materialQuantity;
 			},
 		});

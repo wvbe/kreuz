@@ -22,10 +22,18 @@ export class EventedValue<T> extends Event<[T]> {
 	}
 
 	/**
+	 * Overwrite this property if you want to change the equality check.
+	 */
+	public equalityCheck: (a: T, b: T) => boolean = (a, b) => {
+		return a === b;
+	};
+
+	/**
 	 * Set the current value, and probably emit an event too
 	 */
 	public async set(value: T, skipUpdate?: boolean) {
-		if (value === this.current) {
+		if (this.equalityCheck(this.current, value)) {
+			// if (value === this.current) {
 			return;
 		}
 		this.current = value;

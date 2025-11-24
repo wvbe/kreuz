@@ -1,3 +1,5 @@
+import './main.css';
+
 import { FunctionComponent, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserDriver } from './ui/game/BrowserDriver';
@@ -5,6 +7,7 @@ import { useGeneratedGame } from './ui/hooks/useGeneratedGame';
 
 // import { caveScene } from './scenarios/cave';
 
+// import basement from './scenarios/basement';
 import basement from './scenarios/desertedIsland';
 import { Ui } from './ui/Ui';
 

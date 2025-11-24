@@ -29,6 +29,7 @@ export const locationComponent = new EcsComponent<
 	(entity) => entity.location instanceof EventedValue,
 	(entity, options) => {
 		const location = new EventedValue(options.location, 'locationComponent location');
+		location.equalityCheck = isMapLocationEqualTo;
 
 		entity.location = location;
 

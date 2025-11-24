@@ -7,7 +7,6 @@
  * no further events planned.
  */
 import { civilianBehavior } from '../game/assets/behavior/trees/civilianBehavior';
-import { GrassTerrain } from '../game/assets/terrains';
 import { ShitRandom } from '../game/core/classes/Random';
 import { DriverI } from '../game/core/drivers/types';
 import { animalArchetype, AnimalArchetypeType } from '../game/core/ecs/archetypes/animalArchetype';
@@ -78,21 +77,15 @@ export default async function (driver: DriverI) {
 		}),
 	);
 
-	await game.entities.add(
-		animalArchetype.create({
-			location: ShitRandom.fromArray(centerIsland).location.get(),
-			name: 'Fien',
-			type: AnimalArchetypeType.CHICKEN,
-		}),
-	);
-
-	await game.entities.add(
-		animalArchetype.create({
-			location: ShitRandom.fromArray(centerIsland).location.get(),
-			name: 'Siep',
-			type: AnimalArchetypeType.CHICKEN,
-		}),
-	);
+	for (let i = 0; i < 100; i++) {
+		await game.entities.add(
+			animalArchetype.create({
+				location: ShitRandom.fromArray(centerIsland).location.get(),
+				name: 'Chicken',
+				type: AnimalArchetypeType.CHICKEN,
+			}),
+		);
+	}
 
 	await game.entities.add(
 		animalArchetype.create({
@@ -120,17 +113,17 @@ export default async function (driver: DriverI) {
 	});
 	await game.entities.add(portal);
 
-	await game.entities.add(
-		...game.terrain.tiles
-			.filter((tile) => tile.surfaceType.get() === GrassTerrain && Math.random() < 0.1)
-			.map((tile) => {
-				const regeneratingRawMaterial = regeneratingRawMaterialArchetype.create({
-					location: tile.location.get(),
-					type: RawMaterialType.GRASS,
-				});
-				return regeneratingRawMaterial;
-			}),
-	);
+	// await game.entities.add(
+	// 	...game.terrain.tiles
+	// 		.filter((tile) => tile.surfaceType.get() === GrassTerrain && Math.random() < 0.1)
+	// 		.map((tile) => {
+	// 			const regeneratingRawMaterial = regeneratingRawMaterialArchetype.create({
+	// 				location: tile.location.get(),
+	// 				type: RawMaterialType.GRASS,
+	// 			});
+	// 			return regeneratingRawMaterial;
+	// 		}),
+	// );
 
 	const portalBack = portalArchetype.create({
 		name: 'Portal to another place',

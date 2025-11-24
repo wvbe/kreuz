@@ -1,0 +1,12 @@
+body {
+	background-color: #1565c0;
+	color: #fff;
+	font-family: sans-serif;
+	line-height: 1.25;
+	user-select: none;
+}
+button {
+	line-height: inherit;
+	font-size: inherit;
+	font-weight: inherit;
+}
